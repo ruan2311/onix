@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  App na grade da TV (LAUNCHER + LEANBACK_LAUNCHER) e também candidato a tela
+  inicial (HOME + DEFAULT). O WebView continua offline (só exibe
+  o index.html dos assets); INTERNET é usada apenas pelo Java (WeeklyPicks) para
+  baixar as indicações da semana via HTTPS (JustWatch/Netflix e iTunes) e as
+  notícias dos games (RSS da Adrenaline e da Eurogamer.pt).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.aurora.launcher"
+    android:versionCode="13"
+    android:versionName="13.4.0 beta">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Mantém o agendamento semanal das indicações após reiniciar a TV. -->
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+    <uses-feature android:name="android.software.leanback" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+
+    <!-- Visibilidade de pacotes (Android 11+): apenas apps com ícone na grade. -->
+    <queries>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent>
+        <!-- Netflix: abrir as indicações direto no título (netflix://title/<id>). -->
+        <package android:name="com.netflix.ninja" />
+        <package android:name="com.netflix.mediaclient" />
+        <!-- Busca da Google TV para "onde assistir" das indicações. -->
+        <intent>
+            <action android:name="android.search.action.GLOBAL_SEARCH" />
+        </intent>
+        <intent>
+            <action android:name="android.intent.action.WEB_SEARCH" />
+        </intent>
+        <!-- Navegador para o "continue lendo" das notícias (muitas TVs não têm). -->
+        <intent>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.BROWSABLE" />
+            <data android:scheme="https" />
+        </intent>
+    </queries>
+
+    <application
+        android:label="Onix"
+        android:icon="@drawable/icon"
+        android:banner="@drawable/banner"
+        android:allowBackup="false"
+        android:hardwareAccelerated="true"
+        android:usesCleartextTraffic="false"
+        android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
+            android:windowSoftInputMode="stateAlwaysHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+                <category android:name="android.intent.category.HOME" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <!-- Botão "Desligar TV": só a política force-lock (lockNow põe a TV em standby). -->
+        <receiver
+            android:name=".PowerAdmin"
+            android:exported="true"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data android:name="android.app.device_admin" android:resource="@xml/device_admin" />
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
+            </intent-filter>
+        </receiver>
+
+        <service
+            android:name=".PicksJob"
+            android:exported="false"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+    </application>
+</manifest>

@@ -1,0 +1,2817 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<!--
+  Segurança: nenhum recurso externo é carregado. Tudo (CSS, JS, ícones) está inline.
+  - Sem rede (connect-src 'none'), sem frames, sem plugins, sem formulários.
+  - Imagens apenas data: (ícones vindos da ponte Android, validados).
+-->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src 'none'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<meta name="color-scheme" content="dark">
+<title>Onix</title>
+<style>
+:root{
+  --bg:#060709;
+  --text:#f5f6f8;
+  --muted:rgba(232,234,240,.6);
+  --glass:linear-gradient(135deg,rgba(255,255,255,.15),rgba(255,255,255,.04) 60%,rgba(255,255,255,.07));
+  --glass-border:rgba(255,255,255,.18);
+  --glass-hi:inset 0 1px 0 rgba(255,255,255,.35),inset 0 -1px 0 rgba(255,255,255,.05);
+  /* Sombras curtas: desfoque grande custa caro na GPU da TV */
+  --shadow:0 .35rem .8rem rgba(0,0,0,.4);
+  --accent:#ffffff;
+  --focus-glow:0 0 0 .14rem #fff,0 .5rem 1.2rem rgba(0,0,0,.55);
+  --radius:1.1rem;
+  --nav-w:13.5rem;
+  --ease:cubic-bezier(.2,.8,.2,1);
+}
+html{font-size:clamp(12px,1.04vw,22px);background:var(--bg);height:100%}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{
+  margin:0;height:100%;overflow:hidden;color:var(--text);
+  /* Fundo: gradiente estático, sem camadas animadas (60 FPS na TV) */
+  background:linear-gradient(160deg,#16181e 0%,#0a0b0e 55%,#040405 100%) var(--bg);
+  font-family:system-ui,-apple-system,"Segoe UI",Roboto,"Google Sans",Arial,sans-serif;
+  -webkit-font-smoothing:antialiased;user-select:none;-webkit-user-select:none;
+}
+button{font:inherit;color:inherit;background:none;border:0;padding:0;margin:0;cursor:pointer;text-align:inherit}
+button:focus{outline:none}
+svg{display:block}
+
+/* ---------- Vidro ---------- */
+.glass{background:var(--glass);border:1px solid var(--glass-border);box-shadow:var(--glass-hi),var(--shadow);border-radius:var(--radius)}
+/* Barra lateral opaca (sem backdrop-filter) */
+.glass-blur{background:linear-gradient(180deg,#101114,#08090b)}
+
+/* ---------- Elementos focáveis + feixe de brilho ----------
+   Só transform/opacity animam (compositor). Sem translate3d permanente: uma camada
+   de GPU por tile esgotaria a memória da TV com muitos apps. O feixe (::after) só é
+   gerado no item focado: com 300 apps, são 300 caixas a menos no layout. */
+.f{position:relative;overflow:hidden;transition:transform .2s var(--ease)}
+.f::after{position:absolute;inset:-2px;pointer-events:none;border-radius:inherit;
+  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.08) 42%,rgba(255,255,255,.5) 50%,rgba(255,255,255,.08) 58%,transparent 70%);
+  transform:translateX(-130%);opacity:0}
+.f.is-focused::after{content:"";animation:shine .9s var(--ease) .05s 1 both}
+@media (hover:hover){.f:hover::after{content:"";animation:shine .9s var(--ease) 1 both}}
+@keyframes shine{0%{transform:translateX(-130%);opacity:1}100%{transform:translateX(130%);opacity:1}}
+.f.is-focused{transform:scale(1.07);box-shadow:var(--focus-glow);border-color:rgba(255,255,255,.75);z-index:2}
+
+/* ---------- Barra lateral ---------- */
+#sidebar{position:fixed;z-index:10;left:0;top:0;bottom:0;width:var(--nav-w);
+  padding:max(1.6rem,env(safe-area-inset-top)) 1rem 1.6rem max(1rem,env(safe-area-inset-left));
+  display:flex;flex-direction:column;gap:.5rem;border-right:1px solid rgba(255,255,255,.08)}
+.brand{display:flex;align-items:center;gap:.7rem;padding:.2rem .6rem 1.6rem;font-weight:600;letter-spacing:.32em;font-size:1.05rem;text-transform:uppercase}
+.brand-mark{width:1.9rem;height:1.9rem;flex:none}
+.brand-by{margin-left:-.45rem;font-size:.62rem;font-weight:400;letter-spacing:.06em;text-transform:none;color:var(--muted);white-space:nowrap}
+.nav-item{display:flex;align-items:center;gap:.9rem;padding:.8rem .9rem;border-radius:.9rem;
+  color:var(--muted);border:1px solid transparent;font-size:1rem;font-weight:500}
+.nav-item svg{width:1.4rem;height:1.4rem;flex:none}
+.nav-item.active{color:var(--text);background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.12)}
+.nav-item.is-focused{color:#0a0b0e;background:#fff;transform:translateX(.3rem)}
+/* Com o foco no menu, só o item branco aparece: sem o cinza da aba anterior nem o deslize de volta (rastro) */
+#sidebar.nav-focus .nav-item.active:not(.is-focused){background:transparent;border-color:transparent;color:var(--muted)}
+.nav-item:not(.is-focused){transition:none}
+.nav-item.power.armed{background:#ef4444;border-color:#ef4444;color:#fff}
+.nav-spacer{flex:1;display:flex;align-items:center;justify-content:center;min-height:0;overflow:hidden}
+/* Ilustração estática do menu (só enfeite): some quando não há espaço. */
+.nav-art{width:78%;max-height:100%;opacity:.55}
+.nav-mode{font-size:.72rem;color:var(--muted);padding:.4rem .9rem;line-height:1.4}
+
+/* ---------- Conteúdo ---------- */
+#main{position:fixed;z-index:1;top:0;right:0;bottom:0;left:var(--nav-w);overflow-y:auto;overflow-x:hidden;
+  padding:max(1.6rem,env(safe-area-inset-top)) max(2.4rem,env(safe-area-inset-right)) 3rem 2.4rem;
+  scroll-padding-block:2.5rem;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+#main::-webkit-scrollbar{display:none}
+.topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1.4rem}
+#clock{font-size:4.6rem;font-weight:200;line-height:.95;letter-spacing:-.02em;
+  font-variant-numeric:tabular-nums}
+#date{font-size:1.05rem;color:var(--muted);margin-top:.35rem;text-transform:capitalize}
+.chips{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:flex-end}
+/* Botão "Atualizar" acima dos selos; só aparece na tela inicial. Gira enquanto baixa. */
+.top-right{display:flex;flex-direction:column;align-items:flex-end;gap:.7rem}
+#refreshBtn{padding:.55rem 1.1rem;font-size:.9rem}
+#refreshBtn[hidden]{display:none}
+#refreshBtn.busy svg{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.chip{display:flex;align-items:center;gap:.45rem;padding:.45rem .85rem;border-radius:2rem;font-size:.82rem;color:var(--muted)}
+.chip svg{width:1rem;height:1rem}
+.chip.off{color:#ff8a80;border-color:rgba(255,138,128,.35)}
+
+.section{display:none}
+/* Sem animação de entrada: ela criava uma camada do tamanho da seção a cada passo no menu. */
+.section.active{display:block}
+.section-title{font-size:1.8rem;font-weight:600;margin:.2rem 0 1rem}
+
+/* Destaque */
+.hero{position:relative;overflow:hidden;min-height:16.5rem;padding:2rem 2.2rem;display:flex;flex-direction:column;justify-content:flex-end;
+  --h1:#ff2d55;--h2:#5b2cff}
+.hero-bg{position:absolute;inset:0;z-index:0;border-radius:inherit;
+  background:radial-gradient(70% 120% at 85% 30%,var(--h2),transparent 70%),
+             radial-gradient(60% 90% at 60% 110%,var(--h1),transparent 70%);
+  opacity:.4}
+.hero-art{position:absolute;right:2rem;top:50%;width:15rem;height:15rem;margin-top:-7.5rem;z-index:0}
+.hero-art svg{width:100%;height:100%}
+.hero.is-pick .hero-art{width:9.4rem;height:14rem;margin-top:-7rem}
+.hero-art img{width:100%;height:100%;object-fit:cover;border-radius:.8rem;border:1px solid rgba(255,255,255,.25);box-shadow:0 .5rem 1.2rem rgba(0,0,0,.5)}
+.hero-content{position:relative;z-index:1;max-width:60%;transition:opacity .35s}
+.hero.swap .hero-content{opacity:0}
+.kicker{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:.5rem}
+.hero h1{font-size:2.3rem;line-height:1.1;margin:0 0 .6rem;font-weight:700}
+.hero p{margin:0 0 1.2rem;color:var(--muted);font-size:1rem;line-height:1.45;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.hero-actions{display:flex;gap:.8rem;flex-wrap:wrap}
+.btn{display:inline-flex;align-items:center;gap:.55rem;padding:.75rem 1.4rem;border-radius:2rem;font-weight:600;font-size:.95rem;
+  border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12)}
+.btn svg{width:1.1rem;height:1.1rem}
+.btn.primary{background:#fff;color:#0b0d1d;border-color:#fff}
+.dots{position:absolute;z-index:1;right:2rem;bottom:1.4rem;display:flex;gap:.4rem}
+.dots i{width:.5rem;height:.5rem;border-radius:1rem;background:rgba(255,255,255,.35);transition:background .3s}
+.dots i.on{width:1.4rem;background:#fff}
+
+/* Fileiras */
+.row-title{font-size:1.15rem;font-weight:600;margin:1.6rem 0 .1rem;color:rgba(255,255,255,.9)}
+.row{display:flex;gap:1.1rem;overflow-x:auto;overflow-y:hidden;padding:1.1rem 1rem 1.3rem;margin:0 -1rem;
+  scroll-padding-inline:1.5rem;scrollbar-width:none;-webkit-overflow-scrolling:touch;contain:layout paint}
+.row::-webkit-scrollbar{display:none}
+
+.tile{flex:none;display:flex;flex-direction:column;align-items:center;gap:.55rem;width:9.2rem;border-radius:var(--radius);overflow:visible;contain:layout style}
+.tile.f{overflow:visible}
+.tile.f::after{display:none}
+.tile-art{position:relative;overflow:hidden;width:100%;aspect-ratio:16/10;border-radius:var(--radius);
+  border:1px solid var(--glass-border);box-shadow:var(--shadow);background:#111;
+  transition:transform .2s var(--ease)}
+.tile-art svg,.tile-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.tile-art img{padding:12%;background:#1b1c21}
+.tile-art img.wide{padding:0;object-fit:cover}
+.tile-art::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+  background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,0) 40%)}
+.tile-art::after{position:absolute;inset:-2px;z-index:2;pointer-events:none;
+  background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.08) 42%,rgba(255,255,255,.55) 50%,rgba(255,255,255,.08) 58%,transparent 70%);
+  transform:translateX(-130%);opacity:0}
+.tile.is-focused{transform:none;box-shadow:none}
+.tile.is-focused .tile-art{transform:translateY(-.15rem) scale(1.1);box-shadow:var(--focus-glow);border-color:rgba(255,255,255,.8)}
+.tile.is-focused .tile-art::after{content:"";animation:shine .9s var(--ease) .05s 1 both}
+@media (hover:hover){.tile:hover .tile-art::after{content:"";animation:shine .9s var(--ease) 1 both}}
+.tile-label{font-size:.85rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tile.is-focused .tile-label{color:#fff}
+.letter{position:absolute;inset:0;display:grid;place-items:center;font-size:2.4rem;font-weight:700;color:#fff}
+
+.tile.pick{width:8.4rem}
+.tile.pick .tile-art{aspect-ratio:2/3}
+.tile.pick .tile-art img{padding:0;object-fit:cover}
+/* Seletor longo: precisa vencer ".tile.pick .tile-art img" (pôster em tela cheia). */
+.tile.pick .tile-art .nf-badge{position:absolute;z-index:3;inset:auto;top:.45rem;left:.45rem;width:1.5rem;height:1.5rem;
+  padding:0;object-fit:cover;border-radius:.35rem;background:#000;border:1px solid rgba(255,255,255,.18)}
+.row-sub{font-weight:400;font-size:.8rem;color:var(--muted);margin-left:.6rem}
+
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.2rem,1fr));gap:1.4rem 1.1rem;padding:.8rem 0 1rem}
+.grid .tile{width:auto}
+.grid.games{grid-template-columns:repeat(auto-fill,minmax(14rem,1fr))}
+.tile-sub{font-size:.75rem;color:var(--muted);opacity:.8;margin-top:-.35rem}
+/* Entradas: o tile e, embaixo, a canetinha que troca o banner. */
+.input-cell{display:flex;flex-direction:column;align-items:center;gap:.7rem}
+.input-cell .tile{width:100%}
+.pen{display:grid;place-items:center;width:2.6rem;height:2.6rem;border-radius:50%;color:var(--muted)}
+.pen svg{width:1.15rem;height:1.15rem}
+.pen.is-focused{background:#fff;color:#0a0b0e}
+.grid .info{grid-column:1/-1}
+
+/* ---------- Organizar "Seus apps" ---------- */
+.edit-hint{max-width:52rem;font-size:.9rem;color:var(--muted);line-height:1.55;margin:-.4rem 0 1rem}
+.edit-bar{display:flex;gap:.8rem;flex-wrap:wrap}
+.tile-art .mark{position:absolute;z-index:3;top:.4rem;right:.4rem;width:1.5rem;height:1.5rem;border-radius:50%;
+  display:grid;place-items:center;background:rgba(0,0,0,.55);border:2px solid rgba(255,255,255,.75)}
+.tile-art .mark svg{position:static;width:.9rem;height:.9rem;opacity:0}
+.tile.on .tile-art .mark{background:#34c759;border-color:#34c759}
+.tile.on .tile-art .mark svg{opacity:1}
+.tile.grabbed .tile-art{transform:translateY(-.5rem) scale(1.12);border-color:#ffd60a;box-shadow:0 0 0 .18rem #ffd60a,0 .6rem 1.2rem rgba(0,0,0,.55)}
+.tile.grabbed .tile-label{color:#ffd60a}
+.tile.grabbed .tile-label::before{content:"\25C0  "}
+.tile.grabbed .tile-label::after{content:"  \25B6"}
+
+/* ---------- Notícias dos games ---------- */
+.grid.news{grid-template-columns:repeat(auto-fill,minmax(17rem,1fr));gap:1.3rem 1.1rem}
+.news-card{display:flex;flex-direction:column;text-align:left}
+.news-img{display:block;width:100%;aspect-ratio:16/9;object-fit:cover;background:#15161a}
+.news-ph{background:linear-gradient(135deg,#2a2d38,#121318)}
+.news-body{display:flex;flex-direction:column;gap:.35rem;padding:.8rem 1rem 1rem}
+.news-meta{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.news-title{font-size:1rem;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.news-card.is-focused{transform:scale(1.04)}
+#reader{position:fixed;inset:0;z-index:25;display:grid;place-items:center;padding:2rem;background:rgba(4,4,6,.88)}
+#reader[hidden]{display:none}
+.reader-panel{width:min(58rem,100%);max-height:100%;overflow-y:auto;scrollbar-width:none;border-radius:1.4rem;
+  background:#111216;border:1px solid rgba(255,255,255,.14);box-shadow:var(--shadow)}
+.reader-panel::-webkit-scrollbar{display:none}
+/* Banner do leitor: a foto inteira e centralizada; as laterais repetem a própria foto, escurecida (sem blur: pesa na GPU). */
+#readerArt{position:relative;height:24rem;overflow:hidden;background:#0b0c0f}
+#readerArt:empty{display:none}
+.reader-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.22;transform:scale(1.15)}
+.reader-img{position:relative;display:block;width:100%;height:100%;object-fit:contain;object-position:center}
+.reader-body{padding:1.5rem 2.2rem 1.8rem}
+.reader-body h2{font-size:1.8rem;line-height:1.2;margin:.2rem 0 1rem}
+.reader-text p{margin:0 0 .85rem;font-size:1.05rem;line-height:1.62;color:rgba(240,242,246,.86);user-select:text;-webkit-user-select:text}
+.reader-more{display:flex;align-items:center;gap:1.6rem;margin-top:1.2rem;padding-top:1.3rem;border-top:1px solid rgba(255,255,255,.12);font-size:.95rem;color:var(--muted)}
+.reader-more b{color:var(--text)}
+/* QR escuro sobre branco (o celular não lê o invertido de forma confiável); a borda branca é a zona de silêncio. */
+.reader-qr{flex:none;width:11rem;height:11rem;border-radius:.9rem;background:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.3),var(--shadow)}
+.reader-qr svg{display:block;width:100%;height:100%;shape-rendering:crispEdges}
+.reader-qr:empty{display:none}
+.reader-more-text{display:flex;flex-direction:column;gap:.35rem;min-width:0;line-height:1.45}
+.reader-more-title{font-size:1.15rem}
+.reader-url{display:block;margin-top:.2rem;font-size:.78rem;opacity:.75;word-break:break-all}
+.reader-actions{display:flex;gap:.8rem;flex-wrap:wrap;margin-top:.8rem}
+
+/* ---------- Jogos: uma tela cheia com um único canvas ----------
+   O loop só roda durante a partida; pausado ou no menu, nada é redesenhado. */
+#game{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg)}
+#game[hidden]{display:none}
+#gameCanvas{width:min(100vw,177.78vh);height:min(56.25vw,100vh)}
+
+.info{padding:1.1rem 1.2rem;border-radius:var(--radius);font-size:.85rem;color:var(--muted);line-height:1.6}
+.info b{color:var(--text);font-weight:600}
+
+#toast{position:fixed;z-index:20;left:50%;bottom:2.2rem;max-width:80vw;padding:.85rem 1.4rem;border-radius:2rem;font-size:.95rem;
+  background:#16171b;border:1px solid rgba(255,255,255,.2);box-shadow:var(--shadow);
+  transform:translate3d(-50%,1.5rem,0);opacity:0;transition:transform .3s var(--ease),opacity .3s;pointer-events:none}
+#toast.show{transform:translate3d(-50%,0,0);opacity:1}
+
+/* ---------- Configurações do Onix ---------- */
+.opts{max-width:46rem;display:flex;flex-direction:column;gap:.6rem;padding-bottom:1rem}
+.opts-group{font-size:.8rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin:1rem 0 .1rem .2rem}
+.opts-group:first-child{margin-top:0}
+.opt{display:flex;align-items:center;gap:1.2rem;padding:.9rem 1.2rem;border-radius:var(--radius)}
+.opt-text{flex:1;min-width:0}
+.opt-name{display:block;font-size:1.05rem;font-weight:600}
+.opt-desc{display:block;font-size:.82rem;color:var(--muted);margin-top:.2rem;line-height:1.4}
+.switch{position:relative;flex:none;width:2.8rem;height:1.6rem;border-radius:1rem;background:rgba(255,255,255,.18);transition:background .2s}
+.switch::before{content:"";position:absolute;top:.2rem;left:.2rem;width:1.2rem;height:1.2rem;border-radius:50%;background:#fff;transition:transform .2s var(--ease)}
+.switch.on{background:#34c759}
+.switch.on::before{transform:translateX(1.2rem)}
+.opt-go{flex:none;width:1.3rem;height:1.3rem;opacity:.7}
+.opt.f::after{display:none}
+.opt.is-focused{transform:none;background:#fff;color:#0a0b0e}
+.opt.is-focused .opt-desc{color:rgba(10,11,14,.65)}
+.opt.is-focused .switch:not(.on){background:rgba(10,11,14,.25)}
+.about{flex-direction:column;align-items:stretch;gap:.55rem;padding:1.1rem 1.2rem;text-align:left}
+.about-row{display:flex;justify-content:space-between;gap:1rem;font-size:.95rem}
+.about-row span:first-child{color:var(--muted)}
+.about-row span:last-child{font-weight:600}
+.about-thanks{margin-top:.35rem;padding-top:.7rem;border-top:1px solid rgba(255,255,255,.12);font-size:.95rem}
+.about.is-focused .about-row span:first-child{color:rgba(10,11,14,.65)}
+.about.is-focused .about-thanks{border-top-color:rgba(10,11,14,.15)}
+
+/* ---------- Tela de descanso ----------
+   Some na hora (sem transição) para o controle responder logo; só a entrada é suave. */
+#saver{position:fixed;inset:0;z-index:40;background:#000;opacity:0;visibility:hidden;cursor:none}
+#saver.show{opacity:1;visibility:visible;transition:opacity 1.6s ease}
+#saver canvas{position:absolute;inset:0;width:100%;height:100%}
+#saverClock{position:absolute;left:4vw;bottom:5vh;color:rgba(245,246,248,.45);font-weight:200;font-size:4.2rem;
+  letter-spacing:.02em;line-height:1;font-variant-numeric:tabular-nums}
+#saverClock small{display:block;margin-top:.5rem;font-size:1rem;font-weight:400;letter-spacing:.08em;color:rgba(232,234,240,.35)}
+
+/* ---------- Otimizações (classes na <html>, ligadas nas Configurações do Onix) ---------- */
+html.no-shine .f::after,html.no-shine .tile-art::after{display:none}
+html.no-zoom .f.is-focused,html.no-zoom .nav-item.is-focused{transform:none}
+html.no-zoom .tile.is-focused .tile-art{transform:none}
+html.no-shadow{--shadow:0 0 transparent;--glass-hi:inset 0 0 transparent;--focus-glow:0 0 0 .14rem #fff}
+html.no-shadow .hero-art img{box-shadow:none}
+html.no-motion *,html.no-motion *::before,html.no-motion *::after{transition:none!important;animation:none!important}
+
+/* ---------- Celular em retrato: menu vira barra inferior ---------- */
+@media (max-width:760px) and (orientation:portrait){
+  html{font-size:13px}
+  #sidebar{top:auto;right:0;width:auto;height:auto;flex-direction:row;justify-content:space-around;gap:.2rem;
+    padding:.5rem .5rem max(.6rem,env(safe-area-inset-bottom));border-right:0;border-top:1px solid rgba(255,255,255,.12)}
+  .brand,.nav-spacer,.nav-mode{display:none}
+  .nav-item{flex-direction:column;gap:.25rem;padding:.5rem .4rem;font-size:.7rem;flex:1;align-items:center}
+  .nav-item.is-focused{transform:translateY(-.2rem)}
+  #main{left:0;bottom:4.8rem;padding:max(1.2rem,env(safe-area-inset-top)) 1.2rem 2rem}
+  #clock{font-size:3.6rem}
+  .hero{min-height:18rem;padding:1.4rem}
+  .hero-content{max-width:100%}
+  .hero-art{width:9rem;height:9rem;top:1rem;right:.6rem;margin-top:0;opacity:.85}
+  .hero h1{font-size:1.7rem;padding-right:6rem}
+  .chips .chip:not(:first-child){display:none}
+  #reader{padding:1rem}
+  .reader-body{padding:1.2rem}
+  .reader-more{flex-direction:column;align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<nav id="sidebar" class="glass-blur" aria-label="Menu principal">
+  <div class="brand"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><defs><mask id="mkBack" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><circle cx="24" cy="24" r="11.6" fill="#000"/></mask><mask id="mkGap" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><path d="M45 24A21 6 0 0 1 3 24" stroke="#000" stroke-width="6" transform="rotate(-20 24 24)"/></mask></defs><circle cx="24" cy="24" r="10" mask="url(#mkGap)"/><g transform="rotate(-20 24 24)"><path d="M3 24A21 6 0 0 1 45 24" mask="url(#mkBack)"/><path d="M45 24A21 6 0 0 1 3 24"/></g></svg>Onix<span class="brand-by">By Ruan</span></div>
+  <button class="f nav-item" data-section="home" tabindex="-1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Início</span></button>
+  <button class="f nav-item" data-section="apps" tabindex="-1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span>Apps</span></button>
+  <button class="f nav-item" data-section="games" tabindex="-1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5.5"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="15.5" cy="11.5" r=".6" fill="currentColor"/><circle cx="18" cy="14" r=".6" fill="currentColor"/></svg><span>Jogos</span></button>
+  <div class="nav-spacer"><svg class="nav-art" viewBox="0 0 160 170" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <circle cx="80" cy="88" r="38" stroke-width="1.2" stroke-dasharray="0 5" opacity=".45"/>
+    <circle cx="80" cy="88" r="62" stroke-width="1" stroke-dasharray="0 6" opacity=".3"/>
+    <circle cx="80" cy="88" r="38" stroke-width="1" stroke-dasharray="14 225" stroke-dashoffset="-40" opacity=".35"/>
+    <path d="M100 88A20 6 0 0 0 60 88" transform="rotate(-20 80 88)" stroke-width="2.2" opacity=".9"/>
+    <circle cx="80" cy="88" r="11" fill="#0c0d10" stroke-width="2.2"/>
+    <path d="M60 88A20 6 0 0 0 100 88" transform="rotate(-20 80 88)" stroke="#0c0d10" stroke-width="5"/>
+    <path d="M60 88A20 6 0 0 0 100 88" transform="rotate(-20 80 88)" stroke-width="2.2"/>
+    <circle cx="113" cy="69" r="3.2" fill="#fff" stroke="none" opacity=".85"/>
+    <circle cx="40" cy="135" r="4.5" stroke-width="1.6" opacity=".7"/>
+    <circle cx="57" cy="118" r="1.8" fill="#fff" stroke="none" opacity=".55"/>
+    <path d="M128 22v8M124 26h8" stroke-width="1.4" opacity=".75"/>
+    <path d="M30 44v6M27 47h6" stroke-width="1.2" opacity=".5"/>
+    <path d="M136 140v6M133 143h6" stroke-width="1.2" opacity=".55"/>
+    <circle cx="22" cy="92" r="1" fill="#fff" stroke="none" opacity=".5"/>
+    <circle cx="146" cy="96" r="1.2" fill="#fff" stroke="none" opacity=".45"/>
+    <circle cx="96" cy="14" r="1" fill="#fff" stroke="none" opacity=".4"/>
+    <circle cx="70" cy="160" r="1" fill="#fff" stroke="none" opacity=".4"/>
+    <path d="M44 12l-16 10" stroke-width="1.2" opacity=".35"/>
+  </svg></div>
+  <button class="f nav-item" data-section="inputs" tabindex="-1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 10.5h7M11 7.5l3 3-3 3"/></svg><span>Entradas</span></button>
+  <button class="f nav-item" data-section="settings" tabindex="-1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Configurações</span></button>
+  <button class="f nav-item power" id="powerBtn" tabindex="-1">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg><span>Desligar TV</span></button>
+  <div class="nav-mode" id="navMode"></div>
+</nav>
+
+<main id="main">
+  <header class="topbar">
+    <div>
+      <div id="clock">--:--</div>
+      <div id="date"></div>
+    </div>
+    <div class="top-right">
+    <button class="f btn" id="refreshBtn" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span>Atualizar</span></button>
+    <div class="chips">
+      <span class="chip glass" id="modeChip"></span>
+      <span class="chip glass" id="netChip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8.5a15 15 0 0120 0M5 12a10 10 0 0114 0M8.5 15.5a5 5 0 017 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg><span id="netText">Conectado</span></span>
+    </div>
+    </div>
+  </header>
+
+  <section class="section" id="sec-home" aria-label="Início">
+    <div class="hero glass" id="hero">
+      <div class="hero-bg"></div>
+      <div class="hero-art" id="heroArt"></div>
+      <div class="hero-content">
+        <div class="kicker" id="heroKicker"></div>
+        <h1 id="heroTitle"></h1>
+        <p id="heroDesc"></p>
+        <div class="hero-actions">
+          <button class="f btn primary" id="heroOpen" tabindex="-1"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l13-7.5z"/></svg><span>Abrir</span></button>
+          <button class="f btn" id="heroNext" tabindex="-1"><span>Próxima</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg></button>
+        </div>
+      </div>
+      <div class="dots" id="heroDots"></div>
+    </div>
+    <div class="row-title">Seus apps</div>
+    <div class="row" id="homeApps"></div>
+    <div class="row-title">Indicações da semana<span class="row-sub">· Netflix em primeiro · renovadas toda segunda-feira</span></div>
+    <div class="row" id="homePicks"></div>
+  </section>
+
+  <section class="section" id="sec-apps" aria-label="Apps">
+    <div class="section-title">Todos os apps</div>
+    <div class="grid" id="appsGrid"></div>
+  </section>
+
+  <section class="section" id="sec-inputs" aria-label="Entradas">
+    <div class="section-title">Entradas</div>
+    <div class="edit-bar">
+      <button class="f btn" id="pictureBtn" tabindex="-1" aria-label="Ajustes de imagem da TV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><circle cx="12" cy="10.5" r="3"/></svg><span>Ajustes de imagem da TV</span></button>
+    </div>
+    <div class="grid games" id="inputsGrid"></div>
+  </section>
+
+  <section class="section" id="sec-games" aria-label="Jogos">
+    <div class="section-title">Jogos</div>
+    <div class="grid games" id="gamesGrid"></div>
+    <div class="row-title">Notícias dos games<span class="row-sub">· Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code</span></div>
+    <div class="grid news" id="newsGrid"></div>
+  </section>
+
+  <section class="section" id="sec-edit" aria-label="Organizar seus apps">
+    <div class="section-title">Organizar seus apps</div>
+    <div class="edit-hint">Na fileira de cima, aperte OK num app para pegá-lo, use ◀ ▶ para mudar a posição e OK de novo para soltar. Em “Adicionar ou remover”, OK marca ou desmarca o app na tela inicial. Tudo é salvo na hora.</div>
+    <div class="edit-bar">
+      <button class="f btn primary" id="editDone" tabindex="-1"><span>Concluir</span></button>
+      <button class="f btn" id="editReset" tabindex="-1"><span>Restaurar padrão</span></button>
+    </div>
+    <div class="row-title">Na tela inicial<span class="row-sub" id="editCount"></span></div>
+    <div class="row" id="editRow"></div>
+    <div class="row-title">Adicionar ou remover</div>
+    <div class="grid" id="editGrid"></div>
+  </section>
+
+  <section class="section" id="sec-settings" aria-label="Configurações do Onix">
+    <div class="section-title">Configurações do Onix</div>
+    <div class="opts" id="optsList"></div>
+  </section>
+</main>
+
+<div id="game" hidden><canvas id="gameCanvas" width="0" height="0"></canvas></div>
+
+<div id="reader" hidden role="dialog" aria-modal="true" aria-labelledby="readerTitle">
+  <div class="reader-panel" id="readerPanel">
+    <div id="readerArt"></div>
+    <div class="reader-body">
+      <div class="kicker" id="readerMeta"></div>
+      <h2 id="readerTitle"></h2>
+      <div class="reader-text" id="readerText"></div>
+      <div class="reader-more">
+        <div class="reader-qr" id="readerQr" aria-hidden="true"></div>
+        <div class="reader-more-text">
+          <b class="reader-more-title">Continue lendo no celular</b>
+          <span>Aponte a câmera do celular para o código e a matéria completa abre em <b id="readerHost"></b>.</span>
+          <span class="reader-url" id="readerUrl"></span>
+          <div class="reader-actions">
+            <button class="f btn primary" id="readerClose" tabindex="-1"><span>Voltar</span></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast" role="status" aria-live="polite"></div>
+
+<div id="saver" aria-hidden="true"><canvas id="saverSky" width="0" height="0"></canvas><canvas id="saverCanvas" width="0" height="0"></canvas><div id="saverClock"></div></div>
+
+<script>
+// Aparelhos com WebView antigo (Android TV 9 sem atualização): repõe o pouco de API recente que o Onix usa.
+if (!Element.prototype.replaceChildren) Element.prototype.replaceChildren = function (...n) { this.textContent = ''; this.append(...n); };
+if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', { value(i) { i = Math.trunc(i) || 0; return this[i < 0 ? this.length + i : i]; }, configurable: true, writable: true });
+/*
+  Contrato da ponte nativa (Etapa 2 – WebView Android):
+    AndroidBridge.getInstalledApps() -> String JSON:
+      [{"label":"YouTube","package":"com.google.android.youtube.tv","icon":"data:image/png;base64,..."}]
+      (aceita também "name" / "packageName"; "icon" é opcional)
+    AndroidBridge.launchApp(pkg)    -> lança o app (o lado nativo DEVE revalidar o pacote)
+    AndroidBridge.openSettings()    -> abre as configurações do sistema da TV
+    AndroidBridge.openPictureSettings() -> abre os ajustes de imagem da TV (ou as configurações gerais)
+    AndroidBridge.getTvInputs()     -> String JSON: [{"id":"<id da entrada>","label":"HDMI 1"}] (portas HDMI físicas)
+    AndroidBridge.openInput(id)     -> muda a TV para a entrada (o nativo só aceita IDs da própria lista)
+    AndroidBridge.getGameNews()     -> String JSON: [{"source","title","link","date":ms,"summary":"par1\n\npar2","image":"data:..."}]
+  O nativo pode chamar  Launcher.onAppsChanged()  quando apps forem instalados/removidos,
+  Launcher.onNewsChanged()  quando as notícias dos games forem atualizadas,
+  e  Launcher.onBack()  (true = tratado pela página) na tecla Voltar do controle.
+  Launcher.onResume()  ao voltar para o launcher (zera a contagem da tela de descanso).
+  "banner": true indica que "icon" é um banner 16:9 da TV.
+  Tudo que vem da ponte é tratado como não confiável: validado e inserido só via textContent / <img src=data:>.
+*/
+(() => {
+'use strict';
+
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => Array.from(r.querySelectorAll(s));
+
+function h(tag, props, ...kids) {
+  const el = document.createElement(tag);
+  if (props) for (const k of Object.keys(props)) {
+    const v = props[k];
+    if (k === 'class') el.className = v;
+    else if (k === 'text') el.textContent = v;
+    else if (k === 'style') el.setAttribute('style', v);
+    else el.setAttribute(k, v);
+  }
+  for (const c of kids) if (c != null) el.append(c);
+  return el;
+}
+// Apenas para SVG estático escrito neste arquivo (nunca para dados externos).
+function svgFrom(str) {
+  const t = document.createElement('template');
+  t.innerHTML = str.trim();
+  return t.content.firstElementChild;
+}
+
+/* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
+   que desligam efeitos no CSS; nada é recalculado por quadro. */
+const APP_VERSION = '13.4.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const SETTINGS_KEY = 'onix.settings';
+const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true });
+const settings = Object.assign({}, DEFAULTS);
+try {
+  const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
+  for (const k of Object.keys(DEFAULTS)) if (typeof saved[k] === 'boolean') settings[k] = saved[k];
+} catch (_) {}
+function saveSettings() { try { localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings)); } catch (_) {} }
+function applySettings() {
+  const cl = document.documentElement.classList;
+  cl.toggle('no-shine', !settings.shine);
+  cl.toggle('no-zoom', !settings.zoom);
+  cl.toggle('no-motion', !settings.motion);
+  cl.toggle('no-shadow', !settings.shadow);
+}
+applySettings();
+
+/* ---------------- Ícones oficiais (SVG estilizado) ---------------- */
+const BRAND_SVG = {
+  youtube: '<svg viewBox="0 0 160 100"><rect width="160" height="100" fill="#0f0f0f"/><rect x="48" y="24" width="64" height="46" rx="13" fill="#FF0000"/><path d="M73 36v22l19-11z" fill="#fff"/><text x="80" y="88" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="12" fill="#fff">YouTube</text></svg>',
+  netflix: '<svg viewBox="0 0 160 100"><rect width="160" height="100" fill="#000"/><path d="M64 18h12l8 34V18h12v64c-4-.4-8-.7-12-.8L76 48v33c-4 .1-8 .4-12 .8z" fill="#E50914"/><path d="M76 18l20 64c-4-.4-8-.7-12-.8L64 18z" fill="#B1060F" opacity=".55"/></svg>',
+  prime: '<svg viewBox="0 0 160 100"><rect width="160" height="100" fill="#00A8E1"/><text x="80" y="50" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="26" fill="#fff">prime</text><path d="M52 58q28 14 56 0" stroke="#fff" stroke-width="4" fill="none" stroke-linecap="round"/><path d="M102 53l7 5-8 3" stroke="#fff" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/><text x="80" y="82" text-anchor="middle" font-family="Arial,sans-serif" font-size="15" fill="#fff" letter-spacing="1">video</text></svg>',
+  disney: '<svg viewBox="0 0 160 100"><defs><linearGradient id="gd" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0A1B4F"/><stop offset="1" stop-color="#1E46C8"/></linearGradient></defs><rect width="160" height="100" fill="url(#gd)"/><path d="M38 52Q80 8 124 46" stroke="#fff" stroke-width="2.2" fill="none" stroke-linecap="round"/><text x="78" y="68" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="700" font-size="28" fill="#fff">Disney</text><text x="124" y="66" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="24" fill="#fff">+</text></svg>',
+  globoplay: '<svg viewBox="0 0 160 100"><defs><linearGradient id="gg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FF7A00"/><stop offset=".55" stop-color="#FF1F48"/><stop offset="1" stop-color="#E8007F"/></linearGradient></defs><rect width="160" height="100" fill="url(#gg)"/><circle cx="80" cy="44" r="22" fill="none" stroke="#fff" stroke-width="7"/><path d="M75 34v20l16-10z" fill="#fff"/><text x="80" y="88" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="13" fill="#fff">globoplay</text></svg>',
+  max: '<svg viewBox="0 0 160 100"><rect width="160" height="100" fill="#002BE7"/><text x="80" y="64" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="40" fill="#fff" letter-spacing="-1">max</text></svg>',
+  spotify: '<svg viewBox="0 0 160 100"><rect width="160" height="100" fill="#121212"/><circle cx="80" cy="50" r="30" fill="#1DB954"/><path d="M62 41q20-6 38 3M64 51q16-5 31 2M66 60q12-3 24 2" stroke="#121212" stroke-width="5" fill="none" stroke-linecap="round"/></svg>',
+  settings: '<svg viewBox="0 0 160 100"><defs><linearGradient id="gs" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#5b6478"/><stop offset="1" stop-color="#232838"/></linearGradient></defs><rect width="160" height="100" fill="url(#gs)"/><circle cx="80" cy="50" r="25" fill="none" stroke="#fff" stroke-width="9" stroke-dasharray="7.1 6"/><circle cx="80" cy="50" r="17" fill="none" stroke="#fff" stroke-width="8"/></svg>',
+};
+
+// Apps de demonstração (navegador). Pacotes reais do Google TV para referência futura.
+const DEMO_APPS = [
+  { brand: 'youtube',   name: 'YouTube',       pkg: 'com.google.android.youtube.tv' },
+  { brand: 'netflix',   name: 'Netflix',       pkg: 'com.netflix.ninja' },
+  { brand: 'prime',     name: 'Prime Video',   pkg: 'com.amazon.amazonvideo.livingroom' },
+  { brand: 'disney',    name: 'Disney+',       pkg: 'com.disney.disneyplus' },
+  { brand: 'globoplay', name: 'Globoplay',     pkg: 'com.globo.globotv' },
+  { brand: 'max',       name: 'Max',           pkg: 'com.wbd.stream' },
+  { brand: 'spotify',   name: 'Spotify',       pkg: 'com.spotify.tv.android' },
+  { brand: 'settings',  name: 'Configurações', pkg: 'com.android.tv.settings' },
+];
+const BRAND_BY_PKG = {
+  'com.google.android.youtube.tv': 'youtube', 'com.google.android.youtube': 'youtube',
+  'com.netflix.ninja': 'netflix', 'com.netflix.mediaclient': 'netflix',
+  'com.amazon.amazonvideo.livingroom': 'prime', 'com.amazon.avod.thirdpartyclient': 'prime',
+  'com.disney.disneyplus': 'disney', 'com.globo.globotv': 'globoplay',
+  'com.wbd.stream': 'max', 'com.hbo.hbonow': 'max',
+  'com.spotify.tv.android': 'spotify', 'com.spotify.music': 'spotify',
+  'com.android.tv.settings': 'settings',
+};
+const BRAND_ORDER = ['youtube', 'netflix', 'prime', 'disney', 'globoplay', 'max', 'spotify'];
+
+/* ---------------- Ponte Android (somente leitura defensiva) ---------------- */
+const PKG_RE = /^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z0-9_]+)+$/;
+const ICON_RE = /^data:image\/(png|webp|jpeg);base64,[A-Za-z0-9+/]+={0,2}$/;
+const MAX_ICON = 512 * 1024, MAX_APPS = 300;
+
+const Bridge = (() => {
+  const b = window.AndroidBridge;
+  const native = !!b && typeof b.getInstalledApps === 'function' && typeof b.launchApp === 'function';
+  let lastRaw = null, lastApps = [];
+  return Object.freeze({
+    native,
+    // Mesma resposta da ponte = mesmo array (refreshApps usa isso para não redesenhar nada).
+    getApps() {
+      if (!native) return null;
+      try {
+        const raw = b.getInstalledApps();
+        if (typeof raw !== 'string' || raw.length > 64 * 1024 * 1024) return [];
+        if (raw !== lastRaw) { lastApps = sanitizeApps(JSON.parse(raw)); lastRaw = raw; }
+        return lastApps;
+      } catch (e) { console.warn('getInstalledApps falhou', e); return []; }
+    },
+    launch(pkg) {
+      if (!native) return false;
+      try { return b.launchApp(pkg) !== false; } catch (e) { console.warn('launchApp falhou', e); return false; }
+    },
+    getPicks() {
+      if (!native || typeof b.getWeeklyPicks !== 'function') return [];
+      try {
+        const raw = b.getWeeklyPicks();
+        if (typeof raw !== 'string' || raw.length > 8 * 1024 * 1024) return [];
+        return sanitizePicks(JSON.parse(raw));
+      } catch (e) { console.warn('getWeeklyPicks falhou', e); return []; }
+    },
+    search(title) {
+      if (!native || typeof b.searchTitle !== 'function') return false;
+      try { return b.searchTitle(title) === true; } catch (e) { console.warn('searchTitle falhou', e); return false; }
+    },
+    // "title" | "app" | "search" | "" — o nativo decide entre Netflix no título, Netflix ou busca.
+    openPick(title) {
+      if (!native) return '';
+      if (typeof b.openPick !== 'function') return this.search(title) ? 'search' : '';
+      try { const r = b.openPick(title); return typeof r === 'string' ? r : ''; } catch (e) { console.warn('openPick falhou', e); return ''; }
+    },
+    getInputs() {
+      if (!native || typeof b.getTvInputs !== 'function') return [];
+      try {
+        const raw = b.getTvInputs();
+        if (typeof raw !== 'string' || raw.length > 64 * 1024) return [];
+        return sanitizeInputs(JSON.parse(raw));
+      } catch (e) { console.warn('getTvInputs falhou', e); return []; }
+    },
+    openInput(id) {
+      if (!native || typeof b.openInput !== 'function') return false;
+      try { return b.openInput(id) === true; } catch (e) { console.warn('openInput falhou', e); return false; }
+    },
+    getNews() {
+      if (!native || typeof b.getGameNews !== 'function') return [];
+      try {
+        const raw = b.getGameNews();
+        if (typeof raw !== 'string' || raw.length > 8 * 1024 * 1024) return [];
+        return sanitizeNews(JSON.parse(raw));
+      } catch (e) { console.warn('getGameNews falhou', e); return []; }
+    },
+    openSettings() {
+      if (!native || typeof b.openSettings !== 'function') return false;
+      try { return b.openSettings() === true; } catch (e) { console.warn('openSettings falhou', e); return false; }
+    },
+    refreshAll() {
+      if (!native || typeof b.refreshAll !== 'function') return false;
+      try { return b.refreshAll() === true; } catch (e) { console.warn('refreshAll falhou', e); return false; }
+    },
+    openPictureSettings() {
+      if (!native || typeof b.openPictureSettings !== 'function') return this.openSettings();
+      try { return b.openPictureSettings() === true; } catch (e) { console.warn('openPictureSettings falhou', e); return false; }
+    },
+    // "ok" | "ask" | "fail"
+    powerOff() {
+      if (!native || typeof b.powerOff !== 'function') return 'fail';
+      try { const r = b.powerOff(); return typeof r === 'string' ? r : 'fail'; } catch (e) { console.warn('powerOff falhou', e); return 'fail'; }
+    },
+  });
+})();
+
+function cleanText(s, max) {
+  return String(s).replace(/[\u0000-\u001f\u007f‪-‮⁦-⁩]/g, '').trim().slice(0, max);
+}
+function sanitizeApps(list) {
+  if (!Array.isArray(list)) return [];
+  const seen = new Set(), out = [];
+  for (const it of list) {
+    if (out.length >= MAX_APPS) break;
+    if (!it || typeof it !== 'object') continue;
+    const pkg = typeof it.package === 'string' ? it.package : (typeof it.packageName === 'string' ? it.packageName : '');
+    if (pkg.length > 150 || !PKG_RE.test(pkg) || seen.has(pkg)) continue;
+    const rawName = typeof it.label === 'string' ? it.label : (typeof it.name === 'string' ? it.name : pkg);
+    const name = cleanText(rawName, 40) || pkg;
+    let icon = null;
+    if (typeof it.icon === 'string' && it.icon.length <= MAX_ICON && ICON_RE.test(it.icon)) icon = it.icon;
+    seen.add(pkg);
+    out.push({ name, pkg, icon, wide: it.banner === true, system: it.system === true, brand: BRAND_BY_PKG[pkg] || null });
+  }
+  // Ordem: essenciais (streaming, mesmo vindo de fábrica) → instalados pelo usuário → apps de sistema.
+  const rank = a => {
+    const r = a.brand ? BRAND_ORDER.indexOf(a.brand) : -1;
+    return r >= 0 ? r : (a.system ? 200 : 100);
+  };
+  out.sort((a, b) => rank(a) - rank(b) || a.name.localeCompare(b.name, 'pt-BR'));
+  return out;
+}
+
+// IDs de entrada do Android TV, ex.: "com.mediatek.tvinput/.hdmi.HDMIInputService/HW5".
+const INPUT_RE = /^[A-Za-z0-9._\/:$-]{1,200}$/;
+function sanitizeInputs(list) {
+  if (!Array.isArray(list)) return [];
+  const out = [];
+  for (const it of list.slice(0, 8)) {
+    if (!it || typeof it !== 'object' || typeof it.id !== 'string' || !INPUT_RE.test(it.id)) continue;
+    out.push({ id: it.id, label: typeof it.label === 'string' ? cleanText(it.label, 40) : '' });
+  }
+  return out;
+}
+
+const COLOR_RE = /^#[0-9a-f]{6}$/i;
+function sanitizePicks(list) {
+  if (!Array.isArray(list)) return [];
+  const out = [];
+  for (const it of list.slice(0, 12)) {
+    if (!it || typeof it !== 'object' || typeof it.title !== 'string' || typeof it.poster !== 'string') continue;
+    if (it.poster.length > MAX_ICON || !ICON_RE.test(it.poster)) continue;
+    const title = cleanText(it.title, 80);
+    if (!title) continue;
+    out.push({
+      title,
+      rawTitle: it.title,   // a ponte só aceita busca pelo título exato que ela enviou
+      netflix: it.provider === 'netflix',
+      kind: it.kind === 'Série' || it.kind === 'Filme' ? it.kind : '',
+      genre: typeof it.genre === 'string' ? cleanText(it.genre, 30) : '',
+      year: typeof it.year === 'string' && /^\d{4}$/.test(it.year) ? it.year : '',
+      summary: typeof it.summary === 'string' ? cleanText(it.summary, 300) : '',
+      poster: it.poster,
+      color: typeof it.color === 'string' && COLOR_RE.test(it.color) ? it.color : '#3a3f4c',
+    });
+  }
+  return out;
+}
+
+const NEWS_LINK_RE = /^https:\/\/([a-z0-9.-]{1,80})\/[^\s"'<>]{0,400}$/i;
+function sanitizeNews(list) {
+  if (!Array.isArray(list)) return [];
+  const out = [];
+  for (const it of list.slice(0, 20)) {
+    if (!it || typeof it !== 'object' || typeof it.title !== 'string' || typeof it.link !== 'string' || typeof it.summary !== 'string') continue;
+    const m = NEWS_LINK_RE.exec(it.link);
+    const title = cleanText(it.title, 160);
+    // Parágrafos separados por linha em branco; cleanText remove as quebras de cada um.
+    const summary = it.summary.slice(0, 4000).split(/\n\s*\n/).map(p => cleanText(p, 1500)).filter(Boolean).slice(0, 8);
+    if (!m || !title || !summary.length) continue;
+    out.push({
+      title, summary, link: it.link,
+      host: m[1].toLowerCase().replace(/^www\./, ''),
+      source: typeof it.source === 'string' ? cleanText(it.source, 30) : '',
+      date: typeof it.date === 'number' && it.date > 0 ? it.date : 0,
+      image: typeof it.image === 'string' && it.image.length <= MAX_ICON && ICON_RE.test(it.image) ? it.image : null,
+    });
+  }
+  return out;
+}
+
+let apps = [];
+let allowedPkgs = new Set();
+function loadApps() {
+  const native = Bridge.getApps();
+  apps = native && native.length ? native : (Bridge.native ? [] : DEMO_APPS.map(a => Object.assign({ icon: null }, a)));
+  allowedPkgs = new Set(apps.map(a => a.pkg));
+}
+function findApp(brand) { return apps.find(a => a.brand === brand) || null; }
+
+/* "Seus apps" da tela inicial: lista de pacotes escolhida pelo usuário (localStorage).
+   Sem escolha salva, mostra os 10 primeiros da lista (ordem padrão). */
+const HOME_KEY = 'onix.home', MAX_HOME = 20;
+let homePkgs = null;
+try {
+  const saved = JSON.parse(localStorage.getItem(HOME_KEY) || 'null');
+  if (Array.isArray(saved)) homePkgs = saved.filter(p => typeof p === 'string' && p.length <= 150 && PKG_RE.test(p)).slice(0, MAX_HOME);
+} catch (_) {}
+function saveHome() {
+  try { if (homePkgs) localStorage.setItem(HOME_KEY, JSON.stringify(homePkgs)); else localStorage.removeItem(HOME_KEY); } catch (_) {}
+}
+// Apps desinstalados somem da tela inicial, mas continuam salvos (voltam se reinstalados).
+function homeApps() {
+  if (!homePkgs) return apps.slice(0, 10);
+  const byPkg = new Map(apps.map(a => [a.pkg, a]));
+  return homePkgs.map(p => byPkg.get(p)).filter(Boolean);
+}
+
+function launch(app, context) {
+  if (!app) { toast('App não instalado nesta TV'); return; }
+  if (Bridge.native) {
+    // Só lança pacotes que vieram da própria lista nativa.
+    if (!allowedPkgs.has(app.pkg) || !PKG_RE.test(app.pkg)) { toast('Pacote bloqueado'); return; }
+    if (Bridge.launch(app.pkg)) toast('Abrindo ' + app.name + '…');
+    else toast('Não foi possível abrir ' + app.name);
+  } else {
+    toast((context ? context + ' — ' : '') + 'abriria ' + app.name + ' (simulação no navegador)');
+  }
+}
+
+/* ---------------- Toast ---------------- */
+let toastTimer = 0;
+function toast(msg) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), Math.max(2600, msg.length * 55));   // texto longo fica mais tempo
+}
+
+/* ---------------- Relógio ---------------- */
+let lastClock = '';
+function clockText(d) {
+  let hh = d.getHours();
+  if (!settings.h24) hh = hh % 12 || 12;
+  return String(hh).padStart(settings.h24 ? 2 : 1, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+const dateText = d => d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+function updateClock(force) {
+  const d = new Date();
+  const txt = clockText(d);
+  if (txt !== lastClock || force) {
+    lastClock = txt;
+    $('#clock').textContent = txt;
+    $('#date').textContent = dateText(d);
+  }
+}
+
+let clockTimer = 0;
+function scheduleClock() {
+  clearTimeout(clockTimer);
+  updateClock();
+  const d = new Date();
+  clockTimer = setTimeout(scheduleClock, 60050 - d.getSeconds() * 1000 - d.getMilliseconds());
+}
+// Ao voltar de outro app, o timer pode ter ficado pausado: acerta a hora na hora.
+document.addEventListener('visibilitychange', () => { if (!document.hidden) scheduleClock(); });
+
+/* ---------------- Destaque (hero) ---------------- */
+const FEATURED = [
+  { brand: 'youtube',   kicker: 'Destaque · YouTube',     title: 'Viagem ao cosmos em 4K',   desc: 'Nebulosas, galáxias e auroras em ultra definição para a sua tela grande.', h1: '#ff2d55', h2: '#6a2cff' },
+  { brand: 'netflix',   kicker: 'Destaque · Netflix',     title: 'Maratona de sexta',        desc: 'Séries e filmes escolhidos para começar o fim de semana.',                h1: '#e50914', h2: '#3a0a5e' },
+  { brand: 'globoplay', kicker: 'Destaque · Globoplay',   title: 'Ao vivo e sob demanda',    desc: 'Novelas, esportes e jornalismo, quando você quiser.',                      h1: '#ff7a00', h2: '#e8007f' },
+  { brand: 'spotify',   kicker: 'Destaque · Spotify',     title: 'Som ambiente para a sala', desc: 'Playlists relaxantes com a tela em modo cinema.',                         h1: '#1db954', h2: '#0b5cff' },
+];
+// Ícone oficial da Netflix (PNG 64×64 reduzido do original da Wikimedia), usado no selo das indicações.
+const NF_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAEMklEQVR4Xu2byWsUQRTGp2emZ0kyJi4gijcloDfBiyAEvIrgTRAUt8QNbxFFBEH04ikx4q4Y12hcEgwoonhQ0INroodE4u6/4EEP7fcNmVh5r2cq0HPpaht+JFT3S/r7Uq/6vepJKvXvKIEDYAT8BoFjUBO1USO1TjlawXhKB7kKtVJz+aAbSRJfgZrLM4FTQp5MCtRezgt5IilQu5ML3nShdjWYNNRA0lADSUMNJA01EInuXCm4lJtRlT1+g4qp0Jb2g85sQ1V2ZYsqpg6ogUgM5JuDn8U5VflUnB2UPE/FkU2ZQjCYa67KZRgoY+qAGohEj19SoiVrIVTGEScMOOo3Be8Ls5Rokz7MEhlHnDDgOGbAUL5FiTb5BuZ6aRW72QUDzsOAU9NIg/aQBc0JA3iTJ2DAa0sa3McskbFOGHAVN3nRnxHcydV+GpCFXmZK7BYXDLiGm7wBuBZ8DxFt0ilqApsBV+JiwF3c7EkY8KIwU4k2eYbzZqwzBvBme33OBHsaLE1nJ2O3umTATXw9hprga4hok0N+42SsUwYwDfg4fJqvnQZv8bTITMQ6ZQBh88OblqIlbelcObY9U1SiY21AP77vQhqMowGSok260EEy1jkDBsBppMFjS2k8CoMKKc89AwiLlwvTSIPVmbybBvQDpsFooXYa0CRbHcAqU/6+OqAGIiENYBqcQRqw9peiTT4jDXajQeL1UnisDSCculwLpGgJ+4dbIcJjbwBFMQ1GLB0iawKaJeNjbwCn9VnMgEHLfuEPQAOqpUEsDOBNyhuv3Dw7RIqUwk0eYq3gwinjY2/AbdCNNHhlSYMPeFrw0SnjY28Ap/U5zIC+nL0muF4lDWJtAOH6sB2Pui8hok2elNNA/5zYG8A0WI9ip9cyC8aQBmykZHzsDSBsedeg7JWiJVwI2VI7Z8AOpEADGp8xS4fIfQRuqjhnQOUFZ0+udmXId4gyDZwyYGUmp0RLmAJmGjhlQBYMW2oC7ipzi90pA3Yar8SOoDCSok24oWoWRc4ZsCztK9GSIcSwS3TSAA88t7w8eYk0YfUYGwNqtbOEj0Hz+r1+gxJtwtdrFVOdNKDVyyjRkgcojZkGThpA2AJL0SbvJtLACQPYDMkYmiJFm3APgR1iLHaFq/XytQyY56Wtr9IfYZawiZKxdUANRMJmwLaMNoD0W7bLuFHC3WUZVwfUQCRsBvDlh4wh67IFJVrCzx/JuDqgBiIhGxjJxiqfEWz2vHIDJEWb3Av5XFEdUAOR6MBfeANErkKzsxyV3mI85hYgx1sg0A+53iQNSmiV5+P6JelssALx3DvowLpx0G8MDqN0ljF1QA0kDTWQNNRA0lADSeP/P00Nh5xICtSe2h9yIilQe6oJfAw56TrUTO3lYxEYC7nIVaiVmqccjWAfeAN+gT+OQU3URo3UWj7+AtTj2CJKnCiEAAAAAElFTkSuQmCC';
+const HERO_ART = '<svg viewBox="0 0 200 200"><defs><radialGradient id="pl" cx="35%" cy="30%" r="75%"><stop offset="0" style="stop-color:#fff;stop-opacity:.95"/><stop offset=".25" style="stop-color:var(--h1)"/><stop offset="1" style="stop-color:#05061a"/></radialGradient><radialGradient id="gl" r="50%"><stop offset=".55" style="stop-color:var(--h2);stop-opacity:.55"/><stop offset="1" style="stop-color:var(--h2);stop-opacity:0"/></radialGradient></defs><circle cx="100" cy="100" r="98" fill="url(#gl)"/><ellipse cx="100" cy="104" rx="92" ry="20" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="3" transform="rotate(-16 100 100)"/><circle cx="100" cy="100" r="54" fill="url(#pl)"/><path d="M14 122 A92 20 0 0 0 186 86" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="3" transform="rotate(-16 100 100)" stroke-linecap="round"/><circle cx="165" cy="40" r="5" fill="#fff" opacity=".8"/></svg>';
+let picks = [];
+function loadPicks() { picks = Bridge.getPicks(); }
+function openPick(p) {
+  if (!Bridge.native) { toast((p.netflix ? 'Abriria ' + p.title + ' na Netflix' : 'Buscaria onde assistir ' + p.title) + ' (simulação no navegador)'); return; }
+  const r = Bridge.openPick(p.rawTitle);
+  if (r === 'title') toast('Abrindo ' + p.title + ' na Netflix…');
+  else if (r === 'app') toast('Abrindo a Netflix… procure por ' + p.title);
+  else if (r === 'search') toast('Procurando onde assistir ' + p.title + '…');
+  else toast(p.netflix ? 'Netflix não instalada nesta TV' : 'Busca indisponível nesta TV');
+}
+// Itens do destaque: indicações da semana; sem internet (nada em cache), destaques dos apps.
+function heroItems() {
+  if (picks.length) return picks.map(p => ({
+    kicker: [p.netflix ? 'Na Netflix' : 'Indicação da semana', p.kind, p.genre, p.year].filter(Boolean).join(' · '),
+    title: p.title, desc: p.summary, h1: p.netflix ? '#e50914' : p.color, h2: p.color, poster: p.poster,
+    label: p.netflix ? 'Assistir na Netflix' : 'Onde assistir', act: () => openPick(p),
+  }));
+  return FEATURED.map(f => {
+    const app = findApp(f.brand);
+    return { kicker: f.kicker, title: f.title, desc: f.desc, h1: f.h1, h2: f.h2, poster: null,
+      label: app ? 'Abrir ' + app.name : 'Indisponível', act: () => launch(app, f.title) };
+  });
+}
+let heroList = [], heroIdx = 0, heroTimer = 0, heroArtKey = null;
+function renderHero(animate) {
+  const hero = $('#hero');
+  heroList = heroItems();
+  if (heroIdx >= heroList.length) heroIdx = 0;
+  const f = heroList[heroIdx];
+  if ($('#heroDots').children.length !== heroList.length) $('#heroDots').replaceChildren(...heroList.map(() => h('i')));
+  const set = () => {
+    hero.style.setProperty('--h1', f.h1);
+    hero.style.setProperty('--h2', f.h2);
+    hero.classList.toggle('is-pick', !!f.poster);
+    const artKey = f.poster || 'svg';   // o SVG padrão pega as cores das variáveis --h1/--h2
+    if (artKey !== heroArtKey) {
+      heroArtKey = artKey;
+      $('#heroArt').replaceChildren(f.poster ? h('img', { src: f.poster, alt: '', draggable: 'false', decoding: 'async' }) : svgFrom(HERO_ART));
+    }
+    $('#heroKicker').textContent = f.kicker;
+    $('#heroTitle').textContent = f.title;
+    $('#heroDesc').textContent = f.desc;
+    $('#heroOpen span').textContent = f.label;
+    $$('#heroDots i').forEach((d, i) => d.classList.toggle('on', i === heroIdx));
+    hero.classList.remove('swap');
+  };
+  if (animate && settings.motion) { hero.classList.add('swap'); setTimeout(set, 300); } else set();
+}
+function nextHero() { heroIdx = (heroIdx + 1) % heroList.length; renderHero(true); }
+function startHeroRotation() {
+  clearInterval(heroTimer);
+  heroTimer = setInterval(() => {
+    if (!settings.rotate || document.hidden || activeSection !== 'home') return;
+    if (current && current.closest('#hero')) return;
+    nextHero();
+  }, 9000);
+}
+
+/* ---------------- Renderização ---------------- */
+function appArt(app) {
+  const art = h('span', { class: 'tile-art' });
+  if (app.icon) art.append(h('img', { src: app.icon, alt: '', draggable: 'false', decoding: 'async', class: app.wide ? 'wide' : '' }));
+  else if (app.brand && BRAND_SVG[app.brand]) art.append(svgFrom(BRAND_SVG[app.brand]));
+  else {
+    let hash = 0; for (const c of app.pkg) hash = (hash * 31 + c.charCodeAt(0)) >>> 0;
+    art.style.background = 'linear-gradient(135deg,hsl(' + (hash % 360) + ',70%,45%),hsl(' + ((hash + 60) % 360) + ',70%,25%))';
+    art.append(h('span', { class: 'letter', text: app.name.charAt(0).toUpperCase() }));
+  }
+  return art;
+}
+function appTile(app) {
+  const b = h('button', { class: 'f tile', tabindex: '-1', 'aria-label': app.name }, appArt(app), h('span', { class: 'tile-label', text: app.name }));
+  b._act = () => launch(app);
+  return b;
+}
+const EDIT_ART = '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M80 32v36M62 50h36" stroke-width="6"/><path d="M42 41l-9 9 9 9M118 41l9 9-9 9" stroke-width="4" opacity=".55"/></svg>';
+function renderHomeRow() {
+  const row = $('#homeApps');
+  row.replaceChildren();
+  const list = homeApps();
+  if (!apps.length) {
+    row.append(h('div', { class: 'info glass', text: 'Nenhum app retornado pela ponte Android.' }));
+  } else if (!list.length) {
+    row.append(h('div', { class: 'info glass', text: 'Nenhum app escolhido. Use “Organizar” para adicionar.' }));
+  }
+  list.forEach(a => row.append(appTile(a)));
+  const edit = h('button', { class: 'f tile', id: 'homeEdit', tabindex: '-1', 'aria-label': 'Organizar seus apps' },
+    h('span', { class: 'tile-art glass' }, svgFrom(EDIT_ART)),
+    h('span', { class: 'tile-label', text: 'Organizar' }));
+  edit._act = openEditor;
+  row.append(edit);
+  const all = h('button', { class: 'f tile', tabindex: '-1', 'aria-label': 'Todos os apps' },
+    h('span', { class: 'tile-art glass' }, svgFrom('<svg viewBox="0 0 160 100"><g fill="#fff" opacity=".9"><rect x="58" y="26" width="18" height="18" rx="4"/><rect x="84" y="26" width="18" height="18" rx="4"/><rect x="58" y="52" width="18" height="18" rx="4"/><rect x="84" y="52" width="18" height="18" rx="4"/></g></svg>')),
+    h('span', { class: 'tile-label', text: 'Todos os apps' }));
+  all._act = () => { showSection('apps'); focusFirstContent(); };
+  row.append(all);
+}
+function renderApps() {
+  renderHomeRow();
+  $('#appsGrid').replaceChildren(...apps.map(appTile));
+  if (activeSection === 'edit') { renderEditRow(); renderEditGrid(); }
+  renderHero(false);
+}
+
+/* ---------------- Organizar "Seus apps" ----------------
+   Alterações são salvas na hora. A grade com todos os apps só existe enquanto a tela
+   está aberta (os ícones não ficam duplicados na memória). */
+const CHECK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>';
+let editList = [], grabbed = null;
+function openEditor() {
+  editList = homeApps().map(a => a.pkg);
+  grabbed = null;
+  showSection('edit');
+  renderEditRow();
+  renderEditGrid();
+  setFocus($('#editRow .tile') || $('#editDone'));
+}
+function closeEditor() {
+  showSection('home');
+  setFocus($('#homeEdit'));
+}
+// Chamado por showSection ao sair da tela de organizar.
+function leaveEditor() {
+  grabbed = null;
+  $('#editRow').replaceChildren();
+  $('#editGrid').replaceChildren();
+  renderHomeRow();
+}
+function saveEdit() { homePkgs = editList.slice(); saveHome(); }
+function renderEditRow(focusPkg) {
+  const row = $('#editRow'), byPkg = new Map(apps.map(a => [a.pkg, a]));
+  editList = editList.filter(p => byPkg.has(p));
+  if (!editList.includes(grabbed)) grabbed = null;   // app pego foi desinstalado
+  row.replaceChildren(...editList.map(p => {
+    const b = h('button', { class: 'f tile' + (p === grabbed ? ' grabbed' : ''), tabindex: '-1', 'aria-label': byPkg.get(p).name, 'data-pkg': p },
+      appArt(byPkg.get(p)), h('span', { class: 'tile-label', text: byPkg.get(p).name }));
+    b._act = () => toggleGrab(b);
+    return b;
+  }));
+  if (!editList.length) row.append(h('div', { class: 'info glass', text: 'Nenhum app na tela inicial. Escolha abaixo.' }));
+  $('#editCount').textContent = '· ' + editList.length + ' de ' + MAX_HOME;
+  if (focusPkg) setFocus(Array.from(row.children).find(b => b.dataset.pkg === focusPkg));
+}
+function renderEditGrid() {
+  const chosen = new Set(editList);
+  $('#editGrid').replaceChildren(...apps.map(a => {
+    const art = appArt(a);
+    art.append(h('span', { class: 'mark' }, svgFrom(CHECK_SVG)));
+    const b = h('button', { class: 'f tile' + (chosen.has(a.pkg) ? ' on' : ''), tabindex: '-1', 'aria-label': a.name, 'data-pkg': a.pkg },
+      art, h('span', { class: 'tile-label', text: a.name }));
+    b._act = () => toggleHome(a, b);
+    return b;
+  }));
+}
+function toggleHome(app, tile) {
+  const i = editList.indexOf(app.pkg);
+  if (i >= 0) editList.splice(i, 1);
+  else if (editList.length >= MAX_HOME) { toast('Limite de ' + MAX_HOME + ' apps na tela inicial'); return; }
+  else editList.push(app.pkg);
+  tile.classList.toggle('on', i < 0);
+  saveEdit();
+  renderEditRow();
+  toast(i < 0 ? app.name + ' adicionado ao fim de “Seus apps”' : app.name + ' removido de “Seus apps”');
+}
+function toggleGrab(tile) {
+  const pkg = tile.dataset.pkg;
+  if (grabbed === pkg) { dropGrab(); return; }
+  dropGrab();
+  grabbed = pkg;
+  tile.classList.add('grabbed');
+  toast('◀ ▶ mudam a posição · OK solta');
+}
+function dropGrab() {
+  grabbed = null;
+  $$('#editRow .grabbed').forEach(t => t.classList.remove('grabbed'));
+}
+function moveGrabbed(dir) {
+  const i = editList.indexOf(grabbed), j = i + (dir === 'left' ? -1 : 1);
+  if (i < 0 || j < 0 || j >= editList.length) return;
+  editList.splice(i, 1);
+  editList.splice(j, 0, grabbed);
+  saveEdit();
+  renderEditRow(grabbed);
+  sfx('move');
+}
+function resetHome() {
+  homePkgs = null;
+  saveHome();
+  editList = homeApps().map(a => a.pkg);
+  grabbed = null;
+  renderEditRow();
+  renderEditGrid();
+  toast('“Seus apps” voltou ao padrão');
+}
+
+function renderPicks() {
+  const row = $('#homePicks');
+  row.replaceChildren();
+  if (!picks.length) {
+    row.append(h('div', { class: 'info glass', text: 'As indicações da semana aparecem assim que a TV estiver conectada à internet.' }));
+  }
+  picks.forEach((p, i) => {
+    const b = h('button', { class: 'f tile pick', tabindex: '-1', 'aria-label': p.title },
+      h('span', { class: 'tile-art' }, h('img', { src: p.poster, alt: '', draggable: 'false', decoding: 'async' }),
+        p.netflix ? h('img', { class: 'nf-badge', src: NF_ICON, alt: 'Netflix', draggable: 'false' }) : null),
+      h('span', { class: 'tile-label', text: p.title }));
+    b._act = () => openPick(p);
+    row.append(b);
+  });
+  renderHero(false);
+}
+
+/* ---------------- Jogos ----------------
+   Tudo num canvas de 1280×720 (escalado pelo CSS), com cores sólidas sobre o fundo do app.
+   O requestAnimationFrame só roda com a partida em andamento; o canvas é zerado ao sair (libera a memória). */
+const GW = 1280, GH = 720;
+const FONT = 'system-ui,Roboto,"Google Sans",Arial,sans-serif';
+const INK = '#fff', DIM = 'rgba(255,255,255,.35)';
+const keys = { up: false, down: false, left: false, right: false };
+let gCtx = null, game = null, gState = 'off', gScore = 0, gBest = 0, gRaf = 0, gLast = 0, gEnd = '';
+
+const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
+function addScore(n) { gScore += n; }
+const num = n => String(Math.max(0, Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+function loadBest(id) { try { return Number(localStorage.getItem('onix.best.' + id)) || 0; } catch (_) { return 0; } }
+function saveBest(id, v) { try { localStorage.setItem('onix.best.' + id, String(v)); } catch (_) {} }
+function line(ctx, x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
+function dot(ctx, x, y, r, fill) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); fill ? ctx.fill() : ctx.stroke(); }
+
+// Cores sólidas dos jogos.
+const COL = { cyan: '#22d3ee', pink: '#ff3d7f', yellow: '#ffd23f', green: '#3ddc84', orange: '#ff8c42', purple: '#8b5cf6', red: '#ef4444', blue: '#3b82f6' };
+// Partículas e textos que sobem: efeito curto, compartilhado por todos os jogos (coordenadas da tela).
+const fx = {
+  p: [], t: [],
+  clear() { this.p.length = 0; this.t.length = 0; },
+  burst(x, y, color, n, sp) {
+    n = n || 10; sp = sp || 260;
+    for (let i = 0; i < n && this.p.length < 160; i++) {
+      const a = Math.random() * Math.PI * 2, v = sp * (.3 + Math.random() * .7);
+      this.p.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: .45 + Math.random() * .3, color });
+    }
+  },
+  text(x, y, s, color, size) { this.t.push({ x, y, s, color, size: size || 24, life: .9 }); },
+  busy() { return this.p.length > 0 || this.t.length > 0; },
+  update(dt) {
+    let j = 0;
+    for (const q of this.p) { q.life -= dt; if (q.life <= 0) continue; q.x += q.vx * dt; q.y += q.vy * dt; q.vx *= .94; q.vy *= .94; this.p[j++] = q; }
+    this.p.length = j; j = 0;
+    for (const q of this.t) { q.life -= dt; if (q.life <= 0) continue; q.y -= 50 * dt; this.t[j++] = q; }
+    this.t.length = j;
+  },
+  draw(ctx) {
+    for (const q of this.p) { ctx.globalAlpha = Math.min(1, q.life * 2.5); ctx.fillStyle = q.color; ctx.fillRect(q.x - 3, q.y - 3, 6, 6); }
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    for (const q of this.t) { ctx.globalAlpha = Math.min(1, q.life * 2); ctx.fillStyle = q.color; ctx.font = '700 ' + q.size + 'px ' + FONT; ctx.fillText(q.s, q.x, q.y); }
+    ctx.globalAlpha = 1; ctx.textBaseline = 'alphabetic';
+  },
+};
+
+const pong = {
+  id: 'pong', name: 'Pong', sub: 'Contra a máquina · quem fizer 5 vence',
+  hint: '▲ ▼ movem · estrelas: + cresce · − encolhe · » turbo · || congela o outro',
+  WIN: 5,
+  // Estrelas: valem para quem tocou a bola por último (grow/freeze ajudam, shrink atrapalha).
+  POWERS: { grow: { c: COL.green, s: '+' }, shrink: { c: COL.red, s: '−' }, fast: { c: COL.orange, s: '»' }, freeze: { c: COL.blue, s: '||' } },
+  art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M80 16v68" stroke-dasharray="4 7" opacity=".45"/><path d="M30 34v24M130 46v24"/><circle cx="100" cy="40" r="4" fill="#fff"/></svg>',
+  T: 90, B: 690, PH: 110, R: 9,
+  reset() {
+    this.p = this.c = (this.T + this.B) / 2; this.ps = this.cs = 0;
+    this.ph = this.ch = this.PH; this.pt = this.ct = 0; this.pf = this.cf = 0; this.pw = null; this.pwT = 5;
+    this.serve(1);
+  },
+  serve(dir) {
+    const a = Math.random() * .8 - .4;
+    this.bx = GW / 2; this.by = (this.T + this.B) / 2; this.v = 520;
+    this.vx = Math.cos(a) * this.v * dir; this.vy = Math.sin(a) * this.v; this.wait = .8;
+    this.rally = 0; this.last = 0; this.trail = [];
+  },
+  hit(face, center, h, dir) {
+    const rel = clamp((this.by - center) / (h / 2), -1, 1) * .95;
+    this.v = Math.min(this.v * 1.06, 1100);
+    this.vx = Math.cos(rel) * this.v * dir; this.vy = Math.sin(rel) * this.v;
+    this.bx = face + this.R * dir;
+    this.rally++; this.last = dir;
+    fx.burst(face, this.by, dir > 0 ? COL.cyan : COL.pink, 8, 220);
+    if (this.rally > 0 && this.rally % 5 === 0) fx.text(GW / 2, this.T + 150, 'Rally ' + this.rally + '!', COL.yellow, 30);
+  },
+  goal(side) {
+    const x = side > 0 ? GW - 40 : 40, c = side > 0 ? COL.cyan : COL.pink;
+    fx.burst(x, clamp(this.by, this.T, this.B), c, 26, 420);
+    fx.text(GW / 2, (this.T + this.B) / 2, side > 0 ? 'GOL!' : 'Gol da máquina', c, 56);
+  },
+  power() {
+    const w = this.pw, c = this.POWERS[w.kind].c, me = this.last > 0;
+    fx.burst(w.x, w.y, c, 18, 320);
+    if (w.kind === 'grow' || w.kind === 'shrink') {
+      const h = w.kind === 'grow' ? 170 : 60;
+      if (me) { this.ph = h; this.pt = 8; } else { this.ch = h; this.ct = 8; }
+      fx.text(w.x, w.y - 34, w.kind === 'grow' ? (me ? 'Raquete maior!' : 'Máquina cresceu') : (me ? 'Raquete menor!' : 'Máquina encolheu'), c);
+    } else if (w.kind === 'freeze') {
+      if (me) this.cf = 1.4; else this.pf = 1.4;
+      fx.text(w.x, w.y - 34, me ? 'Máquina congelada!' : 'Você congelou!', c);
+    } else {
+      this.v = Math.min(this.v * 1.3, 1250);
+      const s = this.v / Math.hypot(this.vx, this.vy); this.vx *= s; this.vy *= s;
+      fx.text(w.x, w.y - 34, 'Turbo!', c);
+    }
+    this.pw = null;
+  },
+  update(dt) {
+    const R = this.R;
+    if (this.pt > 0 && (this.pt -= dt) <= 0) this.ph = this.PH;
+    if (this.ct > 0 && (this.ct -= dt) <= 0) this.ch = this.PH;
+    if (this.pf > 0) this.pf -= dt;
+    if (this.cf > 0) this.cf -= dt;
+    const hp = this.ph / 2, hc = this.ch / 2;
+    if (this.pf <= 0) this.p = clamp(this.p + ((keys.down ? 1 : 0) - (keys.up ? 1 : 0)) * 640 * dt, this.T + hp, this.B - hp);
+    else this.p = clamp(this.p, this.T + hp, this.B - hp);
+    // A máquina só persegue a bola quando ela vem na sua direção; fica mais rápida se você estiver ganhando.
+    const target = this.vx > 0 && this.bx > GW * .4 ? this.by : (this.T + this.B) / 2;
+    const cv = 380 + 30 * Math.max(0, this.ps - this.cs);
+    const step = this.cf > 0 ? 0 : cv * dt;
+    this.c = clamp(this.c + clamp(target - this.c, -step, step), this.T + hc, this.B - hc);
+    if (this.pw) { if ((this.pw.t -= dt) <= 0) this.pw = null; }
+    else if ((this.pwT -= dt) <= 0) {
+      this.pw = { x: 440 + Math.random() * 400, y: this.T + 90 + Math.random() * (this.B - this.T - 180), kind: ['grow', 'grow', 'shrink', 'fast', 'freeze'][Math.random() * 5 | 0], t: 7 };
+      this.pwT = 7 + Math.random() * 5;
+    }
+    if (this.wait > 0) { this.wait -= dt; return; }
+    this.bx += this.vx * dt; this.by += this.vy * dt;
+    this.trail.push(this.bx, this.by); if (this.trail.length > 12) this.trail.splice(0, 2);
+    if (this.by < this.T + R) { this.by = this.T + R; this.vy = Math.abs(this.vy); }
+    if (this.by > this.B - R) { this.by = this.B - R; this.vy = -Math.abs(this.vy); }
+    if (this.vx < 0 && this.bx - R <= 76 && this.bx > 50 && Math.abs(this.by - this.p) <= hp + R) this.hit(76, this.p, this.ph, 1);
+    if (this.vx > 0 && this.bx + R >= GW - 76 && this.bx < GW - 50 && Math.abs(this.by - this.c) <= hc + R) this.hit(GW - 76, this.c, this.ch, -1);
+    if (this.pw && this.last && Math.hypot(this.bx - this.pw.x, this.by - this.pw.y) < 24 + R) this.power();
+    if (this.bx < -20) { this.cs++; this.goal(-1); this.serve(-1); }
+    if (this.bx > GW + 20) { this.ps++; addScore(1); this.goal(1); this.serve(1); }
+    if (this.ps >= this.WIN) gameOver('Você venceu!');
+    else if (this.cs >= this.WIN) gameOver('A máquina venceu');
+  },
+  draw(ctx) {
+    const T = this.T, B = this.B, mid = (T + B) / 2;
+    // Rinque: gelo azul com áreas de gol coloridas.
+    ctx.fillStyle = '#0c2742'; ctx.fillRect(40, T, GW - 80, B - T);
+    ctx.fillStyle = '#0f4a63'; ctx.beginPath(); ctx.arc(40, mid, 120, -Math.PI / 2, Math.PI / 2); ctx.fill();
+    ctx.fillStyle = '#5a1838'; ctx.beginPath(); ctx.arc(GW - 40, mid, 120, Math.PI / 2, Math.PI * 1.5); ctx.fill();
+    ctx.fillStyle = '#1d4f80'; ctx.fillRect(40, T - 8, GW - 80, 8); ctx.fillRect(40, B, GW - 80, 8);
+    ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = 3;
+    ctx.setLineDash([12, 14]); line(ctx, GW / 2, T, GW / 2, B); ctx.setLineDash([]);
+    dot(ctx, GW / 2, mid, 70, false);
+    ctx.font = '700 72px ' + FONT; ctx.textAlign = 'center';
+    ctx.fillStyle = COL.cyan; ctx.fillText(this.ps, GW / 2 - 90, T + 90);
+    ctx.fillStyle = COL.pink; ctx.fillText(this.cs, GW / 2 + 90, T + 90);
+    if (this.pw) {
+      const w = this.pw, k = this.POWERS[w.kind], r = 26 + Math.sin(w.t * 8) * 3;
+      ctx.fillStyle = k.c; ctx.beginPath();
+      for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .5 : r; ctx.lineTo(w.x + Math.cos(a) * rr, w.y + Math.sin(a) * rr); }
+      ctx.closePath(); ctx.fill();
+      ctx.fillStyle = '#0a0b0e'; ctx.font = '800 16px ' + FONT; ctx.textBaseline = 'middle';
+      ctx.fillText(k.s, w.x, w.y + 2); ctx.textBaseline = 'alphabetic';
+    }
+    ctx.lineWidth = 14; ctx.lineCap = 'round';
+    ctx.strokeStyle = this.pf > 0 ? '#bfdbfe' : COL.cyan; line(ctx, 69, this.p - this.ph / 2 + 7, 69, this.p + this.ph / 2 - 7);
+    ctx.strokeStyle = this.cf > 0 ? '#bfdbfe' : COL.pink; line(ctx, GW - 69, this.c - this.ch / 2 + 7, GW - 69, this.c + this.ch / 2 - 7);
+    ctx.fillStyle = COL.yellow;
+    for (let i = 0; i < this.trail.length; i += 2) { ctx.globalAlpha = (i + 2) / this.trail.length * .35; dot(ctx, this.trail[i], this.trail[i + 1], this.R * .8, true); }
+    ctx.globalAlpha = 1; dot(ctx, this.bx, this.by, this.R, true);
+  },
+};
+
+// Mesa de pinball em coordenadas próprias (440×680), centralizada na tela.
+const PB = { X: (GW - 440) / 2, Y: 20, R: 9, G: 900,
+  WALLS: [[0, 500, 0, 60], [0, 60, 60, 0], [60, 0, 380, 0], [380, 0, 440, 60], [440, 60, 440, 680], [400, 680, 440, 680],
+    [400, 200, 400, 680]],
+  SLINGS: [[0, 500, 120, 593], [400, 500, 280, 593]],
+  LANES: [140, 200, 260],
+  BUMPER_COL: [COL.pink, COL.yellow, COL.cyan],
+};
+// Colisão bola × segmento com espessura; "fl" (flíper) soma a velocidade da superfície no ponto de contato.
+function pbCollide(b, ax, ay, cx, cy, rad, e, fl) {
+  const dx = cx - ax, dy = cy - ay;
+  const t = clamp(((b.x - ax) * dx + (b.y - ay) * dy) / (dx * dx + dy * dy), 0, 1);
+  const px = ax + dx * t, py = ay + dy * t, min = PB.R + rad;
+  let nx = b.x - px, ny = b.y - py;
+  const d = Math.hypot(nx, ny);
+  if (d >= min || d === 0) return false;
+  nx /= d; ny /= d;
+  b.x = px + nx * min; b.y = py + ny * min;
+  const svx = fl ? -fl.w * (py - fl.y) : 0, svy = fl ? fl.w * (px - fl.x) : 0;
+  const rvx = b.vx - svx, rvy = b.vy - svy, vn = rvx * nx + rvy * ny;
+  if (vn < 0) { b.vx = svx + rvx - (1 + e) * vn * nx; b.vy = svy + rvy - (1 + e) * vn * ny; }
+  return true;
+}
+const pinball = {
+  id: 'pinball', name: 'Pinball', sub: '3 bolas · faça 10.000 pontos para vencer',
+  hint: '◀ ▶ flíperes · OK lança · faça 10.000 pontos antes de perder as 3 bolas',
+  GOAL: 10000,
+  art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M40 70V28l10-10h60l10 10v42M40 70l18 12M120 70l-18 12" opacity=".45"/><circle cx="64" cy="38" r="7"/><circle cx="96" cy="38" r="7"/><circle cx="80" cy="56" r="7"/><path d="M58 82l12 4M102 82l-12 4" stroke-width="5"/><circle cx="108" cy="62" r="3.5" fill="#fff"/></svg>',
+  status() { return (this.lane ? 'OK lança a bola' : 'Bola ' + (4 - this.balls) + ' de 3') + ' · x' + this.mult + ' · meta ' + num(this.GOAL); },
+  reset() {
+    this.balls = 3; this.mult = 1; this.won = false;
+    this.fl = [{ x: 120, y: 600, rest: .5, up: -.45, key: 'left' }, { x: 280, y: 600, rest: Math.PI - .5, up: Math.PI + .45, key: 'right' }];
+    this.fl.forEach(f => { f.th = f.rest; f.w = 0; });
+    this.bumpers = [{ x: 120, y: 170 }, { x: 280, y: 170 }, { x: 200, y: 265 }].map((p, i) => Object.assign(p, { r: 24, lit: 0, c: PB.BUMPER_COL[i] }));
+    this.lanes = [false, false, false];
+    this.targets = [150, 184, 218].map(x => ({ x, up: true }));
+    this.slingLit = [0, 0];
+    this.toLane();
+  },
+  toLane() { this.b = { x: 420, y: 680 - PB.R - 1, vx: 0, vy: 0 }; this.lane = true; this.save = 0; },
+  score(n, x, y, c) {
+    addScore(n * this.mult); fx.text(PB.X + x, PB.Y + y - 20, '+' + n * this.mult, c || INK, 20);
+    if (gScore >= this.GOAL && !this.won) { this.won = true; fx.burst(PB.X + 200, PB.Y + 300, COL.yellow, 40, 480); }
+  },
+  ok() {
+    if (!this.lane) return false;
+    this.lane = false; this.save = 6; this.b.vy = -(1300 + Math.random() * 150);
+    return true;
+  },
+  update(dt) {
+    const n = 6, s = dt / n, b = this.b;
+    for (const p of this.bumpers) p.lit = Math.max(0, p.lit - dt);
+    this.slingLit = this.slingLit.map(v => Math.max(0, v - dt));
+    if (this.save > 0 && !this.lane) this.save -= dt;
+    if (this.won) { gameOver('Você venceu!'); return; }
+    for (let i = 0; i < n; i++) {
+      for (const f of this.fl) {
+        const prev = f.th, target = keys[f.key] ? f.up : f.rest;
+        f.th += clamp(target - f.th, -16 * s, 16 * s);
+        f.w = (f.th - prev) / s;
+      }
+      if (this.lane) continue;
+      b.vy += PB.G * s; b.x += b.vx * s; b.y += b.vy * s;
+      for (const w of PB.WALLS) pbCollide(b, w[0], w[1], w[2], w[3], 1.5, .6, null);
+      PB.SLINGS.forEach((w, k) => {
+        if (pbCollide(b, w[0], w[1], w[2], w[3], 3, .6, null) && !this.slingLit[k] && Math.hypot(b.vx, b.vy) > 250) {
+          this.slingLit[k] = .2; this.score(10, (w[0] + w[2]) / 2, (w[1] + w[3]) / 2, COL.orange);
+        }
+      });
+      for (const p of this.bumpers) {
+        let nx = b.x - p.x, ny = b.y - p.y;
+        const d = Math.hypot(nx, ny), min = p.r + PB.R;
+        if (d >= min || d === 0) continue;
+        nx /= d; ny /= d;
+        b.x = p.x + nx * min; b.y = p.y + ny * min;
+        let vn = b.vx * nx + b.vy * ny;
+        if (vn < 0) { b.vx -= 2 * vn * nx; b.vy -= 2 * vn * ny; vn = -vn; }
+        if (vn < 650) { b.vx += (650 - vn) * nx; b.vy += (650 - vn) * ny; }   // o bumper "chuta" a bola
+        if (p.lit < .05) { this.score(100, p.x, p.y - p.r, p.c); fx.burst(PB.X + p.x, PB.Y + p.y, p.c, 10, 240); }
+        p.lit = .15;
+      }
+      // Faixas do topo: passar por cima acende; as três acesas sobem o multiplicador.
+      PB.LANES.forEach((x, k) => {
+        if (this.lanes[k] || Math.abs(b.x - x) > 14 || Math.abs(b.y - 60) > 14) return;
+        this.lanes[k] = true; this.score(50, x, 60, COL.yellow);
+        if (this.lanes.every(Boolean)) {
+          this.lanes = [false, false, false];
+          if (this.mult < 5) this.mult++;
+          fx.text(PB.X + 200, PB.Y + 120, 'Multiplicador x' + this.mult, COL.yellow, 30);
+        }
+      });
+      // Alvos que caem: derrubar os três vale bônus e os levanta de novo.
+      for (const t of this.targets) {
+        if (!t.up || !pbCollide(b, t.x, 380, t.x + 30, 380, 4, .5, null)) continue;
+        t.up = false; this.score(250, t.x + 15, 380, COL.green); fx.burst(PB.X + t.x + 15, PB.Y + 380, COL.green, 8, 200);
+        if (this.targets.every(q => !q.up)) {
+          this.targets.forEach(q => { q.up = true; });
+          this.score(1500, 200, 420, COL.green);
+          fx.text(PB.X + 200, PB.Y + 330, 'Alvos completos!', COL.green, 28);
+        }
+      }
+      for (const f of this.fl) pbCollide(b, f.x, f.y, f.x + 70 * Math.cos(f.th), f.y + 70 * Math.sin(f.th), 7, .35, f);
+      const sp = Math.hypot(b.vx, b.vy);
+      if (sp > 1500) { b.vx *= 1500 / sp; b.vy *= 1500 / sp; }
+      // Bola parada no canal de lançamento (voltou pela abertura de cima): pode lançar de novo.
+      if (b.x > 400 && b.y > 650 && Math.abs(b.vy) < 60) { this.toLane(); break; }
+      if (b.y > 720) {
+        if (this.won) { gameOver('Você venceu!'); return; }
+        if (this.save > 0) { fx.text(PB.X + 200, PB.Y + 520, 'Bola salva!', COL.green, 30); this.toLane(); break; }
+        fx.text(PB.X + 200, PB.Y + 520, 'Bola perdida', COL.red, 30);
+        this.mult = 1;
+        if (--this.balls <= 0) { gameOver('Faltaram ' + num(this.GOAL - gScore) + ' pontos'); return; }
+        this.toLane(); break;
+      }
+    }
+  },
+  draw(ctx) {
+    ctx.save(); ctx.translate(PB.X, PB.Y);
+    // Mesa: roxo sólido, canal de lançamento mais escuro.
+    ctx.fillStyle = '#2a1655'; ctx.beginPath();
+    ctx.moveTo(0, 690); ctx.lineTo(0, 60); ctx.lineTo(60, 0); ctx.lineTo(380, 0); ctx.lineTo(440, 60); ctx.lineTo(440, 690); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#1a0d38'; ctx.fillRect(400, 200, 40, 490);
+    ctx.fillStyle = '#3a2070'; ctx.beginPath(); ctx.arc(200, 200, 150, 0, Math.PI * 2); ctx.fill();
+    ctx.strokeStyle = '#b9a6ff'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    for (const w of PB.WALLS) line(ctx, w[0], w[1], w[2], w[3]);
+    ctx.lineWidth = 8;
+    PB.SLINGS.forEach((w, k) => { ctx.strokeStyle = this.slingLit[k] ? INK : COL.orange; line(ctx, w[0], w[1], w[2], w[3]); });
+    PB.LANES.forEach((x, k) => { ctx.fillStyle = this.lanes[k] ? COL.yellow : '#4b3590'; dot(ctx, x, 60, 9, true); });
+    ctx.lineWidth = 8;
+    for (const t of this.targets) if (t.up) { ctx.strokeStyle = COL.green; line(ctx, t.x + 3, 380, t.x + 27, 380); }
+    for (const p of this.bumpers) {
+      ctx.fillStyle = p.lit ? INK : p.c; dot(ctx, p.x, p.y, p.lit ? p.r + 3 : p.r, true);
+      ctx.fillStyle = '#2a1655'; dot(ctx, p.x, p.y, 9, true);
+    }
+    // Luz da bola salva acima dos flíperes.
+    if (this.save > 0 && !this.lane) { ctx.fillStyle = COL.green; dot(ctx, 200, 640, 7, true); }
+    ctx.strokeStyle = COL.orange; ctx.lineWidth = 14;
+    for (const f of this.fl) line(ctx, f.x, f.y, f.x + 66 * Math.cos(f.th), f.y + 66 * Math.sin(f.th));
+    ctx.fillStyle = '#e8ecf4'; dot(ctx, this.b.x, this.b.y, PB.R, true);
+    ctx.restore();
+  },
+};
+
+const BRICK_COL = [COL.red, COL.orange, COL.yellow, COL.green, COL.cyan, COL.purple];
+// bad = malefício: a cápsula vem com borda e letra na cor, sobre fundo escuro.
+const DROPS = { wide: { c: COL.green, s: 'W' }, life: { c: COL.pink, s: '♥' }, slow: { c: COL.cyan, s: 'S' }, fire: { c: COL.purple, s: 'F' },
+  shrink: { c: COL.red, s: '−', bad: true }, fast: { c: COL.orange, s: 'R', bad: true } };
+const bricks = {
+  id: 'bricks', name: 'Tijolos', sub: 'Quebre todos · pegue os bônus',
+  hint: '◀ ▶ movem · W larga · ♥ vida · S lenta · F fogo · cuidado: − curta · R rápida',
+  art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><g><rect x="34" y="18" width="16" height="7" rx="1.5"/><rect x="53" y="18" width="16" height="7" rx="1.5"/><rect x="72" y="18" width="16" height="7" rx="1.5"/><rect x="91" y="18" width="16" height="7" rx="1.5"/><rect x="110" y="18" width="16" height="7" rx="1.5"/></g><g opacity=".6"><rect x="34" y="30" width="16" height="7" rx="1.5"/><rect x="72" y="30" width="16" height="7" rx="1.5"/><rect x="91" y="30" width="16" height="7" rx="1.5"/><rect x="110" y="30" width="16" height="7" rx="1.5"/></g><path d="M64 84h30" stroke-width="5"/><circle cx="88" cy="62" r="3.5" fill="#fff"/></svg>',
+  L: 240, Rt: 1040, T: 90, PY: 660, PW0: 65, R: 9,
+  status() { return 'Fase ' + this.level + ' · ' + this.lives + (this.lives === 1 ? ' bola' : ' bolas'); },
+  reset() { this.level = 1; this.lives = 3; this.px = GW / 2; this.build(); this.serve(); },
+  build() {
+    // Tijolos de aço (2 batidas) aparecem mais a cada fase.
+    const steel = Math.min(.35, (this.level - 1) * .08);
+    this.b = [];
+    for (let r = 0; r < 6; r++) for (let c = 0; c < 10; c++) this.b.push({ x: this.L + c * 80 + 5, y: 140 + r * 34, w: 70, h: 24, r, hp: Math.random() < steel ? 2 : 1 });
+    this.left = this.b.length; this.drops = [];
+  },
+  serve() { this.v = 430 + this.level * 50; this.vx = this.vy = 0; this.wait = 1; this.bx = this.px; this.by = this.PY - this.R; this.PW = this.PW0; this.wideT = 0; this.fireT = 0; },
+  catchDrop(d) {
+    const k = DROPS[d.kind];
+    fx.burst(d.x, d.y, k.c, 14, 260);
+    const speed = f => { this.v = clamp(this.v * f, 300, 950); const s = this.v / (Math.hypot(this.vx, this.vy) || 1); this.vx *= s; this.vy *= s; };
+    if (d.kind === 'wide') { this.PW = 105; this.wideT = 12; fx.text(d.x, d.y - 30, 'Raquete larga!', k.c); }
+    else if (d.kind === 'shrink') { this.PW = 38; this.wideT = 10; fx.text(d.x, d.y - 30, 'Raquete curta!', k.c); }
+    else if (d.kind === 'life') { this.lives++; fx.text(d.x, d.y - 30, '+1 bola', k.c); }
+    else if (d.kind === 'fire') { this.fireT = 8; fx.text(d.x, d.y - 30, 'Bola de fogo!', k.c); }
+    else if (d.kind === 'fast') { speed(1.3); fx.text(d.x, d.y - 30, 'Bola rápida!', k.c); }
+    else { speed(.75); fx.text(d.x, d.y - 30, 'Bola lenta', k.c); }
+  },
+  update(dt) {
+    const R = this.R;
+    if (this.wideT > 0 && (this.wideT -= dt) <= 0) this.PW = this.PW0;
+    if (this.fireT > 0) this.fireT -= dt;
+    this.px = clamp(this.px + ((keys.right ? 1 : 0) - (keys.left ? 1 : 0)) * 900 * dt, this.L + this.PW, this.Rt - this.PW);
+    for (const d of this.drops) {
+      d.y += 230 * dt;
+      if (d.y >= this.PY - 10 && d.y <= this.PY + 20 && Math.abs(d.x - this.px) <= this.PW + 16) { d.dead = true; this.catchDrop(d); }
+      else if (d.y > GH + 20) d.dead = true;
+    }
+    this.drops = this.drops.filter(d => !d.dead);
+    if (this.wait > 0) {
+      this.bx = this.px; this.by = this.PY - R;
+      if ((this.wait -= dt) <= 0) { const a = Math.random() - .5; this.vx = this.v * Math.sin(a); this.vy = -this.v * Math.cos(a); }
+      return;
+    }
+    for (let i = 0; i < 2; i++) {
+      this.bx += this.vx * dt / 2; this.by += this.vy * dt / 2;
+      if (this.bx < this.L + R) { this.bx = this.L + R; this.vx = Math.abs(this.vx); }
+      if (this.bx > this.Rt - R) { this.bx = this.Rt - R; this.vx = -Math.abs(this.vx); }
+      if (this.by < this.T + R) { this.by = this.T + R; this.vy = Math.abs(this.vy); }
+      if (this.vy > 0 && this.by + R >= this.PY && this.by + R <= this.PY + 18 && Math.abs(this.bx - this.px) <= this.PW + R) {
+        const a = clamp((this.bx - this.px) / this.PW, -1, 1) * 1.05;
+        this.vx = this.v * Math.sin(a); this.vy = -this.v * Math.cos(a); this.by = this.PY - R;
+      }
+      for (const k of this.b) {
+        if (!k.hp) continue;
+        const cx = clamp(this.bx, k.x, k.x + k.w), cy = clamp(this.by, k.y, k.y + k.h);
+        if ((this.bx - cx) ** 2 + (this.by - cy) ** 2 >= R * R) continue;
+        // Bola de fogo atravessa e quebra até o aço; a normal quica.
+        if (this.fireT > 0) k.hp = 1;
+        else if (cy === this.by && cx !== this.bx) this.vx = -this.vx; else this.vy = -this.vy;
+        if (--k.hp) { fx.burst(cx, cy, '#cfd6e2', 5, 160); break; }
+        this.left--; addScore((6 - k.r) * 10);
+        fx.burst(k.x + k.w / 2, k.y + k.h / 2, BRICK_COL[k.r], 10, 240);
+        if (Math.random() < .16) {
+          const kinds = ['wide', 'wide', 'slow', 'fire', 'shrink', 'fast'];
+          if (this.lives < 5) kinds.push('life');
+          this.drops.push({ x: k.x + k.w / 2, y: k.y + k.h / 2, kind: kinds[Math.floor(Math.random() * kinds.length)] });
+        }
+        if (this.fireT <= 0) break;
+      }
+      if (!this.left) { this.level++; fx.text(GW / 2, GH / 2, 'Fase ' + this.level, COL.yellow, 52); this.build(); this.serve(); return; }
+      if (this.by > GH + 20) {
+        if (--this.lives <= 0) { gameOver('Sem bolas'); return; }
+        this.serve(); return;
+      }
+    }
+  },
+  draw(ctx) {
+    ctx.fillStyle = '#121626'; ctx.fillRect(this.L, this.T, this.Rt - this.L, GH - this.T);
+    ctx.fillStyle = '#2b3350'; ctx.fillRect(this.L - 8, this.T - 8, 8, GH - this.T + 8); ctx.fillRect(this.Rt, this.T - 8, 8, GH - this.T + 8);
+    ctx.fillRect(this.L, this.T - 8, this.Rt - this.L, 8);
+    for (const k of this.b) {
+      if (!k.hp) continue;
+      ctx.fillStyle = k.hp > 1 ? '#9aa4b8' : BRICK_COL[k.r]; ctx.fillRect(k.x, k.y, k.w, k.h);
+      ctx.fillStyle = 'rgba(255,255,255,.28)'; ctx.fillRect(k.x, k.y, k.w, 4);
+      if (k.hp > 1) { ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(k.x + 6, k.y + 10, k.w - 12, 4); }
+    }
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '700 16px ' + FONT;
+    for (const d of this.drops) {
+      const k = DROPS[d.kind];
+      if (k.bad) { ctx.fillStyle = '#1a1b20'; ctx.fillRect(d.x - 18, d.y - 10, 36, 20); ctx.strokeStyle = k.c; ctx.lineWidth = 3; ctx.strokeRect(d.x - 17, d.y - 9, 34, 18); ctx.fillStyle = k.c; }
+      else { ctx.fillStyle = k.c; ctx.fillRect(d.x - 18, d.y - 10, 36, 20); ctx.fillStyle = '#0a0b0e'; }
+      ctx.fillText(k.s, d.x, d.y + 1);
+    }
+    ctx.textBaseline = 'alphabetic';
+    ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.strokeStyle = this.wideT > 0 ? (this.PW < this.PW0 ? COL.red : COL.green) : COL.cyan;
+    line(ctx, this.px - this.PW + 7, this.PY + 7, this.px + this.PW - 7, this.PY + 7);
+    if (this.fireT > 0) { ctx.fillStyle = COL.orange; dot(ctx, this.bx, this.by, this.R + 5, true); ctx.fillStyle = COL.yellow; }
+    else ctx.fillStyle = INK;
+    dot(ctx, this.bx, this.by, this.R, true);
+  },
+};
+
+const DIRS = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };
+const snake = {
+  id: 'snake', name: 'Cobrinha', sub: 'Coma, cresça e desvie das pedras',
+  hint: 'Setas mudam a direção · desvie das pedras: nasce uma nova a cada 3 maçãs',
+  art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M28 72h36V42h40v22h22" stroke-width="7"/><circle cx="126" cy="64" r="5.5" fill="#fff" stroke="none"/><circle cx="126" cy="30" r="4.5" stroke-width="2.5"/></svg>',
+  C: 30, cols: 36, rows: 20, ox: 100, oy: 90,
+  status() { return 'Tamanho ' + this.body.length + ' · ' + this.rocks.length + ' pedras'; },
+  reset() {
+    this.body = [{ x: 8, y: 10 }, { x: 7, y: 10 }, { x: 6, y: 10 }];
+    this.dir = DIRS.right; this.queue = []; this.t = 0; this.step = .12; this.eaten = 0; this.gold = null;
+    this.rocks = []; this.f = null;
+    for (let i = 0; i < 6; i++) this.addRock();
+    this.f = this.free();
+  },
+  // Célula vazia (sem cobra, pedra nem maçã); "far" afasta da cabeça para a pedra nunca nascer na cara.
+  free(far) {
+    const hd = this.body[0], same = (a, b) => a && a.x === b.x && a.y === b.y;
+    let f, n = 0;
+    do f = { x: Math.floor(Math.random() * this.cols), y: Math.floor(Math.random() * this.rows) };
+    while (++n < 500 && (this.body.some(p => same(p, f)) || this.rocks.some(p => same(p, f)) || same(this.f, f) || same(this.gold, f) ||
+      (far && (Math.abs(f.x - hd.x) + Math.abs(f.y - hd.y) < 6 || f.y === hd.y))));
+    return f;
+  },
+  addRock() { if (this.rocks.length < 30) this.rocks.push(this.free(true)); },
+  press(d) {
+    const v = DIRS[d], last = this.queue.length ? this.queue.at(-1) : this.dir;
+    if ((v.x === -last.x && v.y === -last.y) || v === last) return;
+    if (this.queue.length < 2) this.queue.push(v);
+  },
+  // Só redesenha quando a cobrinha anda (a cada ~0,1 s) ou há efeitos na tela, não a cada quadro.
+  update(dt) {
+    if ((this.t += dt) < this.step) return false;
+    this.t -= this.step;
+    if (this.queue.length) this.dir = this.queue.shift();
+    if (this.gold && (this.gold.t -= this.step) <= 0) this.gold = null;
+    const hd = this.body[0], n = { x: hd.x + this.dir.x, y: hd.y + this.dir.y };
+    if (n.x < 0 || n.y < 0 || n.x >= this.cols || n.y >= this.rows || this.body.slice(0, -1).some(p => p.x === n.x && p.y === n.y) ||
+        this.rocks.some(p => p.x === n.x && p.y === n.y)) {
+      fx.burst(this.ox + hd.x * this.C + this.C / 2, this.oy + hd.y * this.C + this.C / 2, COL.red, 20, 300);
+      gameOver('A cobrinha bateu'); return false;
+    }
+    this.body.unshift(n);
+    const cx = this.ox + n.x * this.C + this.C / 2, cy = this.oy + n.y * this.C + this.C / 2;
+    if (n.x === this.f.x && n.y === this.f.y) {
+      addScore(10); this.step = Math.max(.065, this.step * .97); this.f = this.free();
+      fx.burst(cx, cy, COL.red, 10, 200); fx.text(cx, cy - 24, '+10', INK, 20);
+      if (++this.eaten % 5 === 0 && !this.gold) this.gold = Object.assign(this.free(), { t: 6 });
+      if (this.eaten % 3 === 0) { this.addRock(); const r = this.rocks.at(-1); fx.burst(this.ox + r.x * this.C + this.C / 2, this.oy + r.y * this.C + this.C / 2, '#9aa4b8', 10, 180); }
+    } else if (this.gold && n.x === this.gold.x && n.y === this.gold.y) {
+      addScore(50); this.gold = null;
+      fx.burst(cx, cy, COL.yellow, 18, 280); fx.text(cx, cy - 24, '+50', COL.yellow, 26);
+    } else this.body.pop();
+  },
+  draw(ctx) {
+    const C = this.C, X = p => this.ox + p.x * C + C / 2, Y = p => this.oy + p.y * C + C / 2;
+    // Gramado xadrez em dois verdes sólidos.
+    ctx.fillStyle = '#16351f'; ctx.fillRect(this.ox, this.oy, this.cols * C, this.rows * C);
+    ctx.fillStyle = '#1b4026';
+    for (let y = 0; y < this.rows; y++) for (let x = (y & 1); x < this.cols; x += 2) ctx.fillRect(this.ox + x * C, this.oy + y * C, C, C);
+    ctx.strokeStyle = '#2f6b3d'; ctx.lineWidth = 4; ctx.strokeRect(this.ox - 2, this.oy - 2, this.cols * C + 4, this.rows * C + 4);
+    // Pedras: cinza com brilho no alto e sombra embaixo.
+    for (const r of this.rocks) {
+      const x = this.ox + r.x * C, y = this.oy + r.y * C;
+      ctx.fillStyle = '#6b7280'; ctx.fillRect(x + 2, y + 2, C - 4, C - 4);
+      ctx.fillStyle = '#9ca3af'; ctx.fillRect(x + 2, y + 2, C - 4, 6);
+      ctx.fillStyle = '#4b5563'; ctx.fillRect(x + 2, y + C - 8, C - 4, 6);
+    }
+    // Maçã vermelha com folha; a dourada pisca no fim.
+    ctx.fillStyle = COL.red; dot(ctx, X(this.f), Y(this.f), C * .36, true);
+    ctx.fillStyle = COL.green; ctx.fillRect(X(this.f) + 1, Y(this.f) - C * .48, 6, 6);
+    if (this.gold && (this.gold.t > 2 || Math.floor(this.gold.t * 6) % 2)) { ctx.fillStyle = COL.yellow; dot(ctx, X(this.gold), Y(this.gold), C * .4, true); }
+    ctx.strokeStyle = '#3ddc84'; ctx.lineWidth = C * .7; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.beginPath(); ctx.moveTo(X(this.body[0]), Y(this.body[0]));
+    for (const p of this.body) ctx.lineTo(X(p), Y(p));
+    ctx.stroke();
+    const hx = X(this.body[0]), hy = Y(this.body[0]), d = this.dir;
+    ctx.fillStyle = '#22a85a'; dot(ctx, hx, hy, C * .42, true);
+    // Olhos olhando para a direção do movimento.
+    ctx.fillStyle = INK;
+    dot(ctx, hx + d.x * 5 - d.y * 6, hy + d.y * 5 + d.x * 6, 4, true); dot(ctx, hx + d.x * 5 + d.y * 6, hy + d.y * 5 - d.x * 6, 4, true);
+    ctx.fillStyle = '#0a0b0e';
+    dot(ctx, hx + d.x * 7 - d.y * 6, hy + d.y * 7 + d.x * 6, 2, true); dot(ctx, hx + d.x * 7 + d.y * 6, hy + d.y * 7 - d.x * 6, 2, true);
+  },
+};
+const GAMES = [pong, pinball, bricks, snake];
+
+/* ---------------- Música dos jogos ----------------
+   Chiptune sintetizado no Web Audio (sem arquivos: a CSP bloqueia mídia). Cada jogo tem
+   um loop de 32 colcheias; 0 = pausa. O agendador marca as notas ~0,2 s à frente e
+   só roda durante a partida. */
+const SONGS = {
+  pong: { bpm: 132,
+    lead: [72,0,76,0,79,0,76,0, 74,0,77,0,81,0,77,0, 72,0,76,0,79,0,84,0, 83,0,79,0,74,0,0,0],
+    bass: [48,0,55,0,48,0,55,0, 50,0,57,0,50,0,57,0, 48,0,55,0,48,0,55,0, 43,0,50,0,43,0,47,0] },
+  pinball: { bpm: 140,
+    lead: [69,72,76,0,74,72,69,0, 67,71,74,0,72,71,67,0, 65,69,72,0,71,69,65,0, 64,68,71,0,74,0,76,0],
+    bass: [45,0,45,57,45,0,45,57, 43,0,43,55,43,0,43,55, 41,0,41,53,41,0,41,53, 40,0,40,52,40,0,44,0] },
+  bricks: { bpm: 120,
+    lead: [74,0,0,77,0,0,81,0, 79,0,77,0,76,0,74,0, 72,0,0,76,0,0,79,0, 77,0,76,0,72,0,0,0],
+    bass: [50,0,50,0,50,0,50,0, 48,0,48,0,48,0,48,0, 46,0,46,0,46,0,46,0, 45,0,45,0,45,0,49,0] },
+  snake: { bpm: 110,
+    lead: [67,0,69,0,71,0,74,0, 76,0,74,0,71,0,69,0, 67,0,64,0,67,0,69,0, 71,0,69,0,67,0,0,0],
+    bass: [43,0,0,0,50,0,0,0, 40,0,0,0,47,0,0,0, 36,0,0,0,43,0,0,0, 38,0,0,0,45,0,0,0] },
+};
+let aCtx = null, aOut = null, mTimer = 0, mSong = null, mStep = 0, mNext = 0;
+function tone(midi, t, dur, type, vol) {
+  const o = aCtx.createOscillator(), g = aCtx.createGain();
+  o.type = type; o.frequency.value = 440 * Math.pow(2, (midi - 69) / 12);
+  g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur);
+  o.connect(g); g.connect(aOut); o.start(t); o.stop(t + dur + .02);
+}
+function musicTick() {
+  const step = 30 / mSong.bpm;   // colcheia
+  while (mNext < aCtx.currentTime + .2) {
+    const i = mStep % mSong.lead.length;
+    if (mSong.lead[i]) tone(mSong.lead[i], mNext, step * .9, 'square', .35);
+    if (mSong.bass[i]) tone(mSong.bass[i], mNext, step * 1.8, 'triangle', .8);
+    mStep++; mNext += step;
+  }
+}
+// Chamado a partir do OK do controle (gesto do usuário), então o áudio pode começar.
+function musicStart(id) {
+  const song = SONGS[id];
+  if (!song) return;
+  if (!aCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return;
+    try { aCtx = new AC(); } catch (_) { return; }
+  }
+  if (!aOut) { aOut = aCtx.createGain(); aOut.gain.value = .07; aOut.connect(aCtx.destination); }
+  if (aCtx.state === 'suspended') aCtx.resume();
+  if (mSong !== song) { mSong = song; mStep = 0; mNext = 0; }
+  mNext = Math.max(mNext, aCtx.currentTime + .05);
+  if (!mTimer) mTimer = setInterval(musicTick, 60);
+  musicTick();
+}
+// Pausa congela o relógio do áudio; ao sair do jogo, a saída é descartada (corta as notas já marcadas).
+function musicStop(reset) {
+  clearInterval(mTimer); mTimer = 0;
+  if (!aCtx) return;
+  if (reset) { if (aOut) aOut.disconnect(); aOut = null; mSong = null; }
+  if (aCtx.state === 'running') aCtx.suspend();
+}
+
+function drawGame() {
+  const ctx = gCtx;
+  ctx.fillStyle = '#060709'; ctx.fillRect(0, 0, GW, GH);
+  ctx.lineCap = 'butt'; ctx.lineJoin = 'miter';
+  game.draw(ctx);
+  fx.draw(ctx);
+  ctx.textBaseline = 'alphabetic';
+  ctx.textAlign = 'left'; ctx.fillStyle = INK; ctx.font = '600 26px ' + FONT;
+  ctx.fillText(game.name, 48, 58);
+  if (game.status) { ctx.fillStyle = DIM; ctx.font = '400 20px ' + FONT; ctx.fillText(game.status(), 48, 88); }
+  if (game.id !== 'pong') {
+    ctx.textAlign = 'right'; ctx.fillStyle = INK; ctx.font = '200 40px ' + FONT;
+    ctx.fillText(gScore, GW - 48, 62);
+    ctx.fillStyle = DIM; ctx.font = '400 18px ' + FONT; ctx.fillText('Recorde ' + Math.max(gBest, gScore), GW - 48, 90);
+  }
+  if (gState === 'play') return;
+  const msg = {
+    ready: [game.name, game.hint, 'OK para começar · Voltar para sair'],
+    pause: ['Pausado', '', 'OK para continuar · Voltar para sair'],
+    over: [gEnd, game.id === 'pong' ? '' : 'Pontos ' + gScore + ' · Recorde ' + gBest, 'OK para jogar de novo · Voltar para sair'],
+  }[gState];
+  ctx.fillStyle = 'rgba(6,7,9,.78)'; ctx.fillRect(0, 0, GW, GH);
+  ctx.textAlign = 'center'; ctx.fillStyle = INK; ctx.font = '600 56px ' + FONT;
+  ctx.fillText(msg[0], GW / 2, GH / 2 - 30);
+  ctx.font = '400 24px ' + FONT;
+  if (msg[1]) { ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fillText(msg[1], GW / 2, GH / 2 + 20); }
+  ctx.fillStyle = DIM; ctx.fillText(msg[2], GW / 2, GH / 2 + 70);
+}
+function frame(t) {
+  gRaf = 0;
+  if (gState !== 'play') return;
+  const dt = Math.min(.034, Math.max(0, (t - gLast) / 1000)); gLast = t;
+  const had = fx.busy(); fx.update(dt);
+  if (game.update(dt) !== false || had || gState !== 'play') drawGame();
+  if (gState === 'play') gRaf = requestAnimationFrame(frame);
+}
+function stopLoop() { if (gRaf) cancelAnimationFrame(gRaf); gRaf = 0; }
+function clearKeys() { for (const k in keys) keys[k] = false; }
+function gameOver(text) {
+  gState = 'over'; gEnd = text; stopLoop(); clearKeys(); musicStop(true);
+  if (gScore > gBest) { gBest = gScore; saveBest(game.id, gBest); }
+  drawGame();
+}
+function playGame() {
+  if (gState === 'over') { game.reset(); gScore = 0; fx.clear(); }
+  gState = 'play'; gLast = performance.now();
+  musicStart(game.id);
+  drawGame();
+  if (!gRaf) gRaf = requestAnimationFrame(frame);
+}
+function pauseGame() {
+  if (gState !== 'play') return;
+  gState = 'pause'; stopLoop(); clearKeys(); musicStop(); drawGame();
+}
+function openGame(g) {
+  const cv = $('#gameCanvas');
+  cv.width = GW; cv.height = GH;
+  gCtx = cv.getContext('2d', { alpha: false });
+  game = g; gBest = loadBest(g.id); gScore = 0; gState = 'ready'; clearKeys();
+  g.reset(); fx.clear();
+  $('#game').hidden = false;
+  drawGame();
+}
+function closeGame() {
+  stopLoop(); clearKeys(); musicStop(true);
+  gState = 'off'; game = null; gCtx = null; fx.clear();
+  const cv = $('#gameCanvas');
+  cv.width = 0; cv.height = 0;   // devolve o buffer do canvas
+  $('#game').hidden = true;
+}
+function gameKey(e, down) {
+  const dir = KEYMAP[e.key] || CODEMAP[e.keyCode];
+  if (dir) {
+    e.preventDefault();
+    keys[dir] = down;
+    if (down && !e.repeat && gState === 'play' && game.press) game.press(dir);
+    return;
+  }
+  if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 23) {
+    e.preventDefault();
+    if (!down || e.repeat) return;
+    if (gState === 'play') { if (!(game.ok && game.ok())) pauseGame(); }
+    else playGame();
+    return;
+  }
+  if (down && (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4)) {
+    e.preventDefault(); back();
+  }
+}
+document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
+
+function renderGames() {
+  $('#gamesGrid').replaceChildren(...GAMES.map(g => {
+    const b = h('button', { class: 'f tile', tabindex: '-1', 'aria-label': g.name },
+      h('span', { class: 'tile-art glass' }, svgFrom(g.art)),
+      h('span', { class: 'tile-label', text: g.name }),
+      h('span', { class: 'tile-sub', text: g.sub }));
+    b._act = () => openGame(g);
+    return b;
+  }));
+}
+
+/* ---------------- Sons do menu ----------------
+   Toques curtos de "vidro" sintetizados no Web Audio, no clima da interface: senoide com um
+   parcial agudo bem baixo que some primeiro, ataque rápido, cauda curta e um passa-baixa
+   para não ficar estridente. Contexto próprio (a música dos jogos suspende o dela) e criado
+   na primeira tecla, que é o gesto que o WebView exige para liberar o áudio. */
+let sCtx = null, sOut = null, sLast = 0;
+function sfxReady() {
+  if (!settings.sound) return false;
+  if (!sCtx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (!AC) return false;
+    try { sCtx = new AC(); } catch (_) { return false; }
+    const lp = sCtx.createBiquadFilter();
+    lp.type = 'lowpass'; lp.frequency.value = 3200; lp.Q.value = .5;
+    sOut = sCtx.createGain(); sOut.gain.value = .14;
+    sOut.connect(lp); lp.connect(sCtx.destination);
+  }
+  if (sCtx.state === 'suspended') sCtx.resume();
+  return true;
+}
+function chime(freq, t, dur, vol) {
+  [[1, vol, dur], [2.76, vol * .18, dur * .45]].forEach(([mul, v, d]) => {
+    const o = sCtx.createOscillator(), g = sCtx.createGain();
+    o.type = 'sine'; o.frequency.value = freq * mul;
+    g.gain.setValueAtTime(0, t);
+    g.gain.linearRampToValueAtTime(v, t + .004);
+    g.gain.exponentialRampToValueAtTime(.0001, t + d);
+    o.connect(g); g.connect(sOut); o.start(t); o.stop(t + d + .02);
+  });
+}
+// move: no menu lateral a nota é um pouco mais grave; edge: bateu na borda (nada para onde ir).
+function sfx(kind) {
+  if (!sfxReady()) return;
+  const t = sCtx.currentTime + .005;
+  if (kind === 'move' || kind === 'nav') {
+    if (t - sLast < .045) return;   // segurar a seta não vira uma metralhadora
+    sLast = t;
+    chime(kind === 'nav' ? 987.8 : 1318.5, t, .09, .5);
+  } else if (kind === 'select') {
+    chime(987.8, t, .12, .45); chime(1318.5, t + .055, .22, .5);
+  } else if (kind === 'back') {
+    chime(1318.5, t, .1, .35); chime(987.8, t + .05, .18, .35);
+  } else if (kind === 'edge') {
+    chime(659.3, t, .07, .22);
+  }
+}
+
+
+/* ---------------- QR code ----------------
+   Gerador mínimo (modo byte, correção M, versões 1 a 40), sem bibliotecas: a CSP não
+   carrega scripts de fora. Devolve a matriz de módulos (true = escuro). */
+const qrMatrix = (() => {
+  // Por versão, no nível M: códigos de correção por bloco e número de blocos.
+  const ECC_LEN = [0, 10, 16, 26, 18, 24, 16, 18, 22, 22, 26, 30, 22, 22, 24, 24, 28, 28, 26, 26, 26, 26, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28, 28];
+  const BLOCKS = [0, 1, 1, 1, 2, 2, 4, 4, 4, 5, 5, 5, 8, 9, 9, 10, 10, 11, 13, 14, 16, 17, 17, 18, 20, 21, 23, 25, 26, 28, 29, 31, 33, 35, 37, 38, 40, 43, 45, 47, 49];
+  const rawModules = v => {
+    let n = (16 * v + 128) * v + 64;
+    if (v >= 2) { const a = Math.floor(v / 7) + 2; n -= (25 * a - 10) * a - 55; if (v >= 7) n -= 36; }
+    return n;
+  };
+  const dataBytes = v => Math.floor(rawModules(v) / 8) - ECC_LEN[v] * BLOCKS[v];
+  const gfMul = (x, y) => {
+    let z = 0;
+    for (let i = 7; i >= 0; i--) { z = (z << 1) ^ ((z >>> 7) * 0x11d); z ^= ((y >>> i) & 1) * x; }
+    return z;
+  };
+  function rsDivisor(deg) {
+    const r = new Array(deg).fill(0);
+    r[deg - 1] = 1;
+    let root = 1;
+    for (let i = 0; i < deg; i++) {
+      for (let j = 0; j < deg; j++) { r[j] = gfMul(r[j], root); if (j + 1 < deg) r[j] ^= r[j + 1]; }
+      root = gfMul(root, 2);
+    }
+    return r;
+  }
+  function rsRemainder(data, div) {
+    const r = new Array(div.length).fill(0);
+    for (const b of data) {
+      const f = b ^ r.shift();
+      r.push(0);
+      div.forEach((c, i) => { r[i] ^= gfMul(c, f); });
+    }
+    return r;
+  }
+
+  return function (text) {
+    const bytes = Array.from(new TextEncoder().encode(text));
+    let v = 1;
+    while (v <= 40 && 4 + (v <= 9 ? 8 : 16) + bytes.length * 8 > dataBytes(v) * 8) v++;
+    if (v > 40) return null;
+
+    // Bits: modo byte (0100), tamanho, dados, terminador, preenchimento.
+    const bits = [];
+    const put = (val, len) => { for (let i = len - 1; i >= 0; i--) bits.push((val >>> i) & 1); };
+    put(4, 4); put(bytes.length, v <= 9 ? 8 : 16); bytes.forEach(b => put(b, 8));
+    const cap = dataBytes(v) * 8;
+    put(0, Math.min(4, cap - bits.length));
+    put(0, (8 - bits.length % 8) % 8);
+    for (let pad = 0xec; bits.length < cap; pad ^= 0xec ^ 0x11) put(pad, 8);
+    const data = [];
+    for (let i = 0; i < bits.length; i += 8) data.push(parseInt(bits.slice(i, i + 8).join(''), 2));
+
+    // Divide em blocos, calcula a correção (Reed-Solomon) e intercala.
+    const nb = BLOCKS[v], el = ECC_LEN[v], raw = Math.floor(rawModules(v) / 8);
+    const nShort = nb - raw % nb, shortLen = Math.floor(raw / nb), div = rsDivisor(el);
+    const blocks = [];
+    for (let i = 0, k = 0; i < nb; i++) {
+      const len = shortLen - el + (i < nShort ? 0 : 1);
+      const dat = data.slice(k, k + len);
+      k += len;
+      const ecc = rsRemainder(dat, div);
+      if (i < nShort) dat.push(0);
+      blocks.push(dat.concat(ecc));
+    }
+    const words = [];
+    for (let i = 0; i < blocks[0].length; i++) {
+      blocks.forEach((b, j) => { if (i !== shortLen - el || j >= nShort) words.push(b[i]); });
+    }
+
+    // Padrões fixos: localizadores, sincronismo, alinhamento, formato e versão.
+    const size = v * 4 + 17;
+    const mod = Array.from({ length: size }, () => new Array(size).fill(false));
+    const fixed = Array.from({ length: size }, () => new Array(size).fill(false));
+    const set = (x, y, dark) => { mod[y][x] = dark; fixed[y][x] = true; };
+    for (let i = 0; i < size; i++) { set(6, i, i % 2 === 0); set(i, 6, i % 2 === 0); }
+    for (const [cx, cy] of [[3, 3], [size - 4, 3], [3, size - 4]]) {
+      for (let dy = -4; dy <= 4; dy++) for (let dx = -4; dx <= 4; dx++) {
+        const x = cx + dx, y = cy + dy, d = Math.max(Math.abs(dx), Math.abs(dy));
+        if (x >= 0 && x < size && y >= 0 && y < size) set(x, y, d !== 2 && d !== 4);
+      }
+    }
+    if (v > 1) {
+      const n = Math.floor(v / 7) + 2, step = Math.floor((v * 8 + n * 3 + 5) / (n * 4 - 4)) * 2;
+      const pos = [6];
+      for (let p = size - 7; pos.length < n; p -= step) pos.splice(1, 0, p);
+      for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) {
+        if ((i === 0 && j === 0) || (i === 0 && j === n - 1) || (i === n - 1 && j === 0)) continue;
+        for (let dy = -2; dy <= 2; dy++) for (let dx = -2; dx <= 2; dx++) {
+          set(pos[i] + dx, pos[j] + dy, Math.max(Math.abs(dx), Math.abs(dy)) !== 1);
+        }
+      }
+    }
+    const drawFormat = mask => {
+      const d = mask;   // nível M = 00
+      let r = d;
+      for (let i = 0; i < 10; i++) r = (r << 1) ^ ((r >>> 9) * 0x537);
+      const f = ((d << 10) | r) ^ 0x5412, bit = i => ((f >>> i) & 1) === 1;
+      for (let i = 0; i <= 5; i++) set(8, i, bit(i));
+      set(8, 7, bit(6)); set(8, 8, bit(7)); set(7, 8, bit(8));
+      for (let i = 9; i < 15; i++) set(14 - i, 8, bit(i));
+      for (let i = 0; i < 8; i++) set(size - 1 - i, 8, bit(i));
+      for (let i = 8; i < 15; i++) set(8, size - 15 + i, bit(i));
+      set(8, size - 8, true);
+    };
+    drawFormat(0);   // reserva a área; o valor certo vem depois da máscara
+    if (v >= 7) {
+      let r = v;
+      for (let i = 0; i < 12; i++) r = (r << 1) ^ ((r >>> 11) * 0x1f25);
+      const f = (v << 12) | r;
+      for (let i = 0; i < 18; i++) {
+        const dark = ((f >>> i) & 1) === 1, a = size - 11 + i % 3, b = Math.floor(i / 3);
+        set(a, b, dark); set(b, a, dark);
+      }
+    }
+
+    // Dados em zigue-zague, de baixo para cima, em colunas duplas.
+    let i = 0;
+    for (let right = size - 1; right >= 1; right -= 2) {
+      if (right === 6) right = 5;
+      for (let vert = 0; vert < size; vert++) {
+        for (let j = 0; j < 2; j++) {
+          const x = right - j, y = ((right + 1) & 2) === 0 ? size - 1 - vert : vert;
+          if (!fixed[y][x] && i < words.length * 8) { mod[y][x] = ((words[i >>> 3] >>> (7 - (i & 7))) & 1) === 1; i++; }
+        }
+      }
+    }
+
+    // Escolhe a máscara com menos penalidade (blocos, faixas e falsos localizadores confundem o celular).
+    const MASKS = [
+      (x, y) => (x + y) % 2 === 0, (x, y) => y % 2 === 0, x => x % 3 === 0, (x, y) => (x + y) % 3 === 0,
+      (x, y) => (Math.floor(x / 3) + Math.floor(y / 2)) % 2 === 0, (x, y) => x * y % 2 + x * y % 3 === 0,
+      (x, y) => (x * y % 2 + x * y % 3) % 2 === 0, (x, y) => ((x + y) % 2 + x * y % 3) % 2 === 0,
+    ];
+    const applyMask = m => {
+      for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) if (!fixed[y][x] && MASKS[m](x, y)) mod[y][x] = !mod[y][x];
+    };
+    const FINDER = [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 0];
+    const linePenalty = line => {
+      let p = 0, run = 1;
+      for (let k = 1; k <= line.length; k++) {
+        if (k < line.length && line[k] === line[k - 1]) run++;
+        else { if (run >= 5) p += run - 2; run = 1; }
+      }
+      for (let k = 0; k + 11 <= line.length; k++) {
+        if (FINDER.every((b, t) => line[k + t] === !!b) || FINDER.every((b, t) => line[k + 10 - t] === !!b)) p += 40;
+      }
+      return p;
+    };
+    const penalty = () => {
+      let p = 0, dark = 0;
+      for (let y = 0; y < size; y++) {
+        p += linePenalty(mod[y]) + linePenalty(mod.map(r => r[y]));
+        for (let x = 0; x < size; x++) {
+          if (mod[y][x]) dark++;
+          if (x < size - 1 && y < size - 1) {
+            const c = mod[y][x];
+            if (c === mod[y][x + 1] && c === mod[y + 1][x] && c === mod[y + 1][x + 1]) p += 3;
+          }
+        }
+      }
+      return p + (Math.ceil(Math.abs(dark * 20 - size * size * 10) / (size * size)) - 1) * 10;
+    };
+    let bestMask = 0, bestScore = Infinity;
+    for (let m = 0; m < 8; m++) {
+      applyMask(m); drawFormat(m);
+      const s = penalty();
+      if (s < bestScore) { bestScore = s; bestMask = m; }
+      applyMask(m);   // desfaz (XOR)
+    }
+    applyMask(bestMask); drawFormat(bestMask);
+    return mod;
+  };
+})();
+// Desenha a matriz como SVG (um único path), com 4 módulos de margem branca.
+function qrSvg(text) {
+  const m = qrMatrix(text);
+  if (!m) return null;
+  const n = m.length + 8, NS = 'http://www.w3.org/2000/svg';
+  let d = '';
+  m.forEach((row, y) => row.forEach((dark, x) => { if (dark) d += 'M' + (x + 4) + ' ' + (y + 4) + 'h1v1h-1z'; }));
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 ' + n + ' ' + n);
+  const path = document.createElementNS(NS, 'path');
+  path.setAttribute('d', d);
+  path.setAttribute('fill', '#0a0b0e');
+  svg.append(path);
+  return svg;
+}
+
+/* ---------------- Notícias dos games ----------------
+   Baixadas pelo Android (no máximo a cada 3 h). OK abre o resumo aqui mesmo;
+   no fim, um QR code leva à matéria completa no celular (a TV não abre o navegador). */
+// Só no navegador (sem ponte): mostra como fica o cartão.
+const DEMO_NEWS = [{
+  title: 'Exemplo de notícia: as manchetes reais aparecem no app da TV', link: 'https://www.adrenaline.com.br/games/',
+  host: 'adrenaline.com.br', source: 'Exemplo', date: 0, image: null,
+  summary: ['No Android, o Onix baixa as últimas notícias de games da Adrenaline e da Eurogamer.pt a cada 3 horas, só com o launcher aberto.',
+    'Ao abrir uma notícia, este resumo aparece sem sair do app. No fim, um QR code abre a matéria completa no celular.'],
+}];
+let news = [];
+function loadNews() { news = Bridge.native ? Bridge.getNews() : DEMO_NEWS; }
+function ago(t) {
+  if (!t) return '';
+  const min = Math.round((Date.now() - t) / 60000);
+  if (min < 1) return 'agora';
+  if (min < 60) return 'há ' + min + ' min';
+  const hr = Math.round(min / 60);
+  if (hr < 24) return 'há ' + hr + ' h';
+  const d = Math.round(hr / 24);
+  return d === 1 ? 'ontem' : 'há ' + d + ' dias';
+}
+const newsMeta = n => [n.source, ago(n.date)].filter(Boolean).join(' · ');
+function renderNews() {
+  const grid = $('#newsGrid');
+  if (!news.length) {
+    grid.replaceChildren(h('div', { class: 'info glass', text: 'As notícias aparecem assim que a TV estiver conectada à internet (atualizadas a cada 3 horas).' }));
+    return;
+  }
+  grid.replaceChildren(...news.map(n => {
+    const b = h('button', { class: 'f news-card glass', tabindex: '-1', 'aria-label': n.title },
+      n.image ? h('img', { class: 'news-img', src: n.image, alt: '', draggable: 'false', decoding: 'async' }) : h('span', { class: 'news-img news-ph' }),
+      h('span', { class: 'news-body' }, h('span', { class: 'news-meta', text: newsMeta(n) }), h('span', { class: 'news-title', text: n.title })));
+    b._news = n;
+    b._act = () => openReader(n, b);
+    return b;
+  }));
+}
+// "há 2 h" envelhece: atualiza só o texto ao entrar em Jogos.
+function updateNewsTimes() {
+  $$('#newsGrid .news-card').forEach(b => { b.querySelector('.news-meta').textContent = newsMeta(b._news); });
+}
+
+// Leitor: janela por cima de tudo; ▲ ▼ rolam o texto, OK ou Voltar fecham.
+let reader = null;
+function openReader(n, from) {
+  $('#readerArt').replaceChildren(...(n.image ? [h('img', { class: 'reader-bg', src: n.image, alt: '', draggable: 'false' }),
+    h('img', { class: 'reader-img', src: n.image, alt: '', draggable: 'false' })] : []));
+  $('#readerMeta').textContent = newsMeta(n);
+  $('#readerTitle').textContent = n.title;
+  $('#readerText').replaceChildren(...n.summary.map(t => h('p', { text: t })));
+  $('#readerHost').textContent = n.host;
+  $('#readerUrl').textContent = n.link;
+  const qr = qrSvg(n.link);
+  $('#readerQr').replaceChildren(...(qr ? [qr] : []));
+  $('#reader').hidden = false;
+  $('#readerPanel').scrollTop = 0;
+  reader = { news: n, from };
+  $('#readerClose').classList.add('is-focused');
+}
+function closeReader() {
+  if (!reader) return;
+  const from = reader.from;
+  reader = null;
+  $('#reader').hidden = true;
+  $('#readerArt').replaceChildren();
+  $('#readerQr').replaceChildren();
+  $('#readerClose').classList.remove('is-focused');
+  if (from && document.contains(from)) setFocus(from); else focusFirstContent();
+}
+function readerKey(e) {
+  const dir = KEYMAP[e.key] || CODEMAP[e.keyCode];
+  if (dir) {
+    e.preventDefault();
+    const panel = $('#readerPanel');
+    if (dir === 'up' || dir === 'down') { panel.scrollTop += (dir === 'down' ? 1 : -1) * panel.clientHeight * .4; sfx('move'); }
+    return;
+  }
+  if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 23) {
+    e.preventDefault(); if (!e.repeat) { sfx('back'); closeReader(); } return;
+  }
+  if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4) {
+    e.preventDefault(); back();
+  }
+}
+
+/* ---------------- Entradas (HDMI) ----------------
+   A ponte lista as portas HDMI físicas na ordem da TV. A canetinha embaixo de cada porta troca
+   o banner (salvo por número da porta), já que os aparelhos ligados mudam com o tempo. */
+// Logo original da PlayStation (PNG branco com transparência, recortado da imagem de referência).
+const PS_ART = '<svg viewBox="0 0 160 100"><rect width="160" height="100" fill="#000"/><image x="39" y="19" width="82" height="63.5" href="data:image/png;base64,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"/></svg>';
+const HDMI_ART = '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M48 36h64v14l-7 9H55l-7-9z" stroke-width="3"/><path d="M58 45h44" stroke-width="2" opacity=".45"/></svg>';
+// Logos do Xbox e do Nintendo Switch: PNG branco com transparência, como o da PlayStation.
+const XBOX_ART = '<svg viewBox="0 0 160 100"><rect width="160" height="100" fill="#000"/><image x="51.9" y="22" width="56.3" height="56" href="data:image/png;base64,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"/></svg>';
+const SWITCH_ART = '<svg viewBox="0 0 160 100"><rect width="160" height="100" fill="#000"/><image x="49.1" y="17" width="61.8" height="66" href="data:image/png;base64,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"/></svg>';
+// Videogame (console + controle) e computador: ícones genéricos em traço branco, no estilo dos ícones do menu.
+const CONSOLE_ART = '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><rect x="30" y="34" width="50" height="26" rx="4" stroke-width="3"/><path d="M38 47h22" stroke-width="2" opacity=".45"/><circle cx="71" cy="47" r="1.6" fill="#fff" stroke-width="2"/><g transform="translate(58 28.2) scale(.6)"><path d="M60 34h40c9 0 14 7 16 19l2 12c1 7-7 10-11 5l-8-9H61l-8 9c-4 5-12 2-11-5l2-12c2-12 7-19 16-19z" stroke-width="5"/><path d="M62 47v10M57 52h10" stroke-width="4"/><circle cx="96" cy="48" r="1.8" fill="#fff" stroke-width="3"/><circle cx="102" cy="55" r="1.8" fill="#fff" stroke-width="3"/></g></svg>';
+const PC_ART = '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><rect x="48" y="24" width="64" height="40" rx="3" stroke-width="3"/><path d="M80 64v10M68 76h24" stroke-width="3"/><path d="M56 56h48" stroke-width="2" opacity=".45"/></svg>';
+const PEN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>';
+// name null = usa o nome da porta. glass = fundo de vidro (os logos já trazem o fundo preto).
+const INPUT_BANNERS = [
+  { id: 'hdmi',   name: null,              art: HDMI_ART,   glass: true },
+  { id: 'ps5',    name: 'PlayStation 5',   art: PS_ART },
+  { id: 'xbox',   name: 'Xbox',            art: XBOX_ART },
+  { id: 'switch', name: 'Nintendo Switch', art: SWITCH_ART },
+  { id: 'console', name: 'Videogame',      art: CONSOLE_ART, glass: true },
+  { id: 'pc',     name: 'Computador',      art: PC_ART,     glass: true },
+];
+const INPUTS_KEY = 'onix.inputs';
+// { "1": "ps5" } = número da porta -> banner. Sem nada salvo, a HDMI 1 segue sendo o PlayStation 5.
+let inputBanners = { 1: 'ps5' };
+try {
+  const saved = JSON.parse(localStorage.getItem(INPUTS_KEY) || 'null');
+  if (saved && typeof saved === 'object') {
+    inputBanners = {};
+    for (const [k, v] of Object.entries(saved)) if (/^\d{1,2}$/.test(k) && INPUT_BANNERS.some(b => b.id === v)) inputBanners[k] = v;
+  }
+} catch (_) {}
+function saveInputBanners() { try { localStorage.setItem(INPUTS_KEY, JSON.stringify(inputBanners)); } catch (_) {} }
+const bannerOf = n => INPUT_BANNERS.find(b => b.id === inputBanners[n]) || INPUT_BANNERS[0];
+
+let inputs = [];
+function loadInputs() { inputs = Bridge.getInputs(); }
+function openInput(inp) {
+  if (!Bridge.native) { toast('Mudaria para ' + inp.name + ' (simulação no navegador)'); return; }
+  if (!inp.id) { toast(inp.port + ' não encontrada nesta TV'); return; }
+  if (Bridge.openInput(inp.id)) toast('Mudando para ' + inp.name + '…');
+  else toast('Não foi possível abrir ' + inp.name);
+}
+function renderInputs() {
+  // Aparelho sem HDMI de entrada (Chromecast, TV box): explica em vez de mostrar portas que não abrem.
+  if (Bridge.native && !inputs.length) {
+    $('#inputsGrid').replaceChildren(h('div', { class: 'info glass', text: 'Este aparelho não tem entradas HDMI para trocar (por exemplo, Chromecast ou TV box). Elas aparecem aqui quando o Onix roda numa TV.' }));
+    return;
+  }
+  // No navegador, mostra as três portas padrão como exemplo.
+  const list = inputs.length ? inputs : [{ id: '' }, { id: '' }, { id: '' }];
+  $('#inputsGrid').replaceChildren(...list.map((it, i) => {
+    const n = i + 1, port = 'HDMI ' + n, ban = bannerOf(n);
+    const inp = { id: it.id, port, name: ban.name || port };
+    const b = h('button', { class: 'f tile', tabindex: '-1', 'aria-label': inp.name },
+      h('span', { class: 'tile-art' + (ban.glass ? ' glass' : '') }, svgFrom(ban.art)),
+      h('span', { class: 'tile-label', text: inp.name }),
+      h('span', { class: 'tile-sub', text: ban.name ? port : (it.label && it.label !== port ? it.label : 'Entrada') }));
+    b._act = () => openInput(inp);
+    const pen = h('button', { class: 'f pen glass', tabindex: '-1', 'aria-label': 'Trocar o banner da ' + port }, svgFrom(PEN_SVG));
+    pen._act = () => cycleBanner(n, i);
+    return h('div', { class: 'input-cell' }, b, pen);
+  }));
+}
+// Cada OK na canetinha passa para o próximo banner; o foco fica nela.
+function cycleBanner(n, i) {
+  const k = INPUT_BANNERS.indexOf(bannerOf(n)), next = INPUT_BANNERS[(k + 1) % INPUT_BANNERS.length];
+  inputBanners[n] = next.id;
+  saveInputBanners();
+  renderInputs();
+  setFocus($('#inputsGrid').children[i].querySelector('.pen'));
+  toast('HDMI ' + n + ': ' + (next.name || 'banner padrão'));
+}
+
+function openSettings() {
+  if (!Bridge.native) { toast('Abriria as configurações da TV (simulação no navegador)'); return; }
+  if (!Bridge.openSettings()) toast('Não foi possível abrir as configurações');
+}
+
+// Desligar TV: o primeiro OK arma (botão vermelho por 3 s), o segundo desliga. Evita desligar por engano.
+let powerArmed = 0;
+function powerOff() {
+  const btn = $('#powerBtn');
+  if (!powerArmed) {
+    btn.classList.add('armed');
+    toast('Aperte OK de novo para desligar a TV');
+    powerArmed = setTimeout(disarmPower, 3000);
+    return;
+  }
+  disarmPower();
+  if (!Bridge.native) { toast('Desligaria a TV (simulação no navegador)'); return; }
+  const r = Bridge.powerOff();
+  if (r === 'ask') toast('Autorize o Onix a desligar a TV e aperte de novo');
+  else if (r !== 'ok') toast('Este aparelho não deixou o Onix desligar a tela. Pelo adb: dpm set-active-admin com.aurora.launcher/.PowerAdmin');
+}
+function disarmPower() { clearTimeout(powerArmed); powerArmed = 0; $('#powerBtn').classList.remove('armed'); }
+
+function openPictureSettings() {
+  if (!Bridge.native) { toast('Abriria os ajustes de imagem da TV (simulação no navegador)'); return; }
+  if (!Bridge.openPictureSettings()) toast('Não foi possível abrir os ajustes de imagem');
+}
+
+/* ---------------- Configurações do Onix ---------------- */
+const OPTIONS = [
+  { group: 'Desempenho' },
+  { key: 'shine',  name: 'Brilho ao focar',       desc: 'Feixe de luz que passa sobre o item selecionado.' },
+  { key: 'zoom',   name: 'Zoom ao focar',         desc: 'Aumenta o item selecionado. Desligado, só o contorno branco marca o foco.' },
+  { key: 'motion', name: 'Transições suaves',     desc: 'Animações de foco, do destaque e dos avisos. Desligado, tudo muda na hora.' },
+  { key: 'shadow', name: 'Sombras e reflexos',    desc: 'Sombras projetadas e reflexo do vidro. Desligar alivia a GPU da TV.' },
+  { act: 'perf',   name: 'Modo desempenho máximo', desc: 'Desliga brilho, zoom, transições e sombras de uma vez.' },
+  { group: 'Início' },
+  { key: 'rotate', name: 'Trocar destaque sozinho', desc: 'Passa para a próxima indicação a cada 9 segundos.' },
+  { key: 'h24',    name: 'Relógio de 24 horas',   desc: 'Desligado, mostra 1:00 em vez de 13:00.' },
+  { key: 'sound',  name: 'Sons do menu',          desc: 'Toque suave ao navegar, abrir e voltar.' },
+  { key: 'saver',  name: 'Tela de descanso',      desc: 'Planetas e asteroides passam pela tela após 10 minutos sem usar o controle.' },
+  { act: 'saver',  name: 'Descansar agora',       desc: 'Entra na tela de descanso na hora, mesmo com ela desligada acima. Qualquer tecla volta ao Onix.' },
+  { group: 'Sistema' },
+  { act: 'reset',  name: 'Restaurar padrão',      desc: 'Volta todas as opções do Onix ao original.' },
+  { act: 'tv',     name: 'Configurações da TV',   desc: 'Rede, imagem, som e demais ajustes do Android TV.' },
+  { group: 'Sobre' },
+  { act: 'about' },
+];
+const ABOUT = [['Criado por', 'Ruan Amaral'], ['Instagram', '@ruan_amarl'], ['Versão', APP_VERSION]];
+const GO_ICON = '<svg class="opt-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
+function setOption(key, on) {
+  settings[key] = on;
+  saveSettings();
+  applySettings();
+  if (key === 'h24') updateClock(true);
+  if (key === 'sound' && on) sfx('select');
+  armSaver();
+}
+function syncSwitches() {
+  $$('#optsList .switch').forEach(sw => sw.classList.toggle('on', settings[sw.dataset.key]));
+}
+function renderSettings() {
+  $('#optsList').replaceChildren(...OPTIONS.map(o => {
+    if (o.group) return h('div', { class: 'opts-group', text: o.group });
+    if (o.act === 'about') {
+      const card = h('button', { class: 'f opt glass about', tabindex: '-1', 'aria-label': 'Sobre o Onix' },
+        ...ABOUT.map(([k, v]) => h('span', { class: 'about-row' }, h('span', { text: k }), h('span', { text: v }))),
+        h('span', { class: 'about-thanks', text: 'Obrigado por usar meu app :)' }));
+      card._act = () => toast('Valeu, de coração! :)');
+      return card;
+    }
+    const b = h('button', { class: 'f opt glass', tabindex: '-1', 'aria-label': o.name },
+      h('span', { class: 'opt-text' }, h('span', { class: 'opt-name', text: o.name }), h('span', { class: 'opt-desc', text: o.desc })),
+      o.key ? h('span', { class: 'switch', 'data-key': o.key }) : svgFrom(GO_ICON));
+    if (o.key) b._act = () => { setOption(o.key, !settings[o.key]); syncSwitches(); };
+    else if (o.act === 'perf') b._act = () => {
+      ['shine', 'zoom', 'motion', 'shadow'].forEach(k => { settings[k] = false; });
+      setOption('motion', false); syncSwitches(); toast('Modo desempenho máximo ativado');
+    };
+    else if (o.act === 'reset') b._act = () => {
+      Object.assign(settings, DEFAULTS); setOption('h24', DEFAULTS.h24); syncSwitches(); toast('Configurações restauradas');
+    };
+    else if (o.act === 'saver') b._act = showSaver;
+    else b._act = openSettings;
+    return b;
+  }));
+  syncSwitches();
+}
+
+/* ---------------- Seções ---------------- */
+let activeSection = 'home';
+function showSection(name) {
+  clearTimeout(sectionTimer); pendingSection = null;
+  if (name === activeSection && $('#sec-' + name).classList.contains('active')) return;
+  if (activeSection === 'edit') leaveEditor();
+  activeSection = name;
+  if (name === 'games') updateNewsTimes();
+  $$('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + name));
+  $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.section === name));
+  $('#refreshBtn').hidden = name !== 'home';
+  $('#main').scrollTop = 0;
+}
+const activeNavItem = () => $('.nav-item[data-section="' + activeSection + '"]');
+
+/* ---------------- Navegação espacial (controle remoto) ---------------- */
+let current = null;
+const lastContent = {};
+const inNav = el => !!el.closest('#sidebar');
+function pool(zone) {
+  const root = zone === 'nav' ? $('#sidebar') : $('#sec-' + activeSection);
+  const els = $$('.f', root);
+  if (zone !== 'nav') els.push(...$$('.topbar .f'));   // "Atualizar", acima dos selos
+  return els.filter(e => e.getClientRects().length > 0);
+}
+function setFocus(el) {
+  if (!el) return;
+  if (powerArmed && el.id !== 'powerBtn') disarmPower();
+  if (current && current !== el) current.classList.remove('is-focused');
+  current = el;
+  el.classList.add('is-focused');
+  try { el.focus({ preventScroll: true }); } catch (_) { el.focus(); }
+  $('#sidebar').classList.toggle('nav-focus', inNav(el));
+  if (inNav(el)) {
+    if (el.dataset.section) queueSection(el.dataset.section);
+  } else {
+    flushSection();
+    lastContent[activeSection] = el;
+    // Rolagem instantânea: a "smooth" do WebView atrasa o foco e acumula com o controle.
+    if (el.closest('#hero')) $('#main').scrollTop = 0;
+    else el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  }
+}
+// O destaque do menu muda na hora; a seção (layout pesado da grade de apps) só troca
+// quando o foco para por um instante, então passar pelo menu não engasga.
+let sectionTimer = 0, pendingSection = null;
+function queueSection(name) {
+  pendingSection = name;
+  clearTimeout(sectionTimer);
+  sectionTimer = setTimeout(flushSection, 120);
+}
+function flushSection() {
+  clearTimeout(sectionTimer);
+  if (pendingSection) { const n = pendingSection; pendingSection = null; showSection(n); }
+}
+function best(from, dir, cands, needOverlap) {
+  const r = from.getBoundingClientRect();
+  const rcx = r.left + r.width / 2, rcy = r.top + r.height / 2;
+  let bestEl = null, bestScore = Infinity;
+  for (const e of cands) {
+    if (e === from) continue;
+    const c = e.getBoundingClientRect();
+    const ccx = c.left + c.width / 2, ccy = c.top + c.height / 2;
+    let main, cross, offset, score;
+    if (dir === 'left' || dir === 'right') {
+      if (dir === 'right' ? ccx <= rcx + 4 : ccx >= rcx - 4) continue;
+      main = dir === 'right' ? Math.max(0, c.left - r.right) : Math.max(0, r.left - c.right);
+      cross = Math.max(0, c.top - r.bottom, r.top - c.bottom);
+      if (needOverlap && cross > 0) continue;
+      offset = Math.abs(ccy - rcy);
+      score = main + cross * 3 + offset * .3;
+    } else {
+      if (dir === 'down' ? ccy <= rcy + 4 : ccy >= rcy - 4) continue;
+      main = dir === 'down' ? Math.max(0, c.top - r.bottom) : Math.max(0, r.top - c.bottom);
+      cross = Math.max(0, c.left - r.right, r.left - c.right);
+      offset = Math.abs(ccx - rcx);
+      score = main * 3 + cross + offset * .5;
+    }
+    if (score < bestScore) { bestScore = score; bestEl = e; }
+  }
+  return bestEl;
+}
+function usable(el) { return el && document.contains(el) && el.getClientRects().length > 0 && !inNav(el) && (el.closest('#sec-' + activeSection) || el.closest('.topbar')); }
+function move(dir) {
+  if (!current || !document.contains(current)) { setFocus(activeNavItem()); return true; }
+  flushSection();
+  const horizontal = dir === 'left' || dir === 'right';
+  const fromNav = inNav(current);
+  let target = best(current, dir, pool(fromNav ? 'nav' : 'content'), horizontal);
+  if (!target) {
+    if (fromNav) {
+      // Só entra no conteúdo se ele estiver na direção pressionada.
+      if (best(current, dir, pool('content'), false)) {
+        const lc = lastContent[activeSection];
+        target = usable(lc) ? lc : best(current, dir, pool('content'), false);
+      }
+    } else if (best(current, dir, pool('nav'), false)) {
+      target = activeNavItem();
+    }
+  }
+  if (!target) return false;
+  setFocus(target);
+  return true;
+}
+function focusFirstContent() {
+  flushSection();
+  const lc = lastContent[activeSection];
+  setFocus(usable(lc) ? lc : pool('content')[0]);
+}
+function activate(el) {
+  if (!el) return;
+  if (inNav(el)) {
+    if (typeof el._act === 'function') { el._act(); return; }   // item de menu com ação própria
+    showSection(el.dataset.section); focusFirstContent(); return;
+  }
+  if (typeof el._act === 'function') el._act();
+}
+// Retorna true se a página tratou o Voltar; false = o app nativo pode fechar.
+function back() {
+  // Voltar só acorda a tela de descanso (também quando o keydown já a fechou neste toque).
+  if (saverOn || Date.now() < saverGuard) { hideSaver(); return true; }
+  const done = backStep();
+  if (done) sfx('back');
+  return done;
+}
+function backStep() {
+  if (game) { closeGame(); return true; }
+  if (reader) { closeReader(); return true; }
+  if (grabbed) { dropGrab(); return true; }
+  flushSection();
+  if (activeSection === 'edit') { closeEditor(); return true; }
+  if (current && !inNav(current)) { setFocus(activeNavItem()); return true; }
+  if (activeSection !== 'home') { setFocus($('.nav-item[data-section="home"]')); return true; }
+  return false;
+}
+
+const KEYMAP = { ArrowUp: 'up', ArrowDown: 'down', ArrowLeft: 'left', ArrowRight: 'right', Up: 'up', Down: 'down', Left: 'left', Right: 'right' };
+const CODEMAP = { 38: 'up', 40: 'down', 37: 'left', 39: 'right' };
+let repeatLock = false;
+document.addEventListener('keyup', e => { if (game) gameKey(e, false); });
+document.addEventListener('keydown', e => {
+  if (game) { gameKey(e, true); return; }
+  if (reader) { readerKey(e); return; }
+  const dir = KEYMAP[e.key] || CODEMAP[e.keyCode];
+  if (dir) {
+    e.preventDefault();
+    // Repetições chegam mais rápido que a TV desenha; descartar as do mesmo quadro
+    // evita que o foco continue andando depois de soltar a tecla.
+    if (e.repeat) { if (repeatLock) return; repeatLock = true; requestAnimationFrame(() => { repeatLock = false; }); }
+    // App "pego" na tela de organizar: ◀ ▶ mudam a posição dele; ▲ ▼ ficam travados até soltar.
+    if (grabbed) { if (dir === 'left' || dir === 'right') moveGrabbed(dir); return; }
+    if (move(dir)) sfx(inNav(current) ? 'nav' : 'move');
+    else if (!e.repeat) sfx('edge');
+    return;
+  }
+  if (e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 23) {
+    e.preventDefault(); if (!e.repeat && current) { sfx('select'); activate(current); } return;
+  }
+  if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4) {
+    e.preventDefault(); back();
+  }
+});
+
+/* ---------------- Toque / mouse ---------------- */
+document.addEventListener('click', e => {
+  if (reader) {
+    const rb = e.target.closest('#reader .f');
+    if (rb) { e.preventDefault(); rb._act(); }
+    else if (!e.target.closest('#readerPanel')) closeReader();
+    return;
+  }
+  const el = e.target.closest('.f');
+  if (!el) return;
+  e.preventDefault();
+  if (grabbed && el.dataset.pkg !== grabbed) dropGrab();
+  setFocus(el);
+  sfx('select');
+  activate(el);
+});
+
+/* ---------------- Tela de descanso ----------------
+   Após 10 min sem tecla nem toque, planetas (o Onix entre eles) e asteroides cruzam a tela
+   devagar. Céu e corpos são desenhados uma vez em canvases (sprites); por quadro só há
+   clearRect + drawImage. A tecla que acorda a tela não chega ao launcher. */
+const SAVER_IDLE = 10 * 60 * 1000, TAU = Math.PI * 2, ROCKS = 18;
+let saverOn = false, saverGuard = 0, lastInput = Date.now(), saverTimer = 0;
+let svCtx = null, svW = 0, svH = 0, svRaf = 0, svLast = 0, svClockTimer = 0;
+let svBodies = [], svQueue = [], svSprites = null, svSpritesH = 0, svMeteor = null, svMeteorIn = 0;
+
+function armSaver() {
+  clearTimeout(saverTimer);
+  if (!settings.saver || saverOn) return;
+  saverTimer = setTimeout(() => {
+    if (lastInput + SAVER_IDLE - Date.now() > 500) armSaver();
+    else if (document.hidden) { lastInput = Date.now(); armSaver(); }
+    else showSaver();
+  }, Math.max(1000, lastInput + SAVER_IDLE - Date.now()));
+}
+// Voltando de outro app (o Android congela os timers da página), a contagem recomeça do zero.
+function wakeSaver() { lastInput = Date.now(); if (saverOn) hideSaver(); else armSaver(); }
+document.addEventListener('visibilitychange', () => { if (!document.hidden) wakeSaver(); else if (saverOn) hideSaver(); });
+
+// Fase de captura: roda antes da navegação. Com a tela ligada (e logo depois de fechar),
+// engole o evento para o toque que acorda não abrir nada nem mover o foco.
+function saverInput(e) {
+  lastInput = Date.now();
+  if (!saverOn && lastInput >= saverGuard) return;
+  e.preventDefault(); e.stopImmediatePropagation();
+  if (saverOn && e.type !== 'keyup' && !e.repeat) hideSaver();
+}
+for (const t of ['keydown', 'keyup', 'pointerdown', 'mousedown', 'touchstart', 'click', 'wheel'])
+  window.addEventListener(t, saverInput, { capture: true, passive: false });
+window.addEventListener('mousemove', () => { lastInput = Date.now(); }, { passive: true });
+window.addEventListener('resize', () => { if (saverOn) { svW = 0; sizeSaver(); } });
+
+function showSaver() {
+  if (saverOn) return;
+  if (game) pauseGame();
+  clearTimeout(saverTimer);
+  saverOn = true;
+  sizeSaver();
+  saverClock();
+  $('#saver').classList.add('show');
+  svLast = 0;
+  svRaf = requestAnimationFrame(saverFrame);
+}
+function hideSaver() {
+  saverGuard = Date.now() + 450;
+  lastInput = Date.now();
+  if (saverOn) {
+    saverOn = false;
+    cancelAnimationFrame(svRaf); clearTimeout(svClockTimer);
+    $('#saver').classList.remove('show');
+    // Devolve a memória das duas telas cheias (a TV tem pouca); os sprites ficam guardados.
+    for (const c of $$('#saver canvas')) { c.width = 0; c.height = 0; }
+    svCtx = null; svW = svH = 0; svMeteor = null;
+  }
+  armSaver();
+}
+
+function saverClock() {
+  clearTimeout(svClockTimer);
+  const d = new Date(), el = $('#saverClock');
+  el.replaceChildren(clockText(d), h('small', { text: dateText(d) }));
+  // Troca de canto a cada minuto: nada fica parado no mesmo ponto da tela (painel OLED).
+  const right = Math.random() < .5, top = Math.random() < .5;
+  el.style.left = right ? 'auto' : (3 + Math.random() * 5) + 'vw';
+  el.style.right = right ? (3 + Math.random() * 5) + 'vw' : 'auto';
+  el.style.top = top ? (5 + Math.random() * 6) + 'vh' : 'auto';
+  el.style.bottom = top ? 'auto' : (5 + Math.random() * 6) + 'vh';
+  el.style.textAlign = right ? 'right' : 'left';
+  svClockTimer = setTimeout(saverClock, 60050 - d.getSeconds() * 1000 - d.getMilliseconds());
+}
+
+// Resolução limitada a 1920 px de largura: mais que isso só pesa na GPU da TV.
+function sizeSaver() {
+  const k = Math.min(window.devicePixelRatio || 1, 1920 / Math.max(1, innerWidth));
+  const W = Math.round(innerWidth * k), H = Math.round(innerHeight * k);
+  if (W === svW && H === svH && svCtx) return;
+  svW = W; svH = H;
+  const sky = $('#saverSky'), fg = $('#saverCanvas');
+  sky.width = fg.width = W; sky.height = fg.height = H;
+  drawSky(sky.getContext('2d', { alpha: false }), W, H, rng(7));
+  svCtx = fg.getContext('2d');
+  if (svSpritesH !== H) { svSprites = buildSprites(H); svSpritesH = H; }
+  seedSaver();
+}
+
+function rng(seed) {
+  return () => {
+    seed = (seed + 0x6D2B79F5) | 0;
+    let t = Math.imul(seed ^ (seed >>> 15), 1 | seed);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+function canvasOf(w, h) {
+  const c = document.createElement('canvas');
+  c.width = Math.max(1, Math.ceil(w)); c.height = Math.max(1, Math.ceil(h));
+  return c;
+}
+function glowAt(g, x, y, r0, r1, color) {
+  const gr = g.createRadialGradient(x, y, r0, x, y, r1);
+  gr.addColorStop(0, color); gr.addColorStop(1, 'rgba(0,0,0,0)');
+  g.fillStyle = gr; g.fillRect(x - r1, y - r1, r1 * 2, r1 * 2);
+}
+
+// Céu noturno: preto puro (OLED apagado) e estrelas discretas, sem nebulosas coloridas.
+function drawSky(g, W, H, rnd) {
+  g.fillStyle = '#000'; g.fillRect(0, 0, W, H);
+  const u = H / 1080, n = Math.round(W * H / 9000);
+  for (let i = 0; i < n; i++) {
+    const s = rnd();
+    g.globalAlpha = .08 + rnd() * .4;
+    g.fillStyle = s > .95 ? '#dde6ff' : '#fff';
+    g.beginPath(); g.arc(rnd() * W, rnd() * H, (s > .97 ? 1.3 : s > .8 ? .9 : .6) * u, 0, TAU); g.fill();
+  }
+  g.globalAlpha = 1;
+  for (let i = 0; i < 6; i++) {
+    const x = rnd() * W, y = rnd() * H, R = (3 + rnd() * 4) * u;
+    const gr = g.createRadialGradient(x, y, 0, x, y, R);
+    gr.addColorStop(0, 'rgba(255,255,255,.6)'); gr.addColorStop(.3, 'rgba(255,255,255,.12)'); gr.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = gr; g.fillRect(x - R, y - R, R * 2, R * 2);
+  }
+}
+
+/* Planeta no estilo do app: esfera de vidro escura (grafite com um leve tom), detalhes em traço
+   branco fino como os ícones, reflexo do --glass e contorno claro no alto à esquerda (--glass-hi). */
+function ball(g, x, y, r, tint, detail) {
+  g.save();
+  g.beginPath(); g.arc(x, y, r, 0, TAU); g.clip();
+  const base = g.createLinearGradient(x - r, y - r, x + r, y + r);
+  base.addColorStop(0, tint); base.addColorStop(.6, '#0b0c10'); base.addColorStop(1, '#050506');
+  g.fillStyle = base; g.fillRect(x - r, y - r, r * 2, r * 2);
+  if (detail) { g.lineCap = 'round'; detail(Math.max(1, r * .035)); }
+  const gl = g.createLinearGradient(x - r, y - r, x + r, y + r);
+  gl.addColorStop(0, 'rgba(255,255,255,.15)'); gl.addColorStop(.6, 'rgba(255,255,255,.03)'); gl.addColorStop(1, 'rgba(255,255,255,.06)');
+  g.fillStyle = gl; g.fillRect(x - r, y - r, r * 2, r * 2);
+  const s = g.createRadialGradient(x - r * .45, y - r * .45, r * .2, x - r * .2, y - r * .2, r * 1.5);
+  s.addColorStop(0, 'rgba(0,0,0,0)'); s.addColorStop(.55, 'rgba(0,0,0,.25)'); s.addColorStop(1, 'rgba(0,0,0,.85)');
+  g.fillStyle = s; g.fillRect(x - r, y - r, r * 2, r * 2);
+  g.restore();
+  rim(g, x, y, r, .6);
+}
+function rim(g, x, y, r, a) {
+  const lw = Math.max(1, r * .045), e = g.createLinearGradient(x - r, y - r, x + r * .6, y + r * .6);
+  e.addColorStop(0, `rgba(255,255,255,${a})`); e.addColorStop(.5, `rgba(255,255,255,${a * .25})`); e.addColorStop(1, 'rgba(255,255,255,.05)');
+  g.strokeStyle = e; g.lineWidth = lw;
+  g.beginPath(); g.arc(x, y, r - lw / 2, 0, TAU); g.stroke();
+}
+// Faixas horizontais em traço fino (alpha variado), curvadas como num globo.
+function lines(g, x, y, r, rnd, n, lw, aMax) {
+  for (let i = 1; i < n; i++) {
+    const yy = y - r + (i + (rnd() - .5) * .5) * 2 * r / n, w = Math.sqrt(Math.max(0, r * r - (yy - y) ** 2));
+    g.strokeStyle = `rgba(255,255,255,${(.25 + rnd() * .75) * aMax})`; g.lineWidth = lw * (.6 + rnd() * .9);
+    g.beginPath(); g.moveTo(x - w, yy); g.quadraticCurveTo(x, yy + r * .08, x + w, yy); g.stroke();
+  }
+}
+function rings(g, x, y, r, rnd, n, lw, a) {
+  for (let i = 0; i < n; i++) {
+    const cx = x + (rnd() * 2 - 1) * r * .8, cy = y + (rnd() * 2 - 1) * r * .8, cr = r * (.06 + rnd() * .12);
+    g.strokeStyle = `rgba(255,255,255,${a})`; g.lineWidth = lw * .8;
+    g.beginPath(); g.arc(cx, cy, cr, 0, TAU); g.stroke();
+  }
+}
+function outline(g, x, y, rx, ry, rot, lw, a, fill) {
+  g.beginPath(); g.ellipse(x, y, rx, ry, rot, 0, TAU);
+  if (fill) { g.fillStyle = fill; g.fill(); }
+  g.strokeStyle = `rgba(255,255,255,${a})`; g.lineWidth = lw; g.stroke();
+}
+function patches(g, x, y, r, rnd, n, lw, fill, a) {
+  for (let i = 0; i < n; i++) {
+    const cx = x + (rnd() * 2 - 1) * r * .7, cy = y + (rnd() * 2 - 1) * r * .7;
+    g.beginPath();
+    const k = 7, pts = [];
+    for (let j = 0; j < k; j++) { const t = j / k * TAU, d = r * (.12 + rnd() * .2); pts.push([cx + Math.cos(t) * d * 1.3, cy + Math.sin(t) * d]); }
+    g.moveTo((pts[0][0] + pts[k - 1][0]) / 2, (pts[0][1] + pts[k - 1][1]) / 2);
+    for (let j = 0; j < k; j++) { const p = pts[j], q = pts[(j + 1) % k]; g.quadraticCurveTo(p[0], p[1], (p[0] + q[0]) / 2, (p[1] + q[1]) / 2); }
+    g.fillStyle = fill; g.fill();
+    if (a) { g.strokeStyle = `rgba(255,255,255,${a})`; g.lineWidth = lw * .8; g.stroke(); }
+  }
+}
+// Anel inclinado: a metade de trás vai antes do planeta, a da frente depois.
+function ring(g, x, y, rx, ry, tilt, front, list) {
+  g.save(); g.translate(x, y); g.rotate(tilt);
+  for (const [k, w, c] of list) {
+    g.strokeStyle = c; g.lineWidth = w;
+    g.beginPath(); g.ellipse(0, 0, rx * k, ry * k, 0, front ? 0 : Math.PI, front ? Math.PI : TAU); g.stroke();
+  }
+  g.restore();
+}
+
+// Anéis em traço branco, como o anel da marca.
+const ringLines = (r, specs) => specs.map(([k, w, a]) => [k, Math.max(1, r * w), `rgba(255,255,255,${a})`]);
+
+const PLANETS = {
+  // r = raio e v = velocidade, em fração da altura da tela (por segundo). Maior = mais perto = mais rápido.
+  onix:    { r: .05,  v: .016, ring: 2.35, paint(g, x, y, r) {
+    // A marca do Onix: planeta escuro de contorno branco, anel a -20° com folga atrás e corte na frente.
+    const tilt = -20 * Math.PI / 180, list = [[1, r * .2, 'rgba(255,255,255,.92)']];
+    ring(g, x, y, r * 2.1, r * .6, tilt, false, list);
+    g.globalCompositeOperation = 'destination-out';
+    g.beginPath(); g.arc(x, y, r * 1.16, 0, TAU); g.fill();
+    g.globalCompositeOperation = 'source-over';
+    ball(g, x, y, r, '#2a2d36', null);
+    g.strokeStyle = '#fff'; g.lineWidth = r * .2;
+    g.beginPath(); g.arc(x, y, r * .9, 0, TAU); g.stroke();
+    g.save(); g.beginPath(); g.arc(x, y, r * 1.02, 0, TAU); g.clip();
+    g.globalCompositeOperation = 'destination-out';
+    ring(g, x, y, r * 2.1, r * .6, tilt, true, [[1, r * .55, '#000']]);
+    g.restore();
+    ring(g, x, y, r * 2.1, r * .6, tilt, true, list);
+    g.globalCompositeOperation = 'destination-over';
+    glowAt(g, x, y, r * .9, r * 1.5, 'rgba(255,255,255,.12)');
+    g.globalCompositeOperation = 'source-over';
+  } },
+  mercury: { r: .02,  v: .008, paint(g, x, y, r, rnd) {
+    ball(g, x, y, r, '#3b3c42', lw => rings(g, x, y, r, rnd, 6, lw, .14));
+  } },
+  venus:   { r: .032, v: .010, paint(g, x, y, r, rnd) {
+    ball(g, x, y, r, '#4d4234', lw => lines(g, x, y, r, rnd, 7, lw, .14));
+  } },
+  earth:   { r: .036, v: .012, paint(g, x, y, r, rnd) {
+    ball(g, x, y, r, '#1d3a5e', lw => {
+      patches(g, x, y, r, rnd, 3, lw, 'rgba(140,190,170,.12)', 0);
+      for (let i = 0; i < 3; i++) {
+        const cy = y + (rnd() * 2 - 1) * r * .8, cx = x + (rnd() - .5) * r, w = r * (.3 + rnd() * .4);
+        g.strokeStyle = 'rgba(255,255,255,.3)'; g.lineWidth = lw;
+        g.beginPath(); g.moveTo(cx - w, cy); g.quadraticCurveTo(cx, cy - r * .1, cx + w, cy); g.stroke();
+      }
+    });
+  } },
+  mars:    { r: .026, v: .009, paint(g, x, y, r, rnd) {
+    ball(g, x, y, r, '#56302a', lw => {
+      patches(g, x, y, r, rnd, 3, lw, 'rgba(0,0,0,.18)', .1);
+      outline(g, x, y - r * .92, r * .38, r * .12, 0, lw, .55, 'rgba(255,255,255,.18)');
+    });
+  } },
+  jupiter: { r: .085, v: .022, paint(g, x, y, r, rnd) {
+    ball(g, x, y, r, '#4a3d30', lw => {
+      lines(g, x, y, r, rnd, 11, lw, .2);
+      outline(g, x + r * .3, y + r * .3, r * .2, r * .1, 0, lw * 1.2, .4, 'rgba(180,90,60,.25)');
+    });
+  } },
+  saturn:  { r: .055, v: .018, ring: 2.35, paint(g, x, y, r, rnd) {
+    const tilt = -.32, list = ringLines(r, [[1.1, .02, .18], [1, .05, .55], [.9, .035, .35], [.8, .025, .22]]);
+    ring(g, x, y, r * 2.15, r * .55, tilt, false, list);
+    ball(g, x, y, r, '#4a4230', lw => lines(g, x, y, r, rnd, 8, lw, .16));
+    ring(g, x, y, r * 2.15, r * .55, tilt, true, list);
+  } },
+  uranus:  { r: .04,  v: .013, ring: 2.1, paint(g, x, y, r, rnd) {
+    const tilt = 1.35, list = ringLines(r, [[1, .03, .35], [.88, .02, .2]]);
+    ring(g, x, y, r * 1.9, r * .38, tilt, false, list);
+    ball(g, x, y, r, '#28505a', lw => lines(g, x, y, r, rnd, 5, lw, .1));
+    ring(g, x, y, r * 1.9, r * .38, tilt, true, list);
+  } },
+  neptune: { r: .038, v: .012, paint(g, x, y, r, rnd) {
+    ball(g, x, y, r, '#22306a', lw => {
+      lines(g, x, y, r, rnd, 6, lw, .12);
+      outline(g, x - r * .2, y + r * .2, r * .2, r * .1, -.2, lw, .3, 'rgba(0,0,0,.3)');
+    });
+  } },
+};
+
+// Asteroide: rocha grafite com borda clara do lado da luz e crateras em traço.
+function rockSprite(r, rnd) {
+  const half = Math.ceil(r * 1.1) + 2, c = canvasOf(half * 2, half * 2), g = c.getContext('2d');
+  const n = 9 + (rnd() * 5 | 0), pts = [];
+  for (let i = 0; i < n; i++) {
+    const a = i / n * TAU + (rnd() - .5) * .4, d = r * (.68 + rnd() * .34);
+    pts.push([half + Math.cos(a) * d, half + Math.sin(a) * d]);
+  }
+  const mid = i => { const p = pts[i % n], q = pts[(i + 1) % n]; return [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; };
+  let m = mid(0);
+  g.beginPath(); g.moveTo(m[0], m[1]);
+  for (let i = 1; i <= n; i++) { const p = pts[i % n]; m = mid(i); g.quadraticCurveTo(p[0], p[1], m[0], m[1]); }
+  g.closePath();
+  const gr = g.createLinearGradient(half - r, half - r, half + r, half + r);
+  gr.addColorStop(0, '#34363d'); gr.addColorStop(.55, '#111216'); gr.addColorStop(1, '#050506');
+  g.fillStyle = gr; g.fill();
+  const lw = Math.max(1, r * .07);
+  g.save(); g.clip();
+  if (r > 6) rings(g, half, half, r * .75, rnd, 2 + (rnd() * 3 | 0), lw, .12);
+  g.restore();
+  const e = g.createLinearGradient(half - r, half - r, half + r * .5, half + r * .5);
+  e.addColorStop(0, 'rgba(255,255,255,.65)'); e.addColorStop(.5, 'rgba(255,255,255,.14)'); e.addColorStop(1, 'rgba(255,255,255,.02)');
+  g.strokeStyle = e; g.lineWidth = lw; g.lineJoin = 'round'; g.stroke();
+  return c;
+}
+
+function buildSprites(H) {
+  const rnd = rng(42), planets = {}, rocks = [];
+  for (const id of Object.keys(PLANETS)) {
+    const p = PLANETS[id], r = p.r * H, half = Math.ceil(r * (p.ring || 1.45)) + 2;
+    const c = canvasOf(half * 2, half * 2);
+    p.paint(c.getContext('2d'), half, half, r, rnd);
+    planets[id] = c;
+  }
+  // Tamanhos variados, a maioria pequena (asteroides grandes são raros).
+  for (let i = 0; i < 12; i++) { const r = H * (.005 + Math.pow(i / 11, 2) * .03); rocks.push({ img: rockSprite(r, rnd), r }); }
+  return { planets, rocks };
+}
+
+function makePlanet(x0) {
+  const onScreen = new Set(svBodies.filter(b => b.id).map(b => b.id));
+  if (!svQueue.length) svQueue = Object.keys(PLANETS).sort(() => Math.random() - .5);
+  let i = svQueue.findIndex(id => !onScreen.has(id));
+  if (i < 0) i = 0;
+  const id = svQueue.splice(i, 1)[0], p = PLANETS[id], img = svSprites.planets[id];
+  // Faixa de altura mais longe dos outros planetas (entre algumas sorteadas).
+  let y = svH / 2, bestD = -1;
+  for (let k = 0; k < 8; k++) {
+    const cy = svH * (.12 + Math.random() * .76);
+    const d = Math.min(Infinity, ...svBodies.filter(b => b.id).map(b => Math.abs(b.y - cy)));
+    if (d > bestD) { bestD = d; y = cy; }
+  }
+  return {
+    id, img, z: p.r * .9, y, a: 0, va: 0,
+    x: x0 != null ? x0 : svW + img.width / 2 + Math.random() * svW * .3,
+    vx: -p.v * svH * (.85 + Math.random() * .3), vy: (Math.random() - .5) * .006 * svH,
+  };
+}
+function makeRock(initial) {
+  const s = svSprites.rocks[Math.random() * svSprites.rocks.length | 0], half = s.img.width / 2;
+  const vx = -(.012 + s.r / svH * 1.1) * svH * (.7 + Math.random() * .6);
+  return {
+    id: null, img: s.img, z: s.r / svH, a: Math.random() * TAU, va: (Math.random() - .5) * .7,
+    x: initial ? Math.random() * svW : svW + half + Math.random() * svW * .4,
+    y: svH * (Math.random() * 1.1 - .05), vx, vy: vx * (Math.random() - .5) * .5,
+  };
+}
+function seedSaver() {
+  svBodies = []; svQueue = [];
+  for (let i = 0; i < 4; i++) svBodies.push(makePlanet(i < 3 ? svW * (.12 + i * .3 + Math.random() * .1) : null));
+  for (let i = 0; i < ROCKS; i++) svBodies.push(makeRock(true));
+  svBodies.sort((a, b) => a.z - b.z);
+  svMeteor = null; svMeteorIn = 6 + Math.random() * 10;
+}
+
+function saverFrame(t) {
+  svRaf = requestAnimationFrame(saverFrame);
+  const dt = svLast ? Math.min((t - svLast) / 1000, .1) : 0;
+  svLast = t;
+  const g = svCtx;
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  g.clearRect(0, 0, svW, svH);
+  let resort = false;
+  for (let i = 0; i < svBodies.length; i++) {
+    const b = svBodies[i], hw = b.img.width / 2;
+    b.x += b.vx * dt; b.y += b.vy * dt; b.a += b.va * dt;
+    if (b.x < -hw || b.y < -hw - svH * .1 || b.y > svH + hw + svH * .1) {
+      // O planeta que sai ainda conta como "na tela": o próximo nunca repete o mesmo.
+      svBodies[i] = b.id ? makePlanet() : makeRock(false);
+      resort = true;
+      continue;
+    }
+    if (b.va) {
+      const c = Math.cos(b.a), s = Math.sin(b.a);
+      g.setTransform(c, s, -s, c, b.x, b.y);
+      g.drawImage(b.img, -hw, -hw);
+    } else {
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      g.drawImage(b.img, b.x - hw, b.y - b.img.height / 2);
+    }
+  }
+  if (resort) svBodies.sort((a, b) => a.z - b.z);
+  drawMeteor(g, dt);
+}
+
+// Estrela cadente de vez em quando (a cada 12–40 s).
+function drawMeteor(g, dt) {
+  if (!svMeteor) {
+    if ((svMeteorIn -= dt) > 0) return;
+    const ang = Math.PI * (.72 + Math.random() * .12);
+    svMeteor = { x: svW * (.3 + Math.random() * .7), y: svH * Math.random() * .4, dx: Math.cos(ang), dy: Math.sin(ang), t: 0, life: .9 + Math.random() * .5 };
+  }
+  const m = svMeteor;
+  m.t += dt;
+  if (m.t >= m.life) { svMeteor = null; svMeteorIn = 12 + Math.random() * 28; return; }
+  const p = m.t / m.life, d = p * svH * .9, len = svH * .16 * Math.sin(Math.PI * p);
+  const hx = m.x + m.dx * d, hy = m.y + m.dy * d, tx = hx - m.dx * len, ty = hy - m.dy * len;
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  const gr = g.createLinearGradient(hx, hy, tx, ty);
+  gr.addColorStop(0, 'rgba(255,255,255,.9)'); gr.addColorStop(1, 'rgba(180,210,255,0)');
+  g.strokeStyle = gr; g.lineWidth = Math.max(1, svH / 700); g.lineCap = 'round';
+  g.beginPath(); g.moveTo(hx, hy); g.lineTo(tx, ty); g.stroke();
+}
+
+/* ---------------- Atualização de apps ---------------- */
+function refreshApps() {
+  const wasInApps = current && current.classList.contains('tile');
+  const before = apps;
+  loadApps();
+  if (apps === before) return;   // nada mudou (ex.: só o ícone de um app de sistema foi reativado)
+  renderApps();
+  if (wasInApps || (current && !document.contains(current))) focusFirstContent();
+}
+function refreshNews() {
+  loadNews();
+  renderNews();
+  if (current && !document.contains(current)) focusFirstContent();
+}
+// Botão "Atualizar": pede ao Android para baixar notícias e indicações agora e refazer os apps.
+let refreshing = 0;
+function refreshAll() {
+  if (refreshing) { toast('Já estou atualizando…'); return; }
+  if (!Bridge.native) { toast('Atualizaria notícias, indicações e apps (simulação no navegador)'); return; }
+  if (!Bridge.refreshAll()) { toast('Não foi possível atualizar agora'); return; }
+  $('#refreshBtn').classList.add('busy');
+  $('#refreshBtn span').textContent = 'Atualizando…';
+  toast('Baixando notícias, indicações e apps…');
+  // Sem resposta do Android em 60 s (rede travada), o botão volta ao normal.
+  refreshing = setTimeout(() => onRefreshed(false, false), 60000);
+}
+function onRefreshed(newsOk, picksOk) {
+  if (!refreshing) return;
+  clearTimeout(refreshing); refreshing = 0;
+  $('#refreshBtn').classList.remove('busy');
+  $('#refreshBtn span').textContent = 'Atualizar';
+  if (newsOk) refreshNews();
+  if (picksOk) refreshPicks();
+  toast(newsOk || picksOk ? 'Tudo atualizado' : 'Sem conexão com os sites: mantive o que já estava salvo');
+}
+function refreshPicks() {
+  loadPicks();
+  renderPicks();
+  if (current && !document.contains(current)) focusFirstContent();
+}
+// Gancho para o lado nativo chamar via evaluateJavascript.
+Object.defineProperty(window, 'Launcher', {
+  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => wakeSaver() }),
+  writable: false, configurable: false,
+});
+
+/* ---------------- Conexão ----------------
+   No app, o Android avisa via Launcher.onNetwork; no navegador, os eventos online/offline. */
+function setNetwork(on) {
+  $('#netChip').classList.toggle('off', !on);
+  $('#netText').textContent = on ? 'Conectado' : 'Sem internet';
+}
+if (!Bridge.native) {
+  window.addEventListener('online', () => setNetwork(true));
+  window.addEventListener('offline', () => setNetwork(false));
+}
+
+/* ---------------- Inicialização ---------------- */
+function init() {
+  const mode = Bridge.native ? 'Android TV' : 'Modo navegador';
+  $('#modeChip').textContent = mode;
+  if (!Bridge.native) setNetwork(navigator.onLine !== false);
+  $('#navMode').textContent = APP_VERSION;
+  $('#heroOpen')._act = () => heroList[heroIdx] && heroList[heroIdx].act();
+  $('#heroNext')._act = nextHero;
+  $('#pictureBtn')._act = openPictureSettings;
+  $('#powerBtn')._act = powerOff;
+  $('#refreshBtn')._act = refreshAll;
+  $('#editDone')._act = closeEditor;
+  $('#editReset')._act = resetHome;
+  $('#readerClose')._act = closeReader;
+  renderGames();
+  loadNews();
+  renderNews();
+  renderSettings();
+  loadInputs();
+  renderInputs();
+  loadApps();
+  loadPicks();
+  renderApps();
+  renderPicks();
+  showSection('home');
+  updateClock(true);
+  scheduleClock();
+  startHeroRotation();
+  armSaver();
+  setFocus($('#heroOpen'));
+}
+init();
+})();
+</script>
+</body>
+</html>

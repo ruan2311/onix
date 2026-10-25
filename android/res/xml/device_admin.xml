@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Só a política de bloquear a tela: é o que deixa o Onix pôr a TV em standby (lockNow). -->
+<device-admin>
+    <uses-policies>
+        <force-lock />
+    </uses-policies>
+</device-admin>

@@ -1,0 +1,12 @@
+# Saída do build (android/build.sh)
+android/build/
+launcher-philips.apk
+onix-home.apk
+*.idsig
+
+# Os APKs de release vão anexados na página de Releases do GitHub
+release/
+
+# Arquivos locais
+.server.log
+*.tmp
