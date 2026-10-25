@@ -27,8 +27,8 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 - [Capturas de tela](#capturas-de-tela)
 - [Instalação: qual é a sua TV?](#instalação)
 - [Android TV e Google TV](#android-tv-e-google-tv)
-- [TVs Samsung (Tizen)](#tvs-samsung-tizen)
-- [TVs LG (webOS)](#tvs-lg-webos)
+- [TVs Samsung (Tizen) · experimental](#tvs-samsung-tizen)
+- [TVs LG (webOS) · experimental](#tvs-lg-webos)
 - [Usar como tela inicial (Onix Launcher)](#usar-como-tela-inicial-onix-launcher)
 - [Atualizações automáticas](#atualizações-automáticas)
 - [Ativar o botão "Desligar TV"](#ativar-o-botão-desligar-tv)
@@ -129,11 +129,11 @@ Quatro jogos feitos para o controle remoto, com música chiptune e recorde salvo
 
 ### Qual é a sua TV?
 
-| Sua TV | Como instalar | Precisa de computador? |
-|---|---|---|
-| **Android TV ou Google TV** (Philips, Sony, TCL, Xiaomi, AOC, Chromecast, TV boxes…) | [Pela própria TV ou pelo celular](#android-tv-e-google-tv) · uns 5 minutos | ❌ Não |
-| **Samsung** (2022 ou mais nova) | [Pelo celular, com o app Apps2Samsung](#tvs-samsung-tizen) | ❌ Não (ou ✅, se preferir) |
-| **LG** (2022 ou mais nova) · ⚠️ beta | [Pelo computador, uma vez](#tvs-lg-webos) | ✅ Sim |
+| Sua TV | Situação |
+|---|---|
+| **Android TV ou Google TV** (Philips, Sony, TCL, Xiaomi, AOC, Chromecast, TV boxes…) | ✅ **Testado.** [Passo a passo abaixo](#android-tv-e-google-tv), só com o controle remoto, uns 5 minutos |
+| **Samsung** (2022 ou mais nova) | 🧪 **Experimental.** Ainda sem um jeito de instalar testado. [Veja aqui](#tvs-samsung-tizen) |
+| **LG** (2022 ou mais nova) | 🧪 **Experimental.** Ainda sem um jeito de instalar testado. [Veja aqui](#tvs-lg-webos) |
 
 > **Não sabe qual é a sua?** Se a tela inicial da TV tem a **Play Store** (ou diz "Google TV"), ela é Android TV/Google TV. TVs Samsung e LG têm sistema próprio e **não** têm a Play Store.
 
@@ -154,32 +154,26 @@ O conteúdo é o mesmo; muda só se ele pode virar a tela inicial.
 
 > **Na dúvida, comece pelo Onix App.** Gostou? Instale o Onix Launcher por cima depois: nada se perde (apps organizados, banners e recordes ficam).
 
-### Jeito 1: pela própria TV, com o app Downloader (mais fácil)
+### Instalar pela própria TV, com o app Downloader
 
-Você só precisa do controle remoto.
+✅ *Testado numa Philips Google TV (outubro de 2026), do começo ao fim, só com o controle.*
 
 1. Na TV, abra a **Play Store**, procure **Downloader** (o ícone laranja, de *AFTVnews*) e instale.
-   > Dica: dá para instalar pelo celular também. Abra a [página do Downloader na Play Store](https://play.google.com/store/apps/details?id=com.esaba.downloader) no navegador do celular, logado na mesma conta Google da TV, toque em **Instalar** e escolha a sua TV.
 2. Abra o **Downloader**. Se ele pedir permissão para acessar arquivos, aceite.
-3. No campo de endereço, digite **`github.com/ruan2311/onix/releases/latest`** e aperte **Go**.
-4. A página do Onix abre. Desça até **Assets** e clique em **onix-app.apk** (ou **onix-launcher.apk**).
-5. Na primeira vez, a TV avisa que o Downloader não pode instalar apps. Clique em **Configurações**, ligue a chave do **Downloader** e aperte **Voltar** no controle.
-6. Clique em **Instalar** e depois em **Abrir**. Pronto! O Onix também aparece na sua lista de apps.
+3. Clique na barra laranja do topo, onde está escrito **"Click here to enter a URL…"**.
+4. No quadro que abre, digite exatamente o link abaixo e clique em **Load**:
+   - para o Onix App: **`github.com/ruan2311/onix/releases/latest/download/onix-app.apk`**
+   - para o Onix Launcher: **`github.com/ruan2311/onix/releases/latest/download/onix-launcher.apk`**
+5. O download começa sozinho. Se a TV avisar que o Downloader não pode instalar apps, clique em **Configurações**, ligue a chave do **Downloader** e aperte **Voltar** no controle.
+6. Na tela do Android, clique em **Instalar** (se o Onix já estiver na TV, o botão se chama **Atualizar**).
+7. Apareceu **"App instalado"**? Clique em **Abrir**. Pronto! O Onix também fica na sua lista de apps.
 
-> No final, o Downloader pergunta se quer apagar o arquivo baixado: pode apagar, ele não é mais necessário.
-
-### Jeito 2: pelo celular, com o app Send Files to TV
-
-Bom se digitar com o controle for chato.
-
-1. Instale o **Send Files to TV** no celular (Play Store) **e** na TV (Play Store da TV). Celular e TV precisam estar **no mesmo Wi-Fi**.
-2. No celular, abra este link e baixe o arquivo: [onix-app.apk](https://github.com/ruan2311/onix/releases/latest/download/onix-app.apk) (ou o [onix-launcher.apk](https://github.com/ruan2311/onix/releases/latest/download/onix-launcher.apk)). Se o celular avisar que "o arquivo pode ser perigoso", toque em **Baixar mesmo assim**: é só porque ele não veio da Play Store.
-3. Abra o **Send Files to TV** na TV e toque em **Receive** (Receber).
-4. No celular, abra o **Send Files to TV**, toque em **Send** (Enviar), escolha o arquivo do Onix (fica em **Downloads**) e depois a sua TV.
-5. Na TV, abra o arquivo recebido e clique em **Instalar**. Se a TV pedir permissão para o Send Files to TV instalar apps, ligue e volte.
+> Se o Downloader perguntar depois se quer apagar o arquivo baixado, pode apagar: ele não é mais necessário.
 
 <details>
-<summary><b>Jeito 3: pelo computador, com adb</b> (para quem já conhece)</summary>
+<summary><b>Pelo computador, com adb</b> (para quem já conhece)</summary>
+
+✅ *Testado numa Philips Google TV.*
 
 1. Na TV, ative as **Opções do desenvolvedor**: em **Configurações → Sistema → Sobre**, clique 7 vezes em **Build do sistema operacional**.
 2. Em **Opções do desenvolvedor**, ative **Depuração USB** e/ou **Depuração sem fio**.
@@ -200,187 +194,17 @@ Depois de instalado, o próprio Onix avisa e instala as versões novas: veja [At
 
 ## TVs Samsung (Tizen)
 
-As TVs Samsung usam o **Tizen**, não o Android, então os arquivos `.apk` não servem nelas. A versão Samsung é a mesma interface, empacotada como app do Tizen (`.wgt`).
+🧪 **Experimental: ainda não existe um jeito de instalar testado.** A versão Samsung (`onix-tizen.wgt` e `onix-tizen.zip` na [página de Releases](https://github.com/ruan2311/onix/releases/latest)) nunca foi instalada numa Samsung de verdade, e a Samsung só aceita apps de fora da loja assinados para cada TV, com uma conta Samsung.
 
-> 🧪 **Beta.** Esta versão ainda teve pouco teste em TVs de verdade. Se algo não funcionar na sua, [abra uma issue](https://github.com/ruan2311/onix/issues) dizendo o modelo e o ano da TV.
-
-**TVs compatíveis:** Samsung de **2022 em diante**. Em modelos mais antigos, o navegador interno da TV não tem os recursos que a interface usa.
-
-> **Por que é mais trabalhoso que no Android?** A Samsung só deixa instalar um app de fora da loja se ele for **assinado para a sua TV** (com o número de série dela) usando uma **conta Samsung**. O app de celular abaixo faz essa assinatura por você.
-
-### Jeito 1: pelo celular, com o app Apps2Samsung (mais fácil)
-
-Você vai precisar de: um **celular Android**, a sua **conta Samsung** e o celular e a TV **no mesmo Wi-Fi**.
-
-> O Apps2Samsung é um app gratuito de outro desenvolvedor, não do Onix. Ele já instala outros apps (como o Jellyfin) em TVs Samsung, mas ainda não foi testado com o Onix.
-
-**1. Descubra o IP do celular.** No celular, vá em **Configurações → Sobre o telefone → Status** (ou **Configurações → Wi-Fi →** toque na rede conectada) e anote o **Endereço IP**, algo como `192.168.0.25`.
-
-**2. Ligue o Modo Desenvolvedor da TV.**
-1. Na TV, abra **Apps** (Aplicativos) na tela inicial.
-2. Com a tela de Apps aberta, digite **1 2 3 4 5** no controle. Se o controle não tiver números, use o botão **123** para abrir o teclado numérico da tela.
-3. Na janela que abrir, ligue o **Developer mode** (**On**), digite o **IP do celular** do passo 1 e confirme.
-4. **Desligue e ligue a TV** pelo controle. Se não funcionar, tire a TV da tomada por 30 segundos.
-
-**3. Instale o Apps2Samsung no celular.** Baixe o arquivo que termina em **`-android.apk`** na [página de downloads do Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung/releases/latest) e abra. Se o celular pedir, permita instalar apps do navegador.
-
-**4. Baixe o Onix no celular:** [onix-tizen.wgt](https://github.com/ruan2311/onix/releases/latest/download/onix-tizen.wgt).
-
-**5. Instale.** Abra o Apps2Samsung, escolha a sua TV na lista, escolha **instalar um arquivo .wgt próprio** (custom .wgt) e selecione o **onix-tizen.wgt** (fica em **Downloads**). Na primeira vez, ele pede para entrar na **conta Samsung**: é assim que ele assina o app para a sua TV.
-
-**6. Pronto!** O **Onix** aparece em **Apps** na TV. Para deixá-lo à mão, selecione o Onix, segure **OK** (ou aperte o botão de opções) e escolha **Adicionar à Página Inicial**.
-
-Depois de instalado, você pode desligar o Modo Desenvolvedor (repita o passo 2 e deixe em **Off**). Ele só é necessário para instalar e atualizar.
-
-> Para **atualizar**, baixe o `onix-tizen.wgt` novo e repita o passo 5: seus apps organizados, banners e recordes são mantidos. Para **desinstalar**, vá em **Apps → ⚙️ Configurações**, selecione o Onix e escolha **Excluir**.
-
-<details>
-<summary><b>Jeito 2: pelo computador, com o Tizen Studio</b> (oficial da Samsung)</summary>
-
-#### Passo 1: instale o Tizen Studio no computador
-
-1. Baixe e instale o [Tizen Studio](https://developer.tizen.org/development/tizen-studio/download) (Windows, macOS ou Linux). A versão "CLI", sem a IDE, já basta.
-2. Abra o **Package Manager** do Tizen Studio e, na aba **Extension SDK**, instale:
-   - **Samsung Certificate Extension**
-   - **TV Extensions** (a versão mais nova)
-3. Os comandos `tizen` e `sdb` ficam em `tizen-studio/tools/ide/bin` e `tizen-studio/tools`. No Windows, são `C:\tizen-studio\tools\ide\bin\tizen.bat` e `C:\tizen-studio\tools\sdb.exe`. Coloque essas pastas no `PATH` ou use o caminho completo.
-
-#### Passo 2: ative o Modo Desenvolvedor na TV
-
-Igual ao passo 2 do jeito pelo celular, mas digitando o **IP do computador** (no Windows, `ipconfig`; no macOS e no Linux, `ip addr`). A TV e o computador precisam estar na mesma rede.
-
-#### Passo 3: conecte o computador à TV
-
-Descubra o IP da TV em **Configurações → Geral → Rede → Status da rede → Configurações de IP**. Depois:
-
-```bash
-sdb connect IP_DA_TV
-sdb devices          # anote o nome do aparelho (ex.: UN55AU7700) para o passo 5
-```
-
-> Se aparecer `failed to connect`, confira se o Modo Desenvolvedor está ligado com o IP certo do computador e se a TV foi reiniciada depois disso.
-
-#### Passo 4: crie o certificado da Samsung (uma vez só)
-
-1. Com a TV conectada, abra o **Certificate Manager** do Tizen Studio (**Tools → Certificate Manager**, ou `tizen-studio/tools/certificate-manager`).
-2. Clique em **+**, escolha **Samsung** e depois **TV**.
-3. Dê um nome ao perfil, por exemplo **Onix**. Esse nome é usado no passo 5.
-4. **Author certificate:** escolha *Create a new author certificate*, preencha um nome e uma senha (guarde a senha) e entre com a sua **conta Samsung** quando pedir.
-5. **Distributor certificate:** deixe o nível de privilégio em **Public**. O **DUID** da TV aparece sozinho porque ela está conectada; se não aparecer, clique em *Add* e escolha a TV. Entre com a conta Samsung de novo e conclua.
-
-#### Passo 5: assine e instale o Onix
-
-1. Baixe o [onix-tizen.zip](https://github.com/ruan2311/onix/releases/latest/download/onix-tizen.zip) e extraia. Vai aparecer a pasta `onix`.
-2. No terminal, dentro da pasta onde está a `onix`:
-
-```bash
-tizen package -t wgt -s Onix -- onix                 # "Onix" = nome do perfil do passo 4; gera onix/Onix.wgt
-tizen install -n Onix.wgt -t NOME_DA_TV -- onix      # NOME_DA_TV = o nome que apareceu no "sdb devices"
-```
-
-3. Pronto: o **Onix** aparece em **Apps** na TV. Para atualizar, baixe o zip novo e repita este passo.
-
-</details>
-
-### O que muda na Samsung
-
-| Recurso | Na Samsung |
-|---|---|
-| Apps, Organizar seus apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android |
-| Indicações da semana + **Assistir na Netflix** | ✅ Abre a Netflix no título. Se a sua TV não aceitar o link direto, abre a Netflix e você procura o título |
-| Atualizações | ⚠️ O Onix avisa quando sai uma versão nova, mas você instala do mesmo jeito que a primeira vez |
-| Indicações do Disney+, HBO Max e Globoplay | ✅ Mesma regra do Android, inclusive a escolha manual em Configurações (mais de 3 aberturas, sai depois de 7 dias). O app abre, mas nem sempre direto no título: o Tizen não documenta links diretos para esses apps |
-| Indicações que não são da Netflix | ⚠️ A Samsung não tem a busca "onde assistir" do Google |
-| Entradas TV e HDMI | ⚠️ A TV (antena) e a HDMI aparecem **em tela cheia dentro do Onix**. **Voltar** ou **OK** retorna ao Onix. Recursos como Modo Jogo automático podem não ligar nessa janela: para jogar, prefira o botão de fontes do controle |
-| Virar a tela inicial | ❌ O Tizen não aceita launchers de terceiros. O Onix abre como um app; dá para fixá-lo na barra da tela inicial |
-| Desligar TV, ajustes de imagem, configurações da TV | ❌ O Tizen não deixa apps comuns fazerem isso, então esses botões não aparecem |
-
-### Compilar a versão Samsung a partir do código
-
-```bash
-bash tizen/build.sh            # gera tizen/build/onix/, o onix-tizen.zip e o onix-tizen.wgt (sem assinatura)
-bash tizen/build.sh Onix       # também gera o Onix.wgt assinado (precisa do Tizen CLI e do perfil "Onix")
-```
-
-O `tizen/build.sh` pega o mesmo `index.html` do Android e, pelo `tv/page.py`, faz quatro coisas: coloca a ponte (`tv/bridge.js` com o adaptador `tizen/platform.js`) antes do script da página, embute as indicações iniciais, libera na Content-Security-Policy só os hosts de indicações e notícias, e troca `inset` e `aspect-ratio` por equivalentes que o navegador das TVs de 2022 entende.
+Quer se arriscar? Os caminhos que *deveriam* funcionar (pelo celular, com o app Apps2Samsung, ou pelo computador, com o Tizen Studio) estão nas [anotações não testadas](docs/tv-experimental.md#tvs-samsung-tizen). Se conseguir (ou não), [conte numa issue](https://github.com/ruan2311/onix/issues) com o modelo da TV.
 
 ---
 
 ## TVs LG (webOS)
 
-As TVs LG usam o **webOS**, então os arquivos `.apk` também não servem nelas. A versão LG é a mesma interface, empacotada como app do webOS (`onix-webos.ipk`).
+🧪 **Experimental: ainda não existe um jeito de instalar testado, e o app pode não funcionar.** A versão LG (`onix-webos.ipk` na [página de Releases](https://github.com/ruan2311/onix/releases/latest)) nunca foi instalada numa LG de verdade, só testada com as APIs da LG simuladas no computador. Para instalar, a LG exige um computador e o Modo Desenvolvedor, que apaga o app se não for renovado a cada 50 horas.
 
-> ⚠️ **Beta: pode não funcionar.** Esta versão ainda não foi testada numa LG de verdade, só com as APIs da LG simuladas no computador. A lista de apps, as entradas, o link direto da Netflix e as indicações podem falhar dependendo do modelo. Se algo não funcionar na sua TV, [abra uma issue](https://github.com/ruan2311/onix/issues) dizendo o modelo e o ano.
-
-**TVs compatíveis:** LG de **2022 em diante** (webOS 22 ou mais novo).
-
-> **Dá para instalar só com o celular?** Infelizmente, ainda não: a LG só deixa instalar apps de fora da loja usando um programa no **computador** (Windows, macOS ou Linux). Você precisa dele **só para instalar**; depois o Onix funciona sozinho na TV.
-
-### Instalar pelo computador (sem terminal)
-
-Você vai precisar de: um **computador** e a TV **no mesmo Wi-Fi**, e uns 15 minutos.
-
-**1. Crie uma conta de desenvolvedor da LG (grátis).** Entre em [webostv.developer.lge.com](https://webostv.developer.lge.com/), clique em **Sign In → Create Account** e siga os passos. É diferente da conta LG que você usa na TV.
-
-**2. Ligue o Modo Desenvolvedor na TV.**
-1. Na TV, abra a **LG Content Store** (ou **Apps**), procure **Developer Mode** e instale.
-2. Abra o **Developer Mode** e entre com a conta do passo 1.
-3. Ligue **Dev Mode Status**. A TV reinicia sozinha.
-4. Abra o **Developer Mode** de novo e ligue **Key Server**. Deixe essa tela aberta: ela mostra o **IP** e a **Passphrase** da TV.
-
-**3. Instale o webOS Dev Manager no computador.** Baixe na [página de downloads dele](https://github.com/webosbrew/dev-manager-desktop/releases/latest) o arquivo do seu sistema (no Windows, o que termina em **`.msi`**) e instale.
-
-**4. Conecte o computador à TV.** Abra o Dev Manager, clique em **Add Device** (adicionar aparelho), escolha a sua TV ou digite o **IP** que aparece no Developer Mode, e cole a **Passphrase** quando ele pedir.
-
-**5. Instale o Onix.** Baixe o [onix-webos.ipk](https://github.com/ruan2311/onix/releases/latest/download/onix-webos.ipk). No Dev Manager, vá em **Apps**, clique em **Install** (ícone de instalar) e escolha o arquivo baixado.
-
-**6. Pronto!** O **Onix** aparece na barra de apps da TV.
-
-> ⏳ **Importante: o Modo Desenvolvedor vence em 50 horas.** Quando vence, a LG **apaga** os apps instalados por ele, inclusive o Onix. Para não perder: de vez em quando, abra o app **Developer Mode** na TV e aperte **Extend** (o contador volta para 50 horas). O Dev Manager também mostra quanto tempo falta.
-
-> Para **atualizar**, baixe o `.ipk` novo e repita o passo 5: seus apps organizados, banners e recordes são mantidos. Para **desinstalar**, segure **OK** no Onix na barra de apps e escolha **Excluir**.
-
-<details>
-<summary><b>Pelo terminal, com o webOS CLI</b> (para quem já conhece)</summary>
-
-Com o [webOS CLI](https://webostv.developer.lge.com/develop/tools/cli-installation) (`npm install -g @webos-tools/cli`), depois dos passos 1 e 2:
-
-```bash
-ares-setup-device                          # "add": nome tv, IP da TV, porta 9922, usuário prisoner
-ares-novacom --device tv --getkey          # pede a Passphrase do app Developer Mode
-ares-install --device tv onix-webos.ipk
-ares-launch --device tv com.ruan2311.onix
-```
-
-</details>
-
-<details>
-<summary><b>TV com root (Homebrew Channel)</b></summary>
-
-Se a sua TV já tem o [Homebrew Channel](https://github.com/webosbrew/webos-homebrew-channel), instale o `onix-webos.ipk` pelo webOS Dev Manager do mesmo jeito. Assim o Onix não expira.
-
-</details>
-
-### O que muda na LG
-
-| Recurso | Na LG |
-|---|---|
-| Apps, Organizar seus apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android. Os apps vêm da barra da LG; se a sua TV não deixar o Onix ler essa lista, ele mostra os apps mais comuns (Netflix, YouTube, Prime Video, Disney+, Spotify, Apple TV, Navegador e Configurações) |
-| Indicações da semana + **Assistir na Netflix** | ✅ Abre a Netflix no título. Se a TV não aceitar o link direto, abre a Netflix e você procura o título |
-| Indicações do Disney+, HBO Max e Globoplay | ⚠️ Mesma regra do Android. O app abre, mas nem sempre direto no título |
-| Entradas TV e HDMI | ✅ Troca a TV inteira para a entrada, como o botão de entradas do controle. Se a TV não informar as portas, aparecem TV e HDMI 1 a 4 |
-| Configurações da TV e ajustes de imagem | ✅ Abrem as Configurações da LG |
-| Atualizações | ⚠️ O Onix avisa quando sai uma versão nova; instale o `.ipk` novo do mesmo jeito que o primeiro |
-| Virar a tela inicial | ❌ O webOS não aceita launchers de terceiros. O Onix aparece na barra de apps da LG, e dá para trazê-lo para o começo dela |
-| Desligar TV | ❌ O webOS não deixa apps comuns desligarem a TV |
-
-### Compilar a versão LG a partir do código
-
-```bash
-bash webos/build.sh            # gera webos/build/onix/ e o onix-webos.ipk
-```
-
-O `webos/build.sh` monta o `index.html` com o mesmo `tv/page.py` da Samsung (trocando o adaptador por `webos/platform.js`), gera os ícones de 80 e 130 px e empacota o `.ipk` com o `webos/ipk.py`, sem precisar do `ares-package`.
+Quer se arriscar? O caminho que *deveria* funcionar (pelo computador, com o webOS Dev Manager) está nas [anotações não testadas](docs/tv-experimental.md#tvs-lg-webos). Se conseguir (ou não), [conte numa issue](https://github.com/ruan2311/onix/issues) com o modelo da TV.
 
 ---
 
@@ -390,41 +214,9 @@ O `webos/build.sh` monta o `index.html` com o mesmo `tv/page.py` da Samsung (tro
 Depois de instalar o **Onix Launcher**, aperte **Home** no controle. Se aparecer a pergunta de qual tela inicial usar, escolha **Onix Launcher → Sempre**.
 
 ### Google TV
-Na Google TV, o botão **Home** do controle quase sempre volta para a tela do Google, mesmo com o Onix Launcher instalado. Para o Onix assumir, é preciso **desativar** a tela inicial do Google. Ela **não é apagada** e pode ser reativada quando quiser.
+✅ *Testado numa Philips Google TV:* depois de instalar o **Onix Launcher**, aperte **Home** no controle e, quando a TV perguntar qual tela inicial usar, escolha **Onix Launcher → Sempre**.
 
-> ⚠️ **Antes, abra o Onix Launcher pela lista de apps e confirme que ele funciona.** Sem nenhuma tela inicial ativa, a TV fica sem tela inicial. Para voltar ao normal, veja [Como desfazer tudo](#como-desfazer-tudo).
-
-**Pelo celular (Android), com o app Bugjaeger:**
-
-1. Na TV, ative as **Opções do desenvolvedor**: em **Configurações → Sistema → Sobre**, clique 7 vezes em **Build do sistema operacional** (aparece "Você é um desenvolvedor").
-2. Em **Configurações → Sistema → Opções do desenvolvedor**, ligue **Depuração USB** (e, se existir, **Depuração sem fio** ou **ADB pela rede**).
-3. Descubra o IP da TV em **Configurações → Rede e Internet →** sua rede (algo como `192.168.0.40`).
-4. No celular, instale o **Bugjaeger Mobile ADB** pela Play Store. Celular e TV no **mesmo Wi-Fi**.
-5. No Bugjaeger, use a opção de **conectar por Wi-Fi** (ícone de rede), digite o **IP da TV** com a porta **5555** (ex.: `192.168.0.40:5555`) e conecte. Na TV, aparece um pedido de autorização: marque **Sempre permitir** e aperte **OK**.
-6. Abra a aba de **comandos** (terminal/shell) do Bugjaeger e rode, um de cada vez:
-
-   ```
-   pm disable-user --user 0 com.google.android.apps.tv.launcherx
-   pm disable-user --user 0 com.google.android.tungsten.setupwraith
-   ```
-
-7. Aperte **Home** no controle: o Onix assume como tela inicial. Se a TV perguntar qual usar, escolha **Onix Launcher → Sempre**.
-
-<details>
-<summary><b>Pelo computador, com adb</b></summary>
-
-```bash
-# Google TV (Chromecast com Google TV, TVs Philips, TCL, Sony etc.)
-adb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx
-adb shell pm disable-user --user 0 com.google.android.tungsten.setupwraith
-```
-
-```bash
-# Android TV "clássico" (launcher antigo do Google), se for o caso
-adb shell pm disable-user --user 0 com.google.android.tvlauncher
-```
-
-</details>
+Em algumas Google TV (como o Chromecast), a TV não pergunta e o **Home** sempre volta para a tela do Google. Nesse caso, dá para abrir o Onix pela lista de apps normalmente. Fazer ele virar a tela inicial nesses aparelhos exige desativar a tela do Google, um caminho que ainda não foi testado: está nas [anotações não testadas](docs/tv-experimental.md#google-tv-desativar-a-tela-inicial-do-google).
 
 ---
 
@@ -440,7 +232,7 @@ Na **primeira atualização**, o Android pede para **permitir que o Onix instale
 
 > **Por que precisa confirmar?** O Android não deixa um app comum se instalar sem a pessoa apertar **Instalar**. O Onix baixa da página de Releases, confere o **SHA-256** publicado pelo GitHub e se o arquivo é mesmo uma versão nova do Onix. O Android ainda confere se a APK foi assinada com a mesma chave. A atualização mantém apps organizados, banners, recordes e configurações. Se recusar, ele pergunta de novo no dia seguinte, ou quando você mandar.
 
-**TVs Samsung e LG:** o Onix avisa quando sai uma versão nova, mas você instala do mesmo jeito que da primeira vez ([Samsung](#tvs-samsung-tizen): baixe o `onix-tizen.wgt` novo e instale pelo Apps2Samsung; [LG](#tvs-lg-webos): instale o `.ipk` novo pelo Dev Manager), porque essas TVs não deixam um app se atualizar sozinho.
+**TVs Samsung e LG (experimentais):** o Onix avisa quando sai uma versão nova, mas não consegue se instalar sozinho; a atualização é feita do mesmo jeito que a instalação (veja as [anotações não testadas](docs/tv-experimental.md)).
 
 ---
 
@@ -450,10 +242,10 @@ Apps comuns não podem desligar a TV. O Onix usa a única via oficial do Android
 
 **Jeito mais fácil:** aperte **Desligar TV** duas vezes. Se o aparelho tiver a tela de administradores, o Android pede a autorização; aceite e aperte de novo.
 
-**Se a sua TV não mostrar o pedido** (algumas não têm essa tela), rode este comando pelo celular, com o Bugjaeger conectado à TV como em [Google TV](#google-tv), ou pelo computador com `adb shell` na frente:
+**Se a sua TV não mostrar o pedido** (algumas não têm essa tela), dá para liberar pelo computador, com adb:
 
-```
-dpm set-active-admin com.aurora.launcher/.PowerAdmin
+```bash
+adb shell dpm set-active-admin com.aurora.launcher/.PowerAdmin
 ```
 
 O Onix não usa nenhuma outra função de administrador: não apaga dados, não troca senhas e não bloqueia nada.
@@ -466,15 +258,9 @@ O Onix não usa nenhuma outra função de administrador: não apaga dados, não 
 
 > Se a permissão de **Desligar TV** estiver ativa, o Android não deixa desinstalar o Onix. Desative antes em **Configurações → Privacidade/Segurança → Apps de administrador do dispositivo → Onix**. O nome do menu varia conforme a marca; procure por "administrador".
 
-**Trazer de volta a tela inicial do Google** (só se você desativou, na Google TV): conecte de novo pelo Bugjaeger (ou pelo adb) e rode:
+**Pelo computador:** `adb uninstall com.aurora.launcher` desinstala o Onix.
 
-```
-pm enable com.google.android.apps.tv.launcherx
-pm enable com.google.android.tungsten.setupwraith
-pm enable com.google.android.tvlauncher
-```
-
-Pelo computador, é o mesmo com `adb shell` na frente (ex.: `adb shell pm enable com.google.android.apps.tv.launcherx`), e `adb uninstall com.aurora.launcher` desinstala o Onix.
+Desativou a tela inicial do Google seguindo as [anotações não testadas](docs/tv-experimental.md#desfazer-trazer-de-volta-a-tela-inicial-do-google)? Lá também está como trazer de volta.
 
 ---
 
@@ -523,6 +309,8 @@ O APK sai em `launcher-philips.apk` (ou `onix-launcher.apk` / `onix-app.apk`), n
 **Versão:** o `android:versionName` do `AndroidManifest.xml` manda. O `build.sh` copia esse valor para o `index.html`, e ele aparece no menu e em "Sobre".
 
 **Onix App × Onix Launcher:** os dois saem do mesmo código. O **Onix App** é o mesmo manifesto sem as categorias `HOME` e `DEFAULT` no `intent-filter` da `MainActivity` e com `android:label="Onix App"`; o `build.sh app` gera essa versão sem mexer no manifesto.
+
+**Samsung e LG:** `bash tizen/build.sh` e `bash webos/build.sh` (detalhes nas [anotações](docs/tv-experimental.md#compilar-a-versão-samsung-a-partir-do-código)).
 
 **Novidades:** a lista `CHANGELOG` no `index.html` alimenta a tela **Configurações → Novidades**. Ao lançar uma versão, atualize ela junto com o `CHANGELOG.md`.
 
@@ -599,8 +387,8 @@ python3 -m http.server 8000
 - **Entradas HDMI** só aparecem em TVs. Em Chromecast e TV boxes, a aba avisa que o aparelho não tem entradas.
 - **Desligar TV** depende do recurso de administrador do dispositivo, que alguns aparelhos não têm.
 - **Indicações e notícias** são focadas no Brasil e em português.
-- **Samsung (Tizen):** não vira tela inicial, não desliga a TV e mostra a HDMI numa janela do próprio Onix. Veja [O que muda na Samsung](#o-que-muda-na-samsung).
-- **LG (webOS):** não vira tela inicial, não desliga a TV e, pelo Modo Desenvolvedor, precisa renovar a sessão a cada 50 horas. Veja [O que muda na LG](#o-que-muda-na-lg).
+- **Samsung (Tizen):** não vira tela inicial, não desliga a TV e mostra a HDMI numa janela do próprio Onix. Veja [O que muda na Samsung](docs/tv-experimental.md#o-que-muda-na-samsung).
+- **LG (webOS):** não vira tela inicial, não desliga a TV e, pelo Modo Desenvolvedor, precisa renovar a sessão a cada 50 horas. Veja [O que muda na LG](docs/tv-experimental.md#o-que-muda-na-lg).
 
 ---
 
