@@ -3,8 +3,7 @@
     python3 tv/page.py RAIZ SAIDA VERSÃO ADAPTADOR.js
 
 Põe a ponte (o adaptador da TV + tv/bridge.js, numa função só) antes do script da página, embute as
-indicações iniciais, libera na CSP só os hosts que a ponte usa e os ícones (file:) dos apps da TV, e
-troca o CSS que o Chromium das TVs de 2022 não conhece.
+indicações iniciais e libera na CSP só os hosts que a ponte usa e os ícones (file:) dos apps da TV.
 """
 import json, re, sys
 
@@ -26,13 +25,7 @@ hosts = ' '.join(['https://apis.justwatch.com', 'https://images.justwatch.com', 
                   'https://assetsio.gnwcdn.com', 'https://api.github.com', 'https://connectivitycheck.gstatic.com'])
 page = sub(r"img-src data:;", "img-src data: file:;", page)
 page = sub(r"connect-src 'none';", f"connect-src {hosts};", page)
-# Chromium das TVs de 2022 (M85 na Samsung, M87 na LG) não conhece "inset" nem "aspect-ratio": troca por equivalentes.
-def inset(m):
-    v = m.group(1).strip()
-    return f'top:{v};right:{v};bottom:{v};left:{v}'
-page = re.sub(r'(?<![-\w])inset:([^;}"]+)', inset, page)
-page = sub(r'</style>', '@supports not (aspect-ratio:1/1){.tile-art{height:0;padding-top:62.5%}'
-           '.tile.pick .tile-art{padding-top:150%}}\n</style>', page)
+# O CSS para navegadores antigos (sem inset, aspect-ratio, clamp e gap no flexbox) já vem no index.html.
 core = core.replace('/*ONIX_SEED*/null', json.dumps(seed, ensure_ascii=False, separators=(',', ':')), 1)
 bridge = "(function () {\n'use strict';\n" + platform + '\n' + core + '})();'
 # A ponte entra antes do script da página (que lê window.AndroidBridge ao abrir).

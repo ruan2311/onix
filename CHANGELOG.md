@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.7.2 beta (outubro de 2026)
+
+- **TV boxes com navegador interno antigo:** os ícones dos apps não apareciam e a tela ficava grande demais, cortada na direita. O Onix agora também funciona com o Android System WebView antigo (testado simulando o Chrome 70): sem `aspect-ratio`, `clamp()`, `max()` com `env()` nem `gap` no flexbox, ele usa equivalentes.
+- O cartão **Sobre** mostra a versão do navegador interno da TV, para ajudar a achar problemas.
+
 ## 13.7.1 beta (outubro de 2026)
 
 - Fechar o gatinho do cartão **Sobre** com **Voltar** não leva mais o foco para o menu.

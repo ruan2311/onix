@@ -28,7 +28,7 @@
   --nav-w:13.5rem;
   --ease:cubic-bezier(.2,.8,.2,1);
 }
-html{font-size:clamp(12px,1.04vw,22px);background:var(--bg);height:100%}
+html{font-size:1.04vw;font-size:clamp(12px,1.04vw,22px);background:var(--bg);height:100%}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{
   margin:0;height:100%;overflow:hidden;color:var(--text);
@@ -51,7 +51,7 @@ svg{display:block}
    de GPU por tile esgotaria a memória da TV com muitos apps. O feixe (::after) só é
    gerado no item focado: com 300 apps, são 300 caixas a menos no layout. */
 .f{position:relative;overflow:hidden;transition:transform .2s var(--ease)}
-.f::after{position:absolute;inset:-2px;pointer-events:none;border-radius:inherit;
+.f::after{position:absolute;top:-2px;right:-2px;bottom:-2px;left:-2px;pointer-events:none;border-radius:inherit;
   background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.08) 42%,rgba(255,255,255,.5) 50%,rgba(255,255,255,.08) 58%,transparent 70%);
   transform:translateX(-130%);opacity:0}
 .f.is-focused::after{content:"";animation:shine .9s var(--ease) .05s 1 both}
@@ -61,7 +61,7 @@ svg{display:block}
 
 /* ---------- Barra lateral ---------- */
 #sidebar{position:fixed;z-index:10;left:0;top:0;bottom:0;width:var(--nav-w);
-  padding:max(1.6rem,env(safe-area-inset-top)) 1rem 1.6rem max(1rem,env(safe-area-inset-left));
+  padding:1.6rem 1rem;
   display:flex;flex-direction:column;gap:.5rem;border-right:1px solid rgba(255,255,255,.08)}
 .brand{display:flex;align-items:center;gap:.7rem;padding:.2rem .6rem 1.6rem;font-weight:600;letter-spacing:.32em;font-size:1.05rem;text-transform:uppercase}
 .brand-mark{width:1.9rem;height:1.9rem;flex:none}
@@ -86,7 +86,7 @@ svg{display:block}
 
 /* ---------- Conteúdo ---------- */
 #main{position:fixed;z-index:1;top:0;right:0;bottom:0;left:var(--nav-w);overflow-y:auto;overflow-x:hidden;
-  padding:max(1.6rem,env(safe-area-inset-top)) max(2.4rem,env(safe-area-inset-right)) 3rem 2.4rem;
+  padding:1.6rem 2.4rem 3rem;
   scroll-padding-block:2.5rem;scrollbar-width:none;-webkit-overflow-scrolling:touch}
 #main::-webkit-scrollbar{display:none}
 .topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1.4rem}
@@ -114,7 +114,7 @@ svg{display:block}
 /* Destaque */
 .hero{position:relative;overflow:hidden;min-height:16.5rem;padding:2rem 2.2rem;display:flex;flex-direction:column;justify-content:flex-end;
   --h1:#ff2d55;--h2:#5b2cff}
-.hero-bg{position:absolute;inset:0;z-index:0;border-radius:inherit;
+.hero-bg{position:absolute;top:0;right:0;bottom:0;left:0;z-index:0;border-radius:inherit;
   background:radial-gradient(70% 120% at 85% 30%,var(--h2),transparent 70%),
              radial-gradient(60% 90% at 60% 110%,var(--h1),transparent 70%);
   opacity:.4}
@@ -154,12 +154,12 @@ svg{display:block}
 .tile-art{position:relative;overflow:hidden;width:100%;aspect-ratio:16/10;border-radius:var(--radius);
   border:1px solid var(--glass-border);box-shadow:var(--shadow);background:#111;
   transition:transform .2s var(--ease)}
-.tile-art svg,.tile-art img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain}
+.tile-art svg,.tile-art img{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:contain}
 .tile-art img{padding:12%;background:#1b1c21}
 .tile-art img.wide{padding:0;object-fit:cover}
-.tile-art::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
+.tile-art::before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;z-index:1;pointer-events:none;
   background:linear-gradient(160deg,rgba(255,255,255,.14),rgba(255,255,255,0) 40%)}
-.tile-art::after{position:absolute;inset:-2px;z-index:2;pointer-events:none;
+.tile-art::after{position:absolute;top:-2px;right:-2px;bottom:-2px;left:-2px;z-index:2;pointer-events:none;
   background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.08) 42%,rgba(255,255,255,.55) 50%,rgba(255,255,255,.08) 58%,transparent 70%);
   transform:translateX(-130%);opacity:0}
 .tile.is-focused{transform:none;box-shadow:none}
@@ -168,13 +168,13 @@ svg{display:block}
 @media (hover:hover){.tile:hover .tile-art::after{content:"";animation:shine .9s var(--ease) 1 both}}
 .tile-label{font-size:.85rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .tile.is-focused .tile-label{color:#fff}
-.letter{position:absolute;inset:0;display:grid;place-items:center;font-size:2.4rem;font-weight:700;color:#fff}
+.letter{position:absolute;top:0;right:0;bottom:0;left:0;display:grid;place-items:center;font-size:2.4rem;font-weight:700;color:#fff}
 
 .tile.pick{width:8.4rem}
 .tile.pick .tile-art{aspect-ratio:2/3}
 .tile.pick .tile-art img{padding:0;object-fit:cover}
 /* Seletor longo: precisa vencer ".tile.pick .tile-art img" (pôster em tela cheia). */
-.tile.pick .tile-art .nf-badge{position:absolute;z-index:3;inset:auto;top:.45rem;left:.45rem;width:1.5rem;height:1.5rem;
+.tile.pick .tile-art .nf-badge{position:absolute;z-index:3;top:auto;right:auto;bottom:auto;left:auto;top:.45rem;left:.45rem;width:1.5rem;height:1.5rem;
   padding:0;object-fit:cover;border-radius:.35rem;background:#000;border:1px solid rgba(255,255,255,.18)}
 .row-sub{font-weight:400;font-size:.8rem;color:var(--muted);margin-left:.6rem}
 
@@ -212,15 +212,15 @@ svg{display:block}
 .news-meta{font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
 .news-title{font-size:1rem;font-weight:600;line-height:1.3;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
 .news-card.is-focused{transform:scale(1.04)}
-#reader{position:fixed;inset:0;z-index:25;display:grid;place-items:center;padding:2rem;background:rgba(4,4,6,.88)}
+#reader{position:fixed;top:0;right:0;bottom:0;left:0;z-index:25;display:grid;place-items:center;padding:2rem;background:rgba(4,4,6,.88)}
 #reader[hidden]{display:none}
-.reader-panel{width:min(58rem,100%);max-height:100%;overflow-y:auto;scrollbar-width:none;border-radius:1.4rem;
+.reader-panel{width:100%;max-width:58rem;max-height:100%;overflow-y:auto;scrollbar-width:none;border-radius:1.4rem;
   background:#111216;border:1px solid rgba(255,255,255,.14);box-shadow:var(--shadow)}
 .reader-panel::-webkit-scrollbar{display:none}
 /* Banner do leitor: a foto inteira e centralizada; as laterais repetem a própria foto, escurecida (sem blur: pesa na GPU). */
 #readerArt{position:relative;height:24rem;overflow:hidden;background:#0b0c0f}
 #readerArt:empty{display:none}
-.reader-bg{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.22;transform:scale(1.15)}
+.reader-bg{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:cover;opacity:.22;transform:scale(1.15)}
 .reader-img{position:relative;display:block;width:100%;height:100%;object-fit:contain;object-position:center}
 .reader-body{padding:1.5rem 2.2rem 1.8rem}
 .reader-body h2{font-size:1.8rem;line-height:1.2;margin:.2rem 0 1rem}
@@ -253,9 +253,9 @@ svg{display:block}
 
 /* ---------- Jogos: uma tela cheia com um único canvas ----------
    O loop só roda durante a partida; pausado ou no menu, nada é redesenhado. */
-#game{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:var(--bg)}
+#game{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;place-items:center;background:var(--bg)}
 #game[hidden]{display:none}
-#gameCanvas{width:min(100vw,177.78vh);height:min(56.25vw,100vh)}
+#gameCanvas{width:100vw;max-width:177.78vh;height:56.25vw;max-height:100vh}
 
 .info{padding:1.1rem 1.2rem;border-radius:var(--radius);font-size:.85rem;color:var(--muted);line-height:1.6}
 .info b{color:var(--text);font-weight:600}
@@ -291,9 +291,9 @@ svg{display:block}
 /* Easter egg do gatinho */
 .about-hint{font-size:.78rem;color:var(--muted);margin-top:-.2rem}
 .about.is-focused .about-hint{color:rgba(10,11,14,.55)}
-#kitty{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:radial-gradient(50% 55% at 50% 45%,rgba(255,158,196,.16),transparent 70%),rgba(4,4,6,.94)}
+#kitty{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;place-items:center;background:radial-gradient(50% 55% at 50% 45%,rgba(255,158,196,.16),transparent 70%),rgba(4,4,6,.94)}
 #kitty[hidden]{display:none}
-.kitty-card{position:relative;overflow:hidden;width:min(30rem,90vw);padding:1.6rem 2rem 2rem;border-radius:1.8rem;text-align:center;background:linear-gradient(160deg,#1a1b22,#0c0d11);
+.kitty-card{position:relative;overflow:hidden;width:90vw;max-width:30rem;padding:1.6rem 2rem 2rem;border-radius:1.8rem;text-align:center;background:linear-gradient(160deg,#1a1b22,#0c0d11);
   animation:kittyIn .7s cubic-bezier(.34,1.56,.64,1) both}
 .kitty-cat{width:15rem;height:15rem;margin:0 auto;overflow:visible;animation:kittyBob 2.4s ease-in-out .7s infinite}
 .kitty-cat .kitty-tail{transform-box:fill-box;transform-origin:0% 60%;animation:kittyTail 1.2s ease-in-out infinite alternate}
@@ -303,7 +303,7 @@ svg{display:block}
 .kitty-cat .kitty-eyes{transform-box:fill-box;transform-origin:50% 50%;animation:kittyBlink 3.6s ease-in-out .9s infinite}
 .kitty-cat .kitty-stars{animation:kittyTwinkle 1.8s ease-in-out infinite alternate}
 .kitty-cat .kitty-ring{transform-box:fill-box;transform-origin:50% 50%;animation:kittyRing 2.4s ease-in-out .7s infinite}
-.kitty-hearts{position:absolute;inset:0;pointer-events:none}
+.kitty-hearts{position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none}
 .kitty-hearts i{position:absolute;left:var(--x);bottom:28%;width:1.5rem;height:1.5rem;opacity:0;animation:kittyHeart 3s ease-out var(--d) infinite}
 .kitty-hearts svg{width:100%;height:100%}
 .kitty-title{position:relative;font-size:1.5rem;font-weight:700;margin-top:.4rem}
@@ -323,12 +323,27 @@ svg{display:block}
 
 /* ---------- Tela de descanso ----------
    Some na hora (sem transição) para o controle responder logo; só a entrada é suave. */
-#saver{position:fixed;inset:0;z-index:40;background:#000;opacity:0;visibility:hidden;cursor:none}
+#saver{position:fixed;top:0;right:0;bottom:0;left:0;z-index:40;background:#000;opacity:0;visibility:hidden;cursor:none}
 #saver.show{opacity:1;visibility:visible;transition:opacity 1.6s ease}
-#saver canvas{position:absolute;inset:0;width:100%;height:100%}
+#saver canvas{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%}
 #saverClock{position:absolute;left:4vw;bottom:5vh;color:rgba(245,246,248,.45);font-weight:200;font-size:4.2rem;
   letter-spacing:.02em;line-height:1;font-variant-numeric:tabular-nums}
 #saverClock small{display:block;margin-top:.5rem;font-size:1rem;font-weight:400;letter-spacing:.08em;color:rgba(232,234,240,.35)}
+
+/* ---------- Navegador antigo (WebView de TV box) ----------
+   Sem aspect-ratio (Chrome < 88): a altura das artes vem do padding, como antes do recurso existir. */
+@supports not (aspect-ratio:1/1){
+  .tile-art{height:0;padding-top:62.5%}
+  .tile.pick .tile-art{padding-top:150%}
+  .news-img{height:9.6rem}
+}
+
+/* Recuo das bordas (notch e barras do sistema) só onde max() existe: no WebView antigo, max() com env()
+   não cai no valor anterior, zera o padding. */
+@supports (padding:max(1px,2px)){
+  #sidebar{padding:max(1.6rem,env(safe-area-inset-top)) 1rem 1.6rem max(1rem,env(safe-area-inset-left))}
+  #main{padding:max(1.6rem,env(safe-area-inset-top)) max(2.4rem,env(safe-area-inset-right)) 3rem 2.4rem}
+}
 
 /* ---------- Otimizações (classes na <html>, ligadas nas Configurações do Onix) ---------- */
 html.no-shine .f::after,html.no-shine .tile-art::after{display:none}
@@ -367,11 +382,11 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 @media (max-width:760px) and (orientation:portrait){
   html{font-size:13px}
   #sidebar{top:auto;right:0;width:auto;height:auto;flex-direction:row;justify-content:space-around;gap:.2rem;
-    padding:.5rem .5rem max(.6rem,env(safe-area-inset-bottom));border-right:0;border-top:1px solid rgba(255,255,255,.12)}
+    padding:.5rem .5rem .6rem;border-right:0;border-top:1px solid rgba(255,255,255,.12)}
   .brand,.nav-spacer,.nav-mode{display:none}
   .nav-item{flex-direction:column;gap:.25rem;padding:.5rem .4rem;font-size:.7rem;flex:1;align-items:center}
   .nav-item.is-focused{transform:translateY(-.2rem)}
-  #main{left:0;bottom:4.8rem;padding:max(1.2rem,env(safe-area-inset-top)) 1.2rem 2rem}
+  #main{left:0;bottom:4.8rem;padding:1.2rem 1.2rem 2rem}
   #clock{font-size:3.6rem}
   .hero{min-height:18rem;padding:1.4rem}
   .hero-content{max-width:100%}
@@ -382,6 +397,10 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
   #reader{padding:1rem}
   .reader-body{padding:1.2rem}
   .reader-more{flex-direction:column;align-items:flex-start}
+  @supports (padding:max(1px,2px)){
+    #sidebar{padding:.5rem .5rem max(.6rem,env(safe-area-inset-bottom))}
+    #main{padding:max(1.2rem,env(safe-area-inset-top)) 1.2rem 2rem}
+  }
 }
 </style>
 </head>
@@ -562,6 +581,45 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 
 <script>
 // Aparelhos com WebView antigo (Android TV 9 sem atualização): repõe o pouco de API recente que o Onix usa.
+/* Navegador antigo (WebView de TV box, Chrome < 84): sem "gap" no flexbox, os itens grudam.
+   Testa o recurso e, se faltar, gera margens equivalentes para cada regra flex que usa gap.
+   No grid o gap funciona desde o Chrome 66, então essas regras ficam como estão. */
+(function flexGapShim() {
+  const t = document.createElement('div');
+  t.style.cssText = 'display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden';
+  t.appendChild(document.createElement('div')); t.appendChild(document.createElement('div'));
+  document.documentElement.appendChild(t);
+  const ok = t.scrollHeight === 1;
+  t.remove();
+  if (ok) return;
+  document.documentElement.classList.add('no-flexgap');
+  const out = [];
+  const walk = (rules, media) => {
+    for (const r of Array.from(rules)) {
+      if (r.cssRules && r.media) { walk(r.cssRules, r.media.mediaText); continue; }
+      if (!r.style || !r.selectorText) continue;
+      const st = r.style, row = st.getPropertyValue('row-gap'), col = st.getPropertyValue('column-gap');
+      if (!row && !col) continue;
+      if (/grid/.test(st.display) || st.gridTemplateColumns || /\.grid\b/.test(r.selectorText)) continue;
+      const column = /column/.test(st.flexDirection);
+      const wrap = /wrap/.test(st.flexWrap);
+      const sels = r.selectorText.split(',').map(x => x.trim());
+      const each = suffix => sels.map(x => x + suffix).join(',');
+      // Em coluna também zera a margem lateral: um elemento pode casar com uma regra de linha e
+      // com outra de coluna (ex.: .opt e .about), e a de coluna, que vem depois, é a que vale.
+      let css = column ? each('>*+*') + '{margin-top:' + (row || col) + ';margin-left:0}'
+                       : each('>*+*') + '{margin-left:' + (col || row) + '}';
+      if (wrap) css += each('>*') + '{margin-bottom:' + (row || col) + '}';
+      out.push(media ? '@media ' + media + '{' + css + '}' : css);
+    }
+  };
+  for (const sheet of Array.from(document.styleSheets)) {
+    try { walk(sheet.cssRules, ''); } catch (_) {}
+  }
+  const style = document.createElement('style');
+  style.textContent = out.join('\n');
+  document.head.appendChild(style);
+})();
 if (!Element.prototype.replaceChildren) Element.prototype.replaceChildren = function (...n) { this.textContent = ''; this.append(...n); };
 if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', { value(i) { i = Math.trunc(i) || 0; return this[i < 0 ? this.length + i : i]; }, configurable: true, writable: true });
 /*
@@ -618,7 +676,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.7.1 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '13.7.2 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -2412,6 +2470,10 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '13.7.2 beta', date: 'outubro de 2026', items: [
+    ['bug', '*TV boxes com navegador interno antigo:* os ícones dos apps não apareciam e a tela ficava grande demais, cortada na direita. Agora o Onix se ajusta também ao Android System WebView antigo.'],
+    ['new', 'O cartão *Sobre*, no fim das Configurações, mostra a versão do navegador interno da TV. Se algo aparecer estranho, mande essa informação junto.'],
+  ] },
   { version: '13.7.1 beta', date: 'outubro de 2026', items: [
     ['bug', 'Fechar o gatinho do cartão *Sobre* com *Voltar* não leva mais o foco para o menu.'],
     ['fix', 'Por dentro, o código do Onix agora se chama *com.onix.launcher*. Nada muda para você: a atualização instala por cima e mantém tudo.'],
@@ -2479,7 +2541,9 @@ function openChangelog(from) {
   reader = { news: null, from };
   $('#readerClose').classList.add('is-focused');
 }
-const ABOUT = [['Criado por', 'Ruan Amaral'], ['Instagram', '@ruan_amarl'], ['GitHub', 'github.com/ruan2311'], ['Versão', APP_VERSION]];
+// Versão do navegador interno (WebView no Android): ajuda a achar problemas de TV box com WebView antigo.
+const ENGINE = (m => m ? 'Chrome ' + m[1] : 'desconhecido')(/Chrome\/(\d+)/.exec(navigator.userAgent));
+const ABOUT = [['Criado por', 'Ruan Amaral'], ['Instagram', '@ruan_amarl'], ['GitHub', 'github.com/ruan2311'], ['Versão', APP_VERSION], ['Navegador da TV', ENGINE]];
 const GO_ICON = '<svg class="opt-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
 const PICK_KEYS = OPTIONS.filter(o => o.service);
 function setOption(key, on) {

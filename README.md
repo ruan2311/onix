@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.1%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.2%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -602,6 +602,7 @@ python3 -m http.server 8000
 - **Entradas HDMI** só aparecem em TVs. Em Chromecast e TV boxes, a aba avisa que o aparelho não tem entradas.
 - **Desligar TV** depende do recurso de administrador do dispositivo, que alguns aparelhos não têm.
 - **Indicações e notícias** são focadas no Brasil e em português.
+- **TV boxes com Android antigo:** o Onix roda dentro do navegador interno do Android (o *Android System WebView*). Desde a 13.7.2 ele se ajusta a versões antigas, mas, se algo aparecer estranho, atualize o **Android System WebView** pela Play Store da TV box. A versão aparece em **Configurações → Sobre → Navegador da TV**.
 - **Samsung (Tizen):** não vira tela inicial, não desliga a TV e mostra a HDMI numa janela do próprio Onix. Veja [O que muda na Samsung](#o-que-muda-na-samsung).
 - **LG (webOS):** não vira tela inicial, não desliga a TV e, pelo Modo Desenvolvedor, precisa renovar a sessão a cada 50 horas. Veja [O que muda na LG](#o-que-muda-na-lg).
 
