@@ -2,15 +2,16 @@
 
 # 🪐 Onix
 
-**Um launcher para Android TV, Google TV e TVs Samsung (Tizen), feito para ser rápido no controle remoto.**
+**Um launcher para Android TV, Google TV, TVs Samsung (Tizen) e TVs LG (webOS), feito para ser rápido no controle remoto.**
 
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-13.6.4%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.0%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
+![LG](https://img.shields.io/badge/LG%20webOS-2022%2B%20(beta)-a50034?style=flat-square&logo=lg&logoColor=white)
 ![Licença](https://img.shields.io/badge/licen%C3%A7a-MIT-blue?style=flat-square)
 
 <img src="docs/screenshots/inicio.png" alt="Tela inicial do Onix" width="900">
@@ -27,6 +28,7 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 - [Download: Onix App ou Onix Launcher?](#download-onix-app-ou-onix-launcher)
 - [Instalação](#instalação)
 - [TVs Samsung (Tizen)](#tvs-samsung-tizen)
+- [TVs LG (webOS)](#tvs-lg-webos)
 - [Usar como tela inicial (Onix Launcher)](#usar-como-tela-inicial-onix-launcher)
 - [Atualizações automáticas](#atualizações-automáticas)
 - [Ativar o botão "Desligar TV"](#ativar-o-botão-desligar-tv)
@@ -46,6 +48,8 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 - **Escolha suas indicações.** Em **Configurações → Indicações**, desligue *Pelo que você assiste* e marque você mesmo Netflix, Disney+, HBO Max ou Globoplay.
 - **Seu aparelho no topo.** O chip mostra o que está rodando o Onix: *Google TV · Philips*, *Android TV*, *Fire TV*, *Celular Android*…
 - **"Conectado" de verdade.** O Onix testa a internet a cada 30 segundos e mostra **Sem internet** quando o Wi-Fi está ligado mas a internet caiu.
+
+Na 13.7.0: versão para **TVs LG (webOS)**, em beta e ainda sem teste numa LG de verdade. Veja [TVs LG (webOS)](#tvs-lg-webos).
 
 Na 13.6.4: etiquetas **Novo**, **Correção** e **Bug** nas Novidades, e um segredo no cartão **Sobre**.
 
@@ -133,6 +137,8 @@ Existem duas versões. O conteúdo é o mesmo; muda só a forma como o Android t
 | Recomendado para | Experimentar sem mexer no sistema | Quem quer o Onix como tela principal |
 
 Tem uma **TV Samsung**? Ela não roda Android: use o [Onix para Samsung (Tizen)](#tvs-samsung-tizen), que tem instalação própria.
+
+Tem uma **TV LG**? Também não roda Android: use o [Onix para LG (webOS)](#tvs-lg-webos).
 
 > **Dica:** comece pelo **Onix App**. Se gostar, instale o **Onix Launcher** por cima. Os dois usam o mesmo pacote (`com.aurora.launcher`), então a troca é uma atualização normal: apps organizados, banners e recordes são mantidos.
 
@@ -242,7 +248,63 @@ bash tizen/build.sh            # gera tizen/build/onix/ e o onix-tizen.zip
 bash tizen/build.sh Onix       # também gera o Onix.wgt assinado (precisa do Tizen CLI e do perfil "Onix")
 ```
 
-O `tizen/build.sh` pega o mesmo `index.html` do Android e faz quatro coisas: coloca a ponte do Tizen (`tizen/bridge.js`) antes do script da página, embute as indicações iniciais, libera na Content-Security-Policy só os hosts de indicações e notícias, e troca `inset` e `aspect-ratio` por equivalentes que o navegador das TVs de 2022 entende.
+O `tizen/build.sh` pega o mesmo `index.html` do Android e, pelo `tv/page.py`, faz quatro coisas: coloca a ponte (`tv/bridge.js` com o adaptador `tizen/platform.js`) antes do script da página, embute as indicações iniciais, libera na Content-Security-Policy só os hosts de indicações e notícias, e troca `inset` e `aspect-ratio` por equivalentes que o navegador das TVs de 2022 entende.
+
+---
+
+## TVs LG (webOS)
+
+As TVs LG usam o **webOS**, então APKs também não instalam nelas. O Onix para LG é a mesma interface empacotada como app do webOS (`onix-webos.ipk`), com a mesma ponte da Samsung e um adaptador próprio para os serviços da LG.
+
+> ⚠️ **Beta: pode não funcionar.** Esta versão ainda não foi testada numa LG de verdade, só com as APIs da LG simuladas no computador. A lista de apps, as entradas, o link direto da Netflix e as indicações podem falhar dependendo do modelo. Se algo não funcionar na sua TV, [abra uma issue](https://github.com/ruan2311/onix/issues) dizendo o modelo e o ano.
+
+### O que muda na LG
+
+| Recurso | Na LG |
+|---|---|
+| Apps, Organizar seus apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android. Os apps vêm da barra da LG; se a sua TV não deixar o Onix ler essa lista, ele mostra os apps mais comuns (Netflix, YouTube, Prime Video, Disney+, Spotify, Apple TV, Navegador e Configurações) |
+| Indicações da semana + **Assistir na Netflix** | ✅ Abre a Netflix no título. Se a TV não aceitar o link direto, abre a Netflix e você procura o título |
+| Indicações do Disney+, HBO Max e Globoplay | ⚠️ Mesma regra do Android. O app abre, mas nem sempre direto no título |
+| Entradas TV e HDMI | ✅ Troca a TV inteira para a entrada, como o botão de entradas do controle. Se a TV não informar as portas, aparecem TV e HDMI 1 a 4 |
+| Configurações da TV e ajustes de imagem | ✅ Abrem as Configurações da LG |
+| Atualizações | ⚠️ O Onix avisa quando sai uma versão nova; instale o `.ipk` novo do mesmo jeito que o primeiro |
+| Virar a tela inicial | ❌ O webOS não aceita launchers de terceiros. O Onix aparece na barra de apps da LG, e dá para trazê-lo para o começo dela |
+| Desligar TV | ❌ O webOS não deixa apps comuns desligarem a TV |
+
+**TVs compatíveis:** LG de **2022 em diante** (webOS 22 ou mais novo). Em modelos mais antigos, o navegador interno não tem os recursos que a interface usa.
+
+### Jeito 1: Modo Desenvolvedor (qualquer LG, sem root)
+
+1. Crie uma conta de graça no [LG Developer](https://webostv.developer.lge.com/) (é diferente da conta LG da TV).
+2. Na TV, instale o app **Developer Mode** pela **LG Content Store**, abra e entre com a conta do passo 1.
+3. Ligue **Dev Mode Status** (a TV reinicia), abra o app de novo e ligue **Key Server**. Anote o **IP** e a **Passphrase** que aparecem na tela.
+4. No computador, instale o [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop/releases) (Windows, macOS ou Linux), adicione a TV com o IP e a Passphrase do passo 3 e conecte.
+5. Baixe o [onix-webos.ipk](https://github.com/ruan2311/onix/releases/latest/download/onix-webos.ipk) e, no Dev Manager, use **Install** e escolha o arquivo. O **Onix** aparece na barra de apps da TV.
+
+Prefere o terminal? Com o [webOS CLI](https://webostv.developer.lge.com/develop/tools/cli-installation) (`npm install -g @webos-tools/cli`):
+
+```bash
+ares-setup-device                          # "add": nome tv, IP da TV, porta 9922, usuário prisoner
+ares-novacom --device tv --getkey          # pede a Passphrase do app Developer Mode
+ares-install --device tv onix-webos.ipk
+ares-launch --device tv com.ruan2311.onix
+```
+
+> ⏳ **O Modo Desenvolvedor dura 50 horas.** Quando ele vence, a LG apaga os apps instalados por ele. Abra o app **Developer Mode** na TV e aperte **Extend** de vez em quando para renovar (o webOS Dev Manager também mostra quanto falta).
+
+### Jeito 2: Homebrew Channel (LG com root)
+
+Se a sua TV já tem o [Homebrew Channel](https://github.com/webosbrew/webos-homebrew-channel), instale o `onix-webos.ipk` pelo webOS Dev Manager ou copiando para a TV e abrindo pelo Homebrew Channel. Assim o Onix não expira.
+
+> Para **atualizar**, instale o `.ipk` novo por cima: seus apps organizados, banners e recordes são mantidos. Para **desinstalar**, segure **OK** no Onix na barra de apps e escolha **Excluir**.
+
+### Compilar a versão LG a partir do código
+
+```bash
+bash webos/build.sh            # gera webos/build/onix/ e o onix-webos.ipk
+```
+
+O `webos/build.sh` monta o `index.html` com o mesmo `tv/page.py` da Samsung (trocando o adaptador por `webos/platform.js`), gera os ícones de 80 e 130 px e empacota o `.ipk` com o `webos/ipk.py`, sem precisar do `ares-package`.
 
 ---
 
@@ -385,10 +447,19 @@ python3 -m http.server 8000
 .
 ├── index.html                  # Toda a interface: HTML, CSS e JS num arquivo só
 ├── CHANGELOG.md                # O que mudou em cada versão
+├── tv/                         # Comum às TVs sem Android (Samsung e LG)
+│   ├── bridge.js               # Ponte JS: apps, indicações, notícias, internet, atualizações
+│   └── page.py                 # Monta o index.html da TV (ponte, CSP, CSS das TVs de 2022)
 ├── tizen/                      # Versão Samsung (Tizen)
-│   ├── bridge.js               # Ponte JS com as APIs do Tizen (apps, HDMI, Netflix, indicações, notícias)
+│   ├── platform.js             # Adaptador com as APIs do Tizen (apps, HDMI, Netflix)
 │   ├── config.xml              # Manifesto do app (.wgt): privilégios e hosts liberados
 │   └── build.sh                # Monta o app e, com um perfil de certificado, o .wgt assinado
+├── webos/                      # Versão LG (webOS)
+│   ├── platform.js             # Adaptador com os serviços Luna da LG (apps, entradas, Netflix)
+│   ├── appinfo.json            # Manifesto do app
+│   ├── ipk.py                  # Empacota o .ipk (sem o ares-package)
+│   ├── Resize.java             # Ícones de 80 e 130 px a partir do ícone do Android
+│   └── build.sh                # Monta o app e o onix-webos.ipk
 ├── android/
 │   ├── AndroidManifest.xml
 │   ├── build.sh                # Build sem Gradle (javac → dx → aapt → zipalign → apksigner)
@@ -408,7 +479,7 @@ python3 -m http.server 8000
 └── docs/screenshots/
 ```
 
-**Na Samsung**, o `tizen/bridge.js` cria um `AndroidBridge` com os mesmos métodos, feito com as APIs web do Tizen (`tizen.application`, `tizen.systeminfo`, `tizen.tvwindow`), e baixa indicações e notícias com o mesmo código, portado para JavaScript.
+**Na Samsung e na LG**, o `tv/bridge.js` cria um `AndroidBridge` com os mesmos métodos e baixa indicações e notícias com o mesmo código, portado para JavaScript. O que muda de uma TV para a outra fica num adaptador pequeno: `tizen/platform.js` (APIs web do Tizen: `tizen.application`, `tizen.systeminfo`, `tizen.tvwindow`) e `webos/platform.js` (serviços Luna da LG pelo `PalmServiceBridge`: `applicationManager` e o serviço de entradas).
 
 **Como funciona:** a `MainActivity` abre um WebView com o `index.html` dos assets. A página conversa com o Android pelo objeto `AndroidBridge` (por exemplo, `getInstalledApps()`, `launchApp()`, `getTvInputs()`, `openPick()`, `powerOff()`), e o Android avisa a página das novidades com `window.Launcher.onAppsChanged()`, `onPicksChanged()`, `onNewsChanged()` e outros.
 
@@ -418,7 +489,7 @@ python3 -m http.server 8000
 
 - **Novos banners de entrada:** adicione um item em `INPUT_BANNERS`, no `index.html`, com `id`, `name` e `art` (um SVG de 160×100).
 - **Fontes de notícias:** edite `FEEDS` em `GameNews.java`.
-- **Serviços das indicações:** a tabela `PROVIDERS` em `WeeklyPicks.java` (e em `tizen/bridge.js`), com o código do serviço no JustWatch, o formato do link do título e os pacotes do app. A regra de uso (4 aberturas, 7 dias) fica em `AppUsage.java`.
+- **Serviços das indicações:** a tabela `PROVIDERS` em `WeeklyPicks.java` (e em `tv/bridge.js`), com o código do serviço no JustWatch, o formato do link do título e os pacotes do app. A regra de uso (4 aberturas, 7 dias) fica em `AppUsage.java`.
 - **País e idioma das indicações:** `vars.put("c", "BR")` e `vars.put("l", "pt-BR")` em `WeeklyPicks.java`.
 - **Tempo da tela de descanso:** `SAVER_IDLE` no `index.html` (padrão: 10 minutos).
 
@@ -432,6 +503,7 @@ python3 -m http.server 8000
 - **Desligar TV** depende do recurso de administrador do dispositivo, que alguns aparelhos não têm.
 - **Indicações e notícias** são focadas no Brasil e em português.
 - **Samsung (Tizen):** não vira tela inicial, não desliga a TV e mostra a HDMI numa janela do próprio Onix. Veja [O que muda na Samsung](#o-que-muda-na-samsung).
+- **LG (webOS):** não vira tela inicial, não desliga a TV e, pelo Modo Desenvolvedor, precisa renovar a sessão a cada 50 horas. Veja [O que muda na LG](#o-que-muda-na-lg).
 
 ---
 

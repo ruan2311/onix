@@ -17,3 +17,7 @@ onix-tizen.zip
 Onix.wgt
 onix-app.apk
 onix-launcher.apk
+
+# Saída do build da versão LG (webos/build.sh)
+webos/build/
+onix-webos.ipk

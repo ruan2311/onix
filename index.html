@@ -587,7 +587,8 @@ if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', { value(i)
     AndroidBridge.getUpdate() -> {"current","latest","state","error","auto","checked"}; checkUpdate(); installUpdate() -> "ok"|"downloading"|"permission"|"fail";
     setAutoUpdate(bool). O nativo chama Launcher.onUpdate() quando o estado da atualização muda.
   Métodos opcionais ausentes (powerOff, openSettings…) escondem os botões correspondentes.
-  A ponte da Samsung (tizen/bridge.js) implementa este mesmo contrato com as APIs do Tizen.
+  As pontes da Samsung e da LG (tv/bridge.js + tizen/platform.js ou webos/platform.js) implementam
+  este mesmo contrato com as APIs de cada TV.
   Tudo que vem da ponte é tratado como não confiável: validado e inserido só via textContent / <img src=data:>.
 */
 (() => {
@@ -617,7 +618,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.6.4 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '13.7.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -678,6 +679,9 @@ const BRAND_BY_PKG = {
   'com.wbd.stream': 'max', 'com.hbo.hbonow': 'max',
   'com.spotify.tv.android': 'spotify', 'com.spotify.music': 'spotify',
   'com.android.tv.settings': 'settings',
+  // LG (webOS)
+  'youtube.leanback.v4': 'youtube', 'netflix': 'netflix', 'amazon': 'prime', 'com.disney.disneyplus-prod': 'disney',
+  'spotify-beehive': 'spotify', 'com.palm.app.settings': 'settings',
 };
 // Samsung (Tizen): os IDs dos apps mudam de ano para ano, então a marca vem do nome.
 const BRAND_BY_NAME = {
@@ -690,7 +694,7 @@ const BRAND_ORDER = ['youtube', 'netflix', 'prime', 'disney', 'globoplay', 'max'
 // Pacotes Android (com.netflix.ninja) e IDs de app do Tizen (3201907018807, org.tizen.netflix-app).
 const PKG_RE = /^[a-zA-Z0-9][a-zA-Z0-9_-]*(\.[a-zA-Z0-9_-]+)*$/;
 const ICON_RE = /^data:image\/(png|webp|jpeg);base64,[A-Za-z0-9+/]+={0,2}$/;
-// Ícone de app do Tizen: arquivo local da TV (no Android a CSP só aceita data:).
+// Ícone de app da Samsung ou da LG: arquivo local da TV (no Android a CSP só aceita data:).
 const ICON_FILE_RE = /^file:\/\/\/[A-Za-z0-9._\/-]{1,300}\.(png|jpe?g|webp)$/i;
 const MAX_ICON = 512 * 1024, MAX_APPS = 300;
 
@@ -781,6 +785,8 @@ const Bridge = (() => {
           state: STATES.indexOf(o.state) >= 0 ? o.state : 'none',
           error: typeof o.error === 'string' ? cleanText(o.error, 120) : '',
           auto: o.auto !== false, checked: typeof o.checked === 'number' && o.checked > 0 ? o.checked : 0,
+          // Samsung e LG: como instalar a versão nova à mão (a TV não deixa o Onix instalar sozinho).
+          hint: typeof o.hint === 'string' ? cleanText(o.hint, 160) : '',
         };
       } catch (e) { console.warn('getUpdate falhou', e); return null; }
     },
@@ -2406,6 +2412,10 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '13.7.0 beta', date: 'outubro de 2026', items: [
+    ['new', '*TVs LG (webOS):* o Onix agora tem uma versão para LG (TVs de 2022 em diante), em *beta*: ainda não foi testada numa LG de verdade e pode não funcionar. O passo a passo está no GitHub.'],
+    ['fix', 'O aviso "O Onix já está na versão mais recente" só aparece quando você mesmo procura atualizações, e não mais ao abrir.'],
+  ] },
   { version: '13.6.4 beta', date: 'outubro de 2026', items: [
     ['new', '*Etiquetas nas Novidades:* cada mudança mostra se é *Novo*, *Correção* ou *Bug* corrigido.'],
     ['new', 'Tem um segredo escondido no cartão *Sobre*, no fim das Configurações. A dica está lá. :)'],
@@ -2589,13 +2599,14 @@ function renderUpdate() {
   else if (update.state === 'downloading') { name = 'Baixando a versão ' + v + '…'; desc = 'A confirmação de instalação abre quando o download terminar.'; }
   else if (update.state === 'ready') { name = 'Instalar a versão ' + v; desc = 'Já está baixada. Aperte OK e confirme na tela da TV.' + (update.error ? ' (' + update.error + ')' : ''); }
   else if (update.state === 'installing') { name = 'Instalando a versão ' + v + '…'; desc = 'Confirme na tela da TV. O Onix reabre sozinho na versão nova.'; }
-  else if (update.state === 'manual') { name = 'Versão ' + v + ' disponível'; desc = 'Na Samsung, baixe o onix-tizen.zip no GitHub e repita o passo 5 do tutorial.'; }
+  else if (update.state === 'manual') { name = 'Versão ' + v + ' disponível'; desc = update.hint || 'Baixe a versão nova no GitHub e instale de novo.'; }
   else if (update.state === 'error') desc = 'Não deu para procurar agora (sem internet ou o GitHub não respondeu). Aperte OK para tentar de novo.';
   else desc = 'Você está na versão mais recente (' + (update.current || APP_VERSION) + ')' + (update.checked ? ', conferida às ' + timeText(update.checked) : '') + '.';
   b.querySelector('.opt-name').textContent = name;
   b.querySelector('.opt-desc').textContent = desc;
   b.setAttribute('aria-label', name);
 }
+let updateAsked = false;
 function refreshUpdate() {
   const before = update;
   update = Bridge.getUpdate();
@@ -2609,15 +2620,18 @@ function refreshUpdate() {
       toast('Saiu a versão ' + update.latest + ' do Onix! Veja em Configurações → Atualizações');
     }
   }
-  if (before && before.state === 'checking' && update && update.state === 'none') toast('O Onix já está na versão mais recente');
-  if (before && before.state === 'checking' && update && update.state === 'error') toast('Não deu para procurar atualizações agora');
+  // Resultado da procura só quando a pessoa pediu (a automática, ao abrir, fica quieta).
+  if (updateAsked && before && before.state === 'checking' && update && (update.state === 'none' || update.state === 'error')) {
+    updateAsked = false;
+    toast(update.state === 'none' ? 'O Onix já está na versão mais recente' : 'Não deu para procurar atualizações agora');
+  }
   if (before && before.state === 'downloading' && update && update.state === 'error') toast('O download da atualização falhou: ' + (update.error || 'tente de novo'));
 }
 function updateAction() {
   if (!Bridge.native) { toast('Procuraria uma versão nova no GitHub (simulação no navegador)'); return; }
   const st = update ? update.state : 'none';
   if (st === 'checking' || st === 'downloading' || st === 'installing') { toast('Só um instante…'); return; }
-  if (st === 'manual') { toast('Baixe o onix-tizen.zip da versão ' + update.latest + ' no GitHub e repita o passo 5 do tutorial'); return; }
+  if (st === 'manual') { toast(update.hint || 'Baixe a versão ' + update.latest + ' no GitHub e instale de novo'); return; }
   if (st === 'available' || st === 'ready') {
     const r = Bridge.installUpdate();
     if (r === 'ok') toast('Confirme a instalação na tela da TV');
@@ -2627,7 +2641,7 @@ function updateAction() {
     refreshUpdate();
     return;
   }
-  if (Bridge.checkUpdate()) toast('Procurando atualizações…');
+  if (Bridge.checkUpdate()) { updateAsked = true; toast('Procurando atualizações…'); }
   else toast('Não foi possível procurar atualizações');
 }
 

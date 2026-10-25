@@ -2,6 +2,12 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.7.0 beta (outubro de 2026)
+
+- **TVs LG (webOS):** o Onix agora tem uma versão para LG (TVs de 2022 em diante), em **beta**: ainda não foi testada numa LG de verdade e **pode não funcionar**. O passo a passo está no README.
+- O aviso **"O Onix já está na versão mais recente"** só aparece quando você mesmo procura atualizações, e não mais ao abrir.
+- Por dentro: a ponte da Samsung e a da LG agora dividem o mesmo código (`tv/bridge.js`), com um adaptador pequeno para cada TV.
+
 ## 13.6.4 beta (outubro de 2026)
 
 - **Etiquetas nas Novidades:** cada mudança mostra se é **Novo**, **Correção** ou **Bug** corrigido.

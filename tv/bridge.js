@@ -1,21 +1,27 @@
 /*
-  Onix para Samsung (Tizen): implementa o mesmo contrato do AndroidBridge (ver o comentário no
-  início do script do index.html) com as APIs web do Tizen. O build (tizen/build.sh) coloca este
-  arquivo dentro do index.html, antes do script da página, porque ela lê a ponte ao abrir.
+  Ponte das TVs que não rodam Android (Samsung/Tizen e LG/webOS): implementa o mesmo contrato do
+  AndroidBridge (ver o comentário no início do script do index.html). O build de cada TV
+  (tizen/build.sh, webos/build.sh) junta o adaptador dela (tizen/platform.js ou webos/platform.js,
+  que define a constante P) com este arquivo, numa função só, e põe tudo dentro do index.html antes
+  do script da página, porque ela lê a ponte ao abrir.
 
-  A página chama a ponte de forma síncrona, mas no Tizen quase tudo é assíncrono. Por isso a ponte
+  A página chama a ponte de forma síncrona, mas nas TVs quase tudo é assíncrono. Por isso a ponte
   responde na hora com o que está salvo (localStorage) e, quando a TV ou a internet respondem,
   avisa a página com Launcher.onAppsChanged(), onPicksChanged(), onNewsChanged() e onInputsChanged().
 
   As indicações e as notícias são o porte de WeeklyPicks.java, AppUsage.java e GameNews.java:
-  mesmas fontes, mesmos filtros e o mesmo formato de JSON. A rede só acessa os hosts liberados na CSP e no config.xml.
+  mesmas fontes, mesmos filtros e o mesmo formato de JSON. A rede só acessa os hosts liberados na CSP.
+
+  O adaptador P (null fora da TV) tem: storage (prefixo do localStorage), name (chip do topo),
+  self (ID do próprio app), version, updateHint (como instalar a versão nova), serviceIds, scanApps(done), watchApps(cb), launch(id, fail),
+  openLink(appId, link, ok, fail), openNetflix(appId, titleId, ok, fail), scanInputs(done),
+  showInput(id, fail), keys {back, exit}, exit() e, se a TV tiver, watching()/stopInput() (HDMI numa
+  janela do Onix) e openSettings()/openPictureSettings().
 */
-(function () {
-'use strict';
-if (!window.tizen || !tizen.application) return;   // fora da TV: a página fica no modo navegador
+if (!P) return;   // fora da TV: a página fica no modo navegador
 
 const SEED = /*ONIX_SEED*/null;   // indicações embutidas (android/assets/picks-seed.json), postas pelo build
-const SELF = (() => { try { return tizen.application.getCurrentApplication().appInfo.id; } catch (_) { return ''; } })();
+const SELF = P.self;
 
 /* ---------------- Utilidades ---------------- */
 function call(name, ...args) {
@@ -23,10 +29,10 @@ function call(name, ...args) {
   return undefined;
 }
 function load(key) {
-  try { return JSON.parse(localStorage.getItem('onix.tz.' + key) || 'null'); } catch (_) { return null; }
+  try { return JSON.parse(localStorage.getItem(P.storage + key) || 'null'); } catch (_) { return null; }
 }
 function save(key, value) {
-  try { localStorage.setItem('onix.tz.' + key, JSON.stringify(value)); return true; } catch (_) { return false; }
+  try { localStorage.setItem(P.storage + key, JSON.stringify(value)); return true; } catch (_) { return false; }
 }
 
 const TIMEOUT = 15000;
@@ -114,7 +120,6 @@ function trimSentence(s, max) {
 /* ---------------- Apps ---------------- */
 const APP_ID_RE = /^[a-zA-Z0-9][a-zA-Z0-9_-]*(\.[a-zA-Z0-9_-]+)*$/;
 const ICON_FILE_RE = /^file:\/\/\/[A-Za-z0-9._\/-]{1,300}\.(png|jpe?g|webp)$/i;
-const SYSTEM_RE = /^(org\.tizen\.|com\.samsung\.|org\.volt\.)/;
 let appList = load('apps') || [];
 
 function iconUrl(path) {
@@ -122,21 +127,20 @@ function iconUrl(path) {
   const u = path.charAt(0) === '/' ? 'file://' + path : path;
   return ICON_FILE_RE.test(u) ? u : null;
 }
+// P.scanApps entrega [{id, name, icon (caminho do arquivo), system}]; aqui vira o formato da página.
 function scanApps() {
-  try {
-    tizen.application.getAppsInfo(list => {
-      const out = [], seen = {};
-      for (const a of list) {
-        if (!a || !a.show || a.id === SELF || seen[a.id] || !APP_ID_RE.test(a.id) || a.id.length > 150) continue;
-        seen[a.id] = true;
-        out.push({ label: a.name || a.id, package: a.id, icon: iconUrl(a.iconPath), system: SYSTEM_RE.test(a.id) });
-      }
-      if (JSON.stringify(out) === JSON.stringify(appList)) return;
-      appList = out;
-      save('apps', out);
-      call('onAppsChanged');
-    }, e => console.warn('getAppsInfo falhou', e));
-  } catch (e) { console.warn('getAppsInfo indisponível', e); }
+  P.scanApps(list => {
+    const out = [], seen = {};
+    for (const a of list) {
+      if (!a || typeof a.id !== 'string' || a.id === SELF || seen[a.id] || !APP_ID_RE.test(a.id) || a.id.length > 150) continue;
+      seen[a.id] = true;
+      out.push({ label: a.name || a.id, package: a.id, icon: iconUrl(a.icon), system: !!a.system });
+    }
+    if (JSON.stringify(out) === JSON.stringify(appList)) return;
+    appList = out;
+    save('apps', out);
+    call('onAppsChanged');
+  });
 }
 function knownApp(id) {
   for (const a of appList) if (a.package === id) return a;
@@ -145,22 +149,21 @@ function knownApp(id) {
 function launch(id) {
   recordUsage(providerForApp(knownApp(id)));
   try {
-    tizen.application.launch(id, null, () => call('onMessage', 'A TV não deixou abrir este app'));
+    P.launch(id, () => call('onMessage', 'A TV não deixou abrir este app'));
     return true;
   } catch (_) { return false; }
 }
 
 /* ---------------- Serviços de streaming ---------------- */
-// Os IDs dos apps mudam conforme o ano da TV; o nome é o jeito mais seguro de achá-los.
-const NETFLIX_IDS = ['3201907018807', '11101200001', 'org.tizen.netflix-app'];
+// Os IDs dos apps mudam conforme o modelo da TV; o nome é o jeito mais seguro de achá-los.
 const PROVIDERS = [   // ordem = desempate; a Netflix é o padrão e entra mesmo sem uso
-  { key: 'netflix', jw: 'nfx', name: /^netflix$/i, ids: NETFLIX_IDS,
+  { key: 'netflix', jw: 'nfx', name: /^netflix$/i, ids: P.serviceIds.netflix || [],
     link: /^https:\/\/www\.netflix\.com\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?title\/(\d{1,12})\/?$/ },
-  { key: 'disney', jw: 'dnp', name: /^disney\s*\+|^disney plus$/i, ids: [],
+  { key: 'disney', jw: 'dnp', name: /^disney\s*\+|^disney plus$/i, ids: P.serviceIds.disney || [],
     link: /^https:\/\/www\.disneyplus\.com\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?browse\/entity-[0-9a-f-]{36}$/ },
-  { key: 'max', jw: 'mxx', name: /^(hbo\s*)?max$/i, ids: [],
+  { key: 'max', jw: 'mxx', name: /^(hbo\s*)?max$/i, ids: P.serviceIds.max || [],
     link: /^https:\/\/play\.(?:hbo)?max\.com\/(?:video\/watch|show|movie)\/[0-9a-f-]{36}(?:\/[0-9a-f-]{36})?$/ },
-  { key: 'globoplay', jw: 'gop', name: /^globoplay$/i, ids: [],
+  { key: 'globoplay', jw: 'gop', name: /^globoplay$/i, ids: P.serviceIds.globoplay || [],
     link: /^https:\/\/globoplay\.globo\.com\/(?:[a-z0-9-]{1,120}\/t\/[A-Za-z0-9]{1,20}\/?|v\/\d{1,12}\/?)$/ },
 ];
 const NETFLIX = PROVIDERS[0];
@@ -201,24 +204,20 @@ function activeProviders() {
 }
 const signature = list => list.map(p => p.key).join(',');
 /**
- * Disney+, HBO Max e Globoplay: tenta abrir o link do título no app; o Tizen não documenta
+ * Disney+, HBO Max e Globoplay: tenta abrir o link do título no app; as TVs não documentam
  * deep links desses apps, então, se não der, abre só o app (e a página pede para procurar o título).
  */
 function openServiceLink(appId, link) {
   try {
-    const ctl = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/view', link, null, null, null);
-    tizen.application.launchAppControl(ctl, appId, () => recordUsage(providerForApp(knownApp(appId))), () => launch(appId));
+    P.openLink(appId, link, () => recordUsage(providerForApp(knownApp(appId))), () => launch(appId));
   } catch (_) {
     launch(appId);
   }
 }
-/** Abre a Netflix direto no título (deep link do app da Samsung); se a TV recusar, abre só a Netflix. */
+/** Abre a Netflix direto no título (deep link do app da TV); se a TV recusar, abre só a Netflix. */
 function openNetflixTitle(appId, titleId) {
   try {
-    const payload = JSON.stringify({ values: 'm=https://www.netflix.com/title/' + titleId + '&source_type=4' });
-    const ctl = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/view', null, null, null,
-      [new tizen.ApplicationControlData('PAYLOAD', [payload])]);
-    tizen.application.launchAppControl(ctl, appId, () => recordUsage(NETFLIX), () => launch(appId));
+    P.openNetflix(appId, titleId, () => recordUsage(NETFLIX), () => launch(appId));
   } catch (_) {
     launch(appId);
   }
@@ -564,78 +563,43 @@ async function refreshNews(networkBack, force) {
   return true;
 }
 
-/* ---------------- Entradas HDMI (TV Window) ---------------- */
-// O Tizen não troca a entrada da TV inteira para um app comum: o Onix mostra a HDMI em tela cheia
-// numa "janela de TV" dele mesmo. Voltar (ou OK) fecha a janela e volta para o Onix.
+/* ---------------- Entradas ---------------- */
 let inputList = load('inputs') || [];
-const sources = {};
-let watching = false;
-
+// P.scanInputs entrega [{id, label, kind?}]: a TV (antena e cabo) primeiro, depois as HDMI.
 function scanInputs() {
-  try {
-    tizen.systeminfo.getPropertyValue('VIDEOSOURCE', v => {
-      const all = [].concat(v.connected || [], v.disconnected || []).filter(s => s && s.number > 0);
-      // TV (antena e cabo) primeiro, depois as HDMI em ordem; uma entrada por ID.
-      const tv = all.filter(s => s.type === 'TV').slice(0, 1);
-      const hdmi = all.filter(s => s.type === 'HDMI').sort((a, b) => a.number - b.number);
-      const out = [], seen = {};
-      for (const s of tv.concat(hdmi)) {
-        const id = s.type + ':' + s.number;
-        if (seen[id]) continue;
-        seen[id] = true;
-        sources[id] = s;
-        out.push(s.type === 'TV' ? { id, label: 'TV', kind: 'tv' } : { id, label: 'HDMI ' + s.number });
-      }
-      if (JSON.stringify(out) === JSON.stringify(inputList)) return;
-      inputList = out;
-      save('inputs', out);
-      call('onInputsChanged');
-    }, e => console.warn('VIDEOSOURCE falhou', e));
-  } catch (e) { console.warn('systeminfo indisponível', e); }
+  P.scanInputs(out => {
+    if (JSON.stringify(out) === JSON.stringify(inputList)) return;
+    inputList = out;
+    save('inputs', out);
+    call('onInputsChanged');
+  });
 }
-
-const tvStyle = document.createElement('style');
-tvStyle.textContent = 'html.onix-tv,html.onix-tv body{background:transparent!important}html.onix-tv body>*{visibility:hidden!important}';
-document.head.appendChild(tvStyle);
-
 function showInput(id) {
-  const src = sources[id];
-  if (!src || !tizen.tvwindow) return false;
-  const fail = () => { stopWatching(); call('onMessage', 'A TV não deixou mostrar ' + (id.indexOf('TV:') === 0 ? 'a antena' : 'a ' + id.replace(':', ' '))); };
-  try {
-    tizen.tvwindow.setSource(src, () => {
-      tizen.tvwindow.show(() => {
-        watching = true;
-        document.documentElement.classList.add('onix-tv');
-      }, fail, ['0px', '0px', '100%', '100%'], 'MAIN');
-    }, fail, 'MAIN');
-    return true;
-  } catch (_) { return false; }
+  if (!inputList.some(i => i.id === id)) return false;
+  return P.showInput(id, () => call('onMessage', 'A TV não deixou abrir ' + (/^TV/.test(id) ? 'a antena' : 'esta entrada'))) === true;
 }
+const watching = () => !!(P.watching && P.watching());
 function stopWatching() {
-  const was = watching;
-  watching = false;
-  document.documentElement.classList.remove('onix-tv');
-  try { tizen.tvwindow.hide(() => {}, () => {}, 'MAIN'); } catch (_) {}
-  if (was) call('onResume');   // zera a contagem da tela de descanso
+  if (!watching()) return;
+  P.stopInput();
+  call('onResume');   // zera a contagem da tela de descanso
 }
 
 /* ---------------- Controle remoto ---------------- */
-const KEY_BACK = 10009, KEY_EXIT = 10182;
 // Fase de captura na window: roda antes de qualquer tecla chegar à página.
 window.addEventListener('keydown', e => {
-  if (watching) {
-    // Vendo a HDMI: só Voltar, OK e Sair fecham; volume e canais ficam com a TV.
+  if (watching()) {
+    // Vendo a HDMI numa janela do Onix: só Voltar, OK e Sair fecham; volume e canais ficam com a TV.
     e.preventDefault(); e.stopPropagation();
-    if (e.keyCode === KEY_BACK || e.keyCode === 13 || e.keyCode === KEY_EXIT) stopWatching();
+    if (e.keyCode === P.keys.back || e.keyCode === 13 || e.keyCode === P.keys.exit) stopWatching();
     return;
   }
-  if (e.keyCode !== KEY_BACK) return;
+  if (e.keyCode !== P.keys.back) return;
   e.preventDefault(); e.stopPropagation();
   // Na raiz (Início sem nada aberto), Voltar deixa a TV como estava antes do Onix.
-  if (call('onBack') !== true) try { tizen.application.getCurrentApplication().hide(); } catch (_) {}
+  if (call('onBack') !== true) P.exit();
 }, true);
-window.addEventListener('keyup', e => { if (watching || e.keyCode === KEY_BACK) { e.preventDefault(); e.stopPropagation(); } }, true);
+window.addEventListener('keyup', e => { if (watching() || e.keyCode === P.keys.back) { e.preventDefault(); e.stopPropagation(); } }, true);
 
 /* ---------------- Ciclo de vida ---------------- */
 async function backgroundRefresh(networkBack) {
@@ -684,12 +648,12 @@ async function checkNetwork() {
 }
 
 /* ---------------- Atualizações ----------------
-   Procura no GitHub e avisa. Instalar daqui o Tizen não deixa (o app precisa ser assinado com o
-   certificado da TV no computador), então o estado fica "manual" e a página explica o passo a passo. */
+   Procura no GitHub e avisa. Instalar daqui as TVs não deixam (a Samsung exige o certificado da TV
+   e a LG, o modo desenvolvedor ou o Homebrew Channel), então o estado fica "manual". */
 const RELEASES = 'https://api.github.com/repos/ruan2311/onix/releases/latest';
 const UPDATE_CHECK = 6 * 60 * 60 * 1000;
 const update = Object.assign({ latest: '', checked: 0 }, load('update') || {}, { state: 'none', error: '' });
-const currentVersion = (() => { try { return tizen.application.getCurrentApplication().appInfo.version || ''; } catch (_) { return ''; } })();
+const currentVersion = P.version || '';
 function versionNumbers(v) {
   const m = /^v?(\d{1,4})\.(\d{1,4})\.(\d{1,4})/.exec(String(v || ''));
   return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
@@ -729,9 +693,7 @@ function start() {
   checkUpdate(false);
   scanApps();
   scanInputs();
-  try {
-    tizen.application.addAppInfoEventListener({ oninstalled: scanApps, onupdated: scanApps, onuninstalled: scanApps });
-  } catch (_) {}
+  P.watchApps(scanApps);
   window.addEventListener('online', checkNetwork);
   window.addEventListener('offline', () => setOnline(false));
   document.addEventListener('visibilitychange', () => {
@@ -749,8 +711,8 @@ function start() {
 document.addEventListener('DOMContentLoaded', start);
 
 /* ---------------- O contrato ---------------- */
-window.AndroidBridge = Object.freeze({
-  platform: () => 'Samsung TV',
+window.AndroidBridge = Object.freeze(Object.assign({
+  platform: () => P.name,
   setPicksChoice(json) {
     let o;
     try { o = JSON.parse(json); } catch (_) { return false; }
@@ -762,7 +724,7 @@ window.AndroidBridge = Object.freeze({
     refreshPicks(true, false).then(ok => { if (ok) call('onPicksChanged'); });
     return true;
   },
-  getUpdate: () => JSON.stringify({ current: currentVersion, latest: update.state === 'manual' ? update.latest : '', state: update.state, error: update.error, auto: false, checked: update.checked }),
+  getUpdate: () => JSON.stringify({ current: currentVersion, latest: update.state === 'manual' ? update.latest : '', state: update.state, error: update.error, auto: false, checked: update.checked, hint: P.updateHint }),
   checkUpdate() { checkUpdate(true); return true; },
   getInstalledApps: () => JSON.stringify(appList),
   launchApp(id) {
@@ -788,7 +750,9 @@ window.AndroidBridge = Object.freeze({
     refreshAll();
     return true;
   },
-  // Sem openSettings, openPictureSettings e powerOff: o Tizen não deixa apps comuns abrirem
-  // os menus da TV nem desligá-la, então a página esconde esses botões.
-});
-})();
+  // Sem powerOff: nenhuma dessas TVs deixa um app comum desligá-la, então a página esconde o botão.
+  // Os ajustes da TV só entram se a TV deixar abrir (LG); na Samsung, os botões somem também.
+}, P.openSettings ? {
+  openSettings: () => P.openSettings() !== false,
+  openPictureSettings: () => (P.openPictureSettings || P.openSettings)() !== false,
+} : {}));
