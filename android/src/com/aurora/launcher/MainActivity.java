@@ -107,6 +107,10 @@ public class MainActivity extends Activity {
 
         setContentView(webView);
         webView.requestFocus();
+        // A ponte já nasce liberada para a nossa página: o onPageStarted chega depois de os scripts
+        // começarem a rodar, e a página aberta antes dele recebia tudo vazio (sem apps, entradas,
+        // indicações nem notícias). Qualquer outra URL é bloqueada pelo SafeClient.
+        bridge.setTrusted(true);
         webView.loadUrl(START_URL);
 
         registerPackageReceiver();
@@ -229,6 +233,8 @@ public class MainActivity extends Activity {
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             pushNetwork();
+            // Rede de segurança: se algo chegou vazio na abertura, a página relê tudo da ponte.
+            if (START_URL.equals(url)) view.evaluateJavascript("window.Launcher&&Launcher.onResync&&Launcher.onResync()", null);
         }
 
         @Override

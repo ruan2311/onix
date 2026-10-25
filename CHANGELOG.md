@@ -2,6 +2,14 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.6.3 beta (outubro de 2026)
+
+- **Voltar ao Onix sem sumir nada:** às vezes, ao voltar de outro app, a tela abria vazia (sem os apps, as entradas, as indicações e as notícias baixadas) e com os destaques de demonstração da primeira versão. Acontecia quando a TV fechava o Onix em segundo plano: a página reabria antes de a ponte com o Android ser liberada. Corrigido, e a página ainda relê tudo assim que termina de abrir.
+- **Sem internet:** no lugar dos destaques de fachada, o Onix agora avisa **"Parece que você está sem conexão"**, com atalho para as configurações da TV. As indicações e as notícias também avisam.
+- **Configurações da TV** saiu das configurações do Onix e agora fica ao lado do botão **Atualizar**, na tela inicial.
+- **Mais animações:** em **Configurações → Animações**, escolha o estilo do foco (suave, elástica, rápida, flutuar ou pulsar), como o destaque troca (esmaecer, deslizar ou zoom) e ligue a transição entre abas.
+- **Apps organizados:** a aba **Apps** separa os **Recentes** (abertos pelo Onix nos últimos 30 dias, o último primeiro) dos **Não usados**, que ficam lá embaixo.
+
 ## 13.6.2 beta (outubro de 2026)
 
 - As indicações do **Disney+**, da **HBO Max** e do **Globoplay** agora mostram o ícone oficial de cada serviço no selo da capa.
