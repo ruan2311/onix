@@ -27,6 +27,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
 import java.io.ByteArrayInputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Collections;
 
 public class MainActivity extends Activity {
@@ -109,10 +111,39 @@ public class MainActivity extends Activity {
 
         registerPackageReceiver();
         PicksJob.schedule(this);
+        Updater.get(this).setListener(new Runnable() {
+            @Override
+            public void run() {
+                if (webView != null) webView.evaluateJavascript("window.Launcher&&Launcher.onUpdate&&Launcher.onUpdate()", null);
+            }
+        });
     }
 
-    /** Se a semana virou, baixa as novas indicações e avisa a página. */
-    private void refreshPicks(final boolean networkBack) {
+    /**
+     * Atualizações: procura a cada 6 h; com a automática ligada, baixa sozinho e, com o Onix na
+     * frente, abre a confirmação de instalação do sistema (no máximo uma vez por dia se a pessoa
+     * recusar). Instalar sem confirmação o Android não deixa apps comuns fazerem.
+     */
+    private void checkUpdate() {
+        final Updater up = Updater.get(this);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                up.check(false);
+                if (!up.auto() || !up.hasUpdate()) return;
+                if (!up.download() || up.promptedRecently()) return;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (resumed && up.isReady()) up.install(MainActivity.this);
+                    }
+                });
+            }
+        }, "onix-update").start();
+    }
+
+    /** Se a semana virou (ou os serviços escolhidos mudaram), baixa as novas indicações e avisa a página. */
+    void refreshPicks(final boolean networkBack) {
         final WeeklyPicks picks = WeeklyPicks.get(this);
         new Thread(new Runnable() {
             @Override
@@ -209,9 +240,9 @@ public class MainActivity extends Activity {
     }
 
     /**
-     * Conexão: o sistema avisa quando a rede muda (sem verificação periódica, nada roda
-     * enquanto nada muda). Só fica registrado com o launcher em primeiro plano; em segundo
-     * plano o PicksJob cuida disso.
+     * Conexão: o sistema avisa quando a rede muda e, com o launcher na frente, o Onix confere
+     * a cada 30 s se a internet responde de verdade (o Wi-Fi pode continuar conectado com o
+     * roteador sem internet, e o Android demora a perceber). Em segundo plano, nada roda.
      */
     private void registerNetworkCallback() {
         final ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -250,8 +281,66 @@ public class MainActivity extends Activity {
         });
     }
 
+    private static final long NET_CHECK_MS = 30 * 1000L;
+    private boolean probing;
+    private final Runnable netTick = new Runnable() {
+        @Override
+        public void run() {
+            checkNetwork();
+            ui.postDelayed(this, NET_CHECK_MS);
+        }
+    };
+
+    /**
+     * Sem rede: desconectado na hora. Com rede: a resposta do teste de internet decide
+     * (até ela chegar, vale o que o Android diz, para o chip não ficar errado na abertura).
+     */
     private void checkNetwork() {
-        boolean now = isOnline();
+        if (!hasNetwork()) {
+            setOnline(false);
+            return;
+        }
+        if (online == null) setOnline(isValidated());
+        if (probing) return;
+        probing = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                final boolean ok = probe();
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        probing = false;
+                        if (hasNetwork()) setOnline(ok);
+                    }
+                });
+            }
+        }, "onix-net").start();
+    }
+
+    /** O mesmo teste do Android: um 204 vazio do Google (portal de login ou sem internet não responde 204). */
+    private static boolean probe() {
+        String[] urls = {"https://connectivitycheck.gstatic.com/generate_204", "https://www.google.com/generate_204"};
+        for (String u : urls) {
+            try {
+                HttpURLConnection c = (HttpURLConnection) new URL(u).openConnection();
+                c.setConnectTimeout(5000);
+                c.setReadTimeout(5000);
+                c.setUseCaches(false);
+                c.setInstanceFollowRedirects(false);
+                try {
+                    if (c.getResponseCode() == 204) return true;
+                } finally {
+                    c.disconnect();
+                }
+            } catch (Exception ignored) {
+                // tenta o próximo
+            }
+        }
+        return false;
+    }
+
+    private void setOnline(boolean now) {
         if (online != null && online == now) return;
         boolean cameBack = online != null && now;
         online = now;
@@ -262,17 +351,29 @@ public class MainActivity extends Activity {
         }
     }
 
+    /** Há uma rede ativa (Wi-Fi ou cabo), com ou sem internet de verdade. */
     @SuppressWarnings("deprecation")
-    private boolean isOnline() {
+    private boolean hasNetwork() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         if (cm == null) return false;
         if (Build.VERSION.SDK_INT >= 23) {
-            // VALIDATED: o sistema confirmou acesso real à internet (não só Wi-Fi conectado).
             NetworkCapabilities c = cm.getNetworkCapabilities(cm.getActiveNetwork());
-            return c != null && c.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+            return c != null && c.hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET);
         }
         NetworkInfo ni = cm.getActiveNetworkInfo();
         return ni != null && ni.isConnected();
+    }
+
+    /** VALIDATED: o sistema confirmou acesso à internet (não só Wi-Fi conectado). */
+    @SuppressWarnings("deprecation")
+    private boolean isValidated() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm == null) return false;
+        if (Build.VERSION.SDK_INT >= 23) {
+            NetworkCapabilities c = cm.getNetworkCapabilities(cm.getActiveNetwork());
+            return c != null && c.hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED);
+        }
+        return hasNetwork();
     }
 
     private void pushNetwork() {
@@ -330,6 +431,7 @@ public class MainActivity extends Activity {
         super.onPause();
         resumed = false;
         unregisterNetworkCallback();
+        ui.removeCallbacks(netTick);
         if (webView != null) {
             webView.onPause();
             // Com outro app na frente (Netflix, YouTube…), o JS e os timers da página param:
@@ -352,11 +454,16 @@ public class MainActivity extends Activity {
         refreshPicks(false);
         refreshNews(false);
         registerNetworkCallback();
+        ui.removeCallbacks(netTick);
+        ui.postDelayed(netTick, NET_CHECK_MS);
+        checkUpdate();
     }
 
     @Override
     protected void onDestroy() {
         ui.removeCallbacks(appsChanged);
+        ui.removeCallbacks(netTick);
+        Updater.get(this).setListener(null);
         if (packageReceiver != null) unregisterReceiver(packageReceiver);
         if (webView != null) {
             bridge.setTrusted(false);

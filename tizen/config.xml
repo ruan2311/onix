@@ -12,7 +12,7 @@
     <content src="index.html"/>
     <feature name="http://tizen.org/feature/screen.size.all"/>
 
-    <!-- Rede: só os mesmos hosts do Android (indicações, capas e notícias). -->
+    <!-- Rede: só os mesmos hosts do Android (indicações, capas, notícias, atualizações e teste de internet). -->
     <access origin="https://apis.justwatch.com" subdomains="false"/>
     <access origin="https://images.justwatch.com" subdomains="false"/>
     <access origin="https://itunes.apple.com" subdomains="false"/>
@@ -20,6 +20,9 @@
     <access origin="https://www.adrenaline.com.br" subdomains="false"/>
     <access origin="https://www.eurogamer.pt" subdomains="false"/>
     <access origin="https://assetsio.gnwcdn.com" subdomains="false"/>
+    <!-- Versões novas (GitHub) e o teste de internet do chip "Conectado". -->
+    <access origin="https://api.github.com" subdomains="false"/>
+    <access origin="https://connectivitycheck.gstatic.com" subdomains="false"/>
 
     <!-- Todos de nível "public": instalam com o certificado comum da Samsung. -->
     <tizen:privilege name="http://tizen.org/privilege/internet"/>

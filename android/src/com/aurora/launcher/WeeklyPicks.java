@@ -105,11 +105,36 @@ final class WeeklyPicks {
         return false;
     }
 
+    private static android.content.SharedPreferences choice(Context ctx) {
+        return ctx.getApplicationContext().getSharedPreferences("picks", Context.MODE_PRIVATE);
+    }
+
     /**
-     * Serviços das indicações agora: a Netflix e os outros abertos mais de 3 vezes na última
-     * semana (e ainda instalados). Os mais abertos vêm primeiro; no empate, a ordem da tabela.
+     * Configurações → Indicações. auto = pelo uso (padrão); senão, só os serviços escolhidos.
+     * Retorna true se a escolha mudou (e a seleção precisa ser baixada de novo).
+     */
+    static synchronized boolean setChoice(Context ctx, boolean auto, Set<String> services) {
+        android.content.SharedPreferences p = choice(ctx);
+        Set<String> old = p.getStringSet("services", Collections.<String>emptySet());
+        if (p.getBoolean("auto", true) == auto && (auto || old.equals(services))) return false;
+        p.edit().putBoolean("auto", auto).putStringSet("services", new HashSet<String>(services)).apply();
+        return true;
+    }
+
+    /**
+     * Serviços das indicações agora. Pelo uso (padrão): a Netflix e os outros abertos mais de
+     * 3 vezes na última semana (e ainda instalados), os mais abertos primeiro; no empate, a ordem
+     * da tabela. Escolha manual: os serviços marcados, na ordem da tabela (nenhum = Netflix).
      */
     static List<Provider> activeProviders(Context ctx) {
+        android.content.SharedPreferences c = choice(ctx);
+        if (!c.getBoolean("auto", true)) {
+            Set<String> keys = c.getStringSet("services", Collections.<String>emptySet());
+            List<Provider> out = new ArrayList<Provider>();
+            for (Provider p : PROVIDERS) if (keys.contains(p.key)) out.add(p);
+            if (out.isEmpty()) out.add(NETFLIX);
+            return out;
+        }
         final Map<Provider, Integer> opens = new LinkedHashMap<Provider, Integer>();
         for (Provider p : PROVIDERS) {
             if (p == NETFLIX || (AppUsage.active(ctx, p.key) && installed(ctx, p))) opens.put(p, AppUsage.opens(ctx, p.key));

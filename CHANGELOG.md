@@ -2,6 +2,14 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.6.0 beta (outubro de 2026)
+
+- **Atualizações pelo próprio Onix:** ele procura versões novas no GitHub, avisa na tela (com um ponto verde em Configurações), baixa sozinho e abre a confirmação de instalação. O download é conferido pelo SHA-256 do GitHub. Tudo fica em **Configurações → Atualizações**, com a opção **Atualizar automaticamente**.
+- **Escolha suas indicações:** em **Configurações → Indicações**, desligue **Pelo que você assiste** e marque você mesmo Netflix, Disney+, HBO Max ou Globoplay.
+- **Seu aparelho no topo:** o chip mostra o que está rodando o Onix, como *Google TV · Philips*, *Android TV*, *Fire TV* ou *Celular Android*.
+- **"Conectado" de verdade:** o Onix testa a internet a cada 30 segundos e mostra **Sem internet** quando o Wi-Fi está ligado mas a internet caiu.
+- Samsung: aviso de versão nova (a instalação continua pelo computador).
+
 ## 13.5.0 beta (outubro de 2026)
 
 - **Indicações do que você assiste:** abra o **Disney+**, a **HBO Max** ou o **Globoplay** mais de 3 vezes pelo Onix e as indicações da semana passam a trazer títulos deles, junto com os da Netflix. As 8 vagas são divididas entre os serviços, e os mais abertos vêm primeiro.

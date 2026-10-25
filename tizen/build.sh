@@ -33,7 +33,7 @@ page = re.sub(r"^const APP_VERSION = '[^']*';", lambda m: f"const APP_VERSION = 
 # CSP: a página continua sem rede própria; liberam-se só os hosts que a ponte usa e os ícones (file:) dos apps da TV.
 hosts = ' '.join(['https://apis.justwatch.com', 'https://images.justwatch.com', 'https://itunes.apple.com',
                   'https://*.mzstatic.com', 'https://www.adrenaline.com.br', 'https://www.eurogamer.pt',
-                  'https://assetsio.gnwcdn.com'])
+                  'https://assetsio.gnwcdn.com', 'https://api.github.com', 'https://connectivitycheck.gstatic.com'])
 page = sub(r"img-src data:;", "img-src data: file:;", page)
 page = sub(r"connect-src 'none';", f"connect-src {hosts};", page)
 # Chromium das TVs de 2022 (M85) não conhece "inset" nem "aspect-ratio": troca por equivalentes.

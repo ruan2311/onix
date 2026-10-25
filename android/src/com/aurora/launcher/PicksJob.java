@@ -9,7 +9,8 @@ import android.content.Context;
 
 /**
  * Verifica em segundo plano (a cada 6 h, com rede) se a semana virou e baixa as
- * novas indicações, para elas já estarem prontas quando o launcher abrir.
+ * novas indicações, para elas já estarem prontas quando o launcher abrir. Também procura
+ * (e, com a atualização automática ligada, baixa) uma versão nova do Onix.
  * Só há download de fato uma vez por semana; nas outras execuções é só uma comparação de data.
  */
 public class PicksJob extends JobService {
@@ -35,6 +36,10 @@ public class PicksJob extends JobService {
             @Override
             public void run() {
                 WeeklyPicks.get(PicksJob.this).refreshIfStale();
+                // Deixa a atualização baixada para a confirmação abrir assim que o Onix voltar.
+                Updater up = Updater.get(PicksJob.this);
+                up.check(false);
+                if (up.auto() && up.hasUpdate()) up.download();
                 jobFinished(params, false);
             }
         }, "onix-picks-job").start();

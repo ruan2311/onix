@@ -2,6 +2,7 @@ package com.aurora.launcher;
 
 import android.app.Activity;
 import android.app.SearchManager;
+import android.app.UiModeManager;
 import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.content.pm.ActivityInfo;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.ResolveInfo;
+import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
@@ -17,6 +19,7 @@ import android.media.tv.TvContract;
 import android.media.tv.TvInputInfo;
 import android.media.tv.TvInputManager;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.Settings;
 import android.util.Base64;
 import android.webkit.JavascriptInterface;
@@ -163,6 +166,52 @@ public class AndroidBridge {
         a = new Art(stamp, icon, isBanner);
         art.put(pkg, a);
         return a;
+    }
+
+    /**
+     * Aparelho no chip do topo: tipo (Google TV, Android TV, Fire TV, celular ou tablet) e marca,
+     * ex.: "Google TV · Philips". A Google TV se identifica pelo recurso AMATI_EXPERIENCE ou pelo
+     * launcher do Google TV instalado (mesmo desativado, como no README).
+     */
+    @JavascriptInterface
+    public String platform() {
+        if (!trusted) return "";
+        PackageManager pm = activity.getPackageManager();
+        String kind;
+        if (pm.hasSystemFeature("amazon.hardware.fire_tv")) {
+            kind = "Fire TV";
+        } else if (isTv(pm)) {
+            kind = pm.hasSystemFeature("com.google.android.feature.AMATI_EXPERIENCE") || hasPackage(pm, "com.google.android.apps.tv.launcherx")
+                    ? "Google TV" : "Android TV";
+        } else {
+            kind = activity.getResources().getConfiguration().smallestScreenWidthDp >= 600 ? "Tablet Android" : "Celular Android";
+        }
+        String brand = brand(Build.BRAND);
+        if (brand.isEmpty()) brand = brand(Build.MANUFACTURER);
+        return brand.isEmpty() ? kind : kind + " · " + brand;
+    }
+
+    private boolean isTv(PackageManager pm) {
+        UiModeManager ui = (UiModeManager) activity.getSystemService(Context.UI_MODE_SERVICE);
+        return (ui != null && ui.getCurrentModeType() == Configuration.UI_MODE_TYPE_TELEVISION)
+                || pm.hasSystemFeature(PackageManager.FEATURE_LEANBACK);
+    }
+
+    private static boolean hasPackage(PackageManager pm, String pkg) {
+        try {
+            pm.getApplicationInfo(pkg, PackageManager.GET_UNINSTALLED_PACKAGES);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    /** "philips" -> "Philips"; nomes genéricos de firmware ficam de fora. */
+    private static String brand(String b) {
+        if (b == null) return "";
+        b = b.trim();
+        if (b.isEmpty() || b.length() > 16 || b.matches("(?i)android|generic|unknown|alps|tpv|mediatek|amlogic|rockchip|allwinner")) return "";
+        return b.substring(0, 1).toUpperCase(java.util.Locale.ROOT) + b.substring(1);
     }
 
     @JavascriptInterface
@@ -365,6 +414,116 @@ public class AndroidBridge {
                 openSettings();
             }
         });
+        return true;
+    }
+
+    /**
+     * Configurações → Indicações: {"auto":true} = pelo uso (Netflix + os apps mais abertos);
+     * {"auto":false,"services":["netflix","disney"]} = só os escolhidos. Se mudou, baixa a seleção nova.
+     */
+    @JavascriptInterface
+    public boolean setPicksChoice(String json) {
+        if (!trusted || json == null || json.length() > 300) return false;
+        boolean auto;
+        java.util.Set<String> services = new HashSet<String>();
+        try {
+            JSONObject o = new JSONObject(json);
+            auto = o.optBoolean("auto", true);
+            JSONArray list = o.optJSONArray("services");
+            for (int i = 0; list != null && i < list.length(); i++) {
+                WeeklyPicks.Provider p = WeeklyPicks.provider(list.optString(i));
+                if (p != null) services.add(p.key);
+            }
+        } catch (Exception e) {
+            return false;
+        }
+        if (WeeklyPicks.setChoice(activity, auto, services) && activity instanceof MainActivity) {
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    ((MainActivity) activity).refreshPicks(true);
+                }
+            });
+        }
+        return true;
+    }
+
+    /* ---------------- Atualizações (Updater) ---------------- */
+
+    @JavascriptInterface
+    public String getUpdate() {
+        if (!trusted) return "{}";
+        return Updater.get(activity).json();
+    }
+
+    /** Botão "Procurar atualizações": procura agora e, com a atualização automática ligada, já baixa. */
+    @JavascriptInterface
+    public boolean checkUpdate() {
+        if (!trusted) return false;
+        final Updater up = Updater.get(activity);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                up.check(true);
+                if (up.auto() && up.hasUpdate()) up.download();
+            }
+        }, "onix-update").start();
+        return true;
+    }
+
+    /**
+     * Instala a versão nova (baixa antes, se precisar). "ok" = abriu a confirmação do sistema;
+     * "downloading" = baixando, a confirmação abre no fim; "permission" = abriu a tela para
+     * permitir instalar apps; "fail".
+     */
+    @JavascriptInterface
+    public String installUpdate() {
+        if (!trusted) return "fail";
+        final Updater up = Updater.get(activity);
+        if (up.isReady()) {
+            final String[] r = {"fail"};
+            final java.util.concurrent.CountDownLatch done = new java.util.concurrent.CountDownLatch(1);
+            activity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    r[0] = up.install(activity);
+                    done.countDown();
+                }
+            });
+            try {
+                done.await(5, java.util.concurrent.TimeUnit.SECONDS);
+            } catch (InterruptedException ignored) {
+            }
+            return r[0];
+        }
+        if (!up.hasUpdate() && !"error".equals(stateOf(up))) return "fail";
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (!up.download()) return;
+                activity.runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        up.install(activity);
+                    }
+                });
+            }
+        }, "onix-update").start();
+        return "downloading";
+    }
+
+    private static String stateOf(Updater up) {
+        try {
+            return new JSONObject(up.json()).optString("state");
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    @JavascriptInterface
+    public boolean setAutoUpdate(boolean on) {
+        if (!trusted) return false;
+        Updater.get(activity).setAuto(on);
         return true;
     }
 

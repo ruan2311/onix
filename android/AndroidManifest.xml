@@ -4,12 +4,13 @@
   inicial (HOME + DEFAULT). O WebView continua offline (só exibe
   o index.html dos assets); INTERNET é usada apenas pelo Java (WeeklyPicks) para
   baixar as indicações da semana via HTTPS (JustWatch e iTunes) e as
-  notícias dos games (RSS da Adrenaline e da Eurogamer.pt).
+  notícias dos games (RSS da Adrenaline e da Eurogamer.pt), para procurar versões
+  novas no GitHub e para o teste de internet do chip "Conectado".
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aurora.launcher"
     android:versionCode="13"
-    android:versionName="13.5.0 beta">
+    android:versionName="13.6.0 beta">
 
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
 
@@ -17,6 +18,8 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Mantém o agendamento semanal das indicações após reiniciar a TV. -->
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <!-- Atualizações pelo próprio Onix (o Android sempre pede confirmação na tela). -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
@@ -87,6 +90,11 @@
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED" />
             </intent-filter>
         </receiver>
+
+        <!-- Resultado da instalação de uma atualização (Updater). -->
+        <receiver
+            android:name=".UpdateReceiver"
+            android:exported="false" />
 
         <service
             android:name=".PicksJob"

@@ -70,6 +70,10 @@ svg{display:block}
   color:var(--muted);border:1px solid transparent;font-size:1rem;font-weight:500}
 .nav-item svg{width:1.4rem;height:1.4rem;flex:none}
 .nav-item.active{color:var(--text);background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.12)}
+/* Versão nova disponível: ponto verde em "Configurações". */
+.nav-item.has-update{position:relative}
+.nav-item.has-update::after{content:"";position:absolute;top:.7rem;left:2.05rem;width:.55rem;height:.55rem;border-radius:50%;
+  background:#4ade80;box-shadow:0 0 0 2px var(--bg)}
 .nav-item.is-focused{color:#0a0b0e;background:#fff;transform:translateX(.3rem)}
 /* Com o foco no menu, só o item branco aparece: sem o cinza da aba anterior nem o deslize de volta (rastro) */
 #sidebar.nav-focus .nav-item.active:not(.is-focused){background:transparent;border-color:transparent;color:var(--muted)}
@@ -473,7 +477,10 @@ if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', { value(i)
   e  Launcher.onBack()  (true = tratado pela página) na tecla Voltar do controle.
   Launcher.onResume()  ao voltar para o launcher (zera a contagem da tela de descanso).
   "banner": true indica que "icon" é um banner 16:9 da TV.
-  Opcional: AndroidBridge.platform() -> nome do aparelho no chip do topo (padrão "Android TV").
+  Opcional: AndroidBridge.platform() -> nome do aparelho no chip do topo (ex.: "Google TV · Philips").
+    AndroidBridge.setPicksChoice('{"auto":true}' | '{"auto":false,"services":["netflix",…]}') -> serviços das indicações
+    AndroidBridge.getUpdate() -> {"current","latest","state","error","auto","checked"}; checkUpdate(); installUpdate() -> "ok"|"downloading"|"permission"|"fail";
+    setAutoUpdate(bool). O nativo chama Launcher.onUpdate() quando o estado da atualização muda.
   Métodos opcionais ausentes (powerOff, openSettings…) escondem os botões correspondentes.
   A ponte da Samsung (tizen/bridge.js) implementa este mesmo contrato com as APIs do Tizen.
   Tudo que vem da ponte é tratado como não confiável: validado e inserido só via textContent / <img src=data:>.
@@ -505,9 +512,10 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.5.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '13.6.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
-const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true });
+const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
+  pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true });
 const settings = Object.assign({}, DEFAULTS);
 try {
   const saved = JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}');
@@ -576,7 +584,7 @@ const Bridge = (() => {
   let lastRaw = null, lastApps = [];
   const has = name => native && typeof b[name] === 'function';
   let platform = 'Android TV';
-  if (has('platform')) try { platform = cleanText(b.platform(), 24) || platform; } catch (_) {}
+  if (has('platform')) try { platform = cleanText(b.platform(), 32) || platform; } catch (_) {}
   return Object.freeze({
     native, platform, has,
     // Mesma resposta da ponte = mesmo array (refreshApps usa isso para não redesenhar nada).
@@ -638,6 +646,38 @@ const Bridge = (() => {
     refreshAll() {
       if (!native || typeof b.refreshAll !== 'function') return false;
       try { return b.refreshAll() === true; } catch (e) { console.warn('refreshAll falhou', e); return false; }
+    },
+    setPicksChoice(choice) {
+      if (!has('setPicksChoice')) return false;
+      try { return b.setPicksChoice(JSON.stringify(choice)) === true; } catch (e) { console.warn('setPicksChoice falhou', e); return false; }
+    },
+    // Estado da atualização, validado: nada da ponte vai para a tela sem passar por aqui.
+    getUpdate() {
+      if (!has('getUpdate')) return null;
+      try {
+        const o = JSON.parse(b.getUpdate());
+        const ver = v => typeof v === 'string' && /^\d{1,4}\.\d{1,4}\.\d{1,4}( [a-z0-9.]{1,20})?$/.test(v) ? v : '';
+        const STATES = ['none', 'checking', 'available', 'downloading', 'ready', 'installing', 'error', 'manual'];
+        return {
+          current: ver(o.current), latest: ver(o.latest),
+          state: STATES.indexOf(o.state) >= 0 ? o.state : 'none',
+          error: typeof o.error === 'string' ? cleanText(o.error, 120) : '',
+          auto: o.auto !== false, checked: typeof o.checked === 'number' && o.checked > 0 ? o.checked : 0,
+        };
+      } catch (e) { console.warn('getUpdate falhou', e); return null; }
+    },
+    checkUpdate() {
+      if (!has('checkUpdate')) return false;
+      try { return b.checkUpdate() === true; } catch (e) { console.warn('checkUpdate falhou', e); return false; }
+    },
+    // "ok" | "downloading" | "permission" | "fail"
+    installUpdate() {
+      if (!has('installUpdate')) return 'fail';
+      try { const r = b.installUpdate(); return typeof r === 'string' ? r : 'fail'; } catch (e) { console.warn('installUpdate falhou', e); return 'fail'; }
+    },
+    setAutoUpdate(on) {
+      if (!has('setAutoUpdate')) return false;
+      try { return b.setAutoUpdate(!!on) === true; } catch (e) { console.warn('setAutoUpdate falhou', e); return false; }
     },
     openPictureSettings() {
       if (!native || typeof b.openPictureSettings !== 'function') return this.openSettings();
@@ -1053,11 +1093,14 @@ function renderPicks() {
     b._act = () => openPick(p);
     row.append(b);
   });
-  // "Netflix em primeiro" ou, com outros serviços, a lista deles (ex.: "Netflix, Disney+ e Globoplay").
+  // "Netflix em primeiro", a lista dos serviços pelo uso (ex.: "Netflix, Disney+ e Globoplay")
+  // ou os escolhidos em Configurações → Indicações.
   const names = Object.keys(PICK_PROVIDERS).filter(k => picks.some(p => p.provider === k)).map(k => PICK_PROVIDERS[k].name);
-  $('#picksSub').textContent = '· ' + (names.length > 1
-    ? names.slice(0, -1).join(', ') + ' e ' + names[names.length - 1] + ', pelos apps que você mais abre'
-    : 'Netflix em primeiro') + ' · renovadas toda segunda-feira';
+  const list = names.length > 1 ? names.slice(0, -1).join(', ') + ' e ' + names[names.length - 1] : names[0];
+  let sub = 'Netflix em primeiro';
+  if (list && !settings.pickAuto) sub = list + (names.length > 1 ? ', escolhidos por você' : ', escolhido por você');
+  else if (names.length > 1) sub = list + ', pelos apps que você mais abre';
+  $('#picksSub').textContent = '· ' + sub + ' · renovadas toda segunda-feira';
   renderHero(false);
 }
 
@@ -2157,6 +2200,15 @@ const OPTIONS = [
   { key: 'sound',  name: 'Sons do menu',          desc: 'Toque suave ao navegar, abrir e voltar.' },
   { key: 'saver',  name: 'Tela de descanso',      desc: 'Planetas e asteroides passam pela tela após 10 minutos sem usar o controle.' },
   { act: 'saver',  name: 'Descansar agora',       desc: 'Entra na tela de descanso na hora, mesmo com ela desligada acima. Qualquer tecla volta ao Onix.' },
+  { group: 'Indicações' },
+  { key: 'pickAuto', name: 'Pelo que você assiste', desc: 'A Netflix sempre, mais Disney+, HBO Max e Globoplay quando você abre o app mais de 3 vezes pelo Onix. Desligado, você escolhe os serviços abaixo.' },
+  { key: 'pickNetflix',   service: 'netflix',   name: 'Netflix',   desc: 'Indicações da Netflix.' },
+  { key: 'pickDisney',    service: 'disney',    name: 'Disney+',   desc: 'Indicações do Disney+.' },
+  { key: 'pickMax',       service: 'max',       name: 'HBO Max',   desc: 'Indicações da HBO Max.' },
+  { key: 'pickGloboplay', service: 'globoplay', name: 'Globoplay', desc: 'Indicações do Globoplay.' },
+  { group: 'Atualizações' },
+  { act: 'update', name: 'Procurar atualizações', desc: 'Confere no GitHub se saiu uma versão nova do Onix.' },
+  { key: 'autoUpdate', name: 'Atualizar automaticamente', desc: 'Baixa as versões novas sozinho e abre a confirmação de instalação quando você volta ao Onix.' },
   { group: 'Sistema' },
   { act: 'reset',  name: 'Restaurar padrão',      desc: 'Volta todas as opções do Onix ao original.' },
   { act: 'tv',     name: 'Configurações da TV',   desc: 'Rede, imagem, som e demais ajustes da TV.' },
@@ -2166,6 +2218,12 @@ const OPTIONS = [
 ];
 /* Novidades (Configurações → Novidades). A versão mais nova primeiro; *texto* vira negrito. */
 const CHANGELOG = [
+  { version: '13.6.0 beta', date: 'outubro de 2026', items: [
+    '*Atualizações pelo próprio Onix:* ele procura versões novas no GitHub, avisa na tela e baixa sozinho. Você só confirma a instalação na tela da TV. Fica em Configurações → Atualizações.',
+    '*Escolha suas indicações:* em Configurações → Indicações, desligue "Pelo que você assiste" e marque você mesmo Netflix, Disney+, HBO Max ou Globoplay.',
+    '*Seu aparelho no topo:* o chip mostra o que está rodando o Onix, como Google TV · Philips, Android TV ou Celular Android.',
+    '*Conectado de verdade:* o Onix testa a internet a cada 30 segundos e mostra "Sem internet" quando o Wi-Fi está ligado mas a internet caiu.',
+  ] },
   { version: '13.5.0 beta', date: 'outubro de 2026', items: [
     '*Indicações do que você assiste:* abra o *Disney+*, a *HBO Max* ou o *Globoplay* mais de 3 vezes pelo Onix e as indicações da semana passam a trazer títulos deles, junto com os da Netflix.',
     'Ficou uma semana sem abrir um desses apps? Ele sai das indicações sozinho, e elas voltam a ser só da Netflix.',
@@ -2201,20 +2259,40 @@ function openChangelog(from) {
 }
 const ABOUT = [['Criado por', 'Ruan Amaral'], ['Instagram', '@ruan_amarl'], ['GitHub', 'github.com/ruan2311'], ['Versão', APP_VERSION]];
 const GO_ICON = '<svg class="opt-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
+const PICK_KEYS = OPTIONS.filter(o => o.service);
 function setOption(key, on) {
+  // Escolha manual das indicações: pelo menos um serviço fica ligado.
+  if (!on && PICK_KEYS.some(o => o.key === key) && !PICK_KEYS.some(o => o.key !== key && settings[o.key])) {
+    toast('Deixe pelo menos um serviço ligado');
+    return;
+  }
   settings[key] = on;
   saveSettings();
   applySettings();
   if (key === 'h24') updateClock(true);
   if (key === 'sound' && on) sfx('select');
+  if (key === 'pickAuto' || PICK_KEYS.some(o => o.key === key)) {
+    syncPicksChoice();
+    toast(key === 'pickAuto' ? (on ? 'Indicações pelo que você assiste' : 'Escolha os serviços das indicações logo abaixo')
+      : 'Indicações: ' + PICK_KEYS.filter(o => settings[o.key]).map(o => o.name).join(', '));
+  }
+  if (key === 'autoUpdate') Bridge.setAutoUpdate(on);
   armSaver();
+}
+// Leva para o nativo (que baixa as indicações e procura atualizações) o que está salvo na página.
+function syncPicksChoice() {
+  Bridge.setPicksChoice(settings.pickAuto ? { auto: true }
+    : { auto: false, services: PICK_KEYS.filter(o => settings[o.key]).map(o => o.service) });
 }
 function syncSwitches() {
   $$('#optsList .switch').forEach(sw => sw.classList.toggle('on', settings[sw.dataset.key]));
 }
 function renderSettings() {
   // Sem openSettings na ponte (Samsung), o atalho some: lá ele não teria o que abrir.
-  const opts = OPTIONS.filter(o => o.act !== 'tv' || !Bridge.native || Bridge.has('openSettings'));
+  // Os serviços só aparecem com a escolha manual; "Atualizar automaticamente", se a ponte instala.
+  const opts = OPTIONS.filter(o => (o.act !== 'tv' || !Bridge.native || Bridge.has('openSettings'))
+    && (!o.service || !settings.pickAuto)
+    && (o.key !== 'autoUpdate' || !Bridge.native || Bridge.has('setAutoUpdate')));
   $('#optsList').replaceChildren(...opts.map(o => {
     if (o.group) return h('div', { class: 'opts-group', text: o.group });
     if (o.act === 'about') {
@@ -2227,20 +2305,92 @@ function renderSettings() {
     const b = h('button', { class: 'f opt glass', tabindex: '-1', 'aria-label': o.name },
       h('span', { class: 'opt-text' }, h('span', { class: 'opt-name', text: o.name }), h('span', { class: 'opt-desc', text: o.desc })),
       o.key ? h('span', { class: 'switch', 'data-key': o.key }) : svgFrom(GO_ICON));
-    if (o.key) b._act = () => { setOption(o.key, !settings[o.key]); syncSwitches(); };
+    if (o.key === 'pickAuto') b._act = () => {
+      setOption('pickAuto', !settings.pickAuto);
+      renderSettings();   // mostra/esconde os serviços
+      setFocus($('#optsList button[aria-label="' + o.name + '"]'));
+    };
+    else if (o.key) b._act = () => { setOption(o.key, !settings[o.key]); syncSwitches(); };
     else if (o.act === 'perf') b._act = () => {
       ['shine', 'zoom', 'motion', 'shadow'].forEach(k => { settings[k] = false; });
       setOption('motion', false); syncSwitches(); toast('Modo desempenho máximo ativado');
     };
     else if (o.act === 'reset') b._act = () => {
-      Object.assign(settings, DEFAULTS); setOption('h24', DEFAULTS.h24); syncSwitches(); toast('Configurações restauradas');
+      Object.assign(settings, DEFAULTS); setOption('h24', DEFAULTS.h24);
+      syncPicksChoice(); Bridge.setAutoUpdate(DEFAULTS.autoUpdate);
+      renderSettings(); setFocus($('#optsList button[aria-label="' + o.name + '"]'));
+      toast('Configurações restauradas');
     };
     else if (o.act === 'saver') b._act = showSaver;
     else if (o.act === 'changelog') b._act = () => openChangelog(b);
+    else if (o.act === 'update') { b.id = 'updateOpt'; b._act = updateAction; }
     else b._act = openSettings;
     return b;
   }));
   syncSwitches();
+  renderUpdate();
+}
+
+/* ---------------- Atualizações ----------------
+   O nativo procura no GitHub (a cada 6 h), baixa e abre a confirmação de instalação do sistema.
+   A página só mostra o estado e avisa quando sai uma versão nova. */
+let update = null;
+const timeText = t => clockText(new Date(t));
+function renderUpdate() {
+  const b = $('#updateOpt');
+  const nav = $('.nav-item[data-section="settings"]');
+  const has = !!update && !!update.latest && ['available', 'downloading', 'ready', 'installing', 'manual'].indexOf(update.state) >= 0;
+  if (nav) nav.classList.toggle('has-update', has);
+  if (!b) return;
+  let name = 'Procurar atualizações', desc;
+  const v = update && update.latest;
+  if (!Bridge.native) desc = 'No app da TV, o Onix procura versões novas no GitHub sozinho.';
+  else if (!update) desc = 'Confere no GitHub se saiu uma versão nova do Onix.';
+  else if (update.state === 'checking') { name = 'Procurando atualizações…'; desc = 'Conferindo a última versão no GitHub.'; }
+  else if (update.state === 'available') { name = 'Instalar a versão ' + v; desc = 'Saiu uma versão nova do Onix. Aperte OK para baixar e instalar.'; }
+  else if (update.state === 'downloading') { name = 'Baixando a versão ' + v + '…'; desc = 'A confirmação de instalação abre quando o download terminar.'; }
+  else if (update.state === 'ready') { name = 'Instalar a versão ' + v; desc = 'Já está baixada. Aperte OK e confirme na tela da TV.' + (update.error ? ' (' + update.error + ')' : ''); }
+  else if (update.state === 'installing') { name = 'Instalando a versão ' + v + '…'; desc = 'Confirme na tela da TV. O Onix reabre sozinho na versão nova.'; }
+  else if (update.state === 'manual') { name = 'Versão ' + v + ' disponível'; desc = 'Na Samsung, baixe o onix-tizen.zip no GitHub e repita o passo 5 do tutorial.'; }
+  else if (update.state === 'error') desc = 'Não deu para procurar agora (sem internet ou o GitHub não respondeu). Aperte OK para tentar de novo.';
+  else desc = 'Você está na versão mais recente (' + (update.current || APP_VERSION) + ')' + (update.checked ? ', conferida às ' + timeText(update.checked) : '') + '.';
+  b.querySelector('.opt-name').textContent = name;
+  b.querySelector('.opt-desc').textContent = desc;
+  b.setAttribute('aria-label', name);
+}
+function refreshUpdate() {
+  const before = update;
+  update = Bridge.getUpdate();
+  renderUpdate();
+  // Versão nova: avisa uma vez (por versão) na tela, onde a pessoa estiver.
+  if (update && update.latest && (update.state === 'available' || update.state === 'ready' || update.state === 'manual')) {
+    let seen = null;
+    try { seen = localStorage.getItem('onix.updateSeen'); } catch (_) {}
+    if (seen !== update.latest) {
+      try { localStorage.setItem('onix.updateSeen', update.latest); } catch (_) {}
+      toast('Saiu a versão ' + update.latest + ' do Onix! Veja em Configurações → Atualizações');
+    }
+  }
+  if (before && before.state === 'checking' && update && update.state === 'none') toast('O Onix já está na versão mais recente');
+  if (before && before.state === 'checking' && update && update.state === 'error') toast('Não deu para procurar atualizações agora');
+  if (before && before.state === 'downloading' && update && update.state === 'error') toast('O download da atualização falhou: ' + (update.error || 'tente de novo'));
+}
+function updateAction() {
+  if (!Bridge.native) { toast('Procuraria uma versão nova no GitHub (simulação no navegador)'); return; }
+  const st = update ? update.state : 'none';
+  if (st === 'checking' || st === 'downloading' || st === 'installing') { toast('Só um instante…'); return; }
+  if (st === 'manual') { toast('Baixe o onix-tizen.zip da versão ' + update.latest + ' no GitHub e repita o passo 5 do tutorial'); return; }
+  if (st === 'available' || st === 'ready') {
+    const r = Bridge.installUpdate();
+    if (r === 'ok') toast('Confirme a instalação na tela da TV');
+    else if (r === 'downloading') toast('Baixando a versão ' + update.latest + '…');
+    else if (r === 'permission') toast('Permita que o Onix instale apps e volte aqui para apertar OK de novo');
+    else toast('Não foi possível instalar agora');
+    refreshUpdate();
+    return;
+  }
+  if (Bridge.checkUpdate()) toast('Procurando atualizações…');
+  else toast('Não foi possível procurar atualizações');
 }
 
 /* ---------------- Seções ---------------- */
@@ -2859,7 +3009,7 @@ function refreshPicks() {
 }
 // Gancho para o lado nativo chamar via evaluateJavascript.
 Object.defineProperty(window, 'Launcher', {
-  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => wakeSaver(), onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)) }),
+  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => wakeSaver(), onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate() }),
   writable: false, configurable: false,
 });
 
@@ -2908,6 +3058,11 @@ function init() {
   armSaver();
   setFocus($('#heroOpen'));
   announceUpdate();
+  if (Bridge.native) {
+    syncPicksChoice();
+    Bridge.setAutoUpdate(settings.autoUpdate);
+    refreshUpdate();
+  }
 }
 // Primeira abertura depois de uma atualização: avisa e aponta para as Novidades.
 // Sem versão salva mas com dados do Onix = veio de uma versão anterior à 13.5.0.

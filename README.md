@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-13.5.0%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-13.6.0%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -21,13 +21,14 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 
 ## Sumário
 
-- [Novidades da 13.5.0](#novidades-da-1350)
+- [Novidades da 13.6.0](#novidades-da-1360)
 - [Recursos](#recursos)
 - [Capturas de tela](#capturas-de-tela)
 - [Download: Onix App ou Onix Launcher?](#download-onix-app-ou-onix-launcher)
 - [Instalação](#instalação)
 - [TVs Samsung (Tizen)](#tvs-samsung-tizen)
 - [Usar como tela inicial (Onix Launcher)](#usar-como-tela-inicial-onix-launcher)
+- [Atualizações automáticas](#atualizações-automáticas)
 - [Ativar o botão "Desligar TV"](#ativar-o-botão-desligar-tv)
 - [Como desfazer tudo](#como-desfazer-tudo)
 - [Permissões e privacidade](#permissões-e-privacidade)
@@ -39,12 +40,14 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 
 ---
 
-## Novidades da 13.5.0
+## Novidades da 13.6.0
 
-- **Indicações do que você assiste.** Abra o **Disney+**, a **HBO Max** ou o **Globoplay** mais de 3 vezes pelo Onix e as indicações da semana passam a ter títulos deles, junto com os da Netflix. Se você passar uma semana sem abrir um desses apps, ele sai das indicações e elas voltam a ser só da Netflix.
-- **Assistir no Disney+, na HBO Max e no Globoplay** abre direto na página do título, como já acontecia com a Netflix.
-- **Novidades** em Configurações: o que mudou em cada versão. Depois de uma atualização, o Onix avisa na tela inicial.
-- **TVs Samsung (Tizen)**, em beta: veja [o tutorial](#tvs-samsung-tizen).
+- **Atualizações pelo próprio Onix.** Ele procura versões novas no GitHub, avisa na tela, baixa sozinho e abre a confirmação de instalação. Veja [Atualizações automáticas](#atualizações-automáticas).
+- **Escolha suas indicações.** Em **Configurações → Indicações**, desligue *Pelo que você assiste* e marque você mesmo Netflix, Disney+, HBO Max ou Globoplay.
+- **Seu aparelho no topo.** O chip mostra o que está rodando o Onix: *Google TV · Philips*, *Android TV*, *Fire TV*, *Celular Android*…
+- **"Conectado" de verdade.** O Onix testa a internet a cada 30 segundos e mostra **Sem internet** quando o Wi-Fi está ligado mas a internet caiu.
+
+Na 13.5.0: indicações do Disney+, HBO Max e Globoplay pelo uso, a tela **Novidades** e a versão para TVs Samsung.
 
 O histórico completo está no [CHANGELOG.md](CHANGELOG.md) e na [página de Releases](https://github.com/ruan2311/onix/releases).
 
@@ -59,6 +62,7 @@ O histórico completo está no [CHANGELOG.md](CHANGELOG.md) e na [página de Rel
   - A **Netflix** é o padrão e está sempre presente.
   - **Disney+**, **HBO Max** e **Globoplay** entram quando você abre o app **mais de 3 vezes pelo Onix** (pela grade ou pelas indicações) e o app está instalado. As 8 vagas são divididas entre os serviços, e os mais abertos vêm primeiro.
   - Uma **semana sem abrir** o app zera a contagem e ele sai das indicações.
+  - Prefere escolher? Em **Configurações → Indicações**, desligue **Pelo que você assiste** e marque os serviços que quiser (pelo menos um).
   - Cada indicação tem o selo do serviço, e **Assistir no…** abre o título direto no app.
 - **Botão Atualizar**: baixa notícias, indicações e a lista de apps na hora, sem esperar o próximo ciclo automático.
 
@@ -90,6 +94,8 @@ Quatro jogos feitos para o controle remoto, com música chiptune e recorde salvo
 
 ### Outros
 - **Desligar TV** no menu: pede confirmação com um segundo OK e coloca a TV em standby.
+- **Aparelho e conexão no topo**: o chip da esquerda mostra o aparelho (*Google TV · Philips*, *Android TV*, *Celular Android*…) e o da direita fica vermelho com **Sem internet** quando a internet cai, mesmo com o Wi-Fi ligado (teste a cada 30 s).
+- **Atualizações**: o Onix avisa quando sai uma versão nova e se atualiza pelo próprio app. Veja [abaixo](#atualizações-automáticas).
 - **Configurações do Onix**: desliga efeitos visuais para TVs mais fracas e controla relógio de 24 h, sons do menu e tela de descanso.
 
 ---
@@ -156,7 +162,8 @@ As TVs Samsung usam o **Tizen**, não o Android, então APKs não instalam nelas
 |---|---|
 | Apps, Organizar seus apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android |
 | Indicações da semana + **Assistir na Netflix** | ✅ Abre a Netflix no título. Se a sua TV não aceitar o link direto, abre a Netflix e você procura o título |
-| Indicações do Disney+, HBO Max e Globoplay | ✅ Mesma regra do Android (mais de 3 aberturas, sai depois de 7 dias). O app abre, mas nem sempre direto no título: o Tizen não documenta links diretos para esses apps |
+| Atualizações | ⚠️ O Onix avisa quando sai uma versão nova, mas instalar continua sendo pelo computador (passo 5) |
+| Indicações do Disney+, HBO Max e Globoplay | ✅ Mesma regra do Android, inclusive a escolha manual em Configurações (mais de 3 aberturas, sai depois de 7 dias). O app abre, mas nem sempre direto no título: o Tizen não documenta links diretos para esses apps |
 | Indicações que não são da Netflix | ⚠️ A Samsung não tem a busca "onde assistir" do Google |
 | Entradas HDMI | ⚠️ A HDMI aparece **em tela cheia dentro do Onix**. **Voltar** ou **OK** retorna ao Onix. Recursos como Modo Jogo automático podem não ligar nessa janela: para jogar, prefira o botão de fontes do controle |
 | Virar a tela inicial | ❌ O Tizen não aceita launchers de terceiros. O Onix abre como um app; dá para fixá-lo na barra da tela inicial |
@@ -255,6 +262,22 @@ Depois disso, aperte **Home**: o Onix assume como tela inicial.
 
 ---
 
+## Atualizações automáticas
+
+A partir da **13.6.0**, o Onix se atualiza sozinho pela [página de Releases](https://github.com/ruan2311/onix/releases):
+
+1. Com o Onix aberto (e a cada 6 horas em segundo plano), ele confere se saiu uma versão nova.
+2. Saiu? Aparece um aviso na tela e um **ponto verde** em **Configurações**. Em **Configurações → Atualizações**, a linha mostra a versão nova.
+3. Com **Atualizar automaticamente** ligado (padrão), o Onix já baixa a APK e, quando você volta para ele, abre a tela de instalação do Android. É só apertar **Instalar**. Com a opção desligada, ele só avisa, e você aperta **Instalar a versão…** quando quiser.
+
+Na **primeira atualização**, o Android pede para **permitir que o Onix instale apps**. O Onix abre essa tela sozinho: ligue a opção do Onix, volte e aperte **Instalar a versão…** de novo.
+
+> **Por que precisa confirmar?** O Android não deixa um app comum se instalar sem a pessoa apertar **Instalar**. O Onix baixa da página de Releases, confere o **SHA-256** publicado pelo GitHub e se o arquivo é mesmo uma versão nova do Onix. O Android ainda confere se a APK foi assinada com a mesma chave. A atualização mantém apps organizados, banners, recordes e configurações. Se recusar, ele pergunta de novo no dia seguinte, ou quando você mandar.
+
+**TVs Samsung:** o Onix avisa quando sai uma versão nova, mas a instalação continua pelo computador (repita o [passo 5](#passo-5-assine-e-instale-o-onix)), porque o Tizen exige a assinatura com o certificado da sua TV.
+
+---
+
 ## Ativar o botão "Desligar TV"
 
 Apps comuns não podem desligar a TV. O Onix usa a única via oficial do Android para isso: registrar-se como **administrador do dispositivo** com uma só política, *bloquear a tela*. Na TV, bloquear a tela coloca o aparelho em standby, como o botão de energia.
@@ -294,6 +317,7 @@ adb uninstall com.aurora.launcher
 | `INTERNET` | Baixar indicações, notícias e miniaturas (só pelo código nativo) |
 | `ACCESS_NETWORK_STATE` | Mostrar "Conectado / Sem internet" e tentar de novo quando a rede volta |
 | `RECEIVE_BOOT_COMPLETED` | Manter o agendamento semanal das indicações depois de reiniciar a TV |
+| `REQUEST_INSTALL_PACKAGES` | Instalar as atualizações do Onix (o Android sempre pede confirmação na tela) |
 | Administrador do dispositivo (opcional) | Apenas `force-lock`, usado pelo botão **Desligar TV** |
 
 - **Sem rastreamento, sem anúncios, sem conta.** O Onix não envia nenhum dado sobre você ou sobre o que você assiste.
@@ -303,6 +327,8 @@ adb uninstall com.aurora.launcher
   - `apis.justwatch.com` e `images.justwatch.com`: indicações da Netflix, do Disney+, da HBO Max e do Globoplay
   - `itunes.apple.com`: filmes mais vistos
   - `adrenaline.com.br` e `eurogamer.pt`: notícias de games
+  - `api.github.com`, `github.com` e `release-assets.githubusercontent.com`: procurar e baixar versões novas do Onix
+  - `connectivitycheck.gstatic.com`: teste de internet do chip **Conectado** (uma resposta vazia, a mesma que o Android usa)
 - Tudo o que vem da página para o código nativo é validado (nomes de pacote, IDs de entrada, títulos da lista atual).
 
 ---
@@ -362,6 +388,8 @@ python3 -m http.server 8000
 │   │   ├── AndroidBridge.java  # Ponte JS ↔ Android (apps, entradas, Netflix, desligar…)
 │   │   ├── WeeklyPicks.java    # Indicações da semana (JustWatch + iTunes), por serviço
 │   │   ├── AppUsage.java       # Aberturas de cada serviço (quem entra nas indicações)
+│   │   ├── Updater.java        # Atualizações pelo GitHub (procura, baixa, confere e instala)
+│   │   ├── UpdateReceiver.java # Resposta do instalador do sistema
 │   │   ├── GameNews.java       # Notícias (RSS da Adrenaline e da Eurogamer.pt)
 │   │   ├── PicksJob.java       # Agendamento semanal das indicações
 │   │   └── PowerAdmin.java     # Administrador do dispositivo (só force-lock)

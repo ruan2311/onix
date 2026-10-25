@@ -187,7 +187,13 @@ function recordUsage(provider) {
   save('usage', usage);
 }
 /** Netflix + serviços abertos mais de 3 vezes na última semana (e instalados); os mais abertos primeiro. */
+// Configurações → Indicações: {auto:true} = pelo uso; {auto:false, services:[…]} = só os escolhidos.
+let choice = load('choice') || { auto: true, services: [] };
 function activeProviders() {
+  if (choice.auto === false) {
+    const list = PROVIDERS.filter(p => choice.services.indexOf(p.key) >= 0);
+    return list.length ? list : [NETFLIX];
+  }
   return PROVIDERS.filter(p => p === NETFLIX || (opens(p.key) >= MIN_OPENS && appFor(p)))
     .map((p, i) => ({ p, i, n: opens(p.key) }))
     .sort((a, b) => b.n - a.n || a.i - b.i)
@@ -643,18 +649,93 @@ async function refreshAll() {
   call('onRefreshed', n, p);
 }
 
+/* ---------------- Internet ----------------
+   O mesmo teste do Android: a cada 30 s (com o Onix na frente), um 204 vazio do Google.
+   navigator.onLine só sabe se há rede, não se a internet responde. */
+let online = null;
+function setOnline(on) {
+  if (on === online) return;
+  const cameBack = online === false && on;
+  online = on;
+  call('onNetwork', on);
+  if (cameBack) backgroundRefresh(true);
+}
+function probe() {
+  return new Promise(resolve => {
+    const x = new XMLHttpRequest();
+    x.open('GET', 'https://connectivitycheck.gstatic.com/generate_204', true);
+    x.timeout = 5000;
+    x.onload = () => resolve(x.status === 204);
+    x.onerror = x.ontimeout = () => resolve(false);
+    x.send();
+  });
+}
+let probing = false;
+async function checkNetwork() {
+  if (navigator.onLine === false) { setOnline(false); return; }
+  if (probing) return;
+  probing = true;
+  const ok = await probe();
+  probing = false;
+  setOnline(ok && navigator.onLine !== false);
+}
+
+/* ---------------- Atualizações ----------------
+   Procura no GitHub e avisa. Instalar daqui o Tizen não deixa (o app precisa ser assinado com o
+   certificado da TV no computador), então o estado fica "manual" e a página explica o passo a passo. */
+const RELEASES = 'https://api.github.com/repos/ruan2311/onix/releases/latest';
+const UPDATE_CHECK = 6 * 60 * 60 * 1000;
+const update = Object.assign({ latest: '', checked: 0 }, load('update') || {}, { state: 'none', error: '' });
+const currentVersion = (() => { try { return tizen.application.getCurrentApplication().appInfo.version || ''; } catch (_) { return ''; } })();
+function versionNumbers(v) {
+  const m = /^v?(\d{1,4})\.(\d{1,4})\.(\d{1,4})/.exec(String(v || ''));
+  return m ? [Number(m[1]), Number(m[2]), Number(m[3])] : null;
+}
+function isNewer(a, b) {
+  const x = versionNumbers(a), y = versionNumbers(b);
+  if (!x || !y) return false;
+  for (let i = 0; i < 3; i++) if (x[i] !== y[i]) return x[i] > y[i];
+  return false;
+}
+update.state = isNewer(update.latest, currentVersion) ? 'manual' : 'none';
+async function checkUpdate(force) {
+  const now = Date.now();
+  if (update.state === 'checking' || (!force && now >= update.checked && now - update.checked < UPDATE_CHECK)) return;
+  const was = update.state;
+  update.state = 'checking';
+  call('onUpdate');
+  try {
+    const rel = JSON.parse(await getText(RELEASES, 512 * 1024));
+    const tag = String(rel.tag_name || '');
+    if (!/^v?\d{1,4}\.\d{1,4}\.\d{1,4}(-[a-z0-9.]{1,20})?$/.test(tag)) throw new Error('versão inválida no GitHub');
+    update.latest = tag.replace(/^v/, '').replace('-', ' ');
+    update.checked = now;
+    update.state = isNewer(update.latest, currentVersion) ? 'manual' : 'none';
+    save('update', { latest: update.latest, checked: now });
+  } catch (e) {
+    update.state = was === 'manual' ? 'manual' : 'error';
+    update.error = String(e && e.message || '');
+  }
+  call('onUpdate');
+}
+
 function start() {
-  call('onNetwork', navigator.onLine !== false);
+  setOnline(navigator.onLine !== false);
+  checkNetwork();
+  setInterval(() => { if (!document.hidden) checkNetwork(); }, 30 * 1000);
+  checkUpdate(false);
   scanApps();
   scanInputs();
   try {
     tizen.application.addAppInfoEventListener({ oninstalled: scanApps, onupdated: scanApps, onuninstalled: scanApps });
   } catch (_) {}
-  window.addEventListener('online', () => { call('onNetwork', true); backgroundRefresh(true); });
-  window.addEventListener('offline', () => call('onNetwork', false));
+  window.addEventListener('online', checkNetwork);
+  window.addEventListener('offline', () => setOnline(false));
   document.addEventListener('visibilitychange', () => {
     if (document.hidden) { stopWatching(); return; }
     scanApps();
+    checkNetwork();
+    checkUpdate(false);
     backgroundRefresh(false);
   });
   // Como no Android: indicações conferidas de hora em hora, notícias a cada 3 h, só com o Onix aberto.
@@ -667,6 +748,19 @@ document.addEventListener('DOMContentLoaded', start);
 /* ---------------- O contrato ---------------- */
 window.AndroidBridge = Object.freeze({
   platform: () => 'Samsung TV',
+  setPicksChoice(json) {
+    let o;
+    try { o = JSON.parse(json); } catch (_) { return false; }
+    if (!o || typeof o !== 'object') return false;
+    const next = { auto: o.auto !== false, services: Array.isArray(o.services) ? o.services.filter(k => providerByKey(k)).map(String) : [] };
+    if (JSON.stringify(next) === JSON.stringify(choice)) return true;
+    choice = next;
+    save('choice', choice);
+    refreshPicks(true, false).then(ok => { if (ok) call('onPicksChanged'); });
+    return true;
+  },
+  getUpdate: () => JSON.stringify({ current: currentVersion, latest: update.state === 'manual' ? update.latest : '', state: update.state, error: update.error, auto: false, checked: update.checked }),
+  checkUpdate() { checkUpdate(true); return true; },
   getInstalledApps: () => JSON.stringify(appList),
   launchApp(id) {
     if (typeof id !== 'string' || id === SELF || !knownApp(id)) return false;
