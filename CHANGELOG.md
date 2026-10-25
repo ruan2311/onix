@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.6.1 beta (outubro de 2026)
+
+- **TV em Entradas:** a primeira entrada agora é a **TV** (antena e cabo), para voltar aos canais abertos sem sair do Onix, mesmo se a TV estava numa HDMI. Só aparece em TVs com sintonizador; os "canais" de apps como Pluto TV e Globoplay ficam de fora.
+- Os pontinhos do destaque da tela inicial agora ficam centralizados embaixo da capa, sem encostar nela.
+
 ## 13.6.0 beta (outubro de 2026)
 
 - **Atualizações pelo próprio Onix:** ele procura versões novas no GitHub, avisa na tela (com um ponto verde em Configurações), baixa sozinho e abre a confirmação de instalação. O download é conferido pelo SHA-256 do GitHub. Tudo fica em **Configurações → Atualizações**, com a opção **Atualizar automaticamente**.

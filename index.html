@@ -118,7 +118,8 @@ svg{display:block}
   opacity:.4}
 .hero-art{position:absolute;right:2rem;top:50%;width:15rem;height:15rem;margin-top:-7.5rem;z-index:0}
 .hero-art svg{width:100%;height:100%}
-.hero.is-pick .hero-art{width:9.4rem;height:14rem;margin-top:-7rem}
+/* Capa um pouco acima do centro: abre espaço para os pontinhos logo abaixo dela. */
+.hero.is-pick .hero-art{width:8.7rem;height:13rem;margin-top:-7.3rem}
 .hero-art img{width:100%;height:100%;object-fit:cover;border-radius:.8rem;border:1px solid rgba(255,255,255,.25);box-shadow:0 .5rem 1.2rem rgba(0,0,0,.5)}
 .hero-content{position:relative;z-index:1;max-width:60%;transition:opacity .35s}
 .hero.swap .hero-content{opacity:0}
@@ -131,7 +132,9 @@ svg{display:block}
   border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12)}
 .btn svg{width:1.1rem;height:1.1rem}
 .btn.primary{background:#fff;color:#0b0d1d;border-color:#fff}
-.dots{position:absolute;z-index:1;right:2rem;bottom:1.4rem;display:flex;gap:.4rem}
+/* Pontinhos centralizados na coluna da arte (mesma largura e mesmo "right" do .hero-art). */
+.dots{position:absolute;z-index:1;right:2rem;bottom:1rem;width:15rem;display:flex;justify-content:center;gap:.4rem}
+.hero.is-pick .dots{width:8.7rem}
 .dots i{width:.5rem;height:.5rem;border-radius:1rem;background:rgba(255,255,255,.35);transition:background .3s}
 .dots i.on{width:1.4rem;background:#fff}
 
@@ -307,6 +310,7 @@ html.no-motion *,html.no-motion *::before,html.no-motion *::after{transition:non
   .hero-content{max-width:100%}
   .hero-art{width:9rem;height:9rem;top:1rem;right:.6rem;margin-top:0;opacity:.85}
   .hero h1{font-size:1.7rem;padding-right:6rem}
+  .dots,.hero.is-pick .dots{width:auto;right:1.4rem}
   .chips .chip:not(:first-child){display:none}
   #reader{padding:1rem}
   .reader-body{padding:1.2rem}
@@ -469,6 +473,7 @@ if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', { value(i)
     AndroidBridge.openSettings()    -> abre as configurações do sistema da TV
     AndroidBridge.openPictureSettings() -> abre os ajustes de imagem da TV (ou as configurações gerais)
     AndroidBridge.getTvInputs()     -> String JSON: [{"id":"<id da entrada>","label":"HDMI 1"}] (portas HDMI físicas)
+                                       e, se a TV tiver antena/cabo, {"id":"…","label":"TV","kind":"tv"}
     AndroidBridge.openInput(id)     -> muda a TV para a entrada (o nativo só aceita IDs da própria lista)
     AndroidBridge.getGameNews()     -> String JSON: [{"source","title","link","date":ms,"summary":"par1\n\npar2","image":"data:..."}]
   O nativo pode chamar  Launcher.onAppsChanged()  quando apps forem instalados/removidos,
@@ -512,7 +517,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.6.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '13.6.1 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true });
@@ -726,7 +731,7 @@ function sanitizeInputs(list) {
   const out = [];
   for (const it of list.slice(0, 8)) {
     if (!it || typeof it !== 'object' || typeof it.id !== 'string' || !INPUT_RE.test(it.id)) continue;
-    out.push({ id: it.id, label: typeof it.label === 'string' ? cleanText(it.label, 40) : '' });
+    out.push({ id: it.id, label: typeof it.label === 'string' ? cleanText(it.label, 40) : '', kind: it.kind === 'tv' ? 'tv' : 'hdmi' });
   }
   return out;
 }
@@ -2098,6 +2103,8 @@ const CONSOLE_ART = '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke
 const PC_ART = '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><rect x="48" y="24" width="64" height="40" rx="3" stroke-width="3"/><path d="M80 64v10M68 76h24" stroke-width="3"/><path d="M56 56h48" stroke-width="2" opacity=".45"/></svg>';
 const PEN_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13.5 6.5l4 4"/></svg>';
 // name null = usa o nome da porta. glass = fundo de vidro (os logos já trazem o fundo preto).
+// Entrada "TV": antena e cabo (o sintonizador da própria TV), sempre a primeira da lista.
+const TV_ART = '<svg viewBox="0 0 160 100"><defs><linearGradient id="gt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1f3b73"/><stop offset="1" stop-color="#0b1022"/></linearGradient></defs><rect width="160" height="100" fill="url(#gt)"/><g fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M66 22l14 12 14-12"/><rect x="50" y="34" width="60" height="40" rx="5"/><path d="M68 82h24"/></g><g fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" opacity=".7"><path d="M118 40a14 14 0 010 20"/><path d="M124 34a22 22 0 010 32"/></g><text x="80" y="60" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="15" fill="#fff">TV</text></svg>';
 const INPUT_BANNERS = [
   { id: 'hdmi',   name: null,              art: HDMI_ART,   glass: true },
   { id: 'ps5',    name: 'PlayStation 5',   art: PS_ART },
@@ -2133,9 +2140,20 @@ function renderInputs() {
     $('#inputsGrid').replaceChildren(h('div', { class: 'info glass', text: 'Este aparelho não tem entradas HDMI para trocar (por exemplo, Chromecast ou TV box). Elas aparecem aqui quando o Onix roda numa TV.' }));
     return;
   }
-  // No navegador, mostra as três portas padrão como exemplo.
-  const list = inputs.length ? inputs : [{ id: '' }, { id: '' }, { id: '' }];
-  $('#inputsGrid').replaceChildren(...list.map((it, i) => {
+  // No navegador, mostra a TV e as três portas padrão como exemplo.
+  const list = inputs.length ? inputs : [{ id: '', kind: 'tv' }, { id: '' }, { id: '' }, { id: '' }];
+  const tv = list.filter(it => it.kind === 'tv').slice(0, 1), hdmi = list.filter(it => it.kind !== 'tv');
+  // TV (antena e cabo) primeiro, sem canetinha: o banner dela é fixo.
+  const tvCells = tv.map(it => {
+    const inp = { id: it.id, port: 'TV', name: 'TV' };
+    const b = h('button', { class: 'f tile', tabindex: '-1', 'aria-label': 'TV (antena e cabo)' },
+      h('span', { class: 'tile-art' }, svgFrom(TV_ART)),
+      h('span', { class: 'tile-label', text: 'TV' }),
+      h('span', { class: 'tile-sub', text: 'Antena e cabo' }));
+    b._act = () => openInput(inp);
+    return h('div', { class: 'input-cell' }, b);
+  });
+  $('#inputsGrid').replaceChildren(...tvCells, ...hdmi.map((it, i) => {
     const n = i + 1, port = 'HDMI ' + n, ban = bannerOf(n);
     const inp = { id: it.id, port, name: ban.name || port };
     const b = h('button', { class: 'f tile', tabindex: '-1', 'aria-label': inp.name },
@@ -2144,7 +2162,7 @@ function renderInputs() {
       h('span', { class: 'tile-sub', text: ban.name ? port : (it.label && it.label !== port ? it.label : 'Entrada') }));
     b._act = () => openInput(inp);
     const pen = h('button', { class: 'f pen glass', tabindex: '-1', 'aria-label': 'Trocar o banner da ' + port }, svgFrom(PEN_SVG));
-    pen._act = () => cycleBanner(n, i);
+    pen._act = () => cycleBanner(n, tvCells.length + i);
     return h('div', { class: 'input-cell' }, b, pen);
   }));
 }
@@ -2218,6 +2236,10 @@ const OPTIONS = [
 ];
 /* Novidades (Configurações → Novidades). A versão mais nova primeiro; *texto* vira negrito. */
 const CHANGELOG = [
+  { version: '13.6.1 beta', date: 'outubro de 2026', items: [
+    '*TV em Entradas:* a primeira entrada agora é a *TV* (antena e cabo), para voltar aos canais abertos sem sair do Onix, mesmo se a TV estava numa HDMI.',
+    'Os pontinhos do destaque da tela inicial agora ficam centralizados embaixo da capa, sem encostar nela.',
+  ] },
   { version: '13.6.0 beta', date: 'outubro de 2026', items: [
     '*Atualizações pelo próprio Onix:* ele procura versões novas no GitHub, avisa na tela e baixa sozinho. Você só confirma a instalação na tela da TV. Fica em Configurações → Atualizações.',
     '*Escolha suas indicações:* em Configurações → Indicações, desligue "Pelo que você assiste" e marque você mesmo Netflix, Disney+, HBO Max ou Globoplay.',

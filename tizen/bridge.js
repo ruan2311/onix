@@ -574,14 +574,17 @@ let watching = false;
 function scanInputs() {
   try {
     tizen.systeminfo.getPropertyValue('VIDEOSOURCE', v => {
-      const all = [].concat(v.connected || [], v.disconnected || []).filter(s => s && s.type === 'HDMI' && s.number > 0);
-      all.sort((a, b) => a.number - b.number);
-      const out = [];
-      for (const s of all) {
-        const id = 'HDMI:' + s.number;
-        if (sources[id]) continue;
+      const all = [].concat(v.connected || [], v.disconnected || []).filter(s => s && s.number > 0);
+      // TV (antena e cabo) primeiro, depois as HDMI em ordem; uma entrada por ID.
+      const tv = all.filter(s => s.type === 'TV').slice(0, 1);
+      const hdmi = all.filter(s => s.type === 'HDMI').sort((a, b) => a.number - b.number);
+      const out = [], seen = {};
+      for (const s of tv.concat(hdmi)) {
+        const id = s.type + ':' + s.number;
+        if (seen[id]) continue;
+        seen[id] = true;
         sources[id] = s;
-        out.push({ id, label: 'HDMI ' + s.number });
+        out.push(s.type === 'TV' ? { id, label: 'TV', kind: 'tv' } : { id, label: 'HDMI ' + s.number });
       }
       if (JSON.stringify(out) === JSON.stringify(inputList)) return;
       inputList = out;
@@ -598,7 +601,7 @@ document.head.appendChild(tvStyle);
 function showInput(id) {
   const src = sources[id];
   if (!src || !tizen.tvwindow) return false;
-  const fail = () => { stopWatching(); call('onMessage', 'A TV não deixou mostrar a ' + id.replace(':', ' ')); };
+  const fail = () => { stopWatching(); call('onMessage', 'A TV não deixou mostrar ' + (id.indexOf('TV:') === 0 ? 'a antena' : 'a ' + id.replace(':', ' '))); };
   try {
     tizen.tvwindow.setSource(src, () => {
       tizen.tvwindow.show(() => {

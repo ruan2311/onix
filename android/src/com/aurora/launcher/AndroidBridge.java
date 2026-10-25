@@ -352,10 +352,46 @@ public class AndroidBridge {
         return m.find() ? Math.min(Integer.parseInt(m.group(1)), 99) : 100;
     }
 
+    /** ID que a página recebe para a entrada "TV" (antena e cabo); não é um ID do sistema. */
+    private static final String TV_ID = "tv";
+
+    /**
+     * A TV tem sintonizador de antena/cabo? Só os da própria TV (app de sistema), não os
+     * "canais" que apps como Pluto TV e Globoplay registram como entradas de TV.
+     */
+    private boolean hasTuner() {
+        TvInputManager tim = (TvInputManager) activity.getSystemService(Context.TV_INPUT_SERVICE);
+        if (tim == null) return false;
+        for (TvInputInfo info : tim.getTvInputList()) {
+            if (info.getType() != TvInputInfo.TYPE_TUNER || info.isPassthroughInput()) continue;
+            ApplicationInfo ai = info.getServiceInfo() != null ? info.getServiceInfo().applicationInfo : null;
+            if (ai != null && (ai.flags & ApplicationInfo.FLAG_SYSTEM) != 0) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Abre a TV ao vivo no app de TV do sistema. A lista de canais leva o app de volta à antena
+     * mesmo se a TV estava numa HDMI (testado na Philips); CLEAR_TASK traz o app para a frente
+     * em vez de só reativar a tarefa antiga dele por trás do Onix.
+     */
+    private Intent liveTvIntent() {
+        return new Intent(Intent.ACTION_VIEW)
+                .setDataAndType(TvContract.Channels.CONTENT_URI, "vnd.android.cursor.dir/channel")
+                .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+    }
+
     @JavascriptInterface
     public String getTvInputs() {
         if (!trusted) return "[]";
         JSONArray out = new JSONArray();
+        try {
+            if (hasTuner() && liveTvIntent().resolveActivity(activity.getPackageManager()) != null) {
+                out.put(new JSONObject().put("id", TV_ID).put("label", "TV").put("kind", "tv"));
+            }
+        } catch (Exception ignored) {
+            // Sem antena: só as HDMI.
+        }
         try {
             for (TvInputInfo info : hdmiInputs()) {
                 JSONObject o = new JSONObject();
@@ -373,6 +409,13 @@ public class AndroidBridge {
     @JavascriptInterface
     public boolean openInput(String id) {
         if (!trusted || id == null || id.length() > 200) return false;
+        if (TV_ID.equals(id)) {
+            try {
+                return hasTuner() && start(liveTvIntent());
+            } catch (Exception e) {
+                return false;
+            }
+        }
         try {
             boolean known = false;
             for (TvInputInfo info : hdmiInputs()) known |= info.getId().equals(id);
