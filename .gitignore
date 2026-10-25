@@ -14,6 +14,7 @@ release/
 # Saída do build da versão Samsung (tizen/build.sh)
 tizen/build/
 onix-tizen.zip
+onix-tizen.wgt
 Onix.wgt
 onix-app.apk
 onix-launcher.apk

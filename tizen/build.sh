@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Build do Onix para Samsung (Tizen). Gera tizen/build/onix/ (o app pronto para assinar) e,
+# Build do Onix para Samsung (Tizen). Gera tizen/build/onix/ (o app pronto para assinar), o
+# onix-tizen.wgt sem assinatura (para o Apps2Samsung, no celular) e,
 # se o Tizen CLI estiver instalado e houver um perfil de certificado, o Onix.wgt assinado.
 #   bash tizen/build.sh                 # só a pasta (e o onix-tizen.zip para a página de Releases)
 #   bash tizen/build.sh MeuPerfil       # pasta + Onix.wgt assinado com o perfil do Certificate Manager
@@ -23,10 +24,14 @@ grep -q "const APP_VERSION = '$VERSION';" "$OUT/index.html" || { echo "APP_VERSI
 sed "s/@VERSION@/$NUM/" config.xml > "$OUT/config.xml"
 cp "$ROOT/android/res/drawable-xxxhdpi/icon.png" "$OUT/icon.png"
 (cd build && rm -f "$ROOT/onix-tizen.zip" && python3 -c "import shutil; shutil.make_archive('$ROOT/onix-tizen', 'zip', '.', 'onix')")
+# .wgt sem assinatura (os arquivos do app na raiz do zip): o Apps2Samsung, no celular, assina com o
+# certificado da TV e instala. O .wgt assinado do passo 3 abaixo é outro (Onix.wgt).
+(cd "$OUT" && rm -f "$ROOT/onix-tizen.wgt" && python3 -c "import shutil; shutil.make_archive('$ROOT/onix-tizen', 'zip', '.')" && mv "$ROOT/onix-tizen.zip" "$ROOT/onix-tizen.wgt")
+(cd build && python3 -c "import shutil; shutil.make_archive('$ROOT/onix-tizen', 'zip', '.', 'onix')")
 
 echo "[3/3] Pacote .wgt"
 if [ -z "$PROFILE" ]; then
-  echo "Sem perfil de certificado: pasta pronta em tizen/$OUT e onix-tizen.zip na raiz."
+  echo "Sem perfil de certificado: pasta pronta em tizen/$OUT, onix-tizen.zip e onix-tizen.wgt na raiz."
   echo "Para gerar o .wgt assinado: bash tizen/build.sh NOME_DO_PERFIL (veja o README)."
   exit 0
 fi
