@@ -1,12 +1,20 @@
 #!/usr/bin/env bash
-# Build do launcher-philips.apk só com ferramentas do Ubuntu (javac, dx, aapt, zipalign, apksigner).
+# Build do APK só com ferramentas do Ubuntu (javac, dx, aapt, zipalign, apksigner).
+#   bash android/build.sh            # launcher-philips.apk (o manifesto como está)
+#   bash android/build.sh launcher   # onix-launcher.apk da página de Releases ("Onix Launcher", pode virar tela inicial)
+#   bash android/build.sh app        # onix-app.apk da página de Releases ("Onix App", sem HOME/DEFAULT)
 set -euo pipefail
 cd "$(dirname "$0")"
 ROOT=$(cd .. && pwd)
 SDK_JAR=/usr/lib/android-sdk/platforms/android-23/android.jar
 OUT=build
 KEYSTORE="$HOME/.android/debug.keystore"
-APK="$ROOT/launcher-philips.apk"
+VARIANT=${1:-}
+case "$VARIANT" in
+  "") APK="$ROOT/launcher-philips.apk" ;;
+  launcher|app) APK="$ROOT/onix-$VARIANT.apk" ;;
+  *) echo "Variante desconhecida: $VARIANT (use launcher ou app)" >&2; exit 1 ;;
+esac
 
 rm -rf "$OUT"; mkdir -p "$OUT/classes" "$OUT/assets"
 
@@ -26,6 +34,18 @@ grep -q "^const APP_VERSION = '$VERSION';" "$OUT/assets/index.html" || { echo "A
 # Indicações embutidas para abrir sem internet (geradas por tools/gen_seed.py).
 [ -f assets/picks-seed.json ] && cp assets/picks-seed.json "$OUT/assets/"
 
+# Variantes da página de Releases: mesmo código, só o nome e (no App) sem virar tela inicial.
+MANIFEST=AndroidManifest.xml
+if [ -n "$VARIANT" ]; then
+  MANIFEST="$OUT/AndroidManifest.xml"
+  if [ "$VARIANT" = app ]; then
+    sed -e '/android.intent.category.HOME/d' -e '/android.intent.category.DEFAULT/d' \
+        -e 's|android:label="Onix"|android:label="Onix App"|' AndroidManifest.xml > "$MANIFEST"
+  else
+    sed 's|android:label="Onix"|android:label="Onix Launcher"|' AndroidManifest.xml > "$MANIFEST"
+  fi
+fi
+
 echo "[3/7] javac"
 javac -source 8 -target 8 -Xlint:-options -encoding UTF-8 -bootclasspath "$SDK_JAR" \
   -d "$OUT/classes" $(find src -name '*.java')
@@ -34,7 +54,7 @@ echo "[4/7] dx (dalvik-exchange)"
 dalvik-exchange --dex --min-sdk-version=21 --output="$OUT/classes.dex" "$OUT/classes"
 
 echo "[5/7] aapt"
-aapt package -f -M AndroidManifest.xml -S res -A "$OUT/assets" -I "$SDK_JAR" -F "$OUT/unsigned.apk"
+aapt package -f -M "$MANIFEST" -S res -A "$OUT/assets" -I "$SDK_JAR" -F "$OUT/unsigned.apk"
 (cd "$OUT" && aapt add -f unsigned.apk classes.dex >/dev/null)
 
 echo "[6/7] zipalign"

@@ -216,6 +216,14 @@ svg{display:block}
 .reader-text p{margin:0 0 .85rem;font-size:1.05rem;line-height:1.62;color:rgba(240,242,246,.86);user-select:text;-webkit-user-select:text}
 .reader-more{display:flex;align-items:center;gap:1.6rem;margin-top:1.2rem;padding-top:1.3rem;border-top:1px solid rgba(255,255,255,.12);font-size:.95rem;color:var(--muted)}
 .reader-more b{color:var(--text)}
+/* Novidades (changelog): o mesmo leitor das notícias, sem imagem nem QR code. */
+#reader.log .reader-more{display:none}
+.log-ver{display:flex;align-items:baseline;gap:.7rem;margin:1.3rem 0 .55rem;font-size:1.2rem}
+.log-ver:first-child{margin-top:.2rem}
+.log-ver span{font-size:.85rem;font-weight:400;color:var(--muted)}
+.log-list{margin:0 0 .4rem;padding-left:1.3rem}
+.log-list li{margin:0 0 .55rem;font-size:1.02rem;line-height:1.55;color:rgba(240,242,246,.86)}
+.log-list b{color:var(--text)}
 /* QR escuro sobre branco (o celular não lê o invertido de forma confiável); a borda branca é a zona de silêncio. */
 .reader-qr{flex:none;width:11rem;height:11rem;border-radius:.9rem;background:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.3),var(--shadow)}
 .reader-qr svg{display:block;width:100%;height:100%;shape-rendering:crispEdges}
@@ -373,7 +381,7 @@ html.no-motion *,html.no-motion *::before,html.no-motion *::after{transition:non
     </div>
     <div class="row-title">Seus apps</div>
     <div class="row" id="homeApps"></div>
-    <div class="row-title">Indicações da semana<span class="row-sub">· Netflix em primeiro · renovadas toda segunda-feira</span></div>
+    <div class="row-title">Indicações da semana<span class="row-sub" id="picksSub">· Netflix em primeiro · renovadas toda segunda-feira</span></div>
     <div class="row" id="homePicks"></div>
   </section>
 
@@ -497,7 +505,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.4.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '13.5.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true });
 const settings = Object.assign({}, DEFAULTS);
@@ -597,7 +605,7 @@ const Bridge = (() => {
       if (!native || typeof b.searchTitle !== 'function') return false;
       try { return b.searchTitle(title) === true; } catch (e) { console.warn('searchTitle falhou', e); return false; }
     },
-    // "title" | "app" | "search" | "" — o nativo decide entre Netflix no título, Netflix ou busca.
+    // "title" | "app" | "search" | "" — o nativo decide entre o título no app do serviço, só o app ou a busca.
     openPick(title) {
       if (!native) return '';
       if (typeof b.openPick !== 'function') return this.search(title) ? 'search' : '';
@@ -695,7 +703,7 @@ function sanitizePicks(list) {
     out.push({
       title,
       rawTitle: it.title,   // a ponte só aceita busca pelo título exato que ela enviou
-      netflix: it.provider === 'netflix',
+      provider: Object.prototype.hasOwnProperty.call(PICK_PROVIDERS, it.provider) ? it.provider : '',
       kind: it.kind === 'Série' || it.kind === 'Filme' ? it.kind : '',
       genre: typeof it.genre === 'string' ? cleanText(it.genre, 30) : '',
       year: typeof it.year === 'string' && /^\d{4}$/.test(it.year) ? it.year : '',
@@ -814,25 +822,41 @@ const FEATURED = [
   { brand: 'spotify',   kicker: 'Destaque · Spotify',     title: 'Som ambiente para a sala', desc: 'Playlists relaxantes com a tela em modo cinema.',                         h1: '#1db954', h2: '#0b5cff' },
 ];
 // Ícone oficial da Netflix (PNG 64×64 reduzido do original da Wikimedia), usado no selo das indicações.
+// Os selos dos outros serviços são SVGs simples desenhados aqui (PICK_PROVIDERS, logo abaixo).
 const NF_ICON = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAYAAACqaXHeAAAEMklEQVR4Xu2byWsUQRTGp2emZ0kyJi4gijcloDfBiyAEvIrgTRAUt8QNbxFFBEH04ikx4q4Y12hcEgwoonhQ0INroodE4u6/4EEP7fcNmVh5r2cq0HPpaht+JFT3S/r7Uq/6vepJKvXvKIEDYAT8BoFjUBO1USO1TjlawXhKB7kKtVJz+aAbSRJfgZrLM4FTQp5MCtRezgt5IilQu5ML3nShdjWYNNRA0lADSUMNJA01EInuXCm4lJtRlT1+g4qp0Jb2g85sQ1V2ZYsqpg6ogUgM5JuDn8U5VflUnB2UPE/FkU2ZQjCYa67KZRgoY+qAGohEj19SoiVrIVTGEScMOOo3Be8Ls5Rokz7MEhlHnDDgOGbAUL5FiTb5BuZ6aRW72QUDzsOAU9NIg/aQBc0JA3iTJ2DAa0sa3McskbFOGHAVN3nRnxHcydV+GpCFXmZK7BYXDLiGm7wBuBZ8DxFt0ilqApsBV+JiwF3c7EkY8KIwU4k2eYbzZqwzBvBme33OBHsaLE1nJ2O3umTATXw9hprga4hok0N+42SsUwYwDfg4fJqvnQZv8bTITMQ6ZQBh88OblqIlbelcObY9U1SiY21AP77vQhqMowGSok260EEy1jkDBsBppMFjS2k8CoMKKc89AwiLlwvTSIPVmbybBvQDpsFooXYa0CRbHcAqU/6+OqAGIiENYBqcQRqw9peiTT4jDXajQeL1UnisDSCculwLpGgJ+4dbIcJjbwBFMQ1GLB0iawKaJeNjbwCn9VnMgEHLfuEPQAOqpUEsDOBNyhuv3Dw7RIqUwk0eYq3gwinjY2/AbdCNNHhlSYMPeFrw0SnjY28Ap/U5zIC+nL0muF4lDWJtAOH6sB2Pui8hok2elNNA/5zYG8A0WI9ip9cyC8aQBmykZHzsDSBsedeg7JWiJVwI2VI7Z8AOpEADGp8xS4fIfQRuqjhnQOUFZ0+udmXId4gyDZwyYGUmp0RLmAJmGjhlQBYMW2oC7ipzi90pA3Yar8SOoDCSok24oWoWRc4ZsCztK9GSIcSwS3TSAA88t7w8eYk0YfUYGwNqtbOEj0Hz+r1+gxJtwtdrFVOdNKDVyyjRkgcojZkGThpA2AJL0SbvJtLACQPYDMkYmiJFm3APgR1iLHaFq/XytQyY56Wtr9IfYZawiZKxdUANRMJmwLaMNoD0W7bLuFHC3WUZVwfUQCRsBvDlh4wh67IFJVrCzx/JuDqgBiIhGxjJxiqfEWz2vHIDJEWb3Av5XFEdUAOR6MBfeANErkKzsxyV3mI85hYgx1sg0A+53iQNSmiV5+P6JelssALx3DvowLpx0G8MDqN0ljF1QA0kDTWQNNRA0lADSeP/P00Nh5xICtSe2h9yIilQe6oJfAw56TrUTO3lYxEYC7nIVaiVmqccjWAfeAN+gT+OQU3URo3UWj7+AtTj2CJKnCiEAAAAAElFTkSuQmCC';
 const HERO_ART = '<svg viewBox="0 0 200 200"><defs><radialGradient id="pl" cx="35%" cy="30%" r="75%"><stop offset="0" style="stop-color:#fff;stop-opacity:.95"/><stop offset=".25" style="stop-color:var(--h1)"/><stop offset="1" style="stop-color:#05061a"/></radialGradient><radialGradient id="gl" r="50%"><stop offset=".55" style="stop-color:var(--h2);stop-opacity:.55"/><stop offset="1" style="stop-color:var(--h2);stop-opacity:0"/></radialGradient></defs><circle cx="100" cy="100" r="98" fill="url(#gl)"/><ellipse cx="100" cy="104" rx="92" ry="20" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="3" transform="rotate(-16 100 100)"/><circle cx="100" cy="100" r="54" fill="url(#pl)"/><path d="M14 122 A92 20 0 0 0 186 86" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="3" transform="rotate(-16 100 100)" stroke-linecap="round"/><circle cx="165" cy="40" r="5" fill="#fff" opacity=".8"/></svg>';
+const svgData = svg => 'data:image/svg+xml,' + encodeURIComponent(svg);
+/* Serviços das indicações. A Netflix é o padrão; os outros entram quando a pessoa abre o app
+   mais de 3 vezes pelo Onix e saem depois de uma semana sem abrir (a contagem fica no nativo).
+   "em" = preposição + nome ("na Netflix", "no Disney+"). */
+const PICK_PROVIDERS = Object.freeze({
+  netflix: { name: 'Netflix', em: 'na Netflix', color: '#e50914', badge: NF_ICON },
+  disney: { name: 'Disney+', em: 'no Disney+', color: '#1a46d6', badge: svgData('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="d" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0a1b4f"/><stop offset="1" stop-color="#1e46c8"/></linearGradient></defs><rect width="64" height="64" fill="url(#d)"/><path d="M12 30Q32 8 52 26" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round"/><text x="29" y="47" text-anchor="middle" font-family="Georgia,serif" font-style="italic" font-weight="700" font-size="24" fill="#fff">D</text><text x="45" y="45" text-anchor="middle" font-family="Arial,sans-serif" font-weight="700" font-size="20" fill="#fff">+</text></svg>') },
+  max: { name: 'HBO Max', em: 'na HBO Max', color: '#5b2fd6', badge: svgData('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="m" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1b0a4a"/><stop offset="1" stop-color="#6a35f0"/></linearGradient></defs><rect width="64" height="64" fill="url(#m)"/><text x="32" y="30" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="15" fill="#fff">HBO</text><text x="32" y="48" text-anchor="middle" font-family="Arial,sans-serif" font-weight="800" font-size="17" fill="#fff">max</text></svg>') },
+  globoplay: { name: 'Globoplay', em: 'no Globoplay', color: '#ff2a54', badge: svgData('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff7a00"/><stop offset=".55" stop-color="#ff1f48"/><stop offset="1" stop-color="#e8007f"/></linearGradient></defs><rect width="64" height="64" fill="url(#g)"/><circle cx="32" cy="32" r="17" fill="none" stroke="#fff" stroke-width="6"/><path d="M28 24v16l13-8z" fill="#fff"/></svg>') },
+});
 let picks = [];
 function loadPicks() { picks = Bridge.getPicks(); }
 function openPick(p) {
-  if (!Bridge.native) { toast((p.netflix ? 'Abriria ' + p.title + ' na Netflix' : 'Buscaria onde assistir ' + p.title) + ' (simulação no navegador)'); return; }
+  const pv = PICK_PROVIDERS[p.provider];
+  if (!Bridge.native) { toast((pv ? 'Abriria ' + p.title + ' ' + pv.em : 'Buscaria onde assistir ' + p.title) + ' (simulação no navegador)'); return; }
   const r = Bridge.openPick(p.rawTitle);
-  if (r === 'title') toast('Abrindo ' + p.title + ' na Netflix…');
-  else if (r === 'app') toast('Abrindo a Netflix… procure por ' + p.title);
+  if (r === 'title') toast('Abrindo ' + p.title + ' ' + pv.em + '…');
+  else if (r === 'app') toast('Abrindo ' + (pv ? pv.name : 'o app') + '… procure por ' + p.title);
   else if (r === 'search') toast('Procurando onde assistir ' + p.title + '…');
-  else toast(p.netflix ? 'Netflix não instalada nesta TV' : 'Busca indisponível nesta TV');
+  else toast(pv ? pv.name + ' não está instalado nesta TV' : 'Busca indisponível nesta TV');
 }
 // Itens do destaque: indicações da semana; sem internet (nada em cache), destaques dos apps.
 function heroItems() {
-  if (picks.length) return picks.map(p => ({
-    kicker: [p.netflix ? 'Na Netflix' : 'Indicação da semana', p.kind, p.genre, p.year].filter(Boolean).join(' · '),
-    title: p.title, desc: p.summary, h1: p.netflix ? '#e50914' : p.color, h2: p.color, poster: p.poster,
-    label: p.netflix ? 'Assistir na Netflix' : 'Onde assistir', act: () => openPick(p),
-  }));
+  if (picks.length) return picks.map(p => {
+    const pv = PICK_PROVIDERS[p.provider];
+    const em = pv ? pv.em.charAt(0).toUpperCase() + pv.em.slice(1) : 'Indicação da semana';
+    return {
+      kicker: [em, p.kind, p.genre, p.year].filter(Boolean).join(' · '),
+      title: p.title, desc: p.summary, h1: pv ? pv.color : p.color, h2: p.color, poster: p.poster,
+      label: pv ? 'Assistir ' + pv.em : 'Onde assistir', act: () => openPick(p),
+    };
+  });
   return FEATURED.map(f => {
     const app = findApp(f.brand);
     return { kicker: f.kicker, title: f.title, desc: f.desc, h1: f.h1, h2: f.h2, poster: null,
@@ -1024,11 +1048,16 @@ function renderPicks() {
   picks.forEach((p, i) => {
     const b = h('button', { class: 'f tile pick', tabindex: '-1', 'aria-label': p.title },
       h('span', { class: 'tile-art' }, h('img', { src: p.poster, alt: '', draggable: 'false', decoding: 'async' }),
-        p.netflix ? h('img', { class: 'nf-badge', src: NF_ICON, alt: 'Netflix', draggable: 'false' }) : null),
+        PICK_PROVIDERS[p.provider] ? h('img', { class: 'nf-badge', src: PICK_PROVIDERS[p.provider].badge, alt: PICK_PROVIDERS[p.provider].name, draggable: 'false' }) : null),
       h('span', { class: 'tile-label', text: p.title }));
     b._act = () => openPick(p);
     row.append(b);
   });
+  // "Netflix em primeiro" ou, com outros serviços, a lista deles (ex.: "Netflix, Disney+ e Globoplay").
+  const names = Object.keys(PICK_PROVIDERS).filter(k => picks.some(p => p.provider === k)).map(k => PICK_PROVIDERS[k].name);
+  $('#picksSub').textContent = '· ' + (names.length > 1
+    ? names.slice(0, -1).join(', ') + ' e ' + names[names.length - 1] + ', pelos apps que você mais abre'
+    : 'Netflix em primeiro') + ' · renovadas toda segunda-feira';
   renderHero(false);
 }
 
@@ -1990,6 +2019,7 @@ function closeReader() {
   const from = reader.from;
   reader = null;
   $('#reader').hidden = true;
+  $('#reader').classList.remove('log');
   $('#readerArt').replaceChildren();
   $('#readerQr').replaceChildren();
   $('#readerClose').classList.remove('is-focused');
@@ -2131,8 +2161,44 @@ const OPTIONS = [
   { act: 'reset',  name: 'Restaurar padrão',      desc: 'Volta todas as opções do Onix ao original.' },
   { act: 'tv',     name: 'Configurações da TV',   desc: 'Rede, imagem, som e demais ajustes da TV.' },
   { group: 'Sobre' },
+  { act: 'changelog', name: 'Novidades',         desc: 'O que mudou em cada versão do Onix, da mais nova para a mais antiga.' },
   { act: 'about' },
 ];
+/* Novidades (Configurações → Novidades). A versão mais nova primeiro; *texto* vira negrito. */
+const CHANGELOG = [
+  { version: '13.5.0 beta', date: 'outubro de 2026', items: [
+    '*Indicações do que você assiste:* abra o *Disney+*, a *HBO Max* ou o *Globoplay* mais de 3 vezes pelo Onix e as indicações da semana passam a trazer títulos deles, junto com os da Netflix.',
+    'Ficou uma semana sem abrir um desses apps? Ele sai das indicações sozinho, e elas voltam a ser só da Netflix.',
+    '*Assistir no Disney+, na HBO Max e no Globoplay* abre direto na página do título, como já acontecia com a Netflix.',
+    '*Novidades:* esta tela, em Configurações, com o que mudou em cada versão. O Onix também avisa quando é atualizado.',
+    '*TVs Samsung:* o Onix agora tem uma versão para Tizen (TVs de 2022 em diante), em beta. O passo a passo está no GitHub.',
+  ] },
+  { version: '13.4.0 beta', date: 'outubro de 2026', items: [
+    'Primeira versão pública do Onix.',
+    'Indicações da semana da Netflix Brasil, que abrem direto no título.',
+    'Notícias de games (Adrenaline e Eurogamer.pt) com leitor e QR code.',
+    'Quatro jogos: Pong, Pinball, Tijolos e Cobrinha.',
+    'Entradas HDMI com banners editáveis, tela de descanso espacial, botão Atualizar e botão Desligar TV.',
+  ] },
+];
+function richText(t) {
+  return t.split('*').map((part, i) => i % 2 ? h('b', { text: part }) : document.createTextNode(part));
+}
+function openChangelog(from) {
+  $('#readerArt').replaceChildren();
+  $('#readerMeta').textContent = 'Onix ' + APP_VERSION;
+  $('#readerTitle').textContent = 'Novidades';
+  $('#readerText').replaceChildren(...[].concat(...CHANGELOG.map(v => [
+    h('h3', { class: 'log-ver', text: v.version }, h('span', { text: v.date })),
+    h('ul', { class: 'log-list' }, ...v.items.map(t => h('li', null, ...richText(t)))),
+  ])));
+  $('#readerQr').replaceChildren();
+  $('#reader').classList.add('log');
+  $('#reader').hidden = false;
+  $('#readerPanel').scrollTop = 0;
+  reader = { news: null, from };
+  $('#readerClose').classList.add('is-focused');
+}
 const ABOUT = [['Criado por', 'Ruan Amaral'], ['Instagram', '@ruan_amarl'], ['GitHub', 'github.com/ruan2311'], ['Versão', APP_VERSION]];
 const GO_ICON = '<svg class="opt-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
 function setOption(key, on) {
@@ -2170,6 +2236,7 @@ function renderSettings() {
       Object.assign(settings, DEFAULTS); setOption('h24', DEFAULTS.h24); syncSwitches(); toast('Configurações restauradas');
     };
     else if (o.act === 'saver') b._act = showSaver;
+    else if (o.act === 'changelog') b._act = () => openChangelog(b);
     else b._act = openSettings;
     return b;
   }));
@@ -2840,6 +2907,18 @@ function init() {
   startHeroRotation();
   armSaver();
   setFocus($('#heroOpen'));
+  announceUpdate();
+}
+// Primeira abertura depois de uma atualização: avisa e aponta para as Novidades.
+// Sem versão salva mas com dados do Onix = veio de uma versão anterior à 13.5.0.
+function announceUpdate() {
+  try {
+    const prev = localStorage.getItem('onix.version');
+    if (prev === APP_VERSION) return;
+    const updated = prev !== null || Object.keys(localStorage).some(k => k.indexOf('onix.') === 0);
+    localStorage.setItem('onix.version', APP_VERSION);
+    if (updated) setTimeout(() => toast('Onix atualizado para a ' + APP_VERSION + '! Veja o que mudou em Configurações → Novidades'), 1500);
+  } catch (_) {}
 }
 init();
 })();

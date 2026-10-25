@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-13.4.0%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-13.5.0%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -21,6 +21,7 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 
 ## Sumário
 
+- [Novidades da 13.5.0](#novidades-da-1350)
 - [Recursos](#recursos)
 - [Capturas de tela](#capturas-de-tela)
 - [Download: Onix App ou Onix Launcher?](#download-onix-app-ou-onix-launcher)
@@ -38,12 +39,27 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 
 ---
 
+## Novidades da 13.5.0
+
+- **Indicações do que você assiste.** Abra o **Disney+**, a **HBO Max** ou o **Globoplay** mais de 3 vezes pelo Onix e as indicações da semana passam a ter títulos deles, junto com os da Netflix. Se você passar uma semana sem abrir um desses apps, ele sai das indicações e elas voltam a ser só da Netflix.
+- **Assistir no Disney+, na HBO Max e no Globoplay** abre direto na página do título, como já acontecia com a Netflix.
+- **Novidades** em Configurações: o que mudou em cada versão. Depois de uma atualização, o Onix avisa na tela inicial.
+- **TVs Samsung (Tizen)**, em beta: veja [o tutorial](#tvs-samsung-tizen).
+
+O histórico completo está no [CHANGELOG.md](CHANGELOG.md) e na [página de Releases](https://github.com/ruan2311/onix/releases).
+
+---
+
 ## Recursos
 
 ### Início
 - **Destaque rotativo** com as indicações da semana. O botão **Assistir na Netflix** abre o título direto na página dele no app da Netflix.
 - **Seus apps**: uma fileira com os seus apps favoritos. Dá para adicionar, remover e reordenar na tela **Organizar seus apps**.
-- **Indicações da semana**: títulos populares da Netflix Brasil (via JustWatch), complementados pelos filmes mais vistos da iTunes Store. A lista é renovada toda segunda-feira.
+- **Indicações da semana**: títulos populares no Brasil (via JustWatch) dos serviços que você usa, complementados pelos filmes mais vistos da iTunes Store. A lista é renovada toda segunda-feira.
+  - A **Netflix** é o padrão e está sempre presente.
+  - **Disney+**, **HBO Max** e **Globoplay** entram quando você abre o app **mais de 3 vezes pelo Onix** (pela grade ou pelas indicações) e o app está instalado. As 8 vagas são divididas entre os serviços, e os mais abertos vêm primeiro.
+  - Uma **semana sem abrir** o app zera a contagem e ele sai das indicações.
+  - Cada indicação tem o selo do serviço, e **Assistir no…** abre o título direto no app.
 - **Botão Atualizar**: baixa notícias, indicações e a lista de apps na hora, sem esperar o próximo ciclo automático.
 
 ### Apps
@@ -140,6 +156,7 @@ As TVs Samsung usam o **Tizen**, não o Android, então APKs não instalam nelas
 |---|---|
 | Apps, Organizar seus apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android |
 | Indicações da semana + **Assistir na Netflix** | ✅ Abre a Netflix no título. Se a sua TV não aceitar o link direto, abre a Netflix e você procura o título |
+| Indicações do Disney+, HBO Max e Globoplay | ✅ Mesma regra do Android (mais de 3 aberturas, sai depois de 7 dias). O app abre, mas nem sempre direto no título: o Tizen não documenta links diretos para esses apps |
 | Indicações que não são da Netflix | ⚠️ A Samsung não tem a busca "onde assistir" do Google |
 | Entradas HDMI | ⚠️ A HDMI aparece **em tela cheia dentro do Onix**. **Voltar** ou **OK** retorna ao Onix. Recursos como Modo Jogo automático podem não ligar nessa janela: para jogar, prefira o botão de fontes do controle |
 | Virar a tela inicial | ❌ O Tizen não aceita launchers de terceiros. O Onix abre como um app; dá para fixá-lo na barra da tela inicial |
@@ -280,9 +297,10 @@ adb uninstall com.aurora.launcher
 | Administrador do dispositivo (opcional) | Apenas `force-lock`, usado pelo botão **Desligar TV** |
 
 - **Sem rastreamento, sem anúncios, sem conta.** O Onix não envia nenhum dado sobre você ou sobre o que você assiste.
+- A contagem de aberturas dos apps de streaming (para as indicações) também fica **só na TV**: o Onix guarda apenas quantas vezes cada serviço foi aberto e quando foi a última vez.
 - As preferências (apps favoritos, banners, recordes, configurações) ficam **só na TV**.
 - A interface roda num WebView **totalmente offline**: o HTML vem empacotado no APK, com uma Content-Security-Policy que bloqueia qualquer acesso à rede. Os downloads são feitos pelo Java, apenas por HTTPS e apenas destes serviços:
-  - `apis.justwatch.com` e `images.justwatch.com`: indicações da Netflix Brasil
+  - `apis.justwatch.com` e `images.justwatch.com`: indicações da Netflix, do Disney+, da HBO Max e do Globoplay
   - `itunes.apple.com`: filmes mais vistos
   - `adrenaline.com.br` e `eurogamer.pt`: notícias de games
 - Tudo o que vem da página para o código nativo é validado (nomes de pacote, IDs de entrada, títulos da lista atual).
@@ -301,14 +319,18 @@ sudo apt install openjdk-17-jdk-headless libandroid-23-java \
 ```bash
 git clone https://github.com/ruan2311/onix.git
 cd onix
-bash android/build.sh
+bash android/build.sh            # launcher-philips.apk
+bash android/build.sh launcher   # onix-launcher.apk (o da página de Releases)
+bash android/build.sh app        # onix-app.apk (o da página de Releases)
 ```
 
-O APK sai em `launcher-philips.apk`, na raiz do projeto, assinado com a chave de debug do seu computador (`~/.android/debug.keystore`, criada automaticamente se não existir).
+O APK sai em `launcher-philips.apk` (ou `onix-launcher.apk` / `onix-app.apk`), na raiz do projeto, assinado com a chave de debug do seu computador (`~/.android/debug.keystore`, criada automaticamente se não existir).
 
 **Versão:** o `android:versionName` do `AndroidManifest.xml` manda. O `build.sh` copia esse valor para o `index.html`, e ele aparece no menu e em "Sobre".
 
-**Onix App × Onix Launcher:** os dois saem do mesmo código. O **Onix App** é o mesmo manifesto sem as categorias `HOME` e `DEFAULT` no `intent-filter` da `MainActivity` e com `android:label="Onix App"`.
+**Onix App × Onix Launcher:** os dois saem do mesmo código. O **Onix App** é o mesmo manifesto sem as categorias `HOME` e `DEFAULT` no `intent-filter` da `MainActivity` e com `android:label="Onix App"`; o `build.sh app` gera essa versão sem mexer no manifesto.
+
+**Novidades:** a lista `CHANGELOG` no `index.html` alimenta a tela **Configurações → Novidades**. Ao lançar uma versão, atualize ela junto com o `CHANGELOG.md`.
 
 > **Assinatura:** um APK só instala por cima de outro com a mesma chave. Se você compilar com a sua chave, não vai conseguir atualizar um Onix instalado a partir dos APKs deste repositório (e vice-versa): desinstale antes.
 
@@ -327,6 +349,7 @@ python3 -m http.server 8000
 ```
 .
 ├── index.html                  # Toda a interface: HTML, CSS e JS num arquivo só
+├── CHANGELOG.md                # O que mudou em cada versão
 ├── tizen/                      # Versão Samsung (Tizen)
 │   ├── bridge.js               # Ponte JS com as APIs do Tizen (apps, HDMI, Netflix, indicações, notícias)
 │   ├── config.xml              # Manifesto do app (.wgt): privilégios e hosts liberados
@@ -337,7 +360,8 @@ python3 -m http.server 8000
 │   ├── src/com/aurora/launcher/
 │   │   ├── MainActivity.java   # WebView, tela inicial, rede, Voltar
 │   │   ├── AndroidBridge.java  # Ponte JS ↔ Android (apps, entradas, Netflix, desligar…)
-│   │   ├── WeeklyPicks.java    # Indicações da semana (JustWatch + iTunes)
+│   │   ├── WeeklyPicks.java    # Indicações da semana (JustWatch + iTunes), por serviço
+│   │   ├── AppUsage.java       # Aberturas de cada serviço (quem entra nas indicações)
 │   │   ├── GameNews.java       # Notícias (RSS da Adrenaline e da Eurogamer.pt)
 │   │   ├── PicksJob.java       # Agendamento semanal das indicações
 │   │   └── PowerAdmin.java     # Administrador do dispositivo (só force-lock)
@@ -357,6 +381,7 @@ python3 -m http.server 8000
 
 - **Novos banners de entrada:** adicione um item em `INPUT_BANNERS`, no `index.html`, com `id`, `name` e `art` (um SVG de 160×100).
 - **Fontes de notícias:** edite `FEEDS` em `GameNews.java`.
+- **Serviços das indicações:** a tabela `PROVIDERS` em `WeeklyPicks.java` (e em `tizen/bridge.js`), com o código do serviço no JustWatch, o formato do link do título e os pacotes do app. A regra de uso (4 aberturas, 7 dias) fica em `AppUsage.java`.
 - **País e idioma das indicações:** `vars.put("c", "BR")` e `vars.put("l", "pt-BR")` em `WeeklyPicks.java`.
 - **Tempo da tela de descanso:** `SAVER_IDLE` no `index.html` (padrão: 10 minutos).
 

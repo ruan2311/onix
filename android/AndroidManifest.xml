@@ -3,13 +3,13 @@
   App na grade da TV (LAUNCHER + LEANBACK_LAUNCHER) e também candidato a tela
   inicial (HOME + DEFAULT). O WebView continua offline (só exibe
   o index.html dos assets); INTERNET é usada apenas pelo Java (WeeklyPicks) para
-  baixar as indicações da semana via HTTPS (JustWatch/Netflix e iTunes) e as
+  baixar as indicações da semana via HTTPS (JustWatch e iTunes) e as
   notícias dos games (RSS da Adrenaline e da Eurogamer.pt).
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aurora.launcher"
     android:versionCode="13"
-    android:versionName="13.4.0 beta">
+    android:versionName="13.5.0 beta">
 
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
 
@@ -31,9 +31,13 @@
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
-        <!-- Netflix: abrir as indicações direto no título (netflix://title/<id>). -->
+        <!-- Serviços das indicações: abrir direto no título (Netflix, Disney+, HBO Max, Globoplay). -->
         <package android:name="com.netflix.ninja" />
         <package android:name="com.netflix.mediaclient" />
+        <package android:name="com.disney.disneyplus" />
+        <package android:name="com.wbd.stream" />
+        <package android:name="com.hbo.hbonow" />
+        <package android:name="com.globo.globotv" />
         <!-- Busca da Google TV para "onde assistir" das indicações. -->
         <intent>
             <action android:name="android.search.action.GLOBAL_SEARCH" />

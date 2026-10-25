@@ -7,8 +7,8 @@
   responde na hora com o que está salvo (localStorage) e, quando a TV ou a internet respondem,
   avisa a página com Launcher.onAppsChanged(), onPicksChanged(), onNewsChanged() e onInputsChanged().
 
-  As indicações e as notícias são o porte de WeeklyPicks.java e GameNews.java: mesmas fontes,
-  mesmos filtros e o mesmo formato de JSON. A rede só acessa os hosts liberados na CSP e no config.xml.
+  As indicações e as notícias são o porte de WeeklyPicks.java, AppUsage.java e GameNews.java:
+  mesmas fontes, mesmos filtros e o mesmo formato de JSON. A rede só acessa os hosts liberados na CSP e no config.xml.
 */
 (function () {
 'use strict';
@@ -143,18 +143,68 @@ function knownApp(id) {
   return null;
 }
 function launch(id) {
+  recordUsage(providerForApp(knownApp(id)));
   try {
     tizen.application.launch(id, null, () => call('onMessage', 'A TV não deixou abrir este app'));
     return true;
   } catch (_) { return false; }
 }
 
-/* ---------------- Netflix ---------------- */
-// O ID da Netflix muda conforme o ano da TV; o nome é o jeito mais seguro de achá-la.
+/* ---------------- Serviços de streaming ---------------- */
+// Os IDs dos apps mudam conforme o ano da TV; o nome é o jeito mais seguro de achá-los.
 const NETFLIX_IDS = ['3201907018807', '11101200001', 'org.tizen.netflix-app'];
-function netflixApp() {
-  for (const a of appList) if (NETFLIX_IDS.indexOf(a.package) >= 0 || /^netflix$/i.test(a.label)) return a;
-  return null;
+const PROVIDERS = [   // ordem = desempate; a Netflix é o padrão e entra mesmo sem uso
+  { key: 'netflix', jw: 'nfx', name: /^netflix$/i, ids: NETFLIX_IDS,
+    link: /^https:\/\/www\.netflix\.com\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?title\/(\d{1,12})\/?$/ },
+  { key: 'disney', jw: 'dnp', name: /^disney\s*\+|^disney plus$/i, ids: [],
+    link: /^https:\/\/www\.disneyplus\.com\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?browse\/entity-[0-9a-f-]{36}$/ },
+  { key: 'max', jw: 'mxx', name: /^(hbo\s*)?max$/i, ids: [],
+    link: /^https:\/\/play\.(?:hbo)?max\.com\/(?:video\/watch|show|movie)\/[0-9a-f-]{36}(?:\/[0-9a-f-]{36})?$/ },
+  { key: 'globoplay', jw: 'gop', name: /^globoplay$/i, ids: [],
+    link: /^https:\/\/globoplay\.globo\.com\/(?:[a-z0-9-]{1,120}\/t\/[A-Za-z0-9]{1,20}\/?|v\/\d{1,12}\/?)$/ },
+];
+const NETFLIX = PROVIDERS[0];
+const providerByKey = key => PROVIDERS.find(p => p.key === key) || null;
+function providerForApp(app) {
+  return app ? PROVIDERS.find(p => p.ids.indexOf(app.package) >= 0 || p.name.test(app.label)) || null : null;
+}
+function appFor(provider) {
+  return appList.find(a => providerForApp(a) === provider) || null;
+}
+function netflixApp() { return appFor(NETFLIX); }
+
+/* Aberturas pelo Onix (como o AppUsage.java): a 4ª ativa o serviço nas indicações; uma semana
+   sem abrir zera a contagem e elas voltam a ser só da Netflix. Fica só na TV. */
+const MIN_OPENS = 4, USAGE_EXPIRE = 7 * 24 * 60 * 60 * 1000;
+const usage = load('usage') || {};
+function opens(key) {
+  const u = usage[key], now = Date.now();
+  return u && now >= u.t && now - u.t <= USAGE_EXPIRE ? u.n : 0;
+}
+function recordUsage(provider) {
+  if (!provider) return;
+  usage[provider.key] = { n: opens(provider.key) + 1, t: Date.now() };
+  save('usage', usage);
+}
+/** Netflix + serviços abertos mais de 3 vezes na última semana (e instalados); os mais abertos primeiro. */
+function activeProviders() {
+  return PROVIDERS.filter(p => p === NETFLIX || (opens(p.key) >= MIN_OPENS && appFor(p)))
+    .map((p, i) => ({ p, i, n: opens(p.key) }))
+    .sort((a, b) => b.n - a.n || a.i - b.i)
+    .map(x => x.p);
+}
+const signature = list => list.map(p => p.key).join(',');
+/**
+ * Disney+, HBO Max e Globoplay: tenta abrir o link do título no app; o Tizen não documenta
+ * deep links desses apps, então, se não der, abre só o app (e a página pede para procurar o título).
+ */
+function openServiceLink(appId, link) {
+  try {
+    const ctl = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/view', link, null, null, null);
+    tizen.application.launchAppControl(ctl, appId, () => recordUsage(providerForApp(knownApp(appId))), () => launch(appId));
+  } catch (_) {
+    launch(appId);
+  }
 }
 /** Abre a Netflix direto no título (deep link do app da Samsung); se a TV recusar, abre só a Netflix. */
 function openNetflixTitle(appId, titleId) {
@@ -162,7 +212,7 @@ function openNetflixTitle(appId, titleId) {
     const payload = JSON.stringify({ values: 'm=https://www.netflix.com/title/' + titleId + '&source_type=4' });
     const ctl = new tizen.ApplicationControl('http://tizen.org/appcontrol/operation/view', null, null, null,
       [new tizen.ApplicationControlData('PAYLOAD', [payload])]);
-    tizen.application.launchAppControl(ctl, appId, null, () => launch(appId));
+    tizen.application.launchAppControl(ctl, appId, () => recordUsage(NETFLIX), () => launch(appId));
   } catch (_) {
     launch(appId);
   }
@@ -173,12 +223,11 @@ const FEED = 'https://itunes.apple.com/br/rss/topmovies/limit=50/json';
 const JUSTWATCH = 'https://apis.justwatch.com/graphql';
 const JW_IMAGES = 'https://images.justwatch.com';
 const JW_QUERY =
-  'query($c:Country!,$l:Language!,$f:TitleFilter){popularTitles(country:$c,first:40,filter:$f,sortBy:POPULAR)'
+  'query($c:Country!,$l:Language!,$f:TitleFilter,$p:[String!]!){popularTitles(country:$c,first:40,filter:$f,sortBy:POPULAR)'
   + '{edges{node{objectType content(country:$c,language:$l){title originalReleaseYear shortDescription posterUrl genres{shortName}}'
-  + ' offers(country:$c,platform:WEB,filter:{packages:["nfx"]}){standardWebURL}}}}}';
+  + ' offers(country:$c,platform:WEB,filter:{packages:$p}){standardWebURL}}}}}';
 const POSTER = /^https:\/\/[a-z0-9-]+\.mzstatic\.com\/image\/thumb\/[^?#\s"]+\/\d+x\d+bb\.(png|jpg)$/;
 const JW_POSTER = /^\/poster\/\d{1,12}\/\{profile\}\/[a-z0-9-]{1,120}\.\{format\}$/;
-const NETFLIX_URL = /^https:\/\/www\.netflix\.com\/(?:[a-z]{2}(?:-[a-z]{2})?\/)?title\/(\d{1,12})\/?$/;
 const PICKS_FORMAT = 3, PICKS_COUNT = 8;
 const MAX_FEED = 2 * 1024 * 1024, MAX_POSTER = 300 * 1024;
 const PICKS_RETRY = 30 * 60 * 1000;
@@ -237,32 +286,39 @@ async function putPoster(it, jpg) {
   if (color) it.color = color;
 }
 
-async function fetchNetflix(rnd, out, franchises) {
+/** Link do título no serviço; no Globoplay, a página do título (/t/) vence o vídeo (/v/). */
+function bestLink(p, offers) {
+  let best = null;
+  for (const o of offers || []) {
+    const u = String(o && o.standardWebURL || '').split('?')[0];   // tira utm_source & cia.
+    if (!p.link.test(u)) continue;
+    if (!best || (u.indexOf('/t/') >= 0 && best.indexOf('/t/') < 0)) best = u;
+  }
+  return best;
+}
+async function fetchProvider(p, rnd, quota, out, franchises) {
   const body = JSON.stringify({
     query: JW_QUERY,
     // "pt" devolve nomes de Portugal (ex.: "Profundo" em vez de "Profundezas")
-    variables: { c: 'BR', l: 'pt-BR', f: { packages: ['nfx'], objectTypes: ['MOVIE', 'SHOW'] } },
+    variables: { c: 'BR', l: 'pt-BR', p: [p.jw], f: { packages: [p.jw], objectTypes: ['MOVIE', 'SHOW'] } },
   });
   const res = JSON.parse(await request('POST', JUSTWATCH, body, 'text', MAX_FEED));
   const edges = res.data.popularTitles.edges;
   for (const idx of weightedOrder(edges.length, rnd, 15)) {
-    if (out.length >= PICKS_COUNT) break;
+    if (out.length >= quota) break;
     try {
       const node = edges[idx].node, c = node.content;
       const title = cleanTitle(c.title);
       if (!title || title.length > 120) continue;
-      let id = null;
-      for (const o of node.offers || []) {
-        const m = NETFLIX_URL.exec(o && o.standardWebURL || '');
-        if (m) { id = m[1]; break; }
-      }
-      if (!id) continue;
+      const link = bestLink(p, node.offers);
+      if (!link) continue;
       const path = c.posterUrl || '';
       if (!JW_POSTER.test(path) || franchises.has(franchise(title))) continue;
       franchises.add(franchise(title));
       const jpg = await getBytes(JW_IMAGES + path.replace('{profile}', 's332').replace('{format}', 'jpg'), MAX_POSTER);
       if (imageType(jpg) !== 'jpeg') continue;
-      const it = { title, provider: 'netflix', netflixId: id, kind: node.objectType === 'SHOW' ? 'Série' : 'Filme' };
+      const it = { title, provider: p.key, kind: node.objectType === 'SHOW' ? 'Série' : 'Filme' };
+      if (p === NETFLIX) it.netflixId = p.link.exec(link)[1]; else it.link = link;
       const g = c.genres && c.genres[0] && GENRES[c.genres[0].shortName];
       if (g) it.genre = g;
       const year = c.originalReleaseYear;
@@ -303,43 +359,63 @@ async function fetchItunes(rnd, out, franchises) {
   }
 }
 
-async function fetchPicks(week) {
-  const out = [], franchises = new Set(), rnd = seededRandom(week);
-  let netflixError = null;
-  try { await fetchNetflix(rnd, out, franchises); } catch (e) { netflixError = e; }   // JustWatch fora do ar: segue só com a iTunes
+async function fetchPicks(week, active) {
+  const franchises = new Set(), rnd = seededRandom(week), lists = [];
+  let jwError = null, taken = 0;
+  // Vagas divididas entre os serviços (8 só da Netflix; 4 + 4 com dois; 3 + 3 + 2 com três…).
+  for (let i = 0; i < active.length; i++) {
+    const left = active.length - i, quota = Math.ceil((PICKS_COUNT - taken) / left), got = [];
+    try { await fetchProvider(active[i], rnd, quota, got, franchises); } catch (e) { jwError = e; }   // JustWatch fora do ar: segue com a iTunes
+    lists.push(got);
+    taken += got.length;
+  }
+  // Intercala os serviços para o destaque não mostrar um só por vários minutos.
+  const out = [];
+  for (let round = 0; out.length < taken; round++) for (const l of lists) if (round < l.length) out.push(l[round]);
   if (out.length < PICKS_COUNT) {
-    try { await fetchItunes(rnd, out, franchises); } catch (e) { if (!out.length) throw netflixError || e; }
+    try { await fetchItunes(rnd, out, franchises); } catch (e) { if (!out.length) throw jwError || e; }
   }
   return out;
 }
 
-const picks = { week: null, items: [], ids: {}, lastAttempt: 0, inFlight: false };
-function applyPicks(week, items) {
+const picks = { week: null, providers: 'netflix', items: [], titles: {}, lastAttempt: 0, inFlight: false };
+function applyPicks(week, sig, items) {
   picks.week = week;
+  picks.providers = sig;
   picks.items = items;
-  picks.ids = {};
-  for (const it of items) if (it && typeof it.title === 'string') picks.ids[it.title] = /^\d{1,12}$/.test(it.netflixId || '') ? it.netflixId : null;
+  picks.titles = {};
+  for (const it of items) {
+    if (!it || typeof it.title !== 'string') continue;
+    let p = providerByKey(it.provider);
+    if (p === NETFLIX && !/^\d{1,12}$/.test(it.netflixId || '')) p = null;
+    if (p && p !== NETFLIX && !p.link.test(it.link || '')) p = null;
+    picks.titles[it.title] = p ? { provider: p, netflixId: p === NETFLIX ? it.netflixId : null, link: p === NETFLIX ? null : it.link } : null;
+  }
 }
 (() => {
   const o = load('picks');
   // Cache de formato antigo: mostra enquanto baixa o novo (semana "vencida").
-  if (o && Array.isArray(o.items)) applyPicks(o.v === PICKS_FORMAT ? o.week : null, o.items);
-  else if (SEED && Array.isArray(SEED.items)) applyPicks(null, SEED.items);
+  if (o && Array.isArray(o.items)) applyPicks(o.v === PICKS_FORMAT ? o.week : null, o.providers || 'netflix', o.items);
+  else if (SEED && Array.isArray(SEED.items)) applyPicks(null, 'netflix', SEED.items);
 })();
 
-/** Baixa a seleção nova se a semana virou. force = botão Atualizar; networkBack = a internet voltou. */
+/**
+ * Baixa a seleção nova se a semana virou ou se os serviços da pessoa mudaram.
+ * force = botão Atualizar; networkBack = a internet voltou.
+ */
 async function refreshPicks(networkBack, force) {
-  const now = currentWeek();
-  if (picks.inFlight || (!force && now === picks.week)) return false;
+  const now = currentWeek(), active = activeProviders(), sig = signature(active);
+  const changed = sig !== picks.providers;
+  if (picks.inFlight || (!force && !changed && now === picks.week)) return false;
   const t = Date.now();
-  if (!force && !networkBack && picks.lastAttempt && t - picks.lastAttempt < PICKS_RETRY) return false;
+  if (!force && !networkBack && !changed && picks.lastAttempt && t - picks.lastAttempt < PICKS_RETRY) return false;
   picks.lastAttempt = t;
   picks.inFlight = true;
   let items;
-  try { items = await fetchPicks(now); } catch (_) { return false; } finally { picks.inFlight = false; }
+  try { items = await fetchPicks(now, active); } catch (_) { return false; } finally { picks.inFlight = false; }
   if (!items.length) return false;
-  save('picks', { v: PICKS_FORMAT, week: now, items });
-  applyPicks(now, items);
+  save('picks', { v: PICKS_FORMAT, week: now, providers: sig, items });
+  applyPicks(now, sig, items);
   return true;
 }
 
@@ -598,14 +674,15 @@ window.AndroidBridge = Object.freeze({
   },
   getWeeklyPicks: () => JSON.stringify(picks.items),
   getGameNews: () => JSON.stringify(news.items),
-  // "title" | "app" | "" — o ID da Netflix nunca vem da página, só da seleção baixada aqui.
+  // "title" | "app" | "" — o link do título nunca vem da página, só da seleção baixada aqui.
   openPick(title) {
-    if (typeof title !== 'string' || !(title in picks.ids)) return '';
-    const nf = netflixApp();
-    if (!nf) return '';
-    const id = picks.ids[title];
-    if (id) { openNetflixTitle(nf.package, id); return 'title'; }
-    return launch(nf.package) ? 'app' : '';
+    if (typeof title !== 'string' || !Object.prototype.hasOwnProperty.call(picks.titles, title)) return '';
+    const pick = picks.titles[title];
+    const app = pick && appFor(pick.provider);
+    if (!app) return '';
+    if (pick.netflixId) { openNetflixTitle(app.package, pick.netflixId); return 'title'; }
+    openServiceLink(app.package, pick.link);
+    return 'app';
   },
   getTvInputs: () => JSON.stringify(inputList),
   openInput: id => typeof id === 'string' && showInput(id),

@@ -177,30 +177,34 @@ public class AndroidBridge {
         return news.json();
     }
 
-    private static final String[] NETFLIX_PKGS = {"com.netflix.ninja", "com.netflix.mediaclient"};
-
     /**
-     * Abre uma indicação: se veio da Netflix, abre o app direto no título; se o app não aceitar
-     * o link, abre só a Netflix; sem Netflix (ou indicação de outra fonte), cai na busca da TV.
-     * O ID nunca vem do JS: é lido da seleção baixada pelo próprio app.
+     * Abre uma indicação no app do serviço (Netflix, Disney+, HBO Max ou Globoplay), direto no
+     * título; se o app não aceitar o link, abre só o app; sem o app (ou indicação da iTunes), cai
+     * na busca da TV. O link nunca vem do JS: é lido da seleção baixada pelo próprio app.
      * Retorna "title", "app", "search" ou "" (falhou).
      */
     @JavascriptInterface
     public String openPick(String title) {
         if (!trusted || title == null || title.length() > 120 || !picks.hasTitle(title)) return "";
-        String id = picks.netflixId(title);
-        if (id != null) {
+        WeeklyPicks.Pick pick = picks.pick(title);
+        if (pick != null) {
             PackageManager pm = activity.getPackageManager();
-            for (String pkg : NETFLIX_PKGS) {
+            // Netflix: https://www.netflix.com/title/<id> abre direto na página do título no app da TV
+            // (testado na Philips); netflix://title só abre a Netflix, então fica como reserva.
+            // Disney+, HBO Max e Globoplay aceitam o próprio link web do título.
+            String[] uris = pick.netflixId != null
+                    ? new String[]{"https://www.netflix.com/title/" + pick.netflixId, "netflix://title/" + pick.netflixId}
+                    : new String[]{pick.link};
+            for (String pkg : pick.provider.pkgs) {
                 if (pm.getLaunchIntentForPackage(pkg) == null && pm.getLeanbackLaunchIntentForPackage(pkg) == null) continue;
-                // https://www.netflix.com/title/<id> abre direto na página do título no app da TV
-                // (testado na Philips); netflix://title só abre a Netflix, então fica como reserva.
-                String[] uris = {"https://www.netflix.com/title/" + id, "netflix://title/" + id};
                 for (String u : uris) {
                     Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse(u)).setPackage(pkg);
-                    i.putExtra("source", "30");
+                    if (pick.netflixId != null) i.putExtra("source", "30");
                     i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                    if (i.resolveActivity(pm) != null && start(i)) return "title";
+                    if (i.resolveActivity(pm) != null && start(i)) {
+                        AppUsage.record(activity, pick.provider.key);
+                        return "title";
+                    }
                 }
                 if (launchApp(pkg)) return "app";
             }
@@ -256,6 +260,9 @@ public class AndroidBridge {
         if (i == null) i = pm.getLaunchIntentForPackage(pkg);
         if (i == null) return false;
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+        // Streaming aberto pelo Onix conta para as indicações (ver AppUsage).
+        WeeklyPicks.Provider provider = WeeklyPicks.providerForPackage(pkg);
+        if (provider != null) AppUsage.record(activity, provider.key);
 
         final Intent launch = i;
         activity.runOnUiThread(new Runnable() {

@@ -1,6 +1,7 @@
 package com.aurora.launcher;
 
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,6 +24,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
@@ -32,11 +34,13 @@ import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * "Indicações da semana": prioriza o catálogo da Netflix Brasil (populares no JustWatch,
- * que informa o ID do título na Netflix para abrir direto nele) e completa com o ranking
- * da iTunes Store Brasil se faltar. Nenhuma das fontes exige chave de API.
- * Sorteio com semente = semana ISO, então a seleção muda toda segunda-feira.
- * A rede é feita só aqui (HTTPS, hosts fixos); a página recebe capas já em data: URL.
+ * "Indicações da semana": populares no JustWatch de cada serviço que a pessoa usa (a Netflix
+ * sempre, e Disney+, HBO Max e Globoplay quando abertos mais de 3 vezes na última semana; ver
+ * AppUsage), com o link do título para abrir direto no app. Completa com o ranking da iTunes
+ * Store Brasil se faltar. Nenhuma das fontes exige chave de API.
+ * Sorteio com semente = semana ISO, então a seleção muda toda segunda-feira (ou quando os
+ * serviços da pessoa mudam). A rede é feita só aqui (HTTPS, hosts fixos); a página recebe
+ * capas já em data: URL.
  */
 final class WeeklyPicks {
 
@@ -44,13 +48,99 @@ final class WeeklyPicks {
     private static final String JUSTWATCH = "https://apis.justwatch.com/graphql";
     private static final String JW_IMAGES = "https://images.justwatch.com";
     private static final String JW_QUERY =
-            "query($c:Country!,$l:Language!,$f:TitleFilter){popularTitles(country:$c,first:40,filter:$f,sortBy:POPULAR)"
+            "query($c:Country!,$l:Language!,$f:TitleFilter,$p:[String!]!){popularTitles(country:$c,first:40,filter:$f,sortBy:POPULAR)"
             + "{edges{node{objectType content(country:$c,language:$l){title originalReleaseYear shortDescription posterUrl genres{shortName}}"
-            + " offers(country:$c,platform:WEB,filter:{packages:[\"nfx\"]}){standardWebURL}}}}}";
+            + " offers(country:$c,platform:WEB,filter:{packages:$p}){standardWebURL}}}}}";
     private static final Pattern POSTER = Pattern.compile(
             "^https://[a-z0-9-]+\\.mzstatic\\.com/image/thumb/[^?#\\s\"]+/\\d+x\\d+bb\\.(png|jpg)$");
     private static final Pattern JW_POSTER = Pattern.compile("^/poster/\\d{1,12}/\\{profile\\}/[a-z0-9-]{1,120}\\.\\{format\\}$");
     private static final Pattern NETFLIX_URL = Pattern.compile("^https://www\\.netflix\\.com/(?:[a-z]{2}(?:-[a-z]{2})?/)?title/(\\d{1,12})/?$");
+
+    /** Um serviço de streaming: código no JustWatch, links aceitos e pacotes do app na TV. */
+    static final class Provider {
+        final String key, jw;
+        final Pattern link;
+        final String[] pkgs;
+
+        Provider(String key, String jw, Pattern link, String... pkgs) {
+            this.key = key;
+            this.jw = jw;
+            this.link = link;
+            this.pkgs = pkgs;
+        }
+    }
+
+    /** Ordem da tabela = desempate. A Netflix é o padrão: entra mesmo sem uso. */
+    static final Provider NETFLIX = new Provider("netflix", "nfx", NETFLIX_URL, "com.netflix.ninja", "com.netflix.mediaclient");
+    static final Provider[] PROVIDERS = {
+            NETFLIX,
+            new Provider("disney", "dnp",
+                    Pattern.compile("^https://www\\.disneyplus\\.com/(?:[a-z]{2}(?:-[a-z]{2})?/)?browse/entity-[0-9a-f-]{36}$"),
+                    "com.disney.disneyplus"),
+            new Provider("max", "mxx",
+                    Pattern.compile("^https://play\\.(?:hbo)?max\\.com/(?:video/watch|show|movie)/[0-9a-f-]{36}(?:/[0-9a-f-]{36})?$"),
+                    "com.wbd.stream", "com.hbo.hbonow"),
+            // /t/ é a página do título; /v/ já dá play num episódio, então fica como reserva.
+            new Provider("globoplay", "gop",
+                    Pattern.compile("^https://globoplay\\.globo\\.com/(?:[a-z0-9-]{1,120}/t/[A-Za-z0-9]{1,20}/?|v/\\d{1,12}/?)$"),
+                    "com.globo.globotv"),
+    };
+
+    static Provider provider(String key) {
+        for (Provider p : PROVIDERS) if (p.key.equals(key)) return p;
+        return null;
+    }
+
+    /** Serviço do app (para contar aberturas), ou null se não for um dos serviços das indicações. */
+    static Provider providerForPackage(String pkg) {
+        for (Provider p : PROVIDERS) for (String k : p.pkgs) if (k.equals(pkg)) return p;
+        return null;
+    }
+
+    static boolean installed(Context ctx, Provider p) {
+        PackageManager pm = ctx.getPackageManager();
+        for (String pkg : p.pkgs) {
+            if (pm.getLeanbackLaunchIntentForPackage(pkg) != null || pm.getLaunchIntentForPackage(pkg) != null) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Serviços das indicações agora: a Netflix e os outros abertos mais de 3 vezes na última
+     * semana (e ainda instalados). Os mais abertos vêm primeiro; no empate, a ordem da tabela.
+     */
+    static List<Provider> activeProviders(Context ctx) {
+        final Map<Provider, Integer> opens = new LinkedHashMap<Provider, Integer>();
+        for (Provider p : PROVIDERS) {
+            if (p == NETFLIX || (AppUsage.active(ctx, p.key) && installed(ctx, p))) opens.put(p, AppUsage.opens(ctx, p.key));
+        }
+        List<Provider> out = new ArrayList<Provider>(opens.keySet());
+        Collections.sort(out, new Comparator<Provider>() {
+            @Override
+            public int compare(Provider a, Provider b) {
+                return opens.get(b) - opens.get(a);   // sort estável: empate mantém a tabela
+            }
+        });
+        return out;
+    }
+
+    private static String signature(List<Provider> list) {
+        StringBuilder sb = new StringBuilder();
+        for (Provider p : list) sb.append(sb.length() > 0 ? "," : "").append(p.key);
+        return sb.toString();
+    }
+
+    /** Indicação da seleção atual que o JS pode abrir: serviço e link do título (nunca vêm do JS). */
+    static final class Pick {
+        final Provider provider;
+        final String link, netflixId;
+
+        Pick(Provider provider, String link, String netflixId) {
+            this.provider = provider;
+            this.link = link;
+            this.netflixId = netflixId;
+        }
+    }
     /** Sobe quando o formato do cache muda: força baixar de novo mesmo na mesma semana. */
     private static final int FORMAT = 3;   // 3: títulos em pt-BR (cache antigo é baixado de novo)
     private static final int COUNT = 8;
@@ -59,12 +149,14 @@ final class WeeklyPicks {
 
     private static WeeklyPicks instance;
 
+    private final Context ctx;
     private final File file;
     private final AssetManager assets;
     private boolean loaded;
     private String week;
+    private String providers = "netflix";   // serviços da seleção em cache (ex.: "netflix,disney")
     private String json = "[]";
-    private final Map<String, String> netflixIds = new HashMap<String, String>();
+    private final Map<String, Pick> titles = new HashMap<String, Pick>();
     private long lastAttempt;
     private boolean inFlight;
 
@@ -74,6 +166,7 @@ final class WeeklyPicks {
     }
 
     private WeeklyPicks(Context ctx) {
+        this.ctx = ctx;
         file = new File(ctx.getFilesDir(), "picks.json");
         assets = ctx.getAssets();
     }
@@ -96,13 +189,14 @@ final class WeeklyPicks {
 
     synchronized boolean hasTitle(String title) {
         ensureLoaded();
-        return netflixIds.containsKey(title);
+        return titles.containsKey(title);
     }
 
-    /** ID do título na Netflix (só dígitos), ou null se a indicação não veio da Netflix. */
-    synchronized String netflixId(String title) {
+    /** Serviço e link do título, ou null se a indicação não veio de um serviço (ex.: iTunes). */
+    synchronized Pick pick(String title) {
         ensureLoaded();
-        return netflixIds.get(title);
+        Pick p = titles.get(title);
+        return p != null && p.provider != null ? p : null;
     }
 
     boolean refreshIfStale() {
@@ -117,20 +211,27 @@ final class WeeklyPicks {
         return refresh(networkBack, false);
     }
 
-    /** force = botão "Atualizar": baixa de novo mesmo com a semana em dia e sem esperar após uma falha. */
+    /**
+     * force = botão "Atualizar": baixa de novo mesmo com a semana em dia e sem esperar após uma falha.
+     * Também baixa de novo quando os serviços da pessoa mudam (um entrou na 4ª abertura ou saiu
+     * depois de uma semana parado).
+     */
     boolean refresh(boolean networkBack, boolean force) {
         String now = currentWeek();
+        List<Provider> active = activeProviders(ctx);
+        String sig = signature(active);
         synchronized (this) {
             ensureLoaded();
-            if (inFlight || (!force && now.equals(week))) return false;
+            boolean changed = !sig.equals(providers);
+            if (inFlight || (!force && !changed && now.equals(week))) return false;
             long t = SystemClock.elapsedRealtime();
-            if (!force && !networkBack && lastAttempt != 0 && t - lastAttempt < RETRY_MS) return false;
+            if (!force && !networkBack && !changed && lastAttempt != 0 && t - lastAttempt < RETRY_MS) return false;
             lastAttempt = t;
             inFlight = true;
         }
         JSONArray items;
         try {
-            items = fetch(now);
+            items = fetch(now, active);
         } catch (Exception e) {
             return false;   // sem rede: mantém a semana anterior em cache
         } finally {
@@ -142,6 +243,7 @@ final class WeeklyPicks {
                 JSONObject o = new JSONObject();
                 o.put("v", FORMAT);
                 o.put("week", now);
+                o.put("providers", sig);
                 o.put("items", items);
                 File tmp = new File(file.getPath() + ".tmp");
                 FileOutputStream out = new FileOutputStream(tmp);
@@ -154,7 +256,7 @@ final class WeeklyPicks {
             } catch (Exception e) {
                 return false;
             }
-            apply(now, items);
+            apply(now, sig, items);
             return true;
         }
     }
@@ -165,7 +267,7 @@ final class WeeklyPicks {
         try {
             JSONObject o = new JSONObject(new String(readFile(file), "UTF-8"));
             // Cache de formato antigo: mostra enquanto baixa o novo (semana "vencida").
-            apply(o.optInt("v") == FORMAT ? o.getString("week") : null, o.getJSONArray("items"));
+            apply(o.optInt("v") == FORMAT ? o.getString("week") : null, o.optString("providers", "netflix"), o.getJSONArray("items"));
         } catch (Exception ignored) {
             loadSeed();   // primeira execução ou arquivo corrompido
         }
@@ -181,7 +283,7 @@ final class WeeklyPicks {
             InputStream in = assets.open("picks-seed.json");
             try {
                 JSONObject o = new JSONObject(new String(readAll(in, MAX_FEED), "UTF-8"));
-                apply(null, o.getJSONArray("items"));
+                apply(null, "netflix", o.getJSONArray("items"));
             } finally {
                 in.close();
             }
@@ -190,45 +292,79 @@ final class WeeklyPicks {
         }
     }
 
-    private void apply(String w, JSONArray items) {
+    private void apply(String w, String sig, JSONArray items) {
         week = w;
+        providers = sig;
         json = items.toString();
-        netflixIds.clear();
+        titles.clear();
         for (int i = 0; i < items.length(); i++) {
             JSONObject it = items.optJSONObject(i);
             if (it == null) continue;
-            String id = it.optString("netflixId");
-            netflixIds.put(it.optString("title"), id.matches("\\d{1,12}") ? id : null);
+            Provider p = provider(it.optString("provider"));
+            String id = it.optString("netflixId"), link = it.optString("link");
+            if (p == NETFLIX && !id.matches("\\d{1,12}")) p = null;
+            if (p != null && p != NETFLIX && !p.link.matcher(link).matches()) p = null;
+            titles.put(it.optString("title"), new Pick(p, p == null || p == NETFLIX ? null : link, p == NETFLIX ? id : null));
         }
     }
 
-    private static JSONArray fetch(String week) throws Exception {
-        JSONArray out = new JSONArray();
+    private static JSONArray fetch(String week, List<Provider> active) throws Exception {
         Set<String> franchises = new HashSet<String>();
         Random rnd = new Random(week.hashCode());
-        Exception netflixError = null;
-        try {
-            fetchNetflix(rnd, out, franchises);
-        } catch (Exception e) {
-            netflixError = e;   // JustWatch fora do ar: segue só com a iTunes
+        Exception jwError = null;
+        // Vagas divididas entre os serviços (8 só da Netflix; 4 + 4 com dois; 3 + 3 + 2 com três…).
+        // O que um serviço não preencher passa para os próximos.
+        List<List<JSONObject>> lists = new ArrayList<List<JSONObject>>();
+        int taken = 0;
+        for (int i = 0; i < active.size(); i++) {
+            int left = active.size() - i, quota = (COUNT - taken + left - 1) / left;
+            List<JSONObject> got = new ArrayList<JSONObject>();
+            try {
+                fetchProvider(active.get(i), rnd, quota, got, franchises);
+            } catch (Exception e) {
+                jwError = e;   // JustWatch fora do ar: segue com os outros e com a iTunes
+            }
+            lists.add(got);
+            taken += got.size();
+        }
+        // Intercala os serviços para o destaque não mostrar um só por vários minutos.
+        JSONArray out = new JSONArray();
+        for (int round = 0; out.length() < taken; round++) {
+            for (List<JSONObject> l : lists) if (round < l.size()) out.put(l.get(round));
         }
         if (out.length() < COUNT) {
             try {
                 fetchItunes(rnd, out, franchises);
             } catch (Exception e) {
-                if (out.length() == 0) throw netflixError != null ? netflixError : e;
+                if (out.length() == 0) throw jwError != null ? jwError : e;
             }
         }
         return out;
     }
 
-    /** Populares da Netflix Brasil, com o ID do título para abrir direto no app. */
-    private static void fetchNetflix(Random rnd, JSONArray out, Set<String> franchises) throws Exception {
+    /** Link do título no serviço; no Globoplay, a página do título (/t/) vence o vídeo (/v/). */
+    private static String bestLink(Provider p, JSONArray offers) {
+        String best = null;
+        for (int i = 0; offers != null && i < offers.length(); i++) {
+            JSONObject o = offers.optJSONObject(i);
+            if (o == null) continue;
+            String u = o.optString("standardWebURL");
+            int q = u.indexOf('?');
+            if (q >= 0) u = u.substring(0, q);   // tira utm_source & cia.
+            if (!p.link.matcher(u).matches()) continue;
+            if (best == null || (u.contains("/t/") && !best.contains("/t/"))) best = u;
+        }
+        return best;
+    }
+
+    /** Populares do serviço no Brasil, com o link do título para abrir direto no app. */
+    private static void fetchProvider(Provider p, Random rnd, int quota, List<JSONObject> out, Set<String> franchises) throws Exception {
         JSONObject vars = new JSONObject();
         vars.put("c", "BR");
         vars.put("l", "pt-BR");   // "pt" devolve nomes de Portugal (ex.: "Profundo" em vez de "Profundezas")
+        vars.put("p", new JSONArray().put(p.jw));
         JSONObject filter = new JSONObject();
-        filter.put("packages", new JSONArray().put("nfx"));
+        filter.put("packages", new JSONArray().put(p.jw));
         filter.put("objectTypes", new JSONArray().put("MOVIE").put("SHOW"));
         vars.put("f", filter);
         JSONObject body = new JSONObject();
@@ -239,20 +375,15 @@ final class WeeklyPicks {
         JSONArray edges = res.getJSONObject("data").getJSONObject("popularTitles").getJSONArray("edges");
 
         for (int idx : weightedOrder(edges.length(), rnd, 15f)) {
-            if (out.length() >= COUNT) break;
+            if (out.size() >= quota) break;
             try {
                 JSONObject node = edges.getJSONObject(idx).getJSONObject("node");
                 JSONObject c = node.getJSONObject("content");
                 String title = cleanTitle(c.getString("title"));
                 if (title.isEmpty() || title.length() > 120) continue;
 
-                String id = null;
-                JSONArray offers = node.optJSONArray("offers");
-                for (int i = 0; offers != null && i < offers.length() && id == null; i++) {
-                    java.util.regex.Matcher m = NETFLIX_URL.matcher(offers.getJSONObject(i).optString("standardWebURL"));
-                    if (m.matches()) id = m.group(1);
-                }
-                if (id == null) continue;
+                String link = bestLink(p, node.optJSONArray("offers"));
+                if (link == null) continue;
 
                 String path = c.optString("posterUrl");
                 if (!JW_POSTER.matcher(path).matches()) continue;
@@ -262,8 +393,14 @@ final class WeeklyPicks {
 
                 JSONObject it = new JSONObject();
                 it.put("title", title);
-                it.put("provider", "netflix");
-                it.put("netflixId", id);
+                it.put("provider", p.key);
+                if (p == NETFLIX) {
+                    java.util.regex.Matcher m = NETFLIX_URL.matcher(link);
+                    if (!m.matches()) continue;
+                    it.put("netflixId", m.group(1));
+                } else {
+                    it.put("link", link);
+                }
                 it.put("kind", "SHOW".equals(node.optString("objectType")) ? "Série" : "Filme");
                 JSONArray genres = c.optJSONArray("genres");
                 if (genres != null && genres.length() > 0) {
@@ -274,7 +411,7 @@ final class WeeklyPicks {
                 if (year > 1900 && year < 3000) it.put("year", String.valueOf(year));
                 it.put("summary", trim(c.optString("shortDescription").trim(), 260));
                 putPoster(it, jpg);
-                out.put(it);
+                out.add(it);
             } catch (Exception ignored) {
                 // Entrada incompleta: pula para a próxima.
             }
