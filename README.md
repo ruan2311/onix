@@ -123,28 +123,6 @@ Quatro jogos feitos para o controle remoto, com música chiptune e recorde salvo
 |---|---|
 | <img src="docs/screenshots/noticia.png" alt="Leitor de notícias com QR code"> | <img src="docs/screenshots/entradas.png" alt="Entradas TV e HDMI"> |
 
----|---|
-| <img src="docs/screenshots/apps.png" alt="Aba Apps com Recentes e Não usados"> | <img src="docs/screenshots/jogos.png" alt="Jogos e notícias dos games"> |
-
-| Leitor de notícias | Entradas (TV e HDMI) |
-|---|---|
-| <img src="docs/screenshots/noticia.png" alt="Leitor de notícias com QR code"> | <img src="docs/screenshots/entradas.png" alt="Entradas TV e HDMI com banners"> |
-
-| Configurações e animações | Novidades |
-|---|---|
-| <img src="docs/screenshots/config.png" alt="Configurações do Onix com as opções de animação"> | <img src="docs/screenshots/novidades.png" alt="Tela Novidades com etiquetas Novo, Correção e Bug"> |
-
-| E um segredo no cartão Sobre 🐾 |
-|---|
-| <img src="docs/screenshots/gatinho.png" alt="Gatinho do Onix, o easter egg do cartão Sobre" width="640"> |
-
----|---|
-| <img src="docs/screenshots/jogos.png" alt="Jogos e notícias"> | <img src="docs/screenshots/noticia.png" alt="Leitor de notícias"> |
-
-| Entradas HDMI com banners |
-|---|
-| <img src="docs/screenshots/entradas.png" alt="Entradas HDMI" width="640"> |
-
 ---
 
 ## Instalação
