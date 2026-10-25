@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.6.2 beta (outubro de 2026)
+
+- As indicações do **Disney+**, da **HBO Max** e do **Globoplay** agora mostram o ícone oficial de cada serviço no selo da capa.
+- Em **Entradas**, a TV e os banners de PlayStation 5, Xbox e Nintendo Switch ganharam o mesmo visual das HDMI: vidro escuro com o símbolo em branco.
+
 ## 13.6.1 beta (outubro de 2026)
 
 - **TV em Entradas:** a primeira entrada agora é a **TV** (antena e cabo), para voltar aos canais abertos sem sair do Onix, mesmo se a TV estava numa HDMI. Só aparece em TVs com sintonizador; os "canais" de apps como Pluto TV e Globoplay ficam de fora.
