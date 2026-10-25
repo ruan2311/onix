@@ -235,6 +235,13 @@ svg{display:block}
 .log-list{margin:0 0 .4rem;padding-left:1.3rem}
 .log-list li{margin:0 0 .55rem;font-size:1.02rem;line-height:1.55;color:rgba(240,242,246,.86)}
 .log-list b{color:var(--text)}
+/* Etiqueta antes de cada mudança: Novo (verde), Correção (azul), Bug (laranja). */
+.log-list{list-style:none;padding-left:0}
+.log-tag{display:inline-block;min-width:6rem;margin-right:.6rem;padding:.12rem .5rem;border-radius:.5rem;text-align:center;
+  font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;vertical-align:.1rem;border:1px solid}
+.log-tag.new{color:#4ade80;background:rgba(74,222,128,.12);border-color:rgba(74,222,128,.35)}
+.log-tag.fix{color:#7cc4ff;background:rgba(124,196,255,.12);border-color:rgba(124,196,255,.35)}
+.log-tag.bug{color:#ffb070;background:rgba(255,176,112,.12);border-color:rgba(255,176,112,.35)}
 /* QR escuro sobre branco (o celular não lê o invertido de forma confiável); a borda branca é a zona de silêncio. */
 .reader-qr{flex:none;width:11rem;height:11rem;border-radius:.9rem;background:#fff;box-shadow:0 0 0 1px rgba(255,255,255,.3),var(--shadow)}
 .reader-qr svg{display:block;width:100%;height:100%;shape-rendering:crispEdges}
@@ -281,6 +288,35 @@ svg{display:block}
 .about-row{display:flex;justify-content:space-between;gap:1rem;font-size:.95rem}
 .about-row span:first-child{color:var(--muted)}
 .about-row span:last-child{font-weight:600}
+/* Easter egg do gatinho */
+.about-hint{font-size:.78rem;color:var(--muted);margin-top:-.2rem}
+.about.is-focused .about-hint{color:rgba(10,11,14,.55)}
+#kitty{position:fixed;inset:0;z-index:30;display:grid;place-items:center;background:radial-gradient(50% 55% at 50% 45%,rgba(255,158,196,.16),transparent 70%),rgba(4,4,6,.94)}
+#kitty[hidden]{display:none}
+.kitty-card{position:relative;overflow:hidden;width:min(30rem,90vw);padding:1.6rem 2rem 2rem;border-radius:1.8rem;text-align:center;background:linear-gradient(160deg,#1a1b22,#0c0d11);
+  animation:kittyIn .7s cubic-bezier(.34,1.56,.64,1) both}
+.kitty-cat{width:15rem;height:15rem;margin:0 auto;overflow:visible;animation:kittyBob 2.4s ease-in-out .7s infinite}
+.kitty-cat .kitty-tail{transform-box:fill-box;transform-origin:0% 60%;animation:kittyTail 1.2s ease-in-out infinite alternate}
+.kitty-cat .kitty-ear{transform-box:fill-box;transform-origin:50% 100%}
+.kitty-cat .kitty-ear.l{animation:kittyEarL 3.2s ease-in-out 1s infinite}
+.kitty-cat .kitty-ear.r{animation:kittyEarR 3.2s ease-in-out 2.1s infinite}
+.kitty-cat .kitty-eyes{transform-box:fill-box;transform-origin:50% 50%;animation:kittyBlink 3.6s ease-in-out .9s infinite}
+.kitty-cat .kitty-stars{animation:kittyTwinkle 1.8s ease-in-out infinite alternate}
+.kitty-cat .kitty-ring{transform-box:fill-box;transform-origin:50% 50%;animation:kittyRing 2.4s ease-in-out .7s infinite}
+.kitty-hearts{position:absolute;inset:0;pointer-events:none}
+.kitty-hearts i{position:absolute;left:var(--x);bottom:28%;width:1.5rem;height:1.5rem;opacity:0;animation:kittyHeart 3s ease-out var(--d) infinite}
+.kitty-hearts svg{width:100%;height:100%}
+.kitty-title{position:relative;font-size:1.5rem;font-weight:700;margin-top:.4rem}
+.kitty-sub{position:relative;font-size:.92rem;color:var(--muted);margin-top:.4rem}
+@keyframes kittyIn{from{opacity:0;transform:scale(.6) translateY(2rem)}to{opacity:1;transform:none}}
+@keyframes kittyBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-.5rem)}}
+@keyframes kittyRing{0%,100%{transform:scaleX(1);opacity:.45}50%{transform:scaleX(.92);opacity:.3}}
+@keyframes kittyTail{from{transform:rotate(-8deg)}to{transform:rotate(14deg)}}
+@keyframes kittyEarL{0%,86%,100%{transform:none}90%{transform:rotate(-14deg)}94%{transform:rotate(4deg)}}
+@keyframes kittyEarR{0%,86%,100%{transform:none}90%{transform:rotate(14deg)}94%{transform:rotate(-4deg)}}
+@keyframes kittyBlink{0%,90%,100%{transform:none}95%{transform:scaleY(.1)}}
+@keyframes kittyTwinkle{from{opacity:.35}to{opacity:1}}
+@keyframes kittyHeart{0%{opacity:0;transform:translateY(0) scale(.5)}15%{opacity:1}100%{opacity:0;transform:translateY(-9rem) scale(1.1) rotate(12deg)}}
 .about-thanks{margin-top:.35rem;padding-top:.7rem;border-top:1px solid rgba(255,255,255,.12);font-size:.95rem}
 .about.is-focused .about-row span:first-child{color:rgba(10,11,14,.65)}
 .about.is-focused .about-thanks{border-top-color:rgba(10,11,14,.15)}
@@ -471,6 +507,33 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 
 <div id="game" hidden><canvas id="gameCanvas" width="0" height="0"></canvas></div>
 
+<!-- Easter egg: OK 5 vezes no cartão "Sobre" das Configurações. -->
+<div id="kitty" hidden role="dialog" aria-label="Gatinho do Onix">
+  <div class="kitty-card glass">
+  <svg class="kitty-cat" viewBox="0 0 240 240" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <ellipse class="kitty-ring" cx="120" cy="204" rx="92" ry="13" stroke-width="3" opacity=".45"/>
+    <g class="kitty-tail"><path d="M150 192c34 4 46-24 34-44-6-10-18-8-16 2"/></g>
+    <path d="M94 120c-16 22-18 56-6 76h64c12-20 10-54-6-76" fill="#0e1015"/>
+    <path d="M108 160c4 6 20 6 24 0" stroke-width="3" opacity=".35"/>
+    <ellipse cx="106" cy="197" rx="11" ry="6" fill="#0e1015"/>
+    <ellipse cx="134" cy="197" rx="11" ry="6" fill="#0e1015"/>
+    <g class="kitty-ear l"><path d="M90 78l2-38 26 20z" fill="#0e1015"/><path d="M95 66l1-14 9 8z" fill="#ff9ec4" stroke="none" opacity=".7"/></g>
+    <g class="kitty-ear r"><path d="M150 78l-2-38-26 20z" fill="#0e1015"/><path d="M145 66l-1-14-9 8z" fill="#ff9ec4" stroke="none" opacity=".7"/></g>
+    <circle cx="120" cy="90" r="38" fill="#0e1015"/>
+    <g class="kitty-eyes" fill="#fff" stroke="none"><ellipse cx="105" cy="88" rx="4.5" ry="6.5"/><ellipse cx="135" cy="88" rx="4.5" ry="6.5"/>
+      <circle cx="106.5" cy="85.5" r="1.6" fill="#0e1015"/><circle cx="136.5" cy="85.5" r="1.6" fill="#0e1015"/></g>
+    <circle cx="96" cy="101" r="5" fill="#ff9ec4" stroke="none" opacity=".45"/><circle cx="144" cy="101" r="5" fill="#ff9ec4" stroke="none" opacity=".45"/>
+    <path d="M116 98h8l-4 4z" fill="#ff9ec4" stroke="#ff9ec4" stroke-width="2"/>
+    <path d="M112 106q4 5 8 0q4 5 8 0" stroke-width="3"/>
+    <g stroke-width="2" opacity=".6"><path d="M90 98l-20-4M90 104l-20 2M150 98l20-4M150 104l20 2"/></g>
+    <g class="kitty-stars" fill="#fff" stroke="none"><circle cx="34" cy="60" r="2.5"/><circle cx="206" cy="46" r="2"/><circle cx="214" cy="132" r="2.5"/><circle cx="26" cy="150" r="2"/>
+      <path d="M196 84l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z"/><path d="M46 104l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></g>
+  </svg>
+    <div class="kitty-hearts"><i style="--x:18%;--d:0.0s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:34%;--d:0.9s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:52%;--d:0.4s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:68%;--d:1.4s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:82%;--d:0.7s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i></div>
+    <div class="kitty-title">Miau! Você achou o gatinho do Onix</div>
+    <div class="kitty-sub">Ele cuida da sua TV enquanto você assiste. Qualquer tecla volta.</div>
+  </div>
+</div>
 <div id="reader" hidden role="dialog" aria-modal="true" aria-labelledby="readerTitle">
   <div class="reader-panel" id="readerPanel">
     <div id="readerArt"></div>
@@ -554,7 +617,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.6.3 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '13.6.4 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -2339,42 +2402,48 @@ const OPTIONS = [
   { act: 'changelog', name: 'Novidades',         desc: 'O que mudou em cada versão do Onix, da mais nova para a mais antiga.' },
   { act: 'about' },
 ];
-/* Novidades (Configurações → Novidades). A versão mais nova primeiro; *texto* vira negrito. */
+/* Novidades (Configurações → Novidades). A versão mais nova primeiro; *texto* vira negrito.
+   Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
+const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '13.6.4 beta', date: 'outubro de 2026', items: [
+    ['new', '*Etiquetas nas Novidades:* cada mudança mostra se é *Novo*, *Correção* ou *Bug* corrigido.'],
+    ['new', 'Tem um segredo escondido no cartão *Sobre*, no fim das Configurações. A dica está lá. :)'],
+  ] },
   { version: '13.6.3 beta', date: 'outubro de 2026', items: [
-    '*Voltar ao Onix sem sumir nada:* às vezes, ao voltar de outro app, a tela abria vazia, sem os apps, as entradas, as indicações e as notícias baixadas, e com os destaques de demonstração da primeira versão. Corrigido: tudo aparece como você deixou.',
-    '*Sem internet:* no lugar dos destaques de fachada, o Onix agora avisa "Parece que você está sem conexão", com atalho para as configurações da TV.',
-    '*Configurações da TV* saiu das configurações do Onix e agora fica ao lado do botão *Atualizar*, na tela inicial.',
-    '*Mais animações:* em Configurações → Animações, escolha o estilo do foco (suave, elástica, rápida, flutuar ou pulsar), como o destaque troca (esmaecer, deslizar ou zoom) e ligue a transição entre abas.',
-    '*Apps organizados:* a aba Apps separa os *Recentes* (abertos pelo Onix nos últimos 30 dias, o último primeiro) dos *Não usados*, que ficam lá embaixo.',
+    ['bug', '*Voltar ao Onix sem sumir nada:* às vezes, ao voltar de outro app, a tela abria vazia, sem os apps, as entradas, as indicações e as notícias baixadas, e com os destaques de demonstração da primeira versão. Corrigido: tudo aparece como você deixou.'],
+    ['fix', '*Sem internet:* no lugar dos destaques de fachada, o Onix agora avisa "Parece que você está sem conexão", com atalho para as configurações da TV.'],
+    ['fix', '*Configurações da TV* saiu das configurações do Onix e agora fica ao lado do botão *Atualizar*, na tela inicial.'],
+    ['new', '*Mais animações:* em Configurações → Animações, escolha o estilo do foco (suave, elástica, rápida, flutuar ou pulsar), como o destaque troca (esmaecer, deslizar ou zoom) e ligue a transição entre abas.'],
+    ['new', '*Apps organizados:* a aba Apps separa os *Recentes* (abertos pelo Onix nos últimos 30 dias, o último primeiro) dos *Não usados*, que ficam lá embaixo.'],
   ] },
   { version: '13.6.2 beta', date: 'outubro de 2026', items: [
-    'As indicações do *Disney+*, da *HBO Max* e do *Globoplay* agora mostram o ícone oficial de cada serviço no selo da capa.',
-    'Em *Entradas*, a TV e os banners de PlayStation 5, Xbox e Nintendo Switch ganharam o mesmo visual das HDMI: vidro escuro com o símbolo em branco.',
+    ['fix', 'As indicações do *Disney+*, da *HBO Max* e do *Globoplay* agora mostram o ícone oficial de cada serviço no selo da capa.'],
+    ['fix', 'Em *Entradas*, a TV e os banners de PlayStation 5, Xbox e Nintendo Switch ganharam o mesmo visual das HDMI: vidro escuro com o símbolo em branco.'],
   ] },
   { version: '13.6.1 beta', date: 'outubro de 2026', items: [
-    '*TV em Entradas:* a primeira entrada agora é a *TV* (antena e cabo), para voltar aos canais abertos sem sair do Onix, mesmo se a TV estava numa HDMI.',
-    'Os pontinhos do destaque da tela inicial agora ficam centralizados embaixo da capa, sem encostar nela.',
+    ['new', '*TV em Entradas:* a primeira entrada agora é a *TV* (antena e cabo), para voltar aos canais abertos sem sair do Onix, mesmo se a TV estava numa HDMI.'],
+    ['bug', 'Os pontinhos do destaque da tela inicial agora ficam centralizados embaixo da capa, sem encostar nela.'],
   ] },
   { version: '13.6.0 beta', date: 'outubro de 2026', items: [
-    '*Atualizações pelo próprio Onix:* ele procura versões novas no GitHub, avisa na tela e baixa sozinho. Você só confirma a instalação na tela da TV. Fica em Configurações → Atualizações.',
-    '*Escolha suas indicações:* em Configurações → Indicações, desligue "Pelo que você assiste" e marque você mesmo Netflix, Disney+, HBO Max ou Globoplay.',
-    '*Seu aparelho no topo:* o chip mostra o que está rodando o Onix, como Google TV · Philips, Android TV ou Celular Android.',
-    '*Conectado de verdade:* o Onix testa a internet a cada 30 segundos e mostra "Sem internet" quando o Wi-Fi está ligado mas a internet caiu.',
+    ['new', '*Atualizações pelo próprio Onix:* ele procura versões novas no GitHub, avisa na tela e baixa sozinho. Você só confirma a instalação na tela da TV. Fica em Configurações → Atualizações.'],
+    ['new', '*Escolha suas indicações:* em Configurações → Indicações, desligue "Pelo que você assiste" e marque você mesmo Netflix, Disney+, HBO Max ou Globoplay.'],
+    ['new', '*Seu aparelho no topo:* o chip mostra o que está rodando o Onix, como Google TV · Philips, Android TV ou Celular Android.'],
+    ['fix', '*Conectado de verdade:* o Onix testa a internet a cada 30 segundos e mostra "Sem internet" quando o Wi-Fi está ligado mas a internet caiu.'],
   ] },
   { version: '13.5.0 beta', date: 'outubro de 2026', items: [
-    '*Indicações do que você assiste:* abra o *Disney+*, a *HBO Max* ou o *Globoplay* mais de 3 vezes pelo Onix e as indicações da semana passam a trazer títulos deles, junto com os da Netflix.',
-    'Ficou uma semana sem abrir um desses apps? Ele sai das indicações sozinho, e elas voltam a ser só da Netflix.',
-    '*Assistir no Disney+, na HBO Max e no Globoplay* abre direto na página do título, como já acontecia com a Netflix.',
-    '*Novidades:* esta tela, em Configurações, com o que mudou em cada versão. O Onix também avisa quando é atualizado.',
-    '*TVs Samsung:* o Onix agora tem uma versão para Tizen (TVs de 2022 em diante), em beta. O passo a passo está no GitHub.',
+    ['new', '*Indicações do que você assiste:* abra o *Disney+*, a *HBO Max* ou o *Globoplay* mais de 3 vezes pelo Onix e as indicações da semana passam a trazer títulos deles, junto com os da Netflix.'],
+    ['new', 'Ficou uma semana sem abrir um desses apps? Ele sai das indicações sozinho, e elas voltam a ser só da Netflix.'],
+    ['new', '*Assistir no Disney+, na HBO Max e no Globoplay* abre direto na página do título, como já acontecia com a Netflix.'],
+    ['new', '*Novidades:* esta tela, em Configurações, com o que mudou em cada versão. O Onix também avisa quando é atualizado.'],
+    ['new', '*TVs Samsung:* o Onix agora tem uma versão para Tizen (TVs de 2022 em diante), em beta. O passo a passo está no GitHub.'],
   ] },
   { version: '13.4.0 beta', date: 'outubro de 2026', items: [
-    'Primeira versão pública do Onix.',
-    'Indicações da semana da Netflix Brasil, que abrem direto no título.',
-    'Notícias de games (Adrenaline e Eurogamer.pt) com leitor e QR code.',
-    'Quatro jogos: Pong, Pinball, Tijolos e Cobrinha.',
-    'Entradas HDMI com banners editáveis, tela de descanso espacial, botão Atualizar e botão Desligar TV.',
+    ['new', 'Primeira versão pública do Onix.'],
+    ['new', 'Indicações da semana da Netflix Brasil, que abrem direto no título.'],
+    ['new', 'Notícias de games (Adrenaline e Eurogamer.pt) com leitor e QR code.'],
+    ['new', 'Quatro jogos: Pong, Pinball, Tijolos e Cobrinha.'],
+    ['new', 'Entradas HDMI com banners editáveis, tela de descanso espacial, botão Atualizar e botão Desligar TV.'],
   ] },
 ];
 function richText(t) {
@@ -2386,7 +2455,8 @@ function openChangelog(from) {
   $('#readerTitle').textContent = 'Novidades';
   $('#readerText').replaceChildren(...[].concat(...CHANGELOG.map(v => [
     h('h3', { class: 'log-ver', text: v.version }, h('span', { text: v.date })),
-    h('ul', { class: 'log-list' }, ...v.items.map(t => h('li', null, ...richText(t)))),
+    h('ul', { class: 'log-list' }, ...v.items.map(([tag, t]) => h('li', null,
+      h('span', { class: 'log-tag ' + tag, text: LOG_TAGS[tag] }), ...richText(t)))),
   ])));
   $('#readerQr').replaceChildren();
   $('#reader').classList.add('log');
@@ -2435,8 +2505,9 @@ function renderSettings() {
     if (o.act === 'about') {
       const card = h('button', { class: 'f opt glass about', tabindex: '-1', 'aria-label': 'Sobre o Onix' },
         ...ABOUT.map(([k, v]) => h('span', { class: 'about-row' }, h('span', { text: k }), h('span', { text: v }))),
-        h('span', { class: 'about-thanks', text: 'Obrigado por usar meu app :)' }));
-      card._act = () => toast('Valeu, de coração! :)');
+        h('span', { class: 'about-thanks', text: 'Obrigado por usar meu app :)' }),
+        h('span', { class: 'about-hint', text: 'Dica: aperte OK 5 vezes aqui para uma surpresa' }));
+      card._act = aboutTap;
       return card;
     }
     const b = h('button', { class: 'f opt glass', tabindex: '-1', 'aria-label': o.name },
@@ -2474,6 +2545,28 @@ function renderSettings() {
   }));
   syncSwitches();
   renderUpdate();
+}
+
+/* Easter egg: 5 OKs seguidos no cartão "Sobre" (com no máximo 2 s entre um e outro) abrem o gatinho. */
+let aboutTaps = 0, aboutTimer = 0, kittyTimer = 0, kittyOpen = false;
+function aboutTap() {
+  clearTimeout(aboutTimer);
+  aboutTaps++;
+  if (aboutTaps >= 5) { aboutTaps = 0; showKitty(); return; }
+  aboutTimer = setTimeout(() => { aboutTaps = 0; }, 2000);
+  toast(aboutTaps === 1 ? 'Valeu, de coração! :)' : 'Mais ' + (5 - aboutTaps) + '…');
+}
+function showKitty() {
+  kittyOpen = true;
+  $('#kitty').hidden = false;
+  toast('Miau!');
+  clearTimeout(kittyTimer);
+  kittyTimer = setTimeout(hideKitty, 12000);
+}
+function hideKitty() {
+  clearTimeout(kittyTimer);
+  kittyOpen = false;
+  $('#kitty').hidden = true;
 }
 
 /* ---------------- Atualizações ----------------
@@ -2665,6 +2758,7 @@ function back() {
 }
 function backStep() {
   if (game) { closeGame(); return true; }
+  if (kittyOpen) { hideKitty(); return true; }
   if (reader) { closeReader(); return true; }
   if (grabbed) { dropGrab(); return true; }
   flushSection();
@@ -2681,6 +2775,10 @@ document.addEventListener('keyup', e => { if (game) gameKey(e, false); });
 document.addEventListener('keydown', e => {
   if (game) { gameKey(e, true); return; }
   if (reader) { readerKey(e); return; }
+  // Gatinho aberto: qualquer tecla fecha (Voltar passa pelo back() normal).
+  if (kittyOpen && !(e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4)) {
+    e.preventDefault(); if (!e.repeat) { hideKitty(); sfx('back'); } return;
+  }
   const dir = KEYMAP[e.key] || CODEMAP[e.keyCode];
   if (dir) {
     e.preventDefault();
@@ -2703,6 +2801,7 @@ document.addEventListener('keydown', e => {
 
 /* ---------------- Toque / mouse ---------------- */
 document.addEventListener('click', e => {
+  if (kittyOpen) { hideKitty(); return; }
   if (reader) {
     const rb = e.target.closest('#reader .f');
     if (rb) { e.preventDefault(); rb._act(); }

@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.6.4 beta (outubro de 2026)
+
+- **Etiquetas nas Novidades:** cada mudança mostra se é **Novo**, **Correção** ou **Bug** corrigido.
+- Tem um segredo escondido no cartão **Sobre**, no fim das Configurações. A dica está lá. :)
+
 ## 13.6.3 beta (outubro de 2026)
 
 - **Voltar ao Onix sem sumir nada:** às vezes, ao voltar de outro app, a tela abria vazia (sem os apps, as entradas, as indicações e as notícias baixadas) e com os destaques de demonstração da primeira versão. Acontecia quando a TV fechava o Onix em segundo plano: a página reabria antes de a ponte com o Android ser liberada. Corrigido, e a página ainda relê tudo assim que termina de abrir.
