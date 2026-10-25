@@ -10,3 +10,8 @@ release/
 # Arquivos locais
 .server.log
 *.tmp
+
+# Saída do build da versão Samsung (tizen/build.sh)
+tizen/build/
+onix-tizen.zip
+Onix.wgt

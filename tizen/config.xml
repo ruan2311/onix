@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Manifesto do app Tizen (Samsung TV). O build.sh troca @VERSION@ pelo android:versionName (só os números). -->
+<widget xmlns="http://www.w3.org/ns/widgets" xmlns:tizen="http://tizen.org/ns/widgets"
+        id="https://github.com/ruan2311/onix" version="@VERSION@" viewmodes="maximized">
+    <tizen:application id="OnixLaunch.Onix" package="OnixLaunch" required_version="2.3"/>
+    <tizen:profile name="tv-samsung"/>
+    <name>Onix</name>
+    <description>Launcher do Onix para TVs Samsung: apps, indicações da Netflix, notícias de games, jogos e entradas HDMI.</description>
+    <author href="https://github.com/ruan2311">Ruan Amaral</author>
+    <license href="https://opensource.org/licenses/MIT">MIT</license>
+    <icon src="icon.png"/>
+    <content src="index.html"/>
+    <feature name="http://tizen.org/feature/screen.size.all"/>
+
+    <!-- Rede: só os mesmos hosts do Android (indicações, capas e notícias). -->
+    <access origin="https://apis.justwatch.com" subdomains="false"/>
+    <access origin="https://images.justwatch.com" subdomains="false"/>
+    <access origin="https://itunes.apple.com" subdomains="false"/>
+    <access origin="https://mzstatic.com" subdomains="true"/>
+    <access origin="https://www.adrenaline.com.br" subdomains="false"/>
+    <access origin="https://www.eurogamer.pt" subdomains="false"/>
+    <access origin="https://assetsio.gnwcdn.com" subdomains="false"/>
+
+    <!-- Todos de nível "public": instalam com o certificado comum da Samsung. -->
+    <tizen:privilege name="http://tizen.org/privilege/internet"/>
+    <tizen:privilege name="http://tizen.org/privilege/application.info"/>
+    <tizen:privilege name="http://tizen.org/privilege/application.launch"/>
+    <tizen:privilege name="http://tizen.org/privilege/tv.window"/>
+
+    <tizen:setting screen-orientation="landscape" context-menu="disable" background-support="disable"
+                   encryption="disable" install-location="auto" hwkey-event="enable"/>
+</widget>

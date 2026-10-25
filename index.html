@@ -6,7 +6,7 @@
 <!--
   Segurança: nenhum recurso externo é carregado. Tudo (CSS, JS, ícones) está inline.
   - Sem rede (connect-src 'none'), sem frames, sem plugins, sem formulários.
-  - Imagens apenas data: (ícones vindos da ponte Android, validados).
+  - Imagens apenas data: (ícones vindos da ponte Android, validados). Na Samsung (Tizen), também file: (ícones dos apps instalados).
 -->
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src 'none'; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
@@ -460,10 +460,14 @@ if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', { value(i)
     AndroidBridge.openInput(id)     -> muda a TV para a entrada (o nativo só aceita IDs da própria lista)
     AndroidBridge.getGameNews()     -> String JSON: [{"source","title","link","date":ms,"summary":"par1\n\npar2","image":"data:..."}]
   O nativo pode chamar  Launcher.onAppsChanged()  quando apps forem instalados/removidos,
+  Launcher.onInputsChanged()  quando a lista de entradas mudar, Launcher.onMessage(texto) para um aviso,
   Launcher.onNewsChanged()  quando as notícias dos games forem atualizadas,
   e  Launcher.onBack()  (true = tratado pela página) na tecla Voltar do controle.
   Launcher.onResume()  ao voltar para o launcher (zera a contagem da tela de descanso).
   "banner": true indica que "icon" é um banner 16:9 da TV.
+  Opcional: AndroidBridge.platform() -> nome do aparelho no chip do topo (padrão "Android TV").
+  Métodos opcionais ausentes (powerOff, openSettings…) escondem os botões correspondentes.
+  A ponte da Samsung (tizen/bridge.js) implementa este mesmo contrato com as APIs do Tizen.
   Tudo que vem da ponte é tratado como não confiável: validado e inserido só via textContent / <img src=data:>.
 */
 (() => {
@@ -543,19 +547,30 @@ const BRAND_BY_PKG = {
   'com.spotify.tv.android': 'spotify', 'com.spotify.music': 'spotify',
   'com.android.tv.settings': 'settings',
 };
+// Samsung (Tizen): os IDs dos apps mudam de ano para ano, então a marca vem do nome.
+const BRAND_BY_NAME = {
+  'youtube': 'youtube', 'netflix': 'netflix', 'prime video': 'prime', 'disney+': 'disney',
+  'globoplay': 'globoplay', 'max': 'max', 'hbo max': 'max', 'spotify': 'spotify',
+};
 const BRAND_ORDER = ['youtube', 'netflix', 'prime', 'disney', 'globoplay', 'max', 'spotify'];
 
 /* ---------------- Ponte Android (somente leitura defensiva) ---------------- */
-const PKG_RE = /^[a-zA-Z][a-zA-Z0-9_]*(\.[a-zA-Z0-9_]+)+$/;
+// Pacotes Android (com.netflix.ninja) e IDs de app do Tizen (3201907018807, org.tizen.netflix-app).
+const PKG_RE = /^[a-zA-Z0-9][a-zA-Z0-9_-]*(\.[a-zA-Z0-9_-]+)*$/;
 const ICON_RE = /^data:image\/(png|webp|jpeg);base64,[A-Za-z0-9+/]+={0,2}$/;
+// Ícone de app do Tizen: arquivo local da TV (no Android a CSP só aceita data:).
+const ICON_FILE_RE = /^file:\/\/\/[A-Za-z0-9._\/-]{1,300}\.(png|jpe?g|webp)$/i;
 const MAX_ICON = 512 * 1024, MAX_APPS = 300;
 
 const Bridge = (() => {
   const b = window.AndroidBridge;
   const native = !!b && typeof b.getInstalledApps === 'function' && typeof b.launchApp === 'function';
   let lastRaw = null, lastApps = [];
+  const has = name => native && typeof b[name] === 'function';
+  let platform = 'Android TV';
+  if (has('platform')) try { platform = cleanText(b.platform(), 24) || platform; } catch (_) {}
   return Object.freeze({
-    native,
+    native, platform, has,
     // Mesma resposta da ponte = mesmo array (refreshApps usa isso para não redesenhar nada).
     getApps() {
       if (!native) return null;
@@ -642,9 +657,10 @@ function sanitizeApps(list) {
     const rawName = typeof it.label === 'string' ? it.label : (typeof it.name === 'string' ? it.name : pkg);
     const name = cleanText(rawName, 40) || pkg;
     let icon = null;
-    if (typeof it.icon === 'string' && it.icon.length <= MAX_ICON && ICON_RE.test(it.icon)) icon = it.icon;
+    if (typeof it.icon === 'string' && it.icon.length <= MAX_ICON && (ICON_RE.test(it.icon) || ICON_FILE_RE.test(it.icon))) icon = it.icon;
     seen.add(pkg);
-    out.push({ name, pkg, icon, wide: it.banner === true, system: it.system === true, brand: BRAND_BY_PKG[pkg] || null });
+    const brand = BRAND_BY_PKG[pkg] || BRAND_BY_NAME[name.toLowerCase()] || null;
+    out.push({ name, pkg, icon, wide: it.banner === true, system: it.system === true, brand });
   }
   // Ordem: essenciais (streaming, mesmo vindo de fábrica) → instalados pelo usuário → apps de sistema.
   const rank = a => {
@@ -861,8 +877,12 @@ function startHeroRotation() {
 /* ---------------- Renderização ---------------- */
 function appArt(app) {
   const art = h('span', { class: 'tile-art' });
-  if (app.icon) art.append(h('img', { src: app.icon, alt: '', draggable: 'false', decoding: 'async', class: app.wide ? 'wide' : '' }));
-  else if (app.brand && BRAND_SVG[app.brand]) art.append(svgFrom(BRAND_SVG[app.brand]));
+  if (app.icon) {
+    const img = h('img', { src: app.icon, alt: '', draggable: 'false', decoding: 'async', class: app.wide ? 'wide' : '' });
+    // Ícone file: que a TV não deixou ler (Samsung): troca pela arte da marca ou pela letra.
+    img.addEventListener('error', () => art.replaceWith(appArt(Object.assign({}, app, { icon: null }))), { once: true });
+    art.append(img);
+  } else if (app.brand && BRAND_SVG[app.brand]) art.append(svgFrom(BRAND_SVG[app.brand]));
   else {
     let hash = 0; for (const c of app.pkg) hash = (hash * 31 + c.charCodeAt(0)) >>> 0;
     art.style.background = 'linear-gradient(135deg,hsl(' + (hash % 360) + ',70%,45%),hsl(' + ((hash + 60) % 360) + ',70%,25%))';
@@ -881,7 +901,7 @@ function renderHomeRow() {
   row.replaceChildren();
   const list = homeApps();
   if (!apps.length) {
-    row.append(h('div', { class: 'info glass', text: 'Nenhum app retornado pela ponte Android.' }));
+    row.append(h('div', { class: 'info glass', text: 'Nenhum app encontrado nesta TV.' }));
   } else if (!list.length) {
     row.append(h('div', { class: 'info glass', text: 'Nenhum app escolhido. Use “Organizar” para adicionar.' }));
   }
@@ -2086,7 +2106,7 @@ function powerOff() {
   if (r === 'ask') toast('Autorize o Onix a desligar a TV e aperte de novo');
   else if (r !== 'ok') toast('Este aparelho não deixou o Onix desligar a tela. Pelo adb: dpm set-active-admin com.aurora.launcher/.PowerAdmin');
 }
-function disarmPower() { clearTimeout(powerArmed); powerArmed = 0; $('#powerBtn').classList.remove('armed'); }
+function disarmPower() { clearTimeout(powerArmed); powerArmed = 0; const btn = $('#powerBtn'); if (btn) btn.classList.remove('armed'); }
 
 function openPictureSettings() {
   if (!Bridge.native) { toast('Abriria os ajustes de imagem da TV (simulação no navegador)'); return; }
@@ -2109,7 +2129,7 @@ const OPTIONS = [
   { act: 'saver',  name: 'Descansar agora',       desc: 'Entra na tela de descanso na hora, mesmo com ela desligada acima. Qualquer tecla volta ao Onix.' },
   { group: 'Sistema' },
   { act: 'reset',  name: 'Restaurar padrão',      desc: 'Volta todas as opções do Onix ao original.' },
-  { act: 'tv',     name: 'Configurações da TV',   desc: 'Rede, imagem, som e demais ajustes do Android TV.' },
+  { act: 'tv',     name: 'Configurações da TV',   desc: 'Rede, imagem, som e demais ajustes da TV.' },
   { group: 'Sobre' },
   { act: 'about' },
 ];
@@ -2127,7 +2147,9 @@ function syncSwitches() {
   $$('#optsList .switch').forEach(sw => sw.classList.toggle('on', settings[sw.dataset.key]));
 }
 function renderSettings() {
-  $('#optsList').replaceChildren(...OPTIONS.map(o => {
+  // Sem openSettings na ponte (Samsung), o atalho some: lá ele não teria o que abrir.
+  const opts = OPTIONS.filter(o => o.act !== 'tv' || !Bridge.native || Bridge.has('openSettings'));
+  $('#optsList').replaceChildren(...opts.map(o => {
     if (o.group) return h('div', { class: 'opts-group', text: o.group });
     if (o.act === 'about') {
       const card = h('button', { class: 'f opt glass about', tabindex: '-1', 'aria-label': 'Sobre o Onix' },
@@ -2757,6 +2779,12 @@ function onRefreshed(newsOk, picksOk) {
   if (picksOk) refreshPicks();
   toast(newsOk || picksOk ? 'Tudo atualizado' : 'Sem conexão com os sites: mantive o que já estava salvo');
 }
+// Samsung: as portas HDMI chegam depois de a página abrir (a consulta ao Tizen é assíncrona).
+function refreshInputs() {
+  loadInputs();
+  renderInputs();
+  if (current && !document.contains(current)) focusFirstContent();
+}
 function refreshPicks() {
   loadPicks();
   renderPicks();
@@ -2764,7 +2792,7 @@ function refreshPicks() {
 }
 // Gancho para o lado nativo chamar via evaluateJavascript.
 Object.defineProperty(window, 'Launcher', {
-  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => wakeSaver() }),
+  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => wakeSaver(), onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)) }),
   writable: false, configurable: false,
 });
 
@@ -2781,7 +2809,7 @@ if (!Bridge.native) {
 
 /* ---------------- Inicialização ---------------- */
 function init() {
-  const mode = Bridge.native ? 'Android TV' : 'Modo navegador';
+  const mode = Bridge.native ? Bridge.platform : 'Modo navegador';
   $('#modeChip').textContent = mode;
   if (!Bridge.native) setNetwork(navigator.onLine !== false);
   $('#navMode').textContent = APP_VERSION;
@@ -2793,6 +2821,9 @@ function init() {
   $('#editDone')._act = closeEditor;
   $('#editReset')._act = resetHome;
   $('#readerClose')._act = closeReader;
+  // A ponte não sabe desligar a TV ou abrir os ajustes (Samsung): tira os botões em vez de deixá-los falhar.
+  if (Bridge.native && !Bridge.has('powerOff')) $('#powerBtn').remove();
+  if (Bridge.native && !Bridge.has('openPictureSettings') && !Bridge.has('openSettings')) $('#pictureBtn').remove();
   renderGames();
   loadNews();
   renderNews();
