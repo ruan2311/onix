@@ -1,4 +1,4 @@
-package com.aurora.launcher;
+package com.onix.launcher;
 
 import android.app.Activity;
 import android.content.BroadcastReceiver;

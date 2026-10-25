@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.7.1 beta (outubro de 2026)
+
+- Fechar o gatinho do cartão **Sobre** com **Voltar** não leva mais o foco para o menu.
+- Por dentro, o código do Onix agora fica em `com.onix.launcher`. O pacote do app continua `com.aurora.launcher`, para a atualização instalar por cima e manter tudo (apps organizados, banners, recordes, tela inicial e o botão Desligar TV).
+
 ## 13.7.0 beta (outubro de 2026)
 
 - **TVs LG (webOS):** o Onix agora tem uma versão para LG (TVs de 2022 em diante). 🧪 Experimental: pode apresentar falhas. O passo a passo está no README.

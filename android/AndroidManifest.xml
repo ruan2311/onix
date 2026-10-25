@@ -10,7 +10,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aurora.launcher"
     android:versionCode="13"
-    android:versionName="13.7.0 beta">
+    android:versionName="13.7.1 beta">
 
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
 
@@ -65,12 +65,21 @@
         android:usesCleartextTraffic="false"
         android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
 
+        <!-- O código fica em com.onix.launcher; o pacote do app continua com.aurora.launcher
+             para as atualizações instalarem por cima. -->
         <activity
-            android:name=".MainActivity"
-            android:exported="true"
+            android:name="com.onix.launcher.MainActivity"
+            android:exported="false"
             android:launchMode="singleTask"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
-            android:windowSoftInputMode="stateAlwaysHidden">
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <!-- Nome antigo de propósito: a TV guarda a tela inicial escolhida (e os atalhos) por ele.
+             O apelido abre a MainActivity de com.onix.launcher. -->
+        <activity-alias
+            android:name="com.aurora.launcher.MainActivity"
+            android:targetActivity="com.onix.launcher.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -78,11 +87,11 @@
                 <category android:name="android.intent.category.HOME" />
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
-        </activity>
+        </activity-alias>
 
         <!-- Botão "Desligar TV": só a política force-lock (lockNow põe a TV em standby). -->
         <receiver
-            android:name=".PowerAdmin"
+            android:name="com.aurora.launcher.PowerAdmin"
             android:exported="true"
             android:permission="android.permission.BIND_DEVICE_ADMIN">
             <meta-data android:name="android.app.device_admin" android:resource="@xml/device_admin" />
@@ -93,11 +102,11 @@
 
         <!-- Resultado da instalação de uma atualização (Updater). -->
         <receiver
-            android:name=".UpdateReceiver"
+            android:name="com.onix.launcher.UpdateReceiver"
             android:exported="false" />
 
         <service
-            android:name=".PicksJob"
+            android:name="com.onix.launcher.PicksJob"
             android:exported="false"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>

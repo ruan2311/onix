@@ -1,4 +1,4 @@
-package com.aurora.launcher;
+package com.onix.launcher;
 
 import android.app.job.JobInfo;
 import android.app.job.JobParameters;
@@ -20,8 +20,10 @@ public class PicksJob extends JobService {
     static void schedule(Context ctx) {
         JobScheduler js = (JobScheduler) ctx.getSystemService(Context.JOB_SCHEDULER_SERVICE);
         if (js == null) return;
+        // Agendamento de antes da troca de pacote do código (com.aurora → com.onix) aponta para
+        // uma classe que não existe mais: com o mesmo ID, o schedule abaixo o substitui.
         for (JobInfo j : js.getAllPendingJobs()) {
-            if (j.getId() == ID) return;
+            if (j.getId() == ID && PicksJob.class.getName().equals(j.getService().getClassName())) return;
         }
         js.schedule(new JobInfo.Builder(ID, new ComponentName(ctx, PicksJob.class))
                 .setRequiredNetworkType(JobInfo.NETWORK_TYPE_ANY)

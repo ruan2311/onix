@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.0%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.1%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -579,7 +579,7 @@ python3 -m http.server 8000
 ├── android/
 │   ├── AndroidManifest.xml
 │   ├── build.sh                # Build sem Gradle (javac → dx → aapt → zipalign → apksigner)
-│   ├── src/com/aurora/launcher/
+│   ├── src/com/onix/launcher/  # o código (o pacote do app segue com.aurora.launcher)
 │   │   ├── MainActivity.java   # WebView, tela inicial, rede, Voltar
 │   │   ├── AndroidBridge.java  # Ponte JS ↔ Android (apps, entradas, Netflix, desligar…)
 │   │   ├── WeeklyPicks.java    # Indicações da semana (JustWatch + iTunes), por serviço
@@ -587,8 +587,9 @@ python3 -m http.server 8000
 │   │   ├── Updater.java        # Atualizações pelo GitHub (procura, baixa, confere e instala)
 │   │   ├── UpdateReceiver.java # Resposta do instalador do sistema
 │   │   ├── GameNews.java       # Notícias (RSS da Adrenaline e da Eurogamer.pt)
-│   │   ├── PicksJob.java       # Agendamento semanal das indicações
-│   │   └── PowerAdmin.java     # Administrador do dispositivo (só force-lock)
+│   │   └── PicksJob.java       # Agendamento semanal das indicações
+│   ├── src/com/aurora/launcher/
+│   │   └── PowerAdmin.java     # "Desligar TV" (só force-lock); nome antigo para não perder a permissão
 │   ├── res/                    # Ícone, banner e política de administrador
 │   ├── assets/picks-seed.json  # Indicações embutidas para o primeiro uso sem internet
 │   └── tools/                  # Geradores do ícone/banner e da lista embutida

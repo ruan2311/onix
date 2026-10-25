@@ -618,7 +618,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.7.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '13.7.1 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -2412,8 +2412,12 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '13.7.1 beta', date: 'outubro de 2026', items: [
+    ['bug', 'Fechar o gatinho do cartão *Sobre* com *Voltar* não leva mais o foco para o menu.'],
+    ['fix', 'Por dentro, o código do Onix agora se chama *com.onix.launcher*. Nada muda para você: a atualização instala por cima e mantém tudo.'],
+  ] },
   { version: '13.7.0 beta', date: 'outubro de 2026', items: [
-    ['new', '*TVs LG (webOS):* o Onix agora tem uma versão para LG (TVs de 2022 em diante), em *beta*: ainda não foi testada numa LG de verdade e pode não funcionar. O passo a passo está no GitHub.'],
+    ['new', '*TVs LG (webOS):* o Onix agora tem uma versão para LG (TVs de 2022 em diante). Experimental: pode apresentar falhas. O passo a passo está no GitHub.'],
     ['fix', 'O aviso "O Onix já está na versão mais recente" só aparece quando você mesmo procura atualizações, e não mais ao abrir.'],
   ] },
   { version: '13.6.4 beta', date: 'outubro de 2026', items: [
@@ -2558,7 +2562,7 @@ function renderSettings() {
 }
 
 /* Easter egg: 5 OKs seguidos no cartão "Sobre" (com no máximo 2 s entre um e outro) abrem o gatinho. */
-let aboutTaps = 0, aboutTimer = 0, kittyTimer = 0, kittyOpen = false;
+let aboutTaps = 0, aboutTimer = 0, kittyTimer = 0, kittyOpen = false, kittyClosed = 0;
 function aboutTap() {
   clearTimeout(aboutTimer);
   aboutTaps++;
@@ -2576,6 +2580,7 @@ function showKitty() {
 function hideKitty() {
   clearTimeout(kittyTimer);
   kittyOpen = false;
+  kittyClosed = Date.now();
   $('#kitty').hidden = true;
 }
 
@@ -2773,6 +2778,9 @@ function back() {
 function backStep() {
   if (game) { closeGame(); return true; }
   if (kittyOpen) { hideKitty(); return true; }
+  // O mesmo Voltar pode chegar duas vezes (tecla na página e Voltar do Android): o que fechou o
+  // gatinho não tira o foco do cartão Sobre.
+  if (Date.now() - kittyClosed < 500) return true;
   if (reader) { closeReader(); return true; }
   if (grabbed) { dropGrab(); return true; }
   flushSection();

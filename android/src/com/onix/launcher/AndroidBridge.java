@@ -1,9 +1,10 @@
-package com.aurora.launcher;
+package com.onix.launcher;
 
 import android.app.Activity;
 import android.app.SearchManager;
 import android.app.UiModeManager;
 import android.app.admin.DevicePolicyManager;
+import com.aurora.launcher.PowerAdmin;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
