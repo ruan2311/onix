@@ -2,6 +2,13 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 14.0.1 beta (outubro de 2026)
+
+- **Conectar celular** saiu do menu e foi para **Configurações → Controle pelo celular**, logo abaixo de Perfil.
+- **Teclado na tela** novo: fileira de números, tecla de maiúscula, **Apagar** ao lado das letras, acentos e sinais na tecla **áé** e um contador de letras. As teclas ficam sobre um fundo escuro, sem a tela de trás aparecendo.
+- Bug: o clima da tela inicial não fica mais cortado pelos botões do topo, e a data aparece como **Segunda-feira, 26 de outubro**.
+- Bug: em **Editar perfil**, o nome e o Perfil infantil têm a mesma largura da fileira de avatares.
+
 ## 14.0.0 beta (outubro de 2026)
 
 - **Perfis:** a tela **Quem está assistindo?** tem um avatar para cada pessoa da casa (oito desenhos espaciais ou uma foto mandada pelo celular). Cada perfil tem os seus apps, recentes, recordes dos jogos, idioma, indicações e cidade do clima. Com um perfil só, o Onix entra direto, sem perguntar. Quem atualiza vira o primeiro perfil (**Meu perfil**, dá para trocar o nome) sem perder nada. Trocar de perfil fica no topo do menu e em **Configurações → Perfil**.

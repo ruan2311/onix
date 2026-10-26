@@ -92,14 +92,14 @@ svg{display:block}
 .topbar{display:flex;align-items:flex-end;justify-content:space-between;gap:1rem;margin-bottom:1.4rem}
 #clock{font-size:4.6rem;font-weight:200;line-height:.95;letter-spacing:-.02em;
   font-variant-numeric:tabular-nums}
-#date{font-size:1.05rem;color:var(--muted);margin-top:.35rem;text-transform:capitalize}
+#date{font-size:1.05rem;color:var(--muted);margin-top:.35rem}
 .chips{display:flex;gap:.6rem;flex-wrap:wrap;justify-content:flex-end}
 /* Botão "Atualizar" acima dos selos; só aparece na tela inicial. Gira enquanto baixa. */
-.top-right{display:flex;flex-direction:column;align-items:flex-end;gap:.7rem}
+.top-right{display:flex;flex-direction:column;align-items:flex-end;gap:.7rem;min-width:0}
 /* "Configurações da TV" fica ao lado do "Atualizar" (atalho para Rede, imagem, som…). */
-.top-actions{display:flex;gap:.6rem}
+.top-actions{display:flex;flex-wrap:wrap;justify-content:flex-end;gap:.5rem}
 .top-actions[hidden]{display:none}
-#refreshBtn,#ramBtn,#tvSettingsBtn{padding:.55rem 1.1rem;font-size:.9rem}
+#refreshBtn,#ramBtn,#tvSettingsBtn{padding:.55rem .95rem;font-size:.9rem}
 #refreshBtn.busy svg,#ramBtn.busy svg{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .chip{display:flex;align-items:center;gap:.45rem;padding:.45rem .85rem;border-radius:2rem;font-size:.82rem;color:var(--muted)}
@@ -390,7 +390,7 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 .layer{position:fixed;top:0;right:0;bottom:0;left:0;z-index:21;display:flex;flex-direction:column;align-items:center;justify-content:center;
   background:radial-gradient(60% 70% at 50% 40%,rgba(80,90,130,.18),transparent 70%),linear-gradient(160deg,#16181e,#060709)}
 .layer[hidden],.layer [hidden],#wxBtn[hidden],.chip[hidden]{display:none!important}
-.layer.dim{background:rgba(6,7,9,.96)}
+.layer.dim{background:#08090c}
 .layer-brand{position:absolute;top:2rem;left:2.4rem;display:flex;align-items:center;gap:.7rem;font-weight:600;letter-spacing:.32em;color:var(--muted);text-transform:uppercase}
 .layer-brand svg{width:1.8rem;height:1.8rem}
 .layer h2{margin:0;font-size:2.6rem;font-weight:300;letter-spacing:-.01em;text-align:center}
@@ -435,6 +435,7 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 .pe-name{font-size:1.4rem;font-weight:600;max-width:15rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .pe-right{display:flex;flex-direction:column;gap:.9rem;min-width:0;flex:1}
 .pe-right h2{text-align:left;font-size:2.1rem}
+.pe-right .row-opt{max-width:40.8rem}
 .lbl{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .av-grid{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
 .av-opt{width:4.4rem;height:4.4rem;border-radius:28%}
@@ -458,19 +459,27 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 .kids-opts[hidden]{display:none}
 
 /* Teclado na tela (nome do perfil, cidade do clima) */
-.kb{width:100%;max-width:60rem;display:flex;flex-direction:column;gap:1rem;padding:0 2rem}
-.kb-field{display:flex;align-items:center;gap:.6rem;min-height:3.6rem;padding:.8rem 1.2rem;border-radius:1rem;background:rgba(255,255,255,.07);
+.kb{width:100%;max-width:58rem;display:flex;flex-direction:column;gap:1rem;padding:0 2rem}
+.kb-field{display:flex;align-items:center;min-height:3.6rem;padding:.8rem 1.2rem;border-radius:1rem;background:#15171c;
   border:1px solid rgba(255,255,255,.3);font-size:1.5rem}
-.kb-ph{color:rgba(255,255,255,.4)}
-.kb-caret{display:inline-block;width:.1rem;height:1.5rem;background:#fff;animation:kbBlink 1s steps(1) infinite}
+.kb-val{white-space:pre}
+.kb-ph{color:rgba(255,255,255,.4);order:1}
+.kb-caret{display:inline-block;width:.12rem;height:1.6rem;margin:0 .1rem;background:#fff;animation:kbBlink 1s steps(1) infinite}
+.kb-count{margin-left:auto;padding-left:1rem;order:2;font-size:.85rem;color:var(--muted);font-variant-numeric:tabular-nums}
 @keyframes kbBlink{50%{opacity:0}}
 .kb-from{color:#4ade80;font-size:.9rem;margin-top:-.4rem}
-.kb-keys{display:grid;grid-template-columns:repeat(10,1fr);gap:.45rem}
-.kb-key{height:3rem;border-radius:.7rem;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);font-size:1.15rem;
+.kb-keys{display:grid;grid-template-columns:repeat(10,1fr);gap:.5rem}
+.kb-key{height:3.1rem;border-radius:.75rem;background:#1c1f26;border:1px solid #2b2f38;font-size:1.25rem;
   display:flex;align-items:center;justify-content:center}
+.kb-key svg{width:1.45rem;height:1.45rem}
 .kb-key.f::after{display:none}
-.kb-key.wide{grid-column:span 3;font-size:.95rem}
-.kb-key.is-focused{transform:scale(1.08);background:#fff;color:#0a0b0e}
+.kb-key.mod{background:#272b34;color:rgba(255,255,255,.85);font-size:1rem}
+.kb-key.mod.on{background:#3d4350;color:#fff;border-color:rgba(255,255,255,.45)}
+.kb-key.span2{grid-column:span 2}
+.kb-key.span4{grid-column:span 4;font-size:1rem}
+.kb-key.done{grid-column:span 2;font-size:1rem;font-weight:600;background:#e9eaee;color:#0a0b0e;border-color:#e9eaee}
+.kb-key.is-focused{transform:scale(1.08);background:#fff;color:#0a0b0e;border-color:#fff}
+.kb-key.done.is-focused{box-shadow:0 0 0 .2rem rgba(255,255,255,.35)}
 .kb-res{display:flex;flex-direction:column;gap:.45rem;min-height:1rem}
 .kb-res .row-opt{max-width:none}
 .kb-msg{color:var(--muted);font-size:.95rem}
@@ -536,7 +545,7 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 
 /* Modo Infantil: só os apps liberados, sem destaque, indicações, Apps, Entradas, Configurações e Desligar TV. */
 html.kids #hero,html.kids .picks-title,html.kids #homePicks,html.kids .top-actions,html.kids #powerBtn,
-html.kids #phoneBtn,html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="inputs"],html.kids .nav-item[data-section="settings"]{display:none!important}
+html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="inputs"],html.kids .nav-item[data-section="settings"]{display:none!important}
 .chip.kids{color:#1a1400;background:#ffd23f;border-color:#ffd23f;font-weight:600}
 .chip[hidden]{display:none}
 
@@ -550,7 +559,7 @@ html.kids #phoneBtn,html.kids .nav-item[data-section="apps"],html.kids .nav-item
 
 /* Clima: discreto ao lado do relógio; o vidro só aparece com o foco. */
 .topbar>div:first-child{flex:none}
-#wxBtn{display:flex;align-items:center;gap:.9rem;padding:.5rem 1.1rem .5rem .8rem;margin:0 auto -.2rem 1.6rem;border-radius:1.1rem;border:1px solid transparent;text-align:left}
+#wxBtn{display:flex;align-items:center;gap:.8rem;padding:.5rem 1rem .5rem .7rem;margin:0 auto -.2rem 1rem;border-radius:1.1rem;border:1px solid transparent;text-align:left}
 #wxBtn[hidden]{display:none}
 #wxBtn.f::after{display:none}
 #wxBtn.is-focused{transform:none;background:var(--glass);border-color:rgba(255,255,255,.75);box-shadow:var(--focus-glow)}
@@ -560,7 +569,8 @@ html.kids #phoneBtn,html.kids .nav-item[data-section="apps"],html.kids .nav-item
 .wx-temp span{font-size:.42em;font-weight:400;color:var(--muted);margin-left:.45em}
 .wx-sub{display:block;font-size:.85rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.25rem}
 .top-actions .btn{white-space:nowrap}
-#wxBtn{min-width:0;flex:0 1 auto}
+#wxBtn{min-width:0;flex:none}
+#wxBtn.home .wx-place{display:none}
 #wxPanel{align-items:flex-end;padding:1.4rem}
 .wx-card{width:31rem;max-height:100%;overflow:hidden;display:flex;flex-direction:column;padding:1.5rem 1.8rem 1.2rem;border-radius:1.6rem;
   background:linear-gradient(170deg,rgba(58,63,74,.98),rgba(20,22,27,.99) 70%);border:1px solid rgba(255,255,255,.22);box-shadow:var(--shadow)}
@@ -650,8 +660,6 @@ html.kids #phoneBtn,html.kids .nav-item[data-section="apps"],html.kids .nav-item
   </svg></div>
   <button class="f nav-item" data-section="inputs" tabindex="-1">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 10.5h7M11 7.5l3 3-3 3"/></svg><span>Entradas</span></button>
-  <button class="f nav-item" id="phoneBtn" tabindex="-1" hidden aria-label="Controle pelo celular">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg><span>Celular</span></button>
   <button class="f nav-item" data-section="settings" tabindex="-1">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Configurações</span></button>
   <button class="f nav-item power" id="powerBtn" tabindex="-1">
@@ -987,7 +995,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '14.0.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '14.0.1 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1360,6 +1368,7 @@ const ES = Object.freeze({
   "Este app não está liberado neste perfil": "Esta app no está permitida en este perfil",
   "Espaço": "Espacio",
   "Apagar": "Borrar",
+  "Maiúscula": "Mayúscula",
   "Sair do Modo Infantil": "Salir del Modo Infantil",
   "Digite o PIN para trocar de perfil": "Escribe el PIN para cambiar de perfil",
   "Digite o mesmo PIN de novo para confirmar": "Escribe el mismo PIN otra vez para confirmar",
@@ -1455,8 +1464,12 @@ const ES = Object.freeze({
   "Aponte a câmera do celular para o código. Uma página abre no navegador e vira controle e teclado, sem instalar nada.": "Apunta la cámara del celular al código. Se abre una página en el navegador que funciona como control y teclado, sin instalar nada.",
   "O celular precisa estar no mesmo Wi-Fi da TV. Depois da primeira vez, ele conecta sozinho.": "El celular debe estar en la misma red Wi-Fi que la TV. Después de la primera vez, se conecta solo.",
   "O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.": "El celular se vuelve control y teclado, sin instalar nada. Funciona con Onix en pantalla, en la misma red Wi-Fi.",
-  "Mostrar o QR code grande": "Mostrar el código QR grande",
-  "Para ler de longe ou conectar mais um celular.": "Para leerlo de lejos o conectar otro celular.",
+  "Conectar celular": "Conectar celular",
+  "*Conectar celular* saiu do menu e foi para *Configurações → Controle pelo celular*, logo abaixo de Perfil.": "*Conectar celular* salió del menú y pasó a *Configuración → Control desde el celular*, justo debajo de Perfil.",
+  "*Teclado na tela* novo: fileira de números, tecla de maiúscula, *Apagar* ao lado das letras, acentos e sinais na tecla *áé* e um contador de letras. As teclas ficam sobre um fundo escuro, sem a tela de trás aparecendo.": "*Teclado en pantalla* nuevo: fila de números, tecla de mayúscula, *Borrar* al lado de las letras, acentos y signos en la tecla *áé* y un contador de letras. Las teclas quedan sobre un fondo oscuro, sin que se vea la pantalla de atrás.",
+  "O clima da tela inicial não fica mais cortado pelos botões do topo, e a data aparece como *Segunda-feira, 26 de outubro*.": "El clima de la pantalla de inicio ya no queda cortado por los botones de arriba, y la fecha aparece como *Lunes, 26 de octubre*.",
+  "*Editar perfil:* o nome e o Perfil infantil têm a mesma largura da fileira de avatares.": "*Editar perfil:* el nombre y el Perfil infantil tienen el mismo ancho que la fila de avatares.",
+  "Mostra o QR code: aponte a câmera do celular e ele vira controle e teclado.": "Muestra el código QR: apunta la cámara del celular y se vuelve control y teclado.",
   "Desconectar os celulares": "Desconectar los celulares",
   "Cada celular precisa ler o QR code de novo para voltar.": "Cada celular debe leer el código QR otra vez para volver.",
   "1 celular conectado. Cada um precisa ler o QR code de novo para voltar.": "1 celular conectado. Cada uno debe leer el código QR otra vez para volver.",
@@ -1913,7 +1926,8 @@ function clockText(d) {
   if (!settings.h24) hh = hh % 12 || 12;
   return String(hh).padStart(settings.h24 ? 2 : 1, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
 }
-const dateText = d => d.toLocaleDateString(LANG === 'es' ? 'es' : 'pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+// Só a primeira letra maiúscula: "Segunda-feira, 26 de outubro" (o capitalize do CSS fazia "26 De Outubro").
+const dateText = d => { const s = d.toLocaleDateString(LANG === 'es' ? 'es' : 'pt-BR', { weekday: 'long', day: 'numeric', month: 'long' }); return s.charAt(0).toUpperCase() + s.slice(1); };
 function updateClock(force) {
   const d = new Date();
   const txt = clockText(d);
@@ -3474,6 +3488,11 @@ const OPTIONS = [
   { group: 'Perfil' },
   { act: 'profile', name: 'Trocar perfil', desc: 'Volta para “Quem está assistindo?”.' },
   { act: 'profiles', name: 'Gerenciar perfis', desc: 'Crie, edite ou exclua perfis, inclusive os infantis.' },
+  { group: 'Controle pelo celular', phone: true },
+  { act: 'remoteBig', phone: true, name: 'Conectar celular', desc: 'Mostra o QR code: aponte a câmera do celular e ele vira controle e teclado.' },
+  { key: 'remote', phone: true, name: 'Controle pelo celular', desc: 'O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.' },
+  { key: 'remoteQr', phone: true, name: 'QR code na tela de descanso', desc: 'Quando nenhum celular está conectado, a tela de descanso mostra o QR code, em tom escuro, para conectar sem usar o controle da TV.' },
+  { act: 'remoteForget', phone: true, name: 'Desconectar os celulares', desc: 'Cada celular precisa ler o QR code de novo para voltar.' },
   { group: 'Idioma' },
   { key: 'lang',   name: 'Idioma',                desc: 'Português ou espanhol. Automático segue o idioma da TV. OK troca.' },
   { group: 'Desempenho' },
@@ -3501,11 +3520,6 @@ const OPTIONS = [
   { key: 'pickDisney',    service: 'disney',    name: 'Disney+',   desc: 'Indicações do Disney+.' },
   { key: 'pickMax',       service: 'max',       name: 'HBO Max',   desc: 'Indicações da HBO Max.' },
   { key: 'pickGloboplay', service: 'globoplay', name: 'Globoplay', desc: 'Indicações do Globoplay.' },
-  { group: 'Controle pelo celular', phone: true },
-  { key: 'remote', phone: true, name: 'Controle pelo celular', desc: 'O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.' },
-  { key: 'remoteQr', phone: true, name: 'QR code na tela de descanso', desc: 'Quando nenhum celular está conectado, a tela de descanso mostra o QR code, em tom escuro, para conectar sem usar o controle da TV.' },
-  { act: 'remoteBig', phone: true, name: 'Mostrar o QR code grande', desc: 'Para ler de longe ou conectar mais um celular.' },
-  { act: 'remoteForget', phone: true, name: 'Desconectar os celulares', desc: 'Cada celular precisa ler o QR code de novo para voltar.' },
   { group: 'Atualizações' },
   { act: 'update', name: 'Procurar atualizações', desc: 'Confere no GitHub se saiu uma versão nova do Onix.' },
   { key: 'autoUpdate', name: 'Atualizar automaticamente', desc: 'Baixa as versões novas sozinho e abre a confirmação de instalação quando você volta ao Onix.' },
@@ -3519,6 +3533,12 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '14.0.1 beta', date: 'outubro de 2026', items: [
+    ['fix', '*Conectar celular* saiu do menu e foi para *Configurações → Controle pelo celular*, logo abaixo de Perfil.'],
+    ['fix', '*Teclado na tela* novo: fileira de números, tecla de maiúscula, *Apagar* ao lado das letras, acentos e sinais na tecla *áé* e um contador de letras. As teclas ficam sobre um fundo escuro, sem a tela de trás aparecendo.'],
+    ['bug', 'O clima da tela inicial não fica mais cortado pelos botões do topo, e a data aparece como *Segunda-feira, 26 de outubro*.'],
+    ['bug', '*Editar perfil:* o nome e o Perfil infantil têm a mesma largura da fileira de avatares.'],
+  ] },
   { version: '14.0.0 beta', date: 'outubro de 2026', items: [
     ['new', '*Perfis:* a tela *Quem está assistindo?* tem um avatar para cada pessoa da casa. Cada perfil tem os seus apps, recentes, recordes dos jogos, idioma, indicações e cidade do clima. Com um perfil só, o Onix entra direto. Você já é o primeiro perfil, com tudo como estava.'],
     ['new', '*Modo Infantil:* um perfil para crianças, só com os apps liberados, PIN para sair e limite de tempo por dia. Crie em Configurações → Gerenciar perfis.'],
@@ -3897,40 +3917,73 @@ const avatar = pr => avatarFill(h('span', { class: 'av' }), pr);
 /* ---------------- Teclado na tela ----------------
    Para o nome do perfil e a cidade do clima. Também aceita o teclado físico e o texto que vem do
    celular (controle pelo celular). */
-const KB_KEYS = 'qwertyuiopasdfghjklçzxcvbnm-\'.áéíóúãõâêô';
+// Fileiras de 10 colunas. 'áé' troca as duas fileiras do meio pelos acentos e sinais.
+const KB_ROWS = {
+  abc: ['1234567890', 'qwertyuiop', 'asdfghjklç', 'zxcvbnm'],
+  acc: ['1234567890', 'áàâãéêíóôõ', 'úüñ\'&!?,()', 'zxcvbnm'],
+};
+const KB_SHIFT_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 4l8 8h-4.5v7h-7v-7H4z"/></svg>';
+const KB_ERASE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5h11a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H9l-6-7z"/><path d="M12.5 9.5l5 5M17.5 9.5l-5 5"/></svg>';
 let kb = null;
 function openKeyboard(o) {
-  kb = Object.assign({ value: '', max: 30, caps: false }, o);
+  kb = Object.assign({ value: '', max: 30, caps: false, mode: 'abc', shift: null }, o);
   kb.value = String(kb.value || '').slice(0, kb.max);
   $('#kbTitle').textContent = t(kb.title);
-  const keys = KB_KEYS.split('').map(ch => { const b = h('button', { class: 'f kb-key', tabindex: '-1' }, ch); b._act = () => kbType(ch); return b; });
-  const wide = (label, fn, cls) => { const b = h('button', { class: 'f kb-key ' + cls, tabindex: '-1', text: label }); b._act = fn; return b; };
-  keys.push(wide('Espaço', () => kbType(' '), 'wide'), wide('Apagar', kbErase, 'wide'), wide('Pronto', kbDone, 'wide'));
-  $('#kbKeys').replaceChildren(...keys);
   $('#kbRes').replaceChildren();
   $('#kbFrom').hidden = true;
   openPane('keyboard', { type: kbType, erase: kbErase, back: () => { closePane('keyboard'); if (kb && kb.onCancel) kb.onCancel(); } });
+  kbKeys();
   kbRender();
-  focusIn($('#keyboard'), '.kb-key');
+  focusIn($('#keyboard'), '.kb-key[data-k="q"]');
   pushRemote();
+}
+// A próxima letra sai maiúscula? ⇧ manda; sem ele, o início de cada palavra (nomes e cidades).
+const kbUpper = () => kb.shift !== null ? kb.shift : kb.caps && (!kb.value || kb.value.slice(-1) === ' ');
+function kbKeys() {
+  const at = current && $('#kbKeys').contains(current) ? $$('.kb-key', $('#kbKeys')).indexOf(current) : -1;
+  const up = kb.upShown = kbUpper();
+  const key = (label, fn, cls, k) => {
+    const b = h('button', { class: 'f kb-key' + (cls ? ' ' + cls : ''), tabindex: '-1' });
+    if (label.startsWith('<svg')) b.append(svgFrom(label)); else b.textContent = label;   // já traduzido por quem chama
+    if (k) b.dataset.k = k;
+    b._act = fn;
+    return b;
+  };
+  const letter = ch => key(up ? ch.toUpperCase() : ch, () => kbType(ch), '', ch);
+  const rows = KB_ROWS[kb.mode];
+  const keys = [];
+  rows.slice(0, 3).forEach(r => r.split('').forEach(ch => keys.push(letter(ch))));
+  const shift = key(KB_SHIFT_SVG, () => { kb.shift = !kbUpper(); kbKeys(); }, 'mod' + (up ? ' on' : ''));
+  shift.setAttribute('aria-label', t('Maiúscula'));
+  keys.push(shift);
+  rows[3].split('').forEach(ch => keys.push(letter(ch)));
+  const erase = key(KB_ERASE_SVG, kbErase, 'mod span2');
+  erase.setAttribute('aria-label', t('Apagar'));
+  keys.push(erase);
+  keys.push(key(kb.mode === 'abc' ? 'áé' : 'abc', () => { kb.mode = kb.mode === 'abc' ? 'acc' : 'abc'; kbKeys(); }, 'mod span2'));
+  keys.push(letter('-'), key(t('Espaço'), () => kbType(' '), 'span4'), letter('.'), key(t('Pronto'), kbDone, 'done'));
+  $('#kbKeys').replaceChildren(...keys);
+  if (at >= 0 && keys[at]) setFocus(keys[at]);
 }
 function kbRender() {
   const f = $('#kbField');
   f.replaceChildren();
-  if (kb.value) f.append(document.createTextNode(kb.value)); else f.append(h('span', { class: 'kb-ph', text: kb.ph || '' }));
-  f.append(h('span', { class: 'kb-caret' }));
+  if (kb.value) f.append(h('span', { class: 'kb-val' }, document.createTextNode(kb.value))); else f.append(h('span', { class: 'kb-ph', text: kb.ph || '' }));
+  f.append(h('span', { class: 'kb-caret' }), h('span', { class: 'kb-count' }, kb.value.length + '/' + kb.max));
 }
 function kbSet(v, fromPhone) {
   if (!kb) return;
   kb.value = String(v).replace(/[\u0000-\u001f\u007f\u202a-\u202e\u2066-\u2069]/g, '').replace(/^\s+/, '').slice(0, kb.max);
   if (fromPhone) $('#kbFrom').hidden = false;
   kbRender();
+  if (kbUpper() !== kb.upShown) kbKeys();   // as letras mudam de caixa no começo de cada palavra
   if (kb.onInput) kb.onInput(kb.value);
   pushRemote();
 }
 function kbType(ch) {
   if (!kb || kb.value.length >= kb.max) return;
-  if (kb.caps && (!kb.value || kb.value.slice(-1) === ' ')) ch = ch.toUpperCase();
+  if (kbUpper()) ch = ch.toUpperCase();
+  kb.shift = null;
   kbSet(kb.value + ch);
 }
 function kbErase() { if (kb) kbSet(kb.value.slice(0, -1)); }
@@ -4442,7 +4495,8 @@ function renderWeather() {
   const w = wx.w, info = wxInfo(w.now.code), today = w.days[0];
   $('#wxIco').replaceChildren(wxIcon(info.icon, w.now.day));
   $('#wxTemp').replaceChildren(document.createTextNode(Math.round(w.now.temp) + '°'), h('span', { text: info.text }));
-  $('#wxSub').textContent = t('Máx {0}° · Mín {1}° · {2}', Math.round(today.hi), Math.round(today.lo), pr.city.name);
+  // A cidade some na tela inicial, onde os três botões do topo dividem a linha com o clima.
+  $('#wxSub').replaceChildren(t('Máx {0}° · Mín {1}°', Math.round(today.hi), Math.round(today.lo)), h('span', { class: 'wx-place' }, ' · ' + pr.city.name));
   b.setAttribute('aria-label', t('Clima: {0}°, {1}. Abrir previsão', Math.round(w.now.temp), t(info.text)));
 }
 function weekday(date, i) {
@@ -4706,6 +4760,7 @@ function showSection(name) {
   $$('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + name));
   $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.section === name));
   $('.top-actions').hidden = name !== 'home';
+  $('#wxBtn').classList.toggle('home', name === 'home');
   $('#main').scrollTop = 0;
 }
 const activeNavItem = () => $('.nav-item[data-section="' + activeSection + '"]');
@@ -5398,8 +5453,6 @@ function init() {
   $('#readerClose')._act = closeReader;
   $('#meBtn')._act = switchProfile;
   // Botão do menu: QR grande para conectar o celular (só onde existe o controle, no Android).
-  $('#phoneBtn').hidden = !Bridge.has('remoteStart');
-  $('#phoneBtn')._act = () => phoneOpen('qr');
   // A ponte não sabe desligar a TV ou abrir os ajustes (Samsung): tira os botões em vez de deixá-los falhar.
   if (Bridge.native && !Bridge.has('powerOff')) $('#powerBtn').remove();
   // Sem openSettings na ponte (Samsung), o atalho some: lá ele não teria o que abrir.
