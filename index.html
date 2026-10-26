@@ -1734,6 +1734,21 @@ function glow(ctx, color, w, path) {
 }
 const seg = (ctx, x1, y1, x2, y2) => () => { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); };
 const circ = (ctx, x, y, r) => () => { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); };
+// Camada estática (fundo, painel e peças paradas) desenhada num canvas fora da tela só quando muda (key).
+// Cada quadro só copia a camada: na TV, redesenhar todos os contornos e brilhos a cada quadro derrubava o FPS.
+let gLayer = null, gLayerKey = null;
+function layer(key, paint) {
+  if (!gLayer) { gLayer = document.createElement('canvas'); gLayer.width = GW; gLayer.height = GH; }
+  if (key !== gLayerKey) {
+    const c = gLayer.getContext('2d', { alpha: false });
+    c.fillStyle = '#060709'; c.fillRect(0, 0, GW, GH);
+    c.lineCap = 'butt'; c.lineJoin = 'miter';
+    paint(c);
+    gLayerKey = key;
+  }
+  gCtx.drawImage(gLayer, 0, 0);
+}
+function dropLayer() { if (gLayer) { gLayer.width = 0; gLayer.height = 0; } gLayer = null; gLayerKey = null; }
 // Partículas e textos que sobem: efeito curto, compartilhado por todos os jogos (coordenadas da tela).
 const fx = {
   p: [], t: [],
@@ -1856,18 +1871,20 @@ const pong = {
   },
   draw(ctx) {
     const T = this.T, B = this.B, mid = (T + B) / 2, L = 40, Rt = GW - 40;
-    panel(ctx, L, T - 10, Rt - L, B - T + 20, 24);
-    // Áreas de gol: só o arco, na cor de cada lado.
-    ctx.lineWidth = 2; ctx.globalAlpha = .6;
-    ctx.strokeStyle = COL.cyan; ctx.beginPath(); ctx.arc(L, mid, 120, -Math.PI / 2, Math.PI / 2); ctx.stroke();
-    ctx.strokeStyle = COL.pink; ctx.beginPath(); ctx.arc(Rt, mid, 120, Math.PI / 2, Math.PI * 1.5); ctx.stroke();
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = FAINT;
-    ctx.setLineDash([10, 14]); line(ctx, GW / 2, T + 6, GW / 2, B - 6); ctx.setLineDash([]);
-    dot(ctx, GW / 2, mid, 70, false);
-    ctx.font = '200 72px ' + FONT; ctx.textAlign = 'center';
-    ctx.fillStyle = COL.cyan; ctx.fillText(this.ps, GW / 2 - 90, T + 90);
-    ctx.fillStyle = COL.pink; ctx.fillText(this.cs, GW / 2 + 90, T + 90);
+    layer('pong' + this.ps + ':' + this.cs, c => {
+      panel(c, L, T - 10, Rt - L, B - T + 20, 24);
+      // Áreas de gol: só o arco, na cor de cada lado.
+      c.lineWidth = 2; c.globalAlpha = .6;
+      c.strokeStyle = COL.cyan; c.beginPath(); c.arc(L, mid, 120, -Math.PI / 2, Math.PI / 2); c.stroke();
+      c.strokeStyle = COL.pink; c.beginPath(); c.arc(Rt, mid, 120, Math.PI / 2, Math.PI * 1.5); c.stroke();
+      c.globalAlpha = 1;
+      c.strokeStyle = FAINT;
+      c.setLineDash([10, 14]); line(c, GW / 2, T + 6, GW / 2, B - 6); c.setLineDash([]);
+      dot(c, GW / 2, mid, 70, false);
+      c.font = '200 72px ' + FONT; c.textAlign = 'center';
+      c.fillStyle = COL.cyan; c.fillText(this.ps, GW / 2 - 90, T + 90);
+      c.fillStyle = COL.pink; c.fillText(this.cs, GW / 2 + 90, T + 90);
+    });
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     if (this.pw) {
       const w = this.pw, k = this.POWERS[w.kind], r = 24 + Math.sin(w.t * 8) * 3;
@@ -2018,21 +2035,27 @@ const pinball = {
     }
   },
   draw(ctx) {
+    // Mesa, faixas e alvos ficam na camada; mudam só quando uma faixa acende ou um alvo cai.
+    layer('pin' + this.lanes.join() + this.targets.map(q => q.up).join(), c => {
+      c.save(); c.translate(PB.X, PB.Y);
+      c.lineCap = 'round'; c.lineJoin = 'round';
+      // Mesa: vidro com contorno branco; o círculo do meio é só decoração.
+      c.beginPath();
+      c.moveTo(0, 690); c.lineTo(0, 60); c.lineTo(60, 0); c.lineTo(380, 0); c.lineTo(440, 60); c.lineTo(440, 690); c.closePath();
+      c.fillStyle = GLASS; c.fill();
+      c.strokeStyle = FAINT; c.lineWidth = 2; dot(c, 200, 200, 150, false);
+      c.strokeStyle = 'rgba(255,255,255,.55)'; c.lineWidth = 3;
+      for (const w of PB.WALLS) line(c, w[0], w[1], w[2], w[3]);
+      PB.LANES.forEach((x, k) => {
+        c.strokeStyle = COL.yellow; c.lineWidth = 2; dot(c, x, 60, 9, false);
+        if (this.lanes[k]) { c.fillStyle = COL.yellow; dot(c, x, 60, 4.5, true); }
+      });
+      for (const tg of this.targets) if (tg.up) glow(c, COL.green, 4, seg(c, tg.x + 3, 380, tg.x + 27, 380));
+      c.restore();
+    });
     ctx.save(); ctx.translate(PB.X, PB.Y);
     ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    // Mesa: vidro com contorno branco; o círculo do meio é só decoração.
-    ctx.beginPath();
-    ctx.moveTo(0, 690); ctx.lineTo(0, 60); ctx.lineTo(60, 0); ctx.lineTo(380, 0); ctx.lineTo(440, 60); ctx.lineTo(440, 690); ctx.closePath();
-    ctx.fillStyle = GLASS; ctx.fill();
-    ctx.strokeStyle = FAINT; ctx.lineWidth = 2; dot(ctx, 200, 200, 150, false);
-    ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 3;
-    for (const w of PB.WALLS) line(ctx, w[0], w[1], w[2], w[3]);
     PB.SLINGS.forEach((w, k) => glow(ctx, this.slingLit[k] ? INK : COL.orange, 4, seg(ctx, w[0], w[1], w[2], w[3])));
-    PB.LANES.forEach((x, k) => {
-      ctx.strokeStyle = COL.yellow; ctx.lineWidth = 2; dot(ctx, x, 60, 9, false);
-      if (this.lanes[k]) { ctx.fillStyle = COL.yellow; dot(ctx, x, 60, 4.5, true); }
-    });
-    for (const tg of this.targets) if (tg.up) glow(ctx, COL.green, 4, seg(ctx, tg.x + 3, 380, tg.x + 27, 380));
     for (const p of this.bumpers) {
       glow(ctx, p.lit ? INK : p.c, 3, circ(ctx, p.x, p.y, p.lit ? p.r + 3 : p.r));
       ctx.strokeStyle = p.c; ctx.lineWidth = 2; ctx.globalAlpha = .5; dot(ctx, p.x, p.y, 9, false); ctx.globalAlpha = 1;
@@ -2075,7 +2098,7 @@ const bricks = {
     for (let r = 0; r < 6; r++) for (let c = 0; c < 10; c++) {
       if (has(r, c)) this.b.push({ x: this.L + c * 80 + 5, y: 140 + r * 34, w: 70, h: 24, r, hp: Math.random() < steel ? 2 : 1 });
     }
-    this.left = this.b.length; this.drops = [];
+    this.left = this.b.length; this.drops = []; this.rev = (this.rev || 0) + 1;
   },
   serve() { this.v = 430 + this.level * 45; this.vx = this.vy = 0; this.wait = 1; this.bx = this.px; this.by = this.PY - this.R; this.PW = this.PW0; this.wideT = 0; this.fireT = 0; },
   catchDrop(d) {
@@ -2118,6 +2141,7 @@ const bricks = {
         if (!k.hp) continue;
         const cx = clamp(this.bx, k.x, k.x + k.w), cy = clamp(this.by, k.y, k.y + k.h);
         if ((this.bx - cx) ** 2 + (this.by - cy) ** 2 >= R * R) continue;
+        this.rev++;
         // Bola de fogo atravessa e quebra até o aço; a normal quica.
         if (this.fireT > 0) k.hp = 1;
         else if (cy === this.by && cx !== this.bx) this.vx = -this.vx; else this.vy = -this.vy;
@@ -2142,17 +2166,20 @@ const bricks = {
     }
   },
   draw(ctx) {
-    panel(ctx, this.L - 12, this.T - 12, this.Rt - this.L + 24, GH - this.T + 40, 22);
-    ctx.lineJoin = 'round';
-    for (const k of this.b) {
-      if (!k.hp) continue;
-      const c = BRICK_COL[k.r];
-      rr(ctx, k.x + 2, k.y + 2, k.w - 4, k.h - 4, 6);
-      ctx.fillStyle = c; ctx.globalAlpha = .07; ctx.fill(); ctx.globalAlpha = 1;
-      ctx.strokeStyle = k.hp > 1 ? INK : c; ctx.lineWidth = 2; ctx.stroke();
-      // Aço (2 batidas): contorno branco com a cor da fileira por dentro; na primeira batida, fica só a cor.
-      if (k.hp > 1) { rr(ctx, k.x + 7, k.y + 7, k.w - 14, k.h - 14, 3); ctx.strokeStyle = c; ctx.stroke(); }
-    }
+    // Painel e tijolos ficam na camada; ela só é redesenhada quando um tijolo é batido.
+    layer('bricks' + this.rev, c => {
+      panel(c, this.L - 12, this.T - 12, this.Rt - this.L + 24, GH - this.T + 40, 22);
+      c.lineJoin = 'round'; c.lineWidth = 2;
+      for (const k of this.b) {
+        if (!k.hp) continue;
+        const col = BRICK_COL[k.r];
+        rr(c, k.x + 2, k.y + 2, k.w - 4, k.h - 4, 6);
+        c.fillStyle = col; c.globalAlpha = .07; c.fill(); c.globalAlpha = 1;
+        c.strokeStyle = k.hp > 1 ? INK : col; c.stroke();
+        // Aço (2 batidas): contorno branco com a cor da fileira por dentro; na primeira batida, fica só a cor.
+        if (k.hp > 1) { rr(c, k.x + 7, k.y + 7, k.w - 14, k.h - 14, 3); c.strokeStyle = col; c.stroke(); }
+      }
+    });
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '700 15px ' + FONT;
     for (const d of this.drops) {
       const k = DROPS[d.kind];
@@ -2216,7 +2243,7 @@ const snake = {
       (far && (Math.abs(f.x - hd.x) + Math.abs(f.y - hd.y) < 6 || f.y === hd.y))));
     return f;
   },
-  addRock() { if (this.rocks.length < 30) this.rocks.push(this.free(true)); },
+  addRock() { if (this.rocks.length < 30) { this.rocks.push(this.free(true)); this.rev = (this.rev || 0) + 1; } },
   press(d) {
     const v = DIRS[d], last = this.queue.length ? this.queue.at(-1) : this.dir;
     if ((v.x === -last.x && v.y === -last.y) || v === last) return;
@@ -2253,16 +2280,20 @@ const snake = {
   },
   draw(ctx) {
     const C = this.C, X = p => this.ox + p.x * C + C / 2, Y = p => this.oy + p.y * C + C / 2;
-    panel(ctx, this.ox - 10, this.oy - 10, this.cols * C + 20, this.rows * C + 20, 20);
-    // Grade de pontinhos, bem de leve.
-    ctx.fillStyle = 'rgba(255,255,255,.07)';
-    for (let y = 1; y < this.rows; y++) for (let x = 1; x < this.cols; x++) ctx.fillRect(this.ox + x * C - 1, this.oy + y * C - 1, 2, 2);
-    // Muros: contorno branco; pedras: contorno cinza, menores.
+    // Painel, grade, muros e pedras ficam na camada; ela só muda na troca de fase e a cada pedra nova.
+    layer('snake' + this.phase + ':' + this.rev, c => {
+      panel(c, this.ox - 10, this.oy - 10, this.cols * C + 20, this.rows * C + 20, 20);
+      // Grade de pontinhos, bem de leve.
+      c.fillStyle = 'rgba(255,255,255,.07)';
+      for (let y = 1; y < this.rows; y++) for (let x = 1; x < this.cols; x++) c.fillRect(this.ox + x * C - 1, this.oy + y * C - 1, 2, 2);
+      // Muros: contorno branco; pedras: contorno cinza, menores.
+      c.lineWidth = 2; c.lineJoin = 'round';
+      c.strokeStyle = 'rgba(255,255,255,.6)';
+      for (const r of this.walls) { rr(c, this.ox + r.x * C + 3, this.oy + r.y * C + 3, C - 6, C - 6, 5); c.stroke(); }
+      c.strokeStyle = '#9aa4b8';
+      for (const r of this.rocks) { rr(c, this.ox + r.x * C + 6, this.oy + r.y * C + 6, C - 12, C - 12, 6); c.stroke(); }
+    });
     ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-    ctx.strokeStyle = 'rgba(255,255,255,.6)';
-    for (const r of this.walls) { rr(ctx, this.ox + r.x * C + 3, this.oy + r.y * C + 3, C - 6, C - 6, 5); ctx.stroke(); }
-    ctx.strokeStyle = '#9aa4b8';
-    for (const r of this.rocks) { rr(ctx, this.ox + r.x * C + 6, this.oy + r.y * C + 6, C - 12, C - 12, 6); ctx.stroke(); }
     // Maçã: contorno vermelho com o cabinho verde; a dourada pisca no fim.
     glow(ctx, COL.red, 2.5, circ(ctx, X(this.f), Y(this.f), C * .3));
     ctx.strokeStyle = COL.green; ctx.lineWidth = 2.5; line(ctx, X(this.f), Y(this.f) - C * .3, X(this.f) + 5, Y(this.f) - C * .46);
@@ -2342,9 +2373,8 @@ function musicStop(reset) {
 
 function drawGame() {
   const ctx = gCtx;
-  ctx.fillStyle = '#060709'; ctx.fillRect(0, 0, GW, GH);
   ctx.lineCap = 'butt'; ctx.lineJoin = 'miter';
-  game.draw(ctx);
+  game.draw(ctx);   // cada jogo começa pela camada estática, que cobre a tela toda
   fx.draw(ctx);
   ctx.textBaseline = 'alphabetic';
   ctx.textAlign = 'left'; ctx.fillStyle = INK; ctx.font = '600 26px ' + FONT;
@@ -2403,7 +2433,7 @@ function openGame(g) {
   const cv = $('#gameCanvas');
   cv.width = GW; cv.height = GH;
   gCtx = cv.getContext('2d', { alpha: false });
-  game = g; gBest = loadBest(g.id); gScore = 0; gState = 'ready'; clearKeys();
+  game = g; gBest = loadBest(g.id); gScore = 0; gState = 'ready'; clearKeys(); dropLayer();
   g.reset(); fx.clear();
   $('#game').hidden = false;
   drawGame();
@@ -2412,7 +2442,8 @@ function closeGame() {
   stopLoop(); clearKeys(); musicStop(true);
   gState = 'off'; game = null; gCtx = null; fx.clear();
   const cv = $('#gameCanvas');
-  cv.width = 0; cv.height = 0;   // devolve o buffer do canvas
+  cv.width = 0; cv.height = 0;   // devolve o buffer do canvas (e o da camada)
+  dropLayer();
   $('#game').hidden = true;
 }
 function gameKey(e, down) {
