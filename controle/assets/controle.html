@@ -247,7 +247,7 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '1.0.0';
+const APP_VERSION = '1.0.1';
 const $ = id => document.getElementById(id);
 const O = window.Onix;
 const ES = /^es\b/i.test(navigator.language || '');
@@ -418,7 +418,7 @@ document.querySelectorAll('[data-k]').forEach(b => {
   b.addEventListener('click', e => e.preventDefault());
 });
 
-// --- modo deslizar: arrastar move (um passo a cada ~40 px), toque é OK ---
+// --- modo deslizar: cada deslizada é um comando só (na direção maior), toque é OK ---
 const setMode = m => {
   store.set('mode', m);
   $('mDpad').setAttribute('aria-pressed', String(m === 'dpad')); $('mPad').setAttribute('aria-pressed', String(m === 'pad'));
@@ -428,16 +428,16 @@ $('mDpad').onclick = () => setMode('dpad');
 $('mPad').onclick = () => setMode('pad');
 setMode(store.get('mode', 'dpad'));
 (() => {
-  const pad = $('pad'), STEP = 40;
+  const pad = $('pad'), STEP = 48;
   let st = null;
   pad.addEventListener('pointerdown', e => { pad.setPointerCapture(e.pointerId); st = { x: e.clientX, y: e.clientY, moved: false, t: Date.now() }; });
   pad.addEventListener('pointermove', e => {
-    if (!st || conn.s !== 'connected') return;
+    if (!st || st.moved || conn.s !== 'connected') return;
     const dx = e.clientX - st.x, dy = e.clientY - st.y;
     if (Math.max(Math.abs(dx), Math.abs(dy)) < STEP) return;
     const code = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 22 : 21) : (dy > 0 ? 20 : 19);
     tap(); O.key(code);
-    st.x = e.clientX; st.y = e.clientY; st.moved = true;
+    st.moved = true;   // o próximo comando só depois de soltar o dedo
   });
   pad.addEventListener('pointerup', e => {
     if (st && !st.moved && Date.now() - st.t < 600) {
@@ -466,8 +466,19 @@ SHORTCUTS.forEach(([name, link]) => {
   $('apps').append(b);
 });
 
-// --- teclado: o campo inteiro vai a cada mudança ---
-let field = { open: false, label: '' }, typing = 0, kbAuto = false;
+// --- teclado: letras novas vão como o texto do campo; letras apagadas, como a tecla Apagar (67),
+// porque a TV ignora um texto mais curto que o que já está no campo ---
+let field = { open: false, label: '' }, typing = 0, kbAuto = false, sent = '';
+function sync() {
+  const v = $('kbIn').value;
+  let same = 0;
+  while (same < v.length && same < sent.length && v[same] === sent[same]) same++;
+  const del = Math.min(sent.length - same, 200);
+  if (del > 0 && conn.s !== 'connected') { toast('TV desconectada'); return; }
+  for (let i = 0; i < del; i++) O.key(67);
+  if (v.length > same && !O.text(v)) { toast('Abra um campo de texto na TV primeiro'); return; }
+  sent = v;
+}
 function openKb(auto) {
   kbAuto = auto;
   $('kbLbl').textContent = field.open && field.label ? field.label : t('Digitar na TV');
@@ -480,11 +491,11 @@ $('kbBtn').onclick = () => openKb(false);
 $('kb').addEventListener('click', e => { if (e.target === $('kb')) closeKb(); });
 $('kbIn').addEventListener('input', () => {
   clearTimeout(typing);
-  typing = setTimeout(() => { if (!O.text($('kbIn').value)) toast('Abra um campo de texto na TV primeiro'); }, 90);
+  typing = setTimeout(sync, 90);
 });
 $('kbIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); O.key(66); } });
 $('kbEnter').onclick = () => { tap(); O.key(66); };
-$('kbClear').onclick = () => { $('kbIn').value = ''; O.text(''); };
+$('kbClear').onclick = () => { clearTimeout(typing); $('kbIn').value = ''; sync(); };
 
 // --- configurações ---
 const sw = (el, on) => el.setAttribute('aria-checked', String(on));
@@ -525,7 +536,8 @@ window.onixEvent = (type, d) => {
   else if (type === 'field') {
     const was = field.open;
     field = d;
-    if (d.open && !was && view === 'remote') { $('kbIn').value = d.value || ''; openKb(true); }
+    if (d.open && !was) sent = d.value || '';
+    if (d.open && !was && view === 'remote') { $('kbIn').value = sent; openKb(true); }
     else if (!d.open && was && kbAuto) closeKb();
     else if (!$('kb').hidden) $('kbLbl').textContent = (d.open && d.label) || t('Digitar na TV');
   }
