@@ -10,9 +10,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aurora.launcher"
     android:versionCode="13"
-    android:versionName="13.7.2 beta">
+    android:versionName="13.7.3 beta">
 
-    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="33" />
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
@@ -20,6 +20,8 @@
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <!-- Atualizações pelo próprio Onix (o Android sempre pede confirmação na tela). -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Botão "Limpar memória": fecha os apps parados em segundo plano (nunca o próprio Onix). -->
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
 
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />

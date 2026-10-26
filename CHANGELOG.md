@@ -2,6 +2,12 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.7.3 beta (outubro de 2026)
+
+- Botão **Limpar memória** ao lado de **Atualizar**: fecha os apps parados em segundo plano com `killBackgroundProcesses` (nunca o próprio Onix nem o teclado; o Android também não fecha o que está tocando) e mostra quanto liberou. No Android 14 ou mais novo, o sistema só deixa cada app fechar a si mesmo, então lá o botão só mostra a memória livre.
+- **Android novo:** em aparelhos com Android recente, o Play Protect bloqueava a instalação dizendo que o app "foi criado para uma versão mais antiga do Android". O Onix agora declara o Android 15 (`targetSdkVersion` 35); antes declarava o 13 (33), e o Play Protect avisa quando a diferença para o Android do aparelho passa de 2 versões.
+- README: o que fazer quando o Play Protect avisar que o app é desconhecido.
+
 ## 13.7.2 beta (outubro de 2026)
 
 - **TV boxes com navegador interno antigo:** os ícones dos apps não apareciam e a tela ficava grande demais, cortada na direita. O Onix agora também funciona com o Android System WebView antigo (testado simulando o Chrome 70): sem `aspect-ratio`, `clamp()`, `max()` com `env()` nem `gap` no flexbox, ele usa equivalentes.

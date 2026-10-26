@@ -584,6 +584,19 @@ public class AndroidBridge {
         return true;
     }
 
+    /** Botão "Limpar memória": fecha os apps parados em segundo plano; a página recebe Launcher.onMemoryCleared no fim. */
+    @JavascriptInterface
+    public boolean clearMemory() {
+        if (!trusted || !(activity instanceof MainActivity)) return false;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ((MainActivity) activity).clearMemory();
+            }
+        });
+        return true;
+    }
+
     /**
      * Põe a TV em standby. "ok" = desligando; "ask" = abriu o pedido de permissão de administrador
      * (só na primeira vez); "fail" = a TV não deixou.

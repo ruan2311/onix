@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.2%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.3%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -77,6 +77,7 @@ O histórico completo está no [CHANGELOG.md](CHANGELOG.md) e na [página de Rel
   - Prefere escolher? Em **Configurações → Indicações**, desligue **Pelo que você assiste** e marque os serviços que quiser (pelo menos um).
   - Cada indicação tem o selo do serviço, e **Assistir no…** abre o título direto no app.
 - **Botão Atualizar**: baixa notícias, indicações e a lista de apps na hora, sem esperar o próximo ciclo automático.
+- **Botão Limpar memória**: fecha os apps parados em segundo plano (nunca o próprio Onix) e mostra quanto liberou. No Android 14 ou mais novo, o sistema não deixa um app fechar outros, e o botão só mostra a memória livre.
 
 ### Apps
 - Grade com todos os apps instalados, com o banner oficial de TV de cada um quando existir.
@@ -167,6 +168,8 @@ O conteúdo é o mesmo; muda só se ele pode virar a tela inicial.
 5. O download começa sozinho. Se a TV avisar que o Downloader não pode instalar apps, clique em **Configurações**, ligue a chave do **Downloader** e aperte **Voltar** no controle.
 6. Na tela do Android, clique em **Instalar** (se o Onix já estiver na TV, o botão se chama **Atualizar**).
 7. Apareceu **"App instalado"**? Clique em **Abrir**. Pronto! O Onix também fica na sua lista de apps.
+
+> Se o **Play Protect** avisar que o app é desconhecido ou arriscado, clique em **Mais detalhes → Instalar mesmo assim**. O aviso aparece porque o Onix não vem da Play Store; o código é aberto e está todo aqui no GitHub.
 
 > Se o Downloader perguntar depois se quer apagar o arquivo baixado, pode apagar: ele não é mais necessário.
 

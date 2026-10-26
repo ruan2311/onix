@@ -1,10 +1,13 @@
 package com.onix.launcher;
 
 import android.app.Activity;
+import android.app.ActivityManager;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
@@ -16,6 +19,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.Settings;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -30,6 +34,8 @@ import java.io.ByteArrayInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 public class MainActivity extends Activity {
 
@@ -207,6 +213,62 @@ public class MainActivity extends Activity {
                 if (webView != null) webView.evaluateJavascript("window.Launcher&&Launcher.onAppsChanged()", null);
             }
         });
+    }
+
+    /**
+     * Botão "Limpar memória": pede ao Android para fechar os apps da grade que estão parados em
+     * segundo plano. Nunca o próprio Onix (ele é quem está na tela) nem o teclado; apps tocando
+     * música ou com tarefa ativa o Android não fecha. No Android 14 ou mais novo o sistema só deixa
+     * cada app fechar a si mesmo, então lá nada muda. No fim avisa a página:
+     * Launcher.onMemoryCleared(MB liberados, MB livres, MB no total, limitado pelo Android).
+     */
+    void clearMemory() {
+        final ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        if (am == null) return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                ActivityManager.MemoryInfo before = new ActivityManager.MemoryInfo();
+                am.getMemoryInfo(before);
+                final boolean limited = Build.VERSION.SDK_INT >= 34;
+                if (!limited) {
+                    for (String pkg : backgroundCandidates()) {
+                        try { am.killBackgroundProcesses(pkg); } catch (Exception ignored) { }
+                    }
+                }
+                // O Android leva um instante para devolver a memória dos processos fechados.
+                try { Thread.sleep(1500); } catch (InterruptedException ignored) { }
+                ActivityManager.MemoryInfo after = new ActivityManager.MemoryInfo();
+                am.getMemoryInfo(after);
+                final long mb = 1024 * 1024;
+                final String js = "window.Launcher&&Launcher.onMemoryCleared&&Launcher.onMemoryCleared("
+                        + Math.max(0, (after.availMem - before.availMem) / mb) + "," + after.availMem / mb + ","
+                        + after.totalMem / mb + "," + limited + ")";
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (webView != null) webView.evaluateJavascript(js, null);
+                    }
+                });
+            }
+        }, "onix-memory").start();
+    }
+
+    /** Apps da grade (Leanback e celular), tirando o próprio Onix e o teclado em uso. */
+    private Set<String> backgroundCandidates() {
+        Set<String> out = new HashSet<String>();
+        PackageManager pm = getPackageManager();
+        for (String category : new String[] { "android.intent.category.LEANBACK_LAUNCHER", Intent.CATEGORY_LAUNCHER }) {
+            try {
+                for (ResolveInfo ri : pm.queryIntentActivities(new Intent(Intent.ACTION_MAIN).addCategory(category), 0)) {
+                    if (ri.activityInfo != null && ri.activityInfo.packageName != null) out.add(ri.activityInfo.packageName);
+                }
+            } catch (Exception ignored) { }
+        }
+        out.remove(getPackageName());
+        String ime = Settings.Secure.getString(getContentResolver(), Settings.Secure.DEFAULT_INPUT_METHOD);
+        if (ime != null && ime.indexOf('/') > 0) out.remove(ime.substring(0, ime.indexOf('/')));
+        return out;
     }
 
     /** Bloqueia qualquer navegação ou requisição que não seja a página empacotada. */

@@ -99,8 +99,8 @@ svg{display:block}
 /* "Configurações da TV" fica ao lado do "Atualizar" (atalho para Rede, imagem, som…). */
 .top-actions{display:flex;gap:.6rem}
 .top-actions[hidden]{display:none}
-#refreshBtn,#tvSettingsBtn{padding:.55rem 1.1rem;font-size:.9rem}
-#refreshBtn.busy svg{animation:spin 1s linear infinite}
+#refreshBtn,#ramBtn,#tvSettingsBtn{padding:.55rem 1.1rem;font-size:.9rem}
+#refreshBtn.busy svg,#ramBtn.busy svg{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 .chip{display:flex;align-items:center;gap:.45rem;padding:.45rem .85rem;border-radius:2rem;font-size:.82rem;color:var(--muted)}
 .chip svg{width:1rem;height:1rem}
@@ -452,6 +452,7 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
     <div class="top-right">
     <div class="top-actions">
     <button class="f btn" id="refreshBtn" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span>Atualizar</span></button>
+    <button class="f btn" id="ramBtn" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="6" width="12" height="12" rx="2"/><path d="M10 10h4v4h-4zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4"/></svg><span>Limpar memória</span></button>
     <button class="f btn" id="tvSettingsBtn" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="M9.5 9.5h5M9.5 12.5h3"/></svg><span>Configurações da TV</span></button>
     </div>
     <div class="chips">
@@ -676,7 +677,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.7.2 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '13.7.3 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -822,6 +823,10 @@ const Bridge = (() => {
     openSettings() {
       if (!native || typeof b.openSettings !== 'function') return false;
       try { return b.openSettings() === true; } catch (e) { console.warn('openSettings falhou', e); return false; }
+    },
+    clearMemory() {
+      if (!has('clearMemory')) return false;
+      try { return b.clearMemory() === true; } catch (e) { console.warn('clearMemory falhou', e); return false; }
     },
     refreshAll() {
       if (!native || typeof b.refreshAll !== 'function') return false;
@@ -2470,6 +2475,10 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '13.7.3 beta', date: 'outubro de 2026', items: [
+    ['new', 'Botão *Limpar memória*, ao lado de Atualizar: fecha os apps parados em segundo plano (nunca o próprio Onix nem o que está tocando) e mostra quanto liberou. No Android 14 ou mais novo, o sistema não deixa um app fechar outros, e o botão só mostra a memória livre.'],
+    ['bug', '*Android novo:* em TVs e TV boxes com Android recente, o Play Protect bloqueava a instalação dizendo que o app foi feito para uma versão antiga do Android. O Onix agora segue as regras do Android 15.'],
+  ] },
   { version: '13.7.2 beta', date: 'outubro de 2026', items: [
     ['bug', '*TV boxes com navegador interno antigo:* os ícones dos apps não apareciam e a tela ficava grande demais, cortada na direita. Agora o Onix se ajusta também ao Android System WebView antigo.'],
     ['new', 'O cartão *Sobre*, no fim das Configurações, mostra a versão do navegador interno da TV. Se algo aparecer estranho, mande essa informação junto.'],
@@ -3326,6 +3335,27 @@ function onRefreshed(newsOk, picksOk) {
   if (picksOk) refreshPicks();
   toast(newsOk || picksOk ? 'Tudo atualizado' : 'Sem conexão com os sites: mantive o que já estava salvo');
 }
+// Botão "Limpar memória": o Android fecha os apps parados em segundo plano (nunca o Onix) e conta o que voltou.
+let clearing = 0;
+function clearMemory() {
+  if (clearing) { toast('Já estou limpando…'); return; }
+  if (!Bridge.native) { toast('Fecharia os apps parados em segundo plano (simulação no navegador)'); return; }
+  if (!Bridge.clearMemory()) { toast('Não foi possível limpar a memória agora'); return; }
+  $('#ramBtn').classList.add('busy');
+  $('#ramBtn span').textContent = 'Limpando…';
+  clearing = setTimeout(() => onMemoryCleared(-1), 15000);
+}
+function onMemoryCleared(freed, free, total, limited) {
+  if (!clearing) return;
+  clearTimeout(clearing); clearing = 0;
+  $('#ramBtn').classList.remove('busy');
+  $('#ramBtn span').textContent = 'Limpar memória';
+  if (!(freed >= 0)) { toast('A TV não respondeu. Tente de novo.'); return; }
+  const gb = mb => (mb / 1024).toFixed(1).replace('.', ',') + ' GB';
+  const livre = free > 0 && total > 0 ? ' · livre: ' + gb(free) + ' de ' + gb(total) : '';
+  if (limited) toast('Este Android não deixa fechar outros apps: ele mesmo libera a memória quando precisa' + livre);
+  else toast((freed >= 10 ? 'Memória liberada: ' + freed + ' MB' : 'A memória já estava livre') + livre);
+}
 // Samsung: as portas HDMI chegam depois de a página abrir (a consulta ao Tizen é assíncrona).
 function refreshInputs() {
   loadInputs();
@@ -3348,7 +3378,7 @@ function resync() {
 }
 // Gancho para o lado nativo chamar via evaluateJavascript.
 Object.defineProperty(window, 'Launcher', {
-  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync() }),
+  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync() }),
   writable: false, configurable: false,
 });
 
@@ -3378,6 +3408,7 @@ function init() {
   $('#pictureBtn')._act = openPictureSettings;
   $('#powerBtn')._act = powerOff;
   $('#refreshBtn')._act = refreshAll;
+  $('#ramBtn')._act = clearMemory;
   $('#tvSettingsBtn')._act = openSettings;
   $('#editDone')._act = closeEditor;
   $('#editReset')._act = resetHome;
@@ -3386,6 +3417,8 @@ function init() {
   if (Bridge.native && !Bridge.has('powerOff')) $('#powerBtn').remove();
   // Sem openSettings na ponte (Samsung), o atalho some: lá ele não teria o que abrir.
   if (Bridge.native && !Bridge.has('openSettings')) $('#tvSettingsBtn').remove();
+  // Samsung e LG não deixam um app fechar outros: o botão de memória só existe no Android.
+  if (Bridge.native && !Bridge.has('clearMemory')) $('#ramBtn').remove();
   if (Bridge.native && !Bridge.has('openPictureSettings') && !Bridge.has('openSettings')) $('#pictureBtn').remove();
   renderGames();
   loadNews();
