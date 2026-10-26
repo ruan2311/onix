@@ -247,7 +247,7 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '1.0.1';
+const APP_VERSION = '1.0.2';
 const $ = id => document.getElementById(id);
 const O = window.Onix;
 const ES = /^es\b/i.test(navigator.language || '');
@@ -466,8 +466,8 @@ SHORTCUTS.forEach(([name, link]) => {
   $('apps').append(b);
 });
 
-// --- teclado: letras novas vão como o texto do campo; letras apagadas, como a tecla Apagar (67),
-// porque a TV ignora um texto mais curto que o que já está no campo ---
+// --- teclado: a TV insere no cursor o texto que recebe (não troca o campo). Por isso vão só as
+// letras novas; as apagadas vão como a tecla Apagar (67), a partir do ponto em que o texto mudou ---
 let field = { open: false, label: '' }, typing = 0, kbAuto = false, sent = '';
 function sync() {
   const v = $('kbIn').value;
@@ -475,8 +475,9 @@ function sync() {
   while (same < v.length && same < sent.length && v[same] === sent[same]) same++;
   const del = Math.min(sent.length - same, 200);
   if (del > 0 && conn.s !== 'connected') { toast('TV desconectada'); return; }
+  if (v.length > same && !O.text('')) { toast('Abra um campo de texto na TV primeiro'); return; }
   for (let i = 0; i < del; i++) O.key(67);
-  if (v.length > same && !O.text(v)) { toast('Abra um campo de texto na TV primeiro'); return; }
+  if (v.length > same) O.text(v.slice(same));
   sent = v;
 }
 function openKb(auto) {

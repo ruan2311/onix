@@ -98,12 +98,14 @@ final class Tv {
     }
 
     /**
-     * Texto do campo aberto na TV: o campo inteiro passa a ser este texto. Usa o número do campo
-     * que a TV mandou ao abrir o teclado (com o da edição, ela ignora o texto).
+     * Insere texto no cursor do campo aberto na TV (ela não troca o campo inteiro: "ab" e depois
+     * "abc" viram "ababc"). Usa o número do campo que a TV mandou por último. Texto vazio só
+     * responde se há um campo aberto. Testado numa Philips Google TV.
      */
     boolean text(String value) {
         Conn c = conn;
         if (c == null || c.fieldCounter < 0) return false;
+        if (value.isEmpty()) return true;
         int end = Math.max(value.length() - 1, 0);
         Proto obj = new Proto().num(1, end).num(2, end).str(3, value);
         send(new Proto().msg(21, new Proto().num(1, c.imeCounter).num(2, c.fieldCounter)
@@ -177,7 +179,11 @@ final class Tv {
                 OutputStream o = s.getOutputStream();
                 Proto enc = new Proto().num(1, 3).num(2, 6);   // hexadecimal, 6 símbolos
 
-                Proto.write(o, head().msg(10, new Proto().str(1, "com.onix.controle").str(2, "Onix Controle")).build());
+                // Nome próprio de cada celular: a TV parece guardar um pareamento por nome, e dois
+                // celulares com o mesmo nome derrubariam um ao outro.
+                String id = Cert.fingerprint(Cert.get(ctx).cert).substring(0, 8);
+                Proto.write(o, head().msg(10, new Proto().str(1, "com.onix.controle." + id)
+                        .str(2, "Onix Controle (" + android.os.Build.MODEL + ")")).build());
                 check(Proto.parse(Proto.read(in)));
                 Proto.write(o, head().msg(20, new Proto().msg(1, enc).num(3, 1)).build());
                 check(Proto.parse(Proto.read(in)));
