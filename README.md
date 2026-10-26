@@ -23,7 +23,7 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 ## Sumário
 
 - [🇪🇸 En español](#-en-español)
-- [Novidades da 13.6.0](#novidades-da-1360)
+- [Novidades da 14.0.0](#novidades-da-1400)
 - [Recursos](#recursos)
 - [Capturas de tela](#capturas-de-tela)
 - [Instalação: qual é a sua TV?](#instalação)
@@ -61,12 +61,20 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 ---
 
-## Novidades da 13.6.0
+## Novidades da 14.0.0
 
-- **Atualizações pelo próprio Onix.** Ele procura versões novas no GitHub, avisa na tela, baixa sozinho e abre a confirmação de instalação. Veja [Atualizações automáticas](#atualizações-automáticas).
-- **Escolha suas indicações.** Em **Configurações → Indicações**, desligue *Pelo que você assiste* e marque você mesmo Netflix, Disney+, HBO Max ou Globoplay.
-- **Seu aparelho no topo.** O chip mostra o que está rodando o Onix: *Google TV · Philips*, *Android TV*, *Fire TV*, *Celular Android*…
-- **"Conectado" de verdade.** O Onix testa a internet a cada 30 segundos e mostra **Sem internet** quando o Wi-Fi está ligado mas a internet caiu.
+> 🚧 **Em produção.** A 14.0.0 ainda não saiu: a versão atual é a 13.7.6. Quando ela for lançada, o Onix avisa e se atualiza sozinho.
+
+- **Perfis.** Uma tela *Quem está assistindo?* com um avatar para cada pessoa da casa. Cada perfil tem os seus apps, recentes, indicações, recordes dos jogos e idioma. Com um perfil só, o Onix entra direto, sem perguntar nada. Quem já usa o Onix vira o primeiro perfil, sem perder nada.
+- **Foto de perfil pelo celular.** Escolha uma foto da galeria do celular, recorte e mande para a TV pelo QR code. A foto fica só na TV.
+- **Boas-vindas.** Na primeira vez, o Onix ajuda a escolher o idioma, criar o seu perfil e acertar algumas preferências. Tudo dá para pular e mudar depois.
+- **Modo Infantil.** Um perfil para crianças que mostra só os apps liberados, com PIN para sair e limite de tempo por dia.
+- **Controle pelo celular.** Leia o QR code da TV e o celular vira controle e teclado, sem instalar nada: setas e OK, busca digitando com o teclado do próprio celular e "Seus apps" organizados na tela do celular. Funciona com o Onix na tela, no Android TV e no Google TV.
+- **Clima na tela inicial (opcional).** A temperatura ao lado do relógio e, com OK, a previsão das próximas horas e dos próximos 5 dias (dados do Open-Meteo). O Onix não detecta onde você está: só usa a cidade que você escolher nas Configurações.
+
+Na 13.7.5: os jogos ganharam o visual do Onix e fases. Na 13.7.4: o Onix passou a falar **espanhol**.
+
+Na 13.6.0: atualizações pelo próprio Onix, escolha dos serviços das indicações, o aparelho no chip do topo e o "Conectado" que testa a internet de verdade.
 
 Na 13.7.0: versão para **TVs LG (webOS)**, em beta e ainda sem teste numa LG de verdade. Veja [TVs LG (webOS)](#tvs-lg-webos).
 
