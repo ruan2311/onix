@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.6%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-14.0.0%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -62,8 +62,6 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 ---
 
 ## Novidades da 14.0.0
-
-> 🚧 **Em produção.** A 14.0.0 ainda não saiu: a versão atual é a 13.7.6. Quando ela for lançada, o Onix avisa e se atualiza sozinho.
 
 - **Perfis.** Uma tela *Quem está assistindo?* com um avatar para cada pessoa da casa. Cada perfil tem os seus apps, recentes, indicações, recordes dos jogos e idioma. Com um perfil só, o Onix entra direto, sem perguntar nada. Quem já usa o Onix vira o primeiro perfil, sem perder nada.
 - **Foto de perfil pelo celular.** Escolha uma foto da galeria do celular, recorte e mande para a TV pelo QR code. A foto fica só na TV.

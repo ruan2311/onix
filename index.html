@@ -987,7 +987,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.7.6 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '14.0.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1463,7 +1463,13 @@ const ES = Object.freeze({
   "{0} celulares conectados. Cada um precisa ler o QR code de novo para voltar.": "{0} celulares conectados. Cada uno debe leer el código QR otra vez para volver.",
   "Aponte a câmera do celular": "Apunta la cámara del celular",
   "QR code na tela de descanso": "Código QR en el salvapantallas",
-  "Quando nenhum celular está conectado, a tela de descanso mostra o QR code, em tom escuro, para conectar sem usar o controle da TV.": "Cuando no hay ningún celular conectado, el salvapantallas muestra el código QR, en tono oscuro, para conectar sin usar el control de la TV."
+  "Quando nenhum celular está conectado, a tela de descanso mostra o QR code, em tom escuro, para conectar sem usar o controle da TV.": "Cuando no hay ningún celular conectado, el salvapantallas muestra el código QR, en tono oscuro, para conectar sin usar el control de la TV.",
+  "*Perfis:* a tela *Quem está assistindo?* tem um avatar para cada pessoa da casa. Cada perfil tem os seus apps, recentes, recordes dos jogos, idioma, indicações e cidade do clima. Com um perfil só, o Onix entra direto. Você já é o primeiro perfil, com tudo como estava.": "*Perfiles:* la pantalla *¿Quién está viendo?* tiene un avatar para cada persona de la casa. Cada perfil tiene sus apps, recientes, récords de los juegos, idioma, recomendaciones y ciudad del clima. Con un solo perfil, Onix entra directo. Tú ya eres el primer perfil, con todo como estaba.",
+  "*Modo Infantil:* um perfil para crianças, só com os apps liberados, PIN para sair e limite de tempo por dia. Crie em Configurações → Gerenciar perfis.": "*Modo Infantil:* un perfil para niños, solo con las apps permitidas, PIN para salir y límite de tiempo por día. Créalo en Configuración → Administrar perfiles.",
+  "*Controle pelo celular:* aponte a câmera do celular para o QR code (botão *Celular*, no menu, ou na tela de descanso) e ele vira controle e teclado, sem instalar nada. Também organiza \"Seus apps\" e manda a foto do perfil.": "*Control desde el celular:* apunta la cámara del celular al código QR (botón *Celular*, en el menú, o en el salvapantallas) y se vuelve control y teclado, sin instalar nada. También ordena \"Tus apps\" y envía la foto del perfil.",
+  "*Clima na tela inicial (opcional):* a temperatura ao lado do relógio e, com OK, a previsão das próximas horas e dos próximos dias. O Onix não detecta onde você está: ligue e escolha a cidade em Configurações → Clima.": "*Clima en la pantalla de inicio (opcional):* la temperatura junto al reloj y, con OK, el pronóstico de las próximas horas y los próximos días. Onix no detecta dónde estás: actívalo y elige la ciudad en Configuración → Clima.",
+  "*Boas-vindas:* quem instala o Onix pela primeira vez escolhe o idioma, cria o perfil e acerta as preferências.": "*Bienvenida:* quien instala Onix por primera vez elige el idioma, crea su perfil y ajusta las preferencias.",
+  "No gatinho do cartão *Sobre*, os corações passam por trás dele e as orelhas e o rabo não se soltam mais ao mexer.": "En el gatito de la tarjeta *Acerca de*, los corazones pasan por detrás y las orejas y la cola ya no se sueltan al moverse."
   });
 let LANG = 'pt';
 function resolveLang() {
@@ -3513,6 +3519,14 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '14.0.0 beta', date: 'outubro de 2026', items: [
+    ['new', '*Perfis:* a tela *Quem está assistindo?* tem um avatar para cada pessoa da casa. Cada perfil tem os seus apps, recentes, recordes dos jogos, idioma, indicações e cidade do clima. Com um perfil só, o Onix entra direto. Você já é o primeiro perfil, com tudo como estava.'],
+    ['new', '*Modo Infantil:* um perfil para crianças, só com os apps liberados, PIN para sair e limite de tempo por dia. Crie em Configurações → Gerenciar perfis.'],
+    ['new', '*Controle pelo celular:* aponte a câmera do celular para o QR code (botão *Celular*, no menu, ou na tela de descanso) e ele vira controle e teclado, sem instalar nada. Também organiza "Seus apps" e manda a foto do perfil.'],
+    ['new', '*Clima na tela inicial (opcional):* a temperatura ao lado do relógio e, com OK, a previsão das próximas horas e dos próximos dias. O Onix não detecta onde você está: ligue e escolha a cidade em Configurações → Clima.'],
+    ['new', '*Boas-vindas:* quem instala o Onix pela primeira vez escolhe o idioma, cria o perfil e acerta as preferências.'],
+    ['bug', 'No gatinho do cartão *Sobre*, os corações passam por trás dele e as orelhas e o rabo não se soltam mais ao mexer.'],
+  ] },
   { version: '13.7.5 beta', date: 'outubro de 2026', items: [
     ['new', '*Jogos de cara nova:* Pong, Pinball, Tijolos e Cobrinha agora seguem o visual do Onix, com traços coloridos sobre o vidro escuro. Nos Tijolos, cada fileira é só um contorno na sua cor, e os de aço têm um contorno branco a mais.'],
     ['new', '*Fases em todos os jogos:* o Pong tem 5 fases contra uma máquina cada vez mais rápida, o Pinball 5 metas (cada uma dá uma bola extra), os Tijolos 8 fases com desenhos diferentes e a Cobrinha 5 fases com muros novos.'],

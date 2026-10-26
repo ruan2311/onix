@@ -2,6 +2,17 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 14.0.0 beta (outubro de 2026)
+
+- **Perfis:** a tela **Quem está assistindo?** tem um avatar para cada pessoa da casa (oito desenhos espaciais ou uma foto mandada pelo celular). Cada perfil tem os seus apps, recentes, recordes dos jogos, idioma, indicações e cidade do clima. Com um perfil só, o Onix entra direto, sem perguntar. Quem atualiza vira o primeiro perfil (**Meu perfil**, dá para trocar o nome) sem perder nada. Trocar de perfil fica no topo do menu e em **Configurações → Perfil**.
+- **Modo Infantil:** um perfil para crianças mostra só os apps liberados, sem destaque, indicações, Apps, Entradas, Configurações e Desligar TV. Sair pede um PIN de 4 números, e dá para pôr um limite por dia (30 min a 3 horas); quando o tempo acaba, a tela avisa e só o PIN troca de perfil.
+- **Controle pelo celular (Android TV e Google TV):** o celular vira controle (setas, OK, Voltar e Início), teclado (o do próprio celular, com as setas para escolher o app encontrado) e organizador de **Seus apps**, sem instalar nada. Para conectar sem usar o controle da TV, aponte a câmera para o QR code do botão **Celular**, no menu, ou da tela de descanso, que mostra o QR (em tom escuro) quando nenhum celular está conectado. Depois da primeira vez, o celular conecta sozinho; dá para salvar o controle na tela inicial dele. Funciona com o Onix na tela e no mesmo Wi-Fi.
+- **Foto de perfil pelo celular:** escolha da galeria ou tire na hora, recorte no celular e ela vai para a TV, onde fica.
+- **Clima na tela inicial (opcional):** a temperatura ao lado do relógio e, com OK, a previsão das próximas horas e dos próximos 5 dias, do Open-Meteo. O Onix não detecta onde você está: você liga e escolhe a cidade em **Configurações → Clima**, numa lista com estado e país.
+- **Boas-vindas:** na primeira vez, o Onix ajuda a escolher o idioma, criar o perfil e acertar as indicações, o relógio e o clima. Tudo dá para pular, menos o nome.
+- **Teclado na tela** para o nome do perfil e a cidade, que também aceita o texto digitado no celular.
+- Gatinho do cartão **Sobre**: os corações passam por trás dele, e as orelhas e o rabo não se soltam mais ao mexer.
+
 ## 13.7.5 beta (outubro de 2026)
 
 - **Jogos de cara nova:** Pong, Pinball, Tijolos e Cobrinha agora seguem o visual do Onix: painel de vidro, traços coloridos com brilho leve e nada de blocos chapados. Nos Tijolos, cada fileira é só um contorno na sua cor; os de aço têm um contorno branco a mais, que some na primeira batida. O aviso de começo, pausa e fim virou um cartão de vidro.
