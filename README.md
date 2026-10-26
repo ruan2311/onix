@@ -423,7 +423,7 @@ Na Google TV, a TV **não pergunta** qual tela inicial usar: o **Home** sempre v
 
 **Pelo celular (Android), com o app Bugjaeger:**
 
-1. Na TV, ative as **Opções do desenvolvedor**: em **Configurações → Sistema → Sobre**, clique 7 vezes em **Build do sistema operacional** (aparece "Você é um desenvolvedor").
+1. Na TV, ative as **Opções do desenvolvedor**: em **Configurações → Sistema → Sobre**, clique 7 vezes em **Build do SO do Android TV** (em versões mais antigas, **Build do sistema operacional**; aparece "Você é um desenvolvedor").
 2. Em **Configurações → Sistema → Opções do desenvolvedor**, ligue **Depuração USB** (e, se existir, **Depuração sem fio** ou **ADB pela rede**).
 3. Descubra o IP da TV em **Configurações → Rede e Internet →** sua rede (algo como `192.168.0.40`).
 4. No celular, instale o **Bugjaeger Mobile ADB** pela Play Store. Celular e TV no **mesmo Wi-Fi**.
@@ -435,7 +435,7 @@ Na Google TV, a TV **não pergunta** qual tela inicial usar: o **Home** sempre v
    pm disable-user --user 0 com.google.android.tungsten.setupwraith
    ```
 
-7. Aperte **Home** no controle: o Onix assume como tela inicial. Se a TV perguntar qual usar, escolha **Onix Launcher → Sempre**.
+7. Aperte **Home** no controle: o Onix abre direto, **sem perguntar nada**, porque passa a ser a única tela inicial da TV. Só se você tiver outro launcher instalado (como o Projectivy) a TV pergunta qual usar: escolha **Onix Launcher → Sempre**.
 
 <details>
 <summary><b>Pelo computador, com adb</b></summary>
