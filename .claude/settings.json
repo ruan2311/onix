@@ -1,0 +1,17 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "git -C \"$CLAUDE_PROJECT_DIR\" pull --ff-only 2>&1 | tail -3 || true",
+            "timeout": 60,
+            "statusMessage": "git pull: baixando mudanças do GitHub..."
+          }
+        ]
+      }
+    ]
+  }
+}
