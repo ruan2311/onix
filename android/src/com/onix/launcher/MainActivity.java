@@ -254,6 +254,16 @@ public class MainActivity extends Activity {
         }, "onix-memory").start();
     }
 
+    /** Roda um aviso na página (de qualquer thread). */
+    void js(final String code) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (webView != null) webView.evaluateJavascript(code, null);
+            }
+        });
+    }
+
     /** Apps da grade (Leanback e celular), tirando o próprio Onix e o teclado em uso. */
     private Set<String> backgroundCandidates() {
         Set<String> out = new HashSet<String>();

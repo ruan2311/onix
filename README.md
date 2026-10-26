@@ -521,13 +521,14 @@ Pelo computador, é o mesmo com `adb shell` na frente (ex.: `adb shell pm enable
 
 - **Sem rastreamento, sem anúncios, sem conta.** O Onix não envia nenhum dado sobre você ou sobre o que você assiste.
 - A contagem de aberturas dos apps de streaming (para as indicações) também fica **só na TV**: o Onix guarda apenas quantas vezes cada serviço foi aberto e quando foi a última vez.
-- As preferências (apps favoritos, banners, recordes, configurações) ficam **só na TV**.
+- As preferências (apps favoritos, banners, recordes, configurações) e os perfis (nomes, fotos, PIN do Modo Infantil) ficam **só na TV**.
 - A interface roda num WebView **totalmente offline**: o HTML vem empacotado no APK, com uma Content-Security-Policy que bloqueia qualquer acesso à rede. Os downloads são feitos pelo Java, apenas por HTTPS e apenas destes serviços:
   - `apis.justwatch.com` e `images.justwatch.com`: indicações da Netflix, do Disney+, da HBO Max e do Globoplay
   - `itunes.apple.com`: filmes mais vistos
   - `adrenaline.com.br` e `eurogamer.pt`: notícias de games
   - `api.github.com`, `github.com` e `release-assets.githubusercontent.com`: procurar e baixar versões novas do Onix
   - `connectivitycheck.gstatic.com`: teste de internet do chip **Conectado** (uma resposta vazia, a mesma que o Android usa)
+  - `api.open-meteo.com` e `geocoding-api.open-meteo.com`: clima da tela inicial, só se você ligar, e a busca da cidade que você digitar (o Onix não pede a sua localização)
 - Tudo o que vem da página para o código nativo é validado (nomes de pacote, IDs de entrada, títulos da lista atual).
 
 ---

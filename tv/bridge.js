@@ -743,6 +743,24 @@ window.AndroidBridge = Object.freeze(Object.assign({
     openServiceLink(app.package, pick.link);
     return 'app';
   },
+  // Clima (Open-Meteo): porte de Weather.java. A resposta vai como veio; a página valida os números.
+  getWeather(lat, lon) {
+    const la = Number(lat), lo = Number(lon);
+    if (!(Math.abs(la) <= 90 && Math.abs(lo) <= 180)) return false;
+    getText('https://api.open-meteo.com/v1/forecast?latitude=' + la.toFixed(4) + '&longitude=' + lo.toFixed(4)
+      + '&current=temperature_2m,relative_humidity_2m,weather_code,wind_speed_10m,is_day&hourly=temperature_2m,weather_code,is_day'
+      + '&daily=weather_code,temperature_2m_max,temperature_2m_min,precipitation_probability_max&timezone=auto&forecast_days=6', 256 * 1024)
+      .then(body => call('onWeather', body), () => {});
+    return true;
+  },
+  searchCity(name) {
+    const q = typeof name === 'string' ? name.trim() : '';
+    if (q.length < 2 || q.length > 60 || !/^[\p{L}\p{M} .'-]+$/u.test(q)) return false;
+    const lang = /^es\b/i.test(navigator.language || '') ? 'es' : 'pt';
+    getText('https://geocoding-api.open-meteo.com/v1/search?count=6&format=json&language=' + lang + '&name=' + encodeURIComponent(q), 256 * 1024)
+      .then(body => call('onCities', body, q), () => call('onCities', '{"results":[]}', q));
+    return true;
+  },
   getTvInputs: () => JSON.stringify(inputList),
   openInput: id => typeof id === 'string' && showInput(id),
   refreshAll() {

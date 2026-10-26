@@ -493,6 +493,65 @@ public class AndroidBridge {
         return true;
     }
 
+    /* ---------------- Clima (Open-Meteo) ---------------- */
+
+    /** Previsão da cidade escolhida no perfil; a resposta chega em Launcher.onWeather(json). */
+    @JavascriptInterface
+    public boolean getWeather(String lat, String lon) {
+        if (!trusted || lat == null || lon == null || lat.length() > 20 || lon.length() > 20) return false;
+        final double la, lo;
+        try {
+            la = Double.parseDouble(lat);
+            lo = Double.parseDouble(lon);
+        } catch (NumberFormatException e) {
+            return false;
+        }
+        if (Double.isNaN(la) || Double.isNaN(lo) || Math.abs(la) > 90 || Math.abs(lo) > 180) return false;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String body = null;
+                try {
+                    body = Weather.forecast(la, lo);
+                } catch (Exception ignored) {
+                }
+                if (body != null) js("window.Launcher&&Launcher.onWeather&&Launcher.onWeather(" + quote(body) + ")");
+            }
+        }, "onix-weather").start();
+        return true;
+    }
+
+    /** Busca de cidade (nome digitado); a lista chega em Launcher.onCities(json, nome). */
+    @JavascriptInterface
+    public boolean searchCity(final String name) {
+        if (!trusted || name == null) return false;
+        final String q = name.trim();
+        if (q.length() < 2 || q.length() > 60 || !q.matches("[\\p{L}\\p{M} .'-]+")) return false;
+        final String lang = "es".equals(Locale.getDefault().getLanguage()) ? "es" : "pt";
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String body;
+                try {
+                    body = Weather.searchCity(q, lang);
+                } catch (Exception e) {
+                    body = "{\"results\":[]}";
+                }
+                js("window.Launcher&&Launcher.onCities&&Launcher.onCities(" + quote(body) + "," + quote(q) + ")");
+            }
+        }, "onix-city").start();
+        return true;
+    }
+
+    /** Texto vira string de JS; U+2028/2029 também (os WebViews antigos não aceitam crus). */
+    static String quote(String s) {
+        return JSONObject.quote(s).replace("\u2028", "\\u2028").replace("\u2029", "\\u2029");
+    }
+
+    private void js(String code) {
+        if (activity instanceof MainActivity) ((MainActivity) activity).js(code);
+    }
+
     /* ---------------- Atualizações (Updater) ---------------- */
 
     @JavascriptInterface
