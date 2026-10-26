@@ -260,7 +260,7 @@ svg{display:block}
 .info{padding:1.1rem 1.2rem;border-radius:var(--radius);font-size:.85rem;color:var(--muted);line-height:1.6}
 .info b{color:var(--text);font-weight:600}
 
-#toast{position:fixed;z-index:20;left:50%;bottom:2.2rem;max-width:80vw;padding:.85rem 1.4rem;border-radius:2rem;font-size:.95rem;
+#toast{position:fixed;z-index:35;left:50%;bottom:2.2rem;max-width:80vw;padding:.85rem 1.4rem;border-radius:2rem;font-size:.95rem;
   background:#16171b;border:1px solid rgba(255,255,255,.2);box-shadow:var(--shadow);
   transform:translate3d(-50%,1.5rem,0);opacity:0;transition:transform .3s var(--ease),opacity .3s;pointer-events:none}
 #toast.show{transform:translate3d(-50%,0,0);opacity:1}
@@ -378,6 +378,204 @@ html.hero-zoom .hero.swap .hero-art{opacity:0}
 html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 @keyframes tabIn{from{opacity:0;transform:translateY(.8rem)}to{opacity:1;transform:none}}
 
+/* ---------- Camadas da 14.0.0 (perfis, boas-vindas, teclado, PIN, clima, celular) ----------
+   Telas por cima do Onix, cada uma com o próprio foco. Ficam abaixo do aviso (#toast) e da tela de descanso. */
+.layer{position:fixed;top:0;right:0;bottom:0;left:0;z-index:21;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  background:radial-gradient(60% 70% at 50% 40%,rgba(80,90,130,.18),transparent 70%),linear-gradient(160deg,#16181e,#060709)}
+.layer[hidden],.layer [hidden],#wxBtn[hidden],.chip[hidden]{display:none!important}
+.layer.dim{background:rgba(4,4,6,.9)}
+.layer-brand{position:absolute;top:2rem;left:2.4rem;display:flex;align-items:center;gap:.7rem;font-weight:600;letter-spacing:.32em;color:var(--muted);text-transform:uppercase}
+.layer-brand svg{width:1.8rem;height:1.8rem}
+.layer h2{margin:0;font-size:2.6rem;font-weight:300;letter-spacing:-.01em;text-align:center}
+.layer-sub{margin:.6rem 0 0;color:var(--muted);font-size:1.05rem;text-align:center;max-width:44rem;line-height:1.5}
+.layer .btn.f.is-focused:not(.primary){background:rgba(255,255,255,.24)}
+.layer-actions{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
+
+/* Avatares: quadrado arredondado com um desenho espacial, ou a foto mandada pelo celular. */
+.av{position:relative;flex:none;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:28%;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 0 0 1px rgba(255,255,255,.12)}
+.av svg{width:62%;height:62%}
+.av img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+
+.pf-list{display:flex;gap:2.2rem;margin:3rem 0 2.6rem}
+.pf{display:flex;flex-direction:column;align-items:center;gap:.8rem;width:9.5rem}
+.pf.f::after{display:none}
+.pf.f,.av-opt.f,.svc.f,.kb-key.f,.pin-key.f,.row-opt.f{overflow:visible}
+.pf .av{width:9.5rem;height:9.5rem;transition:transform .2s var(--ease),box-shadow .2s}
+.pf.is-focused{transform:none;box-shadow:none}
+.pf.is-focused .av{transform:scale(1.08);box-shadow:0 0 0 .2rem #fff,0 .8rem 2rem rgba(0,0,0,.6)}
+.pf-name{font-size:1.2rem;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pf.is-focused .pf-name{color:#fff;font-weight:600}
+.kids-badge{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.22rem .7rem;border-radius:1rem;color:#1a1400;background:#ffd23f}
+.pf-add .av{background:transparent;border:.14rem dashed rgba(255,255,255,.35);box-shadow:none}
+.pf-add .av svg{width:36%;height:36%}
+.pf-pen{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.45)}
+.pf-pen svg{width:32%;height:32%}
+
+/* Item do perfil no topo do menu */
+.nav-item[hidden],#meBtn[hidden]{display:none}
+.nav-item.me{gap:.75rem;padding:.55rem .7rem;margin-bottom:.5rem;border-color:rgba(255,255,255,.1);background:rgba(255,255,255,.04)}
+.nav-item.me .av{width:2.3rem;height:2.3rem}
+.me-txt{display:flex;flex-direction:column;min-width:0;line-height:1.2}
+.me-name{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.me-sw{font-size:.72rem;font-weight:400}
+.nav-item.me.is-focused .me-name{color:#0a0b0e}
+
+/* Editar perfil */
+.pe{display:flex;gap:4rem;align-items:center;max-width:72rem;width:100%;padding:0 4rem}
+.pe-left{display:flex;flex-direction:column;align-items:center;gap:1rem;width:15rem;flex:none}
+.pe-left .av{width:13rem;height:13rem}
+.pe-name{font-size:1.4rem;font-weight:600;max-width:15rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pe-right{display:flex;flex-direction:column;gap:.9rem;min-width:0;flex:1}
+.pe-right h2{text-align:left;font-size:2.1rem}
+.lbl{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.av-grid{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
+.av-opt{width:4.4rem;height:4.4rem;border-radius:28%}
+.av-opt .av{width:100%;height:100%}
+.av-opt.f::after{display:none}
+.av-opt.sel::before{content:"";position:absolute;top:-.35rem;right:-.35rem;bottom:-.35rem;left:-.35rem;border-radius:32%;border:.14rem solid #4ade80}
+.av-photo{display:flex;align-items:center;gap:.6rem;height:4.4rem;padding:0 1.1rem;border-radius:1.1rem;border:.12rem dashed rgba(255,255,255,.35);color:var(--muted);font-weight:500;white-space:nowrap}
+.av-photo svg{width:1.4rem;height:1.4rem}
+.av-photo.sel{border-style:solid;border-color:#4ade80;color:var(--text)}
+.av-photo.is-focused{background:#fff;color:#0a0b0e;transform:scale(1.05)}
+.row-opt{display:flex;align-items:center;justify-content:space-between;gap:1rem;width:100%;max-width:34rem;padding:.75rem 1.1rem;border-radius:1rem;
+  background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);text-align:left}
+.row-opt.f::after{display:none}
+.row-opt.is-focused{transform:none;background:#fff;color:#0a0b0e}
+.row-opt .opt-desc{margin-top:.15rem}
+.row-opt.is-focused .opt-desc{color:rgba(10,11,14,.65)}
+.row-val{flex:none;color:var(--muted);font-weight:600;max-width:16rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.row-opt.is-focused .row-val{color:#0a0b0e}
+.row-opt.is-focused .switch:not(.on){background:rgba(10,11,14,.25)}
+.kids-opts{display:flex;flex-direction:column;gap:.6rem;padding-left:1.1rem;border-left:.15rem solid #ffd23f}
+.kids-opts[hidden]{display:none}
+
+/* Teclado na tela (nome do perfil, cidade do clima) */
+.kb{width:100%;max-width:60rem;display:flex;flex-direction:column;gap:1rem;padding:0 2rem}
+.kb-field{display:flex;align-items:center;gap:.6rem;min-height:3.6rem;padding:.8rem 1.2rem;border-radius:1rem;background:rgba(255,255,255,.07);
+  border:1px solid rgba(255,255,255,.3);font-size:1.5rem}
+.kb-ph{color:rgba(255,255,255,.4)}
+.kb-caret{display:inline-block;width:.1rem;height:1.5rem;background:#fff;animation:kbBlink 1s steps(1) infinite}
+@keyframes kbBlink{50%{opacity:0}}
+.kb-from{color:#4ade80;font-size:.9rem;margin-top:-.4rem}
+.kb-keys{display:grid;grid-template-columns:repeat(10,1fr);gap:.45rem}
+.kb-key{height:3rem;border-radius:.7rem;background:rgba(255,255,255,.09);border:1px solid rgba(255,255,255,.1);font-size:1.15rem;
+  display:flex;align-items:center;justify-content:center}
+.kb-key.f::after{display:none}
+.kb-key.wide{grid-column:span 3;font-size:.95rem}
+.kb-key.is-focused{transform:scale(1.08);background:#fff;color:#0a0b0e}
+.kb-res{display:flex;flex-direction:column;gap:.45rem;min-height:1rem}
+.kb-res .row-opt{max-width:none}
+.kb-msg{color:var(--muted);font-size:.95rem}
+
+/* PIN */
+.pin-dots{display:flex;gap:1rem;margin:1.8rem 0 .6rem}
+.pin-dots i{width:1.1rem;height:1.1rem;border-radius:50%;border:.12rem solid rgba(255,255,255,.6)}
+.pin-dots i.on{background:#fff;border-color:#fff}
+.pin-dots.err{animation:pinShake .35s}
+.pin-dots.err i{border-color:#ff6b6b}
+@keyframes pinShake{25%{transform:translateX(-.6rem)}50%{transform:translateX(.6rem)}75%{transform:translateX(-.3rem)}}
+.pin-msg{min-height:1.4rem;color:#ff6b6b;margin-bottom:.8rem}
+.pin-pad{display:grid;grid-template-columns:repeat(3,4.6rem);gap:.7rem}
+.pin-key{height:3.4rem;border-radius:1rem;font-size:1.3rem;display:flex;align-items:center;justify-content:center}
+.pin-key.f::after{display:none}
+.pin-key.is-focused{transform:scale(1.08);background:#fff;color:#0a0b0e}
+.pin-key svg{width:1.2rem;height:1.2rem}
+
+/* Boas-vindas */
+#welcome{justify-content:flex-start;padding:2rem 4rem 2.4rem}
+.wl-top{display:flex;align-items:center;justify-content:space-between;width:100%}
+.wl-top .layer-brand{position:static}
+.wl-prog{list-style:none;margin:0;padding:0;display:flex;align-items:center;gap:1rem}
+.wl-prog li{display:flex;align-items:center;gap:.5rem;color:var(--muted);font-size:.92rem}
+.wl-prog li+li::before{content:"";width:2rem;height:.1rem;background:rgba(255,255,255,.2);margin-right:.5rem}
+.wl-prog i{width:1.6rem;height:1.6rem;border-radius:50%;border:.12rem solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center;font-style:normal;font-size:.78rem;font-weight:700}
+.wl-prog li.cur{color:var(--text);font-weight:600}
+.wl-prog li.cur i{background:#fff;color:#0a0b0e;border-color:#fff}
+.wl-prog li.done i{background:#4ade80;border-color:#4ade80;color:#06240f}
+.wl-body{flex:1;width:100%;display:flex;align-items:center;justify-content:center;min-height:0}
+.wl-step{display:flex;gap:4rem;align-items:center;width:100%;max-width:74rem}
+.wl-step[hidden]{display:none}
+.wl-intro{flex:1;min-width:0}
+.wl-intro svg{width:5.5rem;height:5.5rem;margin-bottom:1.3rem}
+.wl-intro h2{text-align:left;font-size:3rem;line-height:1.08}
+.wl-intro p{margin:.8rem 0 0;color:var(--muted);font-size:1.15rem;line-height:1.45;max-width:30rem}
+.wl-col{display:flex;flex-direction:column;gap:.8rem;min-width:0}
+.wl-col.grow{flex:1}
+.wl-col h2{text-align:left;font-size:2.1rem}
+.wl-langs .row-opt{width:28rem;padding:1rem 1.3rem}
+.wl-langs b{display:block;font-size:1.15rem}
+.radio{width:1.5rem;height:1.5rem;border-radius:50%;border:.14rem solid currentColor;opacity:.6;flex:none;position:relative}
+.sel .radio{opacity:1;border-color:#4ade80}
+.sel .radio::after{content:"";position:absolute;top:.22rem;right:.22rem;bottom:.22rem;left:.22rem;border-radius:50%;background:#4ade80}
+.wl-prefs{display:flex;gap:3rem;align-items:flex-start;width:100%}
+.svc-list{display:flex;flex-wrap:wrap;gap:.7rem;max-width:34rem}
+.svc{display:flex;align-items:center;gap:.55rem;padding:.6rem 1.1rem;border-radius:2rem;border:1px solid rgba(255,255,255,.2);background:rgba(255,255,255,.05);font-weight:500}
+.svc.f::after{display:none}
+.svc .ck{width:1.05rem;height:1.05rem;border-radius:.3rem;border:.12rem solid currentColor;opacity:.6}
+.svc.sel{background:rgba(74,222,128,.16);border-color:#4ade80}
+.svc.sel .ck{opacity:1;background:#4ade80;border-color:#4ade80}
+.svc.is-focused{transform:scale(1.06);background:#fff;color:#0a0b0e;border-color:#fff}
+.privacy{display:flex;gap:.5rem;color:var(--muted);font-size:.85rem;line-height:1.45;max-width:34rem}
+.privacy svg{width:1.2rem;height:1.2rem;flex:none}
+.wl-done{display:flex;flex-direction:column;align-items:center;gap:1rem;width:100%;text-align:center}
+.wl-done .av{width:8.5rem;height:8.5rem}
+.wl-sum{width:34rem;padding:.3rem 1.4rem;text-align:left}
+.wl-sum div{display:flex;justify-content:space-between;gap:1rem;padding:.7rem 0;border-bottom:1px solid rgba(255,255,255,.1)}
+.wl-sum div:last-child{border-bottom:0}
+.wl-sum span{color:var(--muted)}
+.wl-foot{display:flex;align-items:center;gap:.8rem;width:100%}
+.wl-gap{flex:1}
+
+/* Modo Infantil: só os apps liberados, sem destaque, indicações, Apps, Entradas, Configurações e Desligar TV. */
+html.kids #hero,html.kids .picks-title,html.kids #homePicks,html.kids .top-actions,html.kids #powerBtn,
+html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="inputs"],html.kids .nav-item[data-section="settings"]{display:none!important}
+.chip.kids{color:#1a1400;background:#ffd23f;border-color:#ffd23f;font-weight:600}
+.chip[hidden]{display:none}
+
+/* Clima: discreto ao lado do relógio; o vidro só aparece com o foco. */
+.topbar>div:first-child{flex:none}
+#wxBtn{display:flex;align-items:center;gap:.9rem;padding:.5rem 1.1rem .5rem .8rem;margin:0 auto -.2rem 1.6rem;border-radius:1.1rem;border:1px solid transparent;text-align:left}
+#wxBtn[hidden]{display:none}
+#wxBtn.f::after{display:none}
+#wxBtn.is-focused{transform:none;background:var(--glass);border-color:rgba(255,255,255,.75);box-shadow:var(--focus-glow)}
+.wx-ico{width:3.2rem;height:3.2rem;flex:none}
+.wx-txt{display:flex;flex-direction:column;min-width:0}
+.wx-temp{display:block;white-space:nowrap;font-size:2.3rem;font-weight:200;line-height:1;font-variant-numeric:tabular-nums}
+.wx-temp span{font-size:.42em;font-weight:400;color:var(--muted);margin-left:.45em}
+.wx-sub{display:block;font-size:.85rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:.25rem}
+.top-actions .btn{white-space:nowrap}
+#wxBtn{min-width:0;flex:0 1 auto}
+#wxPanel{align-items:flex-end;padding:1.4rem}
+.wx-card{width:31rem;max-height:100%;overflow:hidden;display:flex;flex-direction:column;padding:1.5rem 1.8rem 1.2rem;border-radius:1.6rem;
+  background:linear-gradient(170deg,rgba(58,63,74,.98),rgba(20,22,27,.99) 70%);border:1px solid rgba(255,255,255,.22);box-shadow:var(--shadow)}
+.wx-head{text-align:center}
+.wx-city{font-size:1.2rem;font-weight:600}
+.wx-big{font-size:4.2rem;font-weight:200;line-height:1;margin:.05em 0 .05em .15em;font-variant-numeric:tabular-nums}
+.wx-cond{font-size:1.05rem;font-weight:500}
+.wx-hl{font-size:.92rem;color:rgba(255,255,255,.8);margin-top:.15rem}
+.wx-lbl{display:flex;justify-content:space-between;gap:1rem;font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.7);
+  border-bottom:1px solid rgba(255,255,255,.14);padding-bottom:.55rem;margin-top:1.3rem}
+.wx-lbl em{font-style:normal;letter-spacing:.02em;text-transform:none;font-size:1.1em}
+.wx-hours{display:flex;justify-content:space-between;text-align:center;padding-top:.7rem}
+.wx-hour{display:flex;flex-direction:column;align-items:center;gap:.35rem;width:16%}
+.wx-hour b{font-size:.85rem;font-weight:500}
+.wx-hour svg{width:2rem;height:2rem}
+.wx-days{display:flex;flex-direction:column}
+.wx-day{display:flex;align-items:center;gap:.6rem;padding:.45rem 0;border-bottom:1px solid rgba(255,255,255,.09)}
+.wx-day:last-child{border-bottom:0}
+.wx-day b{width:3.6rem;font-weight:600}
+.wx-dico{width:2.4rem;display:flex;flex-direction:column;align-items:center}
+.wx-dico svg{width:1.7rem;height:1.7rem}
+.wx-dico small{font-size:.68rem;color:#7cc4ff;font-weight:600;line-height:1}
+.wx-lo,.wx-hi{width:2.4rem;text-align:right;font-variant-numeric:tabular-nums}
+.wx-lo{color:rgba(255,255,255,.65)}
+.wx-bar{position:relative;flex:1;height:.32rem;border-radius:1rem;background:rgba(255,255,255,.14)}
+.wx-bar i{position:absolute;top:0;bottom:0;border-radius:1rem;background:linear-gradient(90deg,#8be08b,#ffd23f)}
+.wx-bar u{position:absolute;top:50%;width:.55rem;height:.55rem;margin:-.275rem 0 0 -.275rem;border-radius:50%;background:#fff;box-shadow:0 0 0 .12rem rgba(20,22,27,.9)}
+.wx-foot{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:.9rem;font-size:.78rem;color:rgba(255,255,255,.6)}
+.wx-foot .btn{padding:.5rem 1.1rem;font-size:.85rem}
+
 /* ---------- Celular em retrato: menu vira barra inferior ---------- */
 @media (max-width:760px) and (orientation:portrait){
   html{font-size:13px}
@@ -408,6 +606,7 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 
 <nav id="sidebar" class="glass-blur" aria-label="Menu principal">
   <div class="brand"><svg class="brand-mark" viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><defs><mask id="mkBack" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><circle cx="24" cy="24" r="11.6" fill="#000"/></mask><mask id="mkGap" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><path d="M45 24A21 6 0 0 1 3 24" stroke="#000" stroke-width="6" transform="rotate(-20 24 24)"/></mask></defs><circle cx="24" cy="24" r="10" mask="url(#mkGap)"/><g transform="rotate(-20 24 24)"><path d="M3 24A21 6 0 0 1 45 24" mask="url(#mkBack)"/><path d="M45 24A21 6 0 0 1 3 24"/></g></svg>Onix<span class="brand-by">By Ruan</span></div>
+  <button class="f nav-item me" id="meBtn" tabindex="-1" hidden><span class="av" id="meAv"></span><span class="me-txt"><span class="me-name" id="meName"></span><span class="me-sw">Trocar perfil</span></span></button>
   <button class="f nav-item" data-section="home" tabindex="-1">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></svg><span>Início</span></button>
   <button class="f nav-item" data-section="apps" tabindex="-1">
@@ -449,6 +648,7 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
       <div id="clock">--:--</div>
       <div id="date"></div>
     </div>
+    <button class="f" id="wxBtn" tabindex="-1" hidden><span class="wx-ico" id="wxIco"></span><span class="wx-txt"><span class="wx-temp" id="wxTemp"></span><span class="wx-sub" id="wxSub"></span></span></button>
     <div class="top-right">
     <div class="top-actions">
     <button class="f btn" id="refreshBtn" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span>Atualizar</span></button>
@@ -456,6 +656,7 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
     <button class="f btn" id="tvSettingsBtn" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/><path d="M9.5 9.5h5M9.5 12.5h3"/></svg><span>Configurações da TV</span></button>
     </div>
     <div class="chips">
+      <span class="chip kids" id="kidsChip" hidden></span>
       <span class="chip glass" id="modeChip"></span>
       <span class="chip glass" id="netChip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2 8.5a15 15 0 0120 0M5 12a10 10 0 0114 0M8.5 15.5a5 5 0 017 0"/><circle cx="12" cy="19" r="1" fill="currentColor"/></svg><span id="netText">Conectado</span></span>
     </div>
@@ -477,9 +678,9 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
       </div>
       <div class="dots" id="heroDots"></div>
     </div>
-    <div class="row-title">Seus apps</div>
+    <div class="row-title" id="homeAppsTitle">Seus apps</div>
     <div class="row" id="homeApps"></div>
-    <div class="row-title">Indicações da semana<span class="row-sub" id="picksSub">· Netflix em primeiro · renovadas toda segunda-feira</span></div>
+    <div class="row-title picks-title">Indicações da semana<span class="row-sub" id="picksSub">· Netflix em primeiro · renovadas toda segunda-feira</span></div>
     <div class="row" id="homePicks"></div>
   </section>
 
@@ -574,6 +775,78 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
       </div>
     </div>
   </div>
+</div>
+
+<!-- 14.0.0: perfis, boas-vindas, teclado, PIN, Modo Infantil, clima e celular. Cada camada tem o próprio foco. -->
+<div class="layer" id="profiles" hidden role="dialog" aria-labelledby="pfTitle">
+  <div class="layer-brand"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="10"/><ellipse cx="24" cy="24" rx="21" ry="6" transform="rotate(-20 24 24)"/></svg>Onix</div>
+  <h2 id="pfTitle">Quem está assistindo?</h2>
+  <p class="layer-sub" id="pfSub"></p>
+  <div class="pf-list" id="pfList"></div>
+  <div class="layer-actions"><button class="f btn" id="pfManage" tabindex="-1"><span>Gerenciar perfis</span></button></div>
+</div>
+<div class="layer" id="profileEdit" hidden role="dialog" aria-labelledby="peTitle">
+  <div class="pe">
+    <div class="pe-left"><span class="av" id="pePreview"></span><span class="pe-name" id="peName"></span><span class="kids-badge" id="peBadge">Infantil</span></div>
+    <div class="pe-right">
+      <h2 id="peTitle">Editar perfil</h2>
+      <span class="lbl">Nome</span>
+      <button class="f row-opt" id="peNameBtn" tabindex="-1"><span class="row-val" id="peNameVal"></span><span class="opt-desc">OK para digitar</span></button>
+      <span class="lbl">Avatar</span>
+      <div class="av-grid" id="peAvs"></div>
+      <button class="f row-opt" id="peKids" tabindex="-1"><span class="opt-text"><span class="opt-name">Perfil infantil</span><span class="opt-desc">Só os apps liberados, com PIN para sair</span></span><span class="switch" id="peKidsSw"></span></button>
+      <div class="kids-opts" id="peKidsOpts">
+        <button class="f row-opt" id="pePin" tabindex="-1"><span class="opt-name">PIN para sair</span><span class="row-val" id="pePinVal"></span></button>
+        <button class="f row-opt" id="peLimit" tabindex="-1"><span class="opt-text"><span class="opt-name">Limite por dia</span><span class="opt-desc">OK muda o tempo</span></span><span class="row-val" id="peLimitVal"></span></button>
+        <button class="f row-opt" id="peApps" tabindex="-1"><span class="opt-name">Apps liberados</span><span class="row-val" id="peAppsVal"></span></button>
+      </div>
+      <div class="layer-actions" style="justify-content:flex-start">
+        <button class="f btn primary" id="peSave" tabindex="-1"><span>Salvar</span></button>
+        <button class="f btn" id="peCancel" tabindex="-1"><span>Cancelar</span></button>
+        <button class="f btn" id="peDel" tabindex="-1"><span>Excluir perfil</span></button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="layer" id="kidsApps" hidden role="dialog" aria-labelledby="kaTitle">
+  <h2 id="kaTitle">Apps liberados</h2>
+  <p class="layer-sub">OK marca ou desmarca. Só os apps marcados aparecem no perfil infantil.</p>
+  <div class="grid" id="kaGrid" style="width:100%;max-width:70rem;max-height:60vh;overflow-y:auto;padding:1.2rem 1.4rem"></div>
+  <div class="layer-actions"><button class="f btn primary" id="kaDone" tabindex="-1"><span>Pronto</span></button></div>
+</div>
+<div class="layer dim" id="keyboard" hidden role="dialog" aria-labelledby="kbTitle">
+  <div class="kb">
+    <h2 id="kbTitle" style="text-align:left;font-size:1.9rem"></h2>
+    <div class="kb-field" id="kbField"></div>
+    <div class="kb-from" id="kbFrom" hidden>Digitando pelo celular</div>
+    <div class="kb-keys" id="kbKeys"></div>
+    <div class="kb-res" id="kbRes"></div>
+  </div>
+</div>
+<div class="layer dim" id="pinPad" hidden role="dialog" aria-labelledby="pinTitle">
+  <h2 id="pinTitle"></h2>
+  <p class="layer-sub" id="pinSub"></p>
+  <div class="pin-dots" id="pinDots"><i></i><i></i><i></i><i></i></div>
+  <div class="pin-msg" id="pinMsg"></div>
+  <div class="pin-pad" id="pinKeys"></div>
+</div>
+<div class="layer dim" id="kidsLock" hidden role="dialog" aria-labelledby="klTitle">
+  <h2 id="klTitle">O tempo de hoje acabou</h2>
+  <p class="layer-sub">Amanhã tem mais. Para continuar agora, peça para um adulto digitar o PIN.</p>
+  <div class="layer-actions" style="margin-top:2rem"><button class="f btn primary" id="klSwitch" tabindex="-1"><span>Trocar perfil</span></button></div>
+</div>
+<div class="layer" id="welcome" hidden role="dialog" aria-label="Boas-vindas">
+  <div class="wl-top"><div class="layer-brand"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><circle cx="24" cy="24" r="10"/><ellipse cx="24" cy="24" rx="21" ry="6" transform="rotate(-20 24 24)"/></svg>Onix</div><ol class="wl-prog" id="wlProg"></ol></div>
+  <div class="wl-body" id="wlBody"></div>
+  <div class="wl-foot">
+    <button class="f btn" id="wlSkip" tabindex="-1"><span>Pular</span></button>
+    <span class="wl-gap"></span>
+    <button class="f btn" id="wlBack" tabindex="-1"><span>Voltar</span></button>
+    <button class="f btn primary" id="wlNext" tabindex="-1"><span>Continuar</span></button>
+  </div>
+</div>
+<div class="layer dim" id="wxPanel" hidden role="dialog" aria-label="Previsão do tempo">
+  <div class="wx-card" id="wxCard"></div>
 </div>
 
 <div id="toast" role="status" aria-live="polite"></div>
@@ -1028,7 +1301,111 @@ const ES = Object.freeze({
   "Tamanho {0}": "Tamaño {0}",
   "A cobrinha bateu na fase {0}": "La serpiente chocó en el nivel {0}",
   "*Jogos de cara nova:* Pong, Pinball, Tijolos e Cobrinha agora seguem o visual do Onix, com traços coloridos sobre o vidro escuro. Nos Tijolos, cada fileira é só um contorno na sua cor, e os de aço têm um contorno branco a mais.": "*Juegos con nueva cara:* Pong, Pinball, Ladrillos y Serpiente ahora siguen el estilo de Onix, con trazos de color sobre el vidrio oscuro. En Ladrillos, cada fila es solo un contorno de su color, y los de acero tienen un contorno blanco extra.",
-  "*Fases em todos os jogos:* o Pong tem 5 fases contra uma máquina cada vez mais rápida, o Pinball 5 metas (cada uma dá uma bola extra), os Tijolos 8 fases com desenhos diferentes e a Cobrinha 5 fases com muros novos.": "*Niveles en todos los juegos:* Pong tiene 5 niveles contra una máquina cada vez más rápida, Pinball 5 metas (cada una da una bola extra), Ladrillos 8 niveles con diseños diferentes y Serpiente 5 niveles con muros nuevos."
+  "*Fases em todos os jogos:* o Pong tem 5 fases contra uma máquina cada vez mais rápida, o Pinball 5 metas (cada uma dá uma bola extra), os Tijolos 8 fases com desenhos diferentes e a Cobrinha 5 fases com muros novos.": "*Niveles en todos los juegos:* Pong tiene 5 niveles contra una máquina cada vez más rápida, Pinball 5 metas (cada una da una bola extra), Ladrillos 8 niveles con diseños diferentes y Serpiente 5 niveles con muros nuevos.",
+  "Trocar perfil": "Cambiar perfil",
+  "Quem está assistindo?": "¿Quién está viendo?",
+  "Gerenciar perfis": "Administrar perfiles",
+  "Nome": "Nombre",
+  "OK para digitar": "OK para escribir",
+  "Só os apps liberados, com PIN para sair": "Solo las apps permitidas, con PIN para salir",
+  "PIN para sair": "PIN para salir",
+  "Limite por dia": "Límite por día",
+  "OK muda o tempo": "OK cambia el tiempo",
+  "Apps liberados": "Apps permitidas",
+  "Salvar": "Guardar",
+  "Excluir perfil": "Eliminar perfil",
+  "OK marca ou desmarca. Só os apps marcados aparecem no perfil infantil.": "OK marca o desmarca. Solo las apps marcadas aparecen en el perfil infantil.",
+  "Pronto": "Listo",
+  "Digitando pelo celular": "Escribiendo desde el celular",
+  "O tempo de hoje acabou": "Se acabó el tiempo de hoy",
+  "Amanhã tem mais. Para continuar agora, peça para um adulto digitar o PIN.": "Mañana hay más. Para seguir ahora, pide a un adulto que escriba el PIN.",
+  "Pular": "Omitir",
+  "Este app não está liberado neste perfil": "Esta app no está permitida en este perfil",
+  "Espaço": "Espacio",
+  "Apagar": "Borrar",
+  "Sair do Modo Infantil": "Salir del Modo Infantil",
+  "Digite o PIN para trocar de perfil": "Escribe el PIN para cambiar de perfil",
+  "Digite o mesmo PIN de novo para confirmar": "Escribe el mismo PIN otra vez para confirmar",
+  "PIN incorreto. Tente de novo.": "PIN incorrecto. Inténtalo de nuevo.",
+  "Os dois PINs não batem. Comece de novo.": "Los dos PIN no coinciden. Empieza de nuevo.",
+  "Perfil: {0}. Trocar perfil": "Perfil: {0}. Cambiar perfil",
+  "Concluído": "Listo",
+  "Escolha um perfil para editar": "Elige un perfil para editar",
+  "Adicionar perfil": "Añadir perfil",
+  "Sem nome": "Sin nombre",
+  "Novo perfil": "Nuevo perfil",
+  "Digite o nome": "Escribe el nombre",
+  "Foto do celular": "Foto del celular",
+  "•••• · OK troca": "•••• · OK cambia",
+  "Criar": "Crear",
+  "Sem limite": "Sin límite",
+  "{0}h{1}": "{0} h {1}",
+  "Precisa ficar pelo menos um perfil de adulto": "Debe quedar al menos un perfil de adulto",
+  "PIN para sair do Modo Infantil": "PIN para salir del Modo Infantil",
+  "Escolha 4 números. Só quem souber o PIN tira a criança do perfil infantil.": "Elige 4 números. Solo quien sepa el PIN puede sacar al niño del perfil infantil.",
+  "PIN salvo": "PIN guardado",
+  "Nome do perfil": "Nombre del perfil",
+  "Dê um nome ao perfil antes de salvar": "Ponle un nombre al perfil antes de guardar",
+  "Crie o PIN para sair do Modo Infantil": "Crea el PIN para salir del Modo Infantil",
+  "Libere pelo menos um app para o perfil infantil": "Permite al menos una app para el perfil infantil",
+  "Perfil salvo": "Perfil guardado",
+  "OK de novo para excluir": "OK otra vez para eliminar",
+  "Perfil {0} excluído": "Perfil {0} eliminado",
+  "Olá, {0}!": "¡Hola, {0}!",
+  "Modo Infantil · restam {0}": "Modo Infantil · quedan {0}",
+  "Preferências": "Preferencias",
+  "Começar": "Empezar",
+  "Segue o idioma da TV": "Sigue el idioma de la TV",
+  "Bem-vindo ao Onix": "Bienvenido a Onix",
+  "Vamos deixar a TV do seu jeito. Leva menos de um minuto.": "Vamos a dejar la TV a tu manera. Toma menos de un minuto.",
+  "Escolha o idioma": "Elige el idioma",
+  "Seu nome": "Tu nombre",
+  "Quem vai usar este perfil?": "¿Quién va a usar este perfil?",
+  "19:30 em vez de 7:30": "19:30 en lugar de 7:30",
+  "Clima na tela inicial": "Clima en la pantalla de inicio",
+  "Temperatura ao lado do relógio": "Temperatura junto al reloj",
+  "Cidade": "Ciudad",
+  "Escolher": "Elegir",
+  "Algumas preferências": "Algunas preferencias",
+  "Tudo isso pode ser mudado depois em Configurações.": "Todo esto se puede cambiar después en Configuración.",
+  "Serviços para as indicações": "Servicios para las recomendaciones",
+  "As indicações da semana vêm destes serviços.": "Las recomendaciones de la semana vienen de estos servicios.",
+  "O Onix não detecta sua localização. Só a cidade escolhida aqui é usada para buscar a previsão.": "Onix no detecta tu ubicación. Solo se usa la ciudad que elijas aquí para buscar el pronóstico.",
+  "Tudo pronto, {0}!": "¡Todo listo, {0}!",
+  "Desligado": "Desactivado",
+  "Relógio": "Reloj",
+  "Para mudar algo, vá em Configurações. Para adicionar outra pessoa, use Trocar perfil no menu.": "Para cambiar algo, ve a Configuración. Para añadir a otra persona, usa Cambiar perfil en el menú.",
+  "Digite seu nome para continuar": "Escribe tu nombre para continuar",
+  "Escolha uma cidade ou desligue o clima": "Elige una ciudad o desactiva el clima",
+  "Perfil criado. Da próxima vez, o Onix entra direto.": "Perfil creado. La próxima vez, Onix entra directo.",
+  "Céu limpo": "Despejado",
+  "Poucas nuvens": "Pocas nubes",
+  "Neblina": "Niebla",
+  "Garoa": "Llovizna",
+  "Chuva": "Lluvia",
+  "Chuva forte": "Lluvia fuerte",
+  "Neve": "Nieve",
+  "Tempestade": "Tormenta",
+  "Clima: {0}°, {1}. Abrir previsão": "Clima: {0}°, {1}. Abrir pronóstico",
+  "Hoje": "Hoy",
+  "Umidade {0}%": "Humedad {0}%",
+  "Vento {0} km/h": "Viento {0} km/h",
+  "Agora": "Ahora",
+  "{0}h": "{0} h",
+  "Próximos dias": "Próximos días",
+  "Open-Meteo · Atualizado às {0}": "Open-Meteo · Actualizado a las {0}",
+  "Cidade do clima": "Ciudad del clima",
+  "Digite sua cidade": "Escribe tu ciudad",
+  "Procurando…": "Buscando…",
+  "Nenhuma cidade encontrada. Confira o nome.": "No se encontró ninguna ciudad. Revisa el nombre.",
+  "Clima de {0} na tela inicial": "Clima de {0} en la pantalla de inicio",
+  "Clima desligado": "Clima desactivado",
+  "Volta para “Quem está assistindo?”.": "Vuelve a “¿Quién está viendo?”.",
+  "Crie, edite ou exclua perfis, inclusive os infantis.": "Crea, edita o elimina perfiles, también los infantiles.",
+  "Temperatura ao lado do relógio. OK nela abre a previsão das próximas horas e dos próximos dias.": "Temperatura junto al reloj. OK sobre ella abre el pronóstico de las próximas horas y los próximos días.",
+  "O Onix não detecta onde você está: só usa a cidade escolhida aqui.": "Onix no detecta dónde estás: solo usa la ciudad elegida aquí.",
+  "Meu perfil": "Mi perfil",
+  "Nenhum app liberado. Peça para um adulto liberar em Gerenciar perfis.": "Ninguna app permitida. Pide a un adulto que las permita en Administrar perfiles."
   });
 let LANG = 'pt';
 function resolveLang() {
@@ -1217,6 +1594,19 @@ const Bridge = (() => {
       if (!has('setAutoUpdate')) return false;
       try { return b.setAutoUpdate(!!on) === true; } catch (e) { console.warn('setAutoUpdate falhou', e); return false; }
     },
+    // Clima (Open-Meteo): o nativo baixa e responde em Launcher.onWeather / Launcher.onCities.
+    // No navegador, dados de exemplo para testar a tela.
+    weather(lat, lon) {
+      if (!has('getWeather')) { if (!native) setTimeout(() => onWeather(DEMO_WEATHER()), 300); return !native; }
+      try { return b.getWeather(String(lat), String(lon)) === true; } catch (e) { console.warn('getWeather falhou', e); return false; }
+    },
+    searchCity(q) {
+      if (!has('searchCity')) {
+        if (!native) setTimeout(() => onCities({ results: DEMO_CITIES.filter(c => c.name.toLowerCase().indexOf(q.toLowerCase()) === 0) }, q), 300);
+        return !native;
+      }
+      try { return b.searchCity(q) === true; } catch (e) { console.warn('searchCity falhou', e); return false; }
+    },
     openPictureSettings() {
       if (!native || typeof b.openPictureSettings !== 'function') return this.openSettings();
       try { return b.openPictureSettings() === true; } catch (e) { console.warn('openPictureSettings falhou', e); return false; }
@@ -1229,6 +1619,22 @@ const Bridge = (() => {
   });
 })();
 
+// Dados de exemplo do clima para o modo navegador (o app de verdade usa o Open-Meteo).
+const DEMO_CITIES = [
+  { name: 'Campo Grande', admin1: 'Mato Grosso do Sul', country: 'Brasil', latitude: -20.44, longitude: -54.65 },
+  { name: 'Campo Grande', admin1: 'Rio Grande do Norte', country: 'Brasil', latitude: -5.86, longitude: -37.31 },
+  { name: 'Campinas', admin1: 'São Paulo', country: 'Brasil', latitude: -22.91, longitude: -47.06 },
+  { name: 'São Paulo', admin1: 'São Paulo', country: 'Brasil', latitude: -23.55, longitude: -46.63 },
+  { name: 'Madrid', admin1: 'Madrid', country: 'España', latitude: 40.42, longitude: -3.70 },
+];
+function DEMO_WEATHER() {
+  const d = new Date(), pad = n => (n < 10 ? '0' : '') + n, day = x => { const y = new Date(d.getTime() + x * 864e5); return y.getFullYear() + '-' + pad(y.getMonth() + 1) + '-' + pad(y.getDate()); };
+  const hrs = [], temps = [], codes = [];
+  for (let i = 0; i < 24; i++) { hrs.push(day(0) + 'T' + pad(i) + ':00'); temps.push(17 + Math.round(6 * Math.sin((i - 9) / 24 * Math.PI * 2))); codes.push(i % 5 ? 3 : 2); }
+  return { current: { time: day(0) + 'T' + pad(d.getHours()) + ':00', temperature_2m: 23, weather_code: 3, is_day: 1, relative_humidity_2m: 57, wind_speed_10m: 10 },
+    hourly: { time: hrs, temperature_2m: temps, weather_code: codes, is_day: hrs.map((_, i) => i >= 6 && i < 18 ? 1 : 0) },
+    daily: { time: [0, 1, 2, 3, 4].map(day), temperature_2m_max: [23, 24, 28, 24, 28], temperature_2m_min: [15, 17, 19, 20, 20], weather_code: [3, 61, 61, 63, 61], precipitation_probability_max: [5, 45, 71, 96, 64] } };
+}
 function cleanText(s, max) {
   return String(s).replace(/[\u0000-\u001f\u007f‪-‮⁦-⁩]/g, '').trim().slice(0, max);
 }
@@ -1324,19 +1730,81 @@ function loadApps() {
 }
 function findApp(brand) { return apps.find(a => a.brand === brand) || null; }
 
+/* ---------------- Perfis: o que fica salvo ----------------
+   Cada pessoa da casa tem os seus apps ("Seus apps"), recentes, recordes, idioma, indicações e cidade
+   do clima. O primeiro perfil usa as chaves de sempre do localStorage (quem atualiza vira ele sem
+   migrar nada); os outros usam as mesmas chaves com ".<id>" no fim. A lista fica em onix.profiles. */
+const PROFILES_KEY = 'onix.profiles', MAX_PROFILES = 5, FIRST_PROFILE = 'p1', AVATARS_N = 8;
+const PROFILE_PREFS = ['lang', 'pickAuto', 'pickNetflix', 'pickDisney', 'pickMax', 'pickGloboplay'];
+const KIDS_LIMITS = [0, 30, 60, 90, 120, 180];   // minutos por dia (0 = sem limite)
+const PHOTO_RE = /^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/, MAX_PHOTO = 160 * 1024;
+let profiles = [], profileId = null, kidsPin = '';
+function cleanCity(c) {
+  if (!c || typeof c !== 'object' || typeof c.name !== 'string' || typeof c.lat !== 'number' || typeof c.lon !== 'number') return null;
+  if (!(Math.abs(c.lat) <= 90 && Math.abs(c.lon) <= 180)) return null;
+  const name = cleanText(c.name, 40);
+  return name ? { name, region: typeof c.region === 'string' ? cleanText(c.region, 60) : '', lat: c.lat, lon: c.lon } : null;
+}
+function cleanProfile(o) {
+  if (!o || typeof o !== 'object' || typeof o.id !== 'string' || !/^p\d{1,9}$/.test(o.id)) return null;
+  const name = typeof o.name === 'string' ? cleanText(o.name, 14) : '';
+  if (!name) return null;
+  const prefs = {};
+  if (o.prefs && typeof o.prefs === 'object') for (const k of PROFILE_PREFS) {
+    const v = o.prefs[k];
+    if (CHOICES[k] ? CHOICES[k].some(c => c[0] === v) : typeof v === 'boolean') prefs[k] = v;
+  }
+  return {
+    id: o.id, name, prefs,
+    av: Number.isInteger(o.av) && o.av >= 0 && o.av < AVATARS_N ? o.av : 0,
+    photo: typeof o.photo === 'string' && o.photo.length <= MAX_PHOTO && PHOTO_RE.test(o.photo) ? o.photo : null,
+    kids: o.kids === true,
+    allow: Array.isArray(o.allow) ? o.allow.filter(p => typeof p === 'string' && p.length <= 150 && PKG_RE.test(p)).slice(0, 60) : [],
+    limit: KIDS_LIMITS.indexOf(o.limit) >= 0 ? o.limit : 0,
+    weather: o.weather === true, city: cleanCity(o.city),
+  };
+}
+try {
+  const saved = JSON.parse(localStorage.getItem(PROFILES_KEY) || 'null');
+  if (saved && Array.isArray(saved.list)) {
+    const seen = new Set();
+    for (const it of saved.list.slice(0, MAX_PROFILES)) {
+      const pr = cleanProfile(it);
+      if (pr && !seen.has(pr.id)) { seen.add(pr.id); profiles.push(pr); }
+    }
+    if (typeof saved.pin === 'string' && /^\d{4}$/.test(saved.pin)) kidsPin = saved.pin;
+    const last = profiles.find(pr => pr.id === saved.last);
+    profileId = last ? last.id : profiles.length ? profiles[0].id : null;
+  }
+} catch (_) {}
+function saveProfiles() {
+  try { localStorage.setItem(PROFILES_KEY, JSON.stringify({ v: 1, list: profiles, last: profileId, pin: kidsPin })); } catch (_) {}
+}
+const activeProfile = () => profiles.find(pr => pr.id === profileId) || null;
+const isKids = () => { const pr = activeProfile(); return !!pr && pr.kids; };
+// Chave do localStorage do perfil ativo: o primeiro usa a de sempre.
+const pkey = k => profileId && profileId !== FIRST_PROFILE ? k + '.' + profileId : k;
+
 /* "Seus apps" da tela inicial: lista de pacotes escolhida pelo usuário (localStorage).
    Sem escolha salva, mostra os 10 primeiros da lista (ordem padrão). */
 const HOME_KEY = 'onix.home', MAX_HOME = 20;
 let homePkgs = null;
-try {
-  const saved = JSON.parse(localStorage.getItem(HOME_KEY) || 'null');
-  if (Array.isArray(saved)) homePkgs = saved.filter(p => typeof p === 'string' && p.length <= 150 && PKG_RE.test(p)).slice(0, MAX_HOME);
-} catch (_) {}
+function loadHome() {
+  homePkgs = null;
+  try {
+    const saved = JSON.parse(localStorage.getItem(pkey(HOME_KEY)) || 'null');
+    if (Array.isArray(saved)) homePkgs = saved.filter(p => typeof p === 'string' && p.length <= 150 && PKG_RE.test(p)).slice(0, MAX_HOME);
+  } catch (_) {}
+}
+loadHome();
 function saveHome() {
-  try { if (homePkgs) localStorage.setItem(HOME_KEY, JSON.stringify(homePkgs)); else localStorage.removeItem(HOME_KEY); } catch (_) {}
+  try { if (homePkgs) localStorage.setItem(pkey(HOME_KEY), JSON.stringify(homePkgs)); else localStorage.removeItem(pkey(HOME_KEY)); } catch (_) {}
 }
 // Apps desinstalados somem da tela inicial, mas continuam salvos (voltam se reinstalados).
+// No Modo Infantil, "Seus apps" são os apps liberados para o perfil.
 function homeApps() {
+  const kid = activeProfile();
+  if (kid && kid.kids) { const byPkg = new Map(apps.map(a => [a.pkg, a])); return kid.allow.map(p => byPkg.get(p)).filter(Boolean); }
   if (!homePkgs) return apps.slice(0, 10);
   const byPkg = new Map(apps.map(a => [a.pkg, a]));
   return homePkgs.map(p => byPkg.get(p)).filter(Boolean);
@@ -1344,6 +1812,8 @@ function homeApps() {
 
 function launch(app, context) {
   if (!app) { toast('App não instalado nesta TV'); return; }
+  const kid = activeProfile();
+  if (kid && kid.kids && (kid.allow.indexOf(app.pkg) < 0 || kidsTimeUp())) { toast(kidsTimeUp() ? 'O tempo de hoje acabou' : 'Este app não está liberado neste perfil'); return; }
   if (Bridge.native) {
     // Só lança pacotes que vieram da própria lista nativa.
     if (!allowedPkgs.has(app.pkg) || !PKG_RE.test(app.pkg)) { toast('Pacote bloqueado'); return; }
@@ -1522,6 +1992,8 @@ function renderHomeRow() {
     row.append(h('div', { class: 'info glass', text: 'Nenhum app escolhido. Use “Organizar” para adicionar.' }));
   }
   list.forEach(a => row.append(appTile(a)));
+  $('#homeAppsTitle').textContent = t(isKids() ? 'Apps liberados' : 'Seus apps');
+  if (isKids()) { if (!list.length) row.append(h('div', { class: 'info glass', text: 'Nenhum app liberado. Peça para um adulto liberar em Gerenciar perfis.' })); return; }
   const edit = h('button', { class: 'f tile', id: 'homeEdit', tabindex: '-1', 'aria-label': 'Organizar seus apps' },
     h('span', { class: 'tile-art glass' }, svgFrom(EDIT_ART)),
     h('span', { class: 'tile-label', text: 'Organizar' }));
@@ -1537,19 +2009,23 @@ function renderHomeRow() {
    "Não usados" lá embaixo, na ordem padrão. Quando cada app foi aberto fica só nesta TV (localStorage). */
 const USED_KEY = 'onix.used', RECENT_MS = 30 * 24 * 60 * 60 * 1000;
 let usedAt = {}, usedDirty = false;
-try {
-  const saved = JSON.parse(localStorage.getItem(USED_KEY) || '{}');
-  if (saved && typeof saved === 'object') for (const k of Object.keys(saved).slice(0, MAX_APPS)) {
-    if (PKG_RE.test(k) && typeof saved[k] === 'number') usedAt[k] = saved[k];
-  }
-} catch (_) {}
+function loadUsed() {
+  usedAt = {};
+  try {
+    const saved = JSON.parse(localStorage.getItem(pkey(USED_KEY)) || '{}');
+    if (saved && typeof saved === 'object') for (const k of Object.keys(saved).slice(0, MAX_APPS)) {
+      if (PKG_RE.test(k) && typeof saved[k] === 'number') usedAt[k] = saved[k];
+    }
+  } catch (_) {}
+}
+loadUsed();
 function markUsed(app) {
   if (!app) return;
   usedAt[app.pkg] = Date.now();
   // Só guarda quem foi aberto nos últimos 30 dias (e quem ainda está instalado).
   const now = Date.now();
   for (const k of Object.keys(usedAt)) if (now - usedAt[k] > RECENT_MS || !allowedPkgs.has(k)) delete usedAt[k];
-  try { localStorage.setItem(USED_KEY, JSON.stringify(usedAt)); } catch (_) {}
+  try { localStorage.setItem(pkey(USED_KEY), JSON.stringify(usedAt)); } catch (_) {}
   usedDirty = true;
 }
 function renderAppsGrid() {
@@ -1705,8 +2181,8 @@ let gCtx = null, game = null, gState = 'off', gScore = 0, gBest = 0, gRaf = 0, g
 const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 function addScore(n) { gScore += n; }
 const num = n => String(Math.max(0, Math.round(n))).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-function loadBest(id) { try { return Number(localStorage.getItem('onix.best.' + id)) || 0; } catch (_) { return 0; } }
-function saveBest(id, v) { try { localStorage.setItem('onix.best.' + id, String(v)); } catch (_) {} }
+function loadBest(id) { try { return Number(localStorage.getItem(pkey('onix.best.' + id))) || 0; } catch (_) { return 0; } }
+function saveBest(id, v) { try { localStorage.setItem(pkey('onix.best.' + id), String(v)); } catch (_) {} }
 function line(ctx, x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
 function dot(ctx, x, y, r, fill) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); fill ? ctx.fill() : ctx.stroke(); }
 
@@ -2924,6 +3400,9 @@ function openPictureSettings() {
 
 /* ---------------- Configurações do Onix ---------------- */
 const OPTIONS = [
+  { group: 'Perfil' },
+  { act: 'profile', name: 'Trocar perfil', desc: 'Volta para “Quem está assistindo?”.' },
+  { act: 'profiles', name: 'Gerenciar perfis', desc: 'Crie, edite ou exclua perfis, inclusive os infantis.' },
   { group: 'Idioma' },
   { key: 'lang',   name: 'Idioma',                desc: 'Português ou espanhol. Automático segue o idioma da TV. OK troca.' },
   { group: 'Desempenho' },
@@ -2942,6 +3421,9 @@ const OPTIONS = [
   { key: 'sound',  name: 'Sons do menu',          desc: 'Toque suave ao navegar, abrir e voltar.' },
   { key: 'saver',  name: 'Tela de descanso',      desc: 'Planetas e asteroides passam pela tela após 10 minutos sem usar o controle.' },
   { act: 'saver',  name: 'Descansar agora',       desc: 'Entra na tela de descanso na hora, mesmo com ela desligada acima. Qualquer tecla volta ao Onix.' },
+  { group: 'Clima' },
+  { act: 'weather', name: 'Clima na tela inicial', desc: 'Temperatura ao lado do relógio. OK nela abre a previsão das próximas horas e dos próximos dias.' },
+  { act: 'city',    name: 'Cidade do clima',       desc: 'O Onix não detecta onde você está: só usa a cidade escolhida aqui.' },
   { group: 'Indicações' },
   { key: 'pickAuto', name: 'Pelo que você assiste', desc: 'A Netflix sempre, mais Disney+, HBO Max e Globoplay quando você abre o app mais de 3 vezes pelo Onix. Desligado, você escolhe os serviços abaixo.' },
   { key: 'pickNetflix',   service: 'netflix',   name: 'Netflix',   desc: 'Indicações da Netflix.' },
@@ -3065,6 +3547,7 @@ function setOption(key, on) {
       : t('Indicações: {0}', PICK_KEYS.filter(o => settings[o.key]).map(o => o.name).join(', ')));
   }
   if (key === 'autoUpdate') Bridge.setAutoUpdate(on);
+  if (PROFILE_PREFS.indexOf(key) >= 0) storeProfilePrefs();
   armSaver();
 }
 // Leva para o nativo (que baixa as indicações e procura atualizações) o que está salvo na página.
@@ -3074,7 +3557,7 @@ function syncPicksChoice() {
 }
 function syncSwitches() {
   $$('#optsList .switch').forEach(sw => sw.classList.toggle('on', settings[sw.dataset.key]));
-  $$('#optsList .opt-val').forEach(v => { const c = CHOICES[v.dataset.key].find(c => c[0] === settings[v.dataset.key]); v.textContent = c ? t(c[1]) : ''; });
+  $$('#optsList .opt-val[data-key]').forEach(v => { const c = CHOICES[v.dataset.key].find(c => c[0] === settings[v.dataset.key]); v.textContent = c ? t(c[1]) : ''; });
 }
 function renderSettings() {
   // Os serviços só aparecem com a escolha manual; "Atualizar automaticamente", se a ponte instala.
@@ -3093,7 +3576,11 @@ function renderSettings() {
     const b = h('button', { class: 'f opt glass', tabindex: '-1', 'aria-label': o.name },
       h('span', { class: 'opt-text' }, h('span', { class: 'opt-name', text: o.name }), h('span', { class: 'opt-desc', text: o.desc })),
       CHOICES[o.key] ? h('span', { class: 'opt-val', 'data-key': o.key })
-        : o.key ? h('span', { class: 'switch', 'data-key': o.key }) : svgFrom(GO_ICON));
+        : o.key ? h('span', { class: 'switch', 'data-key': o.key })
+        : o.act === 'weather' ? h('span', { class: 'switch' + (activeProfile() && activeProfile().weather ? ' on' : '') })
+        : o.act === 'city' ? h('span', { class: 'opt-val', text: activeProfile() && activeProfile().city ? activeProfile().city.name : 'Escolher' })
+        : svgFrom(GO_ICON));
+    if (o.act) b.setAttribute('data-act', o.act);
     if (o.key === 'pickAuto') b._act = () => {
       setOption('pickAuto', !settings.pickAuto);
       renderSettings();   // mostra/esconde os serviços
@@ -3117,10 +3604,15 @@ function renderSettings() {
       Object.assign(settings, DEFAULTS); setOption('h24', DEFAULTS.h24);
       syncPicksChoice(); Bridge.setAutoUpdate(DEFAULTS.autoUpdate);
       const was = LANG; resolveLang(); if (LANG !== was) changeLang();
+      storeProfilePrefs();
       renderSettings(); setFocus($('#optsList button[aria-label="' + t(o.name) + '"]'));
       toast('Configurações restauradas');
     };
     else if (o.act === 'saver') b._act = showSaver;
+    else if (o.act === 'profile') b._act = switchProfile;
+    else if (o.act === 'profiles') b._act = () => openProfiles(true);
+    else if (o.act === 'weather') b._act = toggleWeather;
+    else if (o.act === 'city') b._act = chooseCity;
     else if (o.act === 'changelog') b._act = () => openChangelog(b);
     else if (o.act === 'update') { b.id = 'updateOpt'; b._act = updateAction; }
     return b;
@@ -3218,6 +3710,733 @@ function updateAction() {
   else toast('Não foi possível procurar atualizações');
 }
 
+/* ---------------- Camadas (14.0.0) ----------------
+   Telas por cima do Onix (perfis, boas-vindas, teclado, PIN, clima…). A de cima recebe as teclas:
+   as setas andam só entre os itens dela e o Voltar fecha (ou faz o que ela pedir). */
+const panes = [];
+const topPane = () => panes.length ? panes[panes.length - 1] : null;
+function openPane(id, opts) {
+  const el = $('#' + id);
+  const old = panes.findIndex(p => p.el === el);
+  if (old >= 0) panes.splice(old, 1);
+  const pane = Object.assign({ el, from: current }, opts || {});
+  panes.push(pane);
+  el.style.zIndex = 20 + panes.length;   // a aberta por último fica por cima
+  el.hidden = false;
+  return pane;
+}
+// keep = não devolver o foco (quem chamou já vai pôr o foco em outro lugar).
+function closePane(id, keep) {
+  const i = panes.findIndex(p => p.el.id === id);
+  if (i < 0) return;
+  const wasTop = i === panes.length - 1;
+  const p = panes.splice(i, 1)[0];
+  p.el.hidden = true;
+  if (keep || !wasTop) return;
+  const under = topPane();
+  if (p.from && document.contains(p.from) && p.from.getClientRects().length) setFocus(p.from);
+  else if (under) focusIn(under.el);
+  else focusFirstContent();
+}
+function closeAllPanes() { while (panes.length) closePane(topPane().el.id, true); }
+function focusIn(root, sel) {
+  const el = (sel && $(sel, root)) || $$('.f', root).find(e => e.getClientRects().length > 0);
+  if (el) setFocus(el);
+}
+function paneMove(dir) {
+  const p = topPane();
+  const cands = $$('.f', p.el).filter(e => e.getClientRects().length > 0);
+  if (!current || !p.el.contains(current)) { if (cands[0]) setFocus(cands[0]); return !!cands[0]; }
+  const target = best(current, dir, cands, dir === 'left' || dir === 'right');
+  if (!target) return false;
+  setFocus(target);
+  return true;
+}
+function paneBack() {
+  const p = topPane();
+  if (p.back === false) return;
+  if (typeof p.back === 'function') p.back(); else closePane(p.el.id);
+}
+function paneKey(e) {
+  const p = topPane();
+  const dir = KEYMAP[e.key] || CODEMAP[e.keyCode];
+  if (dir) {
+    e.preventDefault();
+    if (e.repeat) { if (repeatLock) return; repeatLock = true; requestAnimationFrame(() => { repeatLock = false; }); }
+    if (paneMove(dir)) sfx('move'); else if (!e.repeat) sfx('edge');
+    return;
+  }
+  if (e.key === 'Enter' || e.keyCode === 13 || e.keyCode === 23 || (e.key === ' ' && !p.type)) {
+    e.preventDefault();
+    if (!e.repeat && current && p.el.contains(current)) { sfx('select'); activate(current); }
+    return;
+  }
+  if (e.key === 'Backspace' && p.erase) { e.preventDefault(); p.erase(); return; }
+  if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4) { e.preventDefault(); back(); return; }
+  if (p.digit && /^[0-9]$/.test(e.key)) { e.preventDefault(); p.digit(e.key); return; }
+  if (p.type && e.key && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); p.type(e.key); }
+}
+function btnAct(id, fn) { $('#' + id)._act = fn; }
+
+/* ---------------- Avatares ----------------
+   Oito desenhos espaciais (o tema do Onix) ou a foto que veio do celular (JPEG validado). */
+const AVATARS = [
+  { bg: 'linear-gradient(145deg,#4c5bd4,#1d2370)', g: '<circle cx="24" cy="24" r="10" fill="#f1e6ff"/><ellipse cx="24" cy="24" rx="19" ry="5.5" transform="rotate(-20 24 24)" fill="none" stroke="#ffd6a0" stroke-width="2.4"/><path d="M15 21a10 10 0 0 1 18 0" fill="none" stroke="#c8b4ff" stroke-width="2"/>' },
+  { bg: 'linear-gradient(145deg,#e0559a,#6a1645)', g: '<path d="M30 8a16 16 0 1 0 10 27A13 13 0 1 1 30 8z" fill="#fff1d6"/><circle cx="22" cy="28" r="2" fill="#f2d8a8"/><circle cx="27" cy="34" r="1.4" fill="#f2d8a8"/>' },
+  { bg: 'linear-gradient(145deg,#ff8a3d,#8a2d06)', g: '<path d="M24 5c6 5 8.5 13 6.5 23h-13C15.5 18 18 10 24 5z" fill="#f5f6f8"/><circle cx="24" cy="17" r="3.2" fill="#3aa0ff"/><path d="M17.5 24l-5 7 5.5-1zM30.5 24l5 7-5.5-1z" fill="#ff5a3d"/><path d="M20 30h8l-4 11z" fill="#ffd23f"/>' },
+  { bg: 'linear-gradient(145deg,#19b39b,#0a4a45)', g: '<ellipse cx="24" cy="25" rx="13" ry="15" fill="#b7f5a8"/><ellipse cx="19" cy="23" rx="3.6" ry="5" transform="rotate(-15 19 23)" fill="#10221d"/><ellipse cx="29" cy="23" rx="3.6" ry="5" transform="rotate(15 29 23)" fill="#10221d"/><path d="M21 33q3 2 6 0" stroke="#10221d" stroke-width="1.8" fill="none" stroke-linecap="round"/>' },
+  { bg: 'linear-gradient(145deg,#f2b705,#8a5a00)', g: '<g stroke="#fff6cf" stroke-width="2.6" stroke-linecap="round"><path d="M24 4v6M24 38v6M4 24h6M38 24h6M10 10l4 4M34 34l4 4M10 38l4-4M34 14l4-4"/></g><circle cx="24" cy="24" r="9" fill="#fff6cf"/>' },
+  { bg: 'linear-gradient(145deg,#3a8dff,#0c2f6b)', g: '<circle cx="24" cy="24" r="14" fill="#eef1f6"/><rect x="14" y="17" width="20" height="12" rx="6" fill="#1b2b4a"/><path d="M18 20.5q3-2 6-1" stroke="#7cc4ff" stroke-width="1.8" fill="none" stroke-linecap="round"/>' },
+  { bg: 'linear-gradient(145deg,#8d5cff,#2d1270)', g: '<path d="M24 6l5.3 11.2 12.2 1.5-9 8.4 2.3 12.1L24 33.3l-10.8 5.9 2.3-12.1-9-8.4 12.2-1.5z" fill="#ffe27a"/>' },
+  { bg: 'linear-gradient(145deg,#e84545,#5c0f14)', g: '<circle cx="32" cy="16" r="6.5" fill="#fff1e0"/><g stroke="#ffc9a8" stroke-width="2.4" stroke-linecap="round"><path d="M27 20L10 37M30 22.5L17 38M24.5 18L9 30"/></g>' },
+];
+const PLUS_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+const PHONE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>';
+const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+function avatarFill(el, pr) {
+  el.style.background = pr.photo ? '#222' : AVATARS[pr.av].bg;
+  el.replaceChildren(pr.photo ? h('img', { src: pr.photo, alt: '', draggable: 'false' }) : svgFrom('<svg viewBox="0 0 48 48" aria-hidden="true">' + AVATARS[pr.av].g + '</svg>'));
+  return el;
+}
+const avatar = pr => avatarFill(h('span', { class: 'av' }), pr);
+
+/* ---------------- Teclado na tela ----------------
+   Para o nome do perfil e a cidade do clima. Também aceita o teclado físico e o texto que vem do
+   celular (controle pelo celular). */
+const KB_KEYS = 'qwertyuiopasdfghjklçzxcvbnm-\'.áéíóúãõâêô';
+let kb = null;
+function openKeyboard(o) {
+  kb = Object.assign({ value: '', max: 30, caps: false }, o);
+  kb.value = String(kb.value || '').slice(0, kb.max);
+  $('#kbTitle').textContent = t(kb.title);
+  const keys = KB_KEYS.split('').map(ch => { const b = h('button', { class: 'f kb-key', tabindex: '-1' }, ch); b._act = () => kbType(ch); return b; });
+  const wide = (label, fn, cls) => { const b = h('button', { class: 'f kb-key ' + cls, tabindex: '-1', text: label }); b._act = fn; return b; };
+  keys.push(wide('Espaço', () => kbType(' '), 'wide'), wide('Apagar', kbErase, 'wide'), wide('Pronto', kbDone, 'wide'));
+  $('#kbKeys').replaceChildren(...keys);
+  $('#kbRes').replaceChildren();
+  $('#kbFrom').hidden = true;
+  openPane('keyboard', { type: kbType, erase: kbErase, back: () => { closePane('keyboard'); if (kb && kb.onCancel) kb.onCancel(); } });
+  kbRender();
+  focusIn($('#keyboard'), '.kb-key');
+}
+function kbRender() {
+  const f = $('#kbField');
+  f.replaceChildren();
+  if (kb.value) f.append(document.createTextNode(kb.value)); else f.append(h('span', { class: 'kb-ph', text: kb.ph || '' }));
+  f.append(h('span', { class: 'kb-caret' }));
+}
+function kbSet(v, fromPhone) {
+  if (!kb) return;
+  kb.value = String(v).replace(/[\u0000-\u001f\u007f\u202a-\u202e\u2066-\u2069]/g, '').replace(/^\s+/, '').slice(0, kb.max);
+  if (fromPhone) $('#kbFrom').hidden = false;
+  kbRender();
+  if (kb.onInput) kb.onInput(kb.value);
+}
+function kbType(ch) {
+  if (!kb || kb.value.length >= kb.max) return;
+  if (kb.caps && (!kb.value || kb.value.slice(-1) === ' ')) ch = ch.toUpperCase();
+  kbSet(kb.value + ch);
+}
+function kbErase() { if (kb) kbSet(kb.value.slice(0, -1)); }
+function kbDone() {
+  const k = kb;
+  closePane('keyboard', true);
+  if (k && k.onDone) k.onDone(k.value.trim());
+}
+// Resultados embaixo do campo (busca de cidade): [{name, sub, act}]
+function kbResults(list, msg) {
+  if (!kb || $('#keyboard').hidden) return;
+  $('#kbRes').replaceChildren(...(list.length ? list.map(r => {
+    const b = h('button', { class: 'f row-opt', tabindex: '-1' }, h('span', { class: 'opt-name', text: r.name }), h('span', { class: 'row-val', text: r.sub }));
+    b._act = r.act;
+    return b;
+  }) : msg ? [h('div', { class: 'kb-msg', text: msg })] : []));
+}
+
+/* ---------------- PIN (sair do Modo Infantil) ----------------
+   mode 'check' confere o PIN salvo; 'set' pede duas vezes o PIN novo. */
+let pin = null;
+function openPin(o) {
+  pin = Object.assign({ mode: 'check', typed: '', first: '' }, o);
+  $('#pinTitle').textContent = t(pin.title);
+  $('#pinSub').textContent = t(pin.sub);
+  $('#pinMsg').textContent = '';
+  const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'del', '0', 'cancel'].map(k => {
+    if (k === 'del') { const b = h('button', { class: 'f pin-key glass', tabindex: '-1', 'aria-label': 'Apagar' }, svgFrom('<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H8M13 6l-6 6 6 6"/></svg>')); b._act = pinErase; return b; }
+    if (k === 'cancel') { const b = h('button', { class: 'f pin-key glass', tabindex: '-1', text: 'Cancelar', style: 'font-size:.9rem' }); b._act = () => closePane('pinPad'); return b; }
+    const b = h('button', { class: 'f pin-key glass', tabindex: '-1' }, k); b._act = () => pinDigit(k); return b;
+  });
+  $('#pinKeys').replaceChildren(...keys);
+  openPane('pinPad', { digit: pinDigit, erase: pinErase });
+  pinDots();
+  setFocus(keys[4]);
+}
+function pinDots() { $$('#pinDots i').forEach((d, i) => d.classList.toggle('on', i < pin.typed.length)); }
+function pinErase() { pin.typed = pin.typed.slice(0, -1); pinDots(); }
+function pinWrong(msg) {
+  const dots = $('#pinDots');
+  dots.classList.remove('err'); void dots.offsetWidth; dots.classList.add('err');
+  $('#pinMsg').textContent = t(msg);
+  pin.typed = ''; pinDots();
+}
+function pinDigit(d) {
+  if (pin.typed.length >= 4) return;
+  pin.typed += d; pinDots(); $('#pinMsg').textContent = '';
+  if (pin.typed.length < 4) return;
+  const p = pin, typed = p.typed;
+  setTimeout(() => {
+    if (p !== pin) return;
+    if (p.mode === 'check') {
+      if (typed === kidsPin) { closePane('pinPad', true); p.onOk(); } else pinWrong('PIN incorreto. Tente de novo.');
+    } else if (!p.first) {
+      p.first = typed; p.typed = ''; pinDots();
+      $('#pinSub').textContent = t('Digite o mesmo PIN de novo para confirmar');
+    } else if (typed === p.first) { closePane('pinPad', true); p.onOk(typed); }
+    else { p.first = ''; pinWrong('Os dois PINs não batem. Comece de novo.'); $('#pinSub').textContent = t(p.sub); }
+  }, 160);
+}
+
+/* ---------------- Perfis ---------------- */
+let manageProfiles = false, deleteArmed = 0;
+function newProfileId() {
+  let n = 1;
+  for (const pr of profiles) n = Math.max(n, Number(pr.id.slice(1)) + 1);
+  return 'p' + n;
+}
+function profilePrefsNow() { const o = {}; for (const k of PROFILE_PREFS) o[k] = settings[k]; return o; }
+// Configurações → Idioma / Indicações mudam o perfil ativo.
+function storeProfilePrefs() { const pr = activeProfile(); if (pr) { pr.prefs = profilePrefsNow(); saveProfiles(); } }
+function renderMe() {
+  const pr = activeProfile();
+  $('#meBtn').hidden = !pr;
+  if (!pr) return;
+  avatarFill($('#meAv'), pr);
+  $('#meName').textContent = pr.name;
+  $('#meBtn').setAttribute('aria-label', t('Perfil: {0}. Trocar perfil', pr.name));
+}
+function switchProfile() {
+  if (isKids()) openPin({ title: 'Sair do Modo Infantil', sub: 'Digite o PIN para trocar de perfil', onOk: () => openProfiles(false) });
+  else openProfiles(false);
+}
+function openProfiles(manage, focusId) {
+  manageProfiles = !!manage;
+  $('#pfTitle').textContent = t(manageProfiles ? 'Gerenciar perfis' : 'Quem está assistindo?');
+  $('#pfSub').textContent = manageProfiles ? t('Escolha um perfil para editar') : '';
+  $('#pfManage span').textContent = t(manageProfiles ? 'Concluído' : 'Gerenciar perfis');
+  const items = profiles.map(pr => {
+    const av = avatar(pr);
+    if (manageProfiles) av.append(h('span', { class: 'pf-pen' }, svgFrom(PEN_SVG)));
+    const b = h('button', { class: 'f pf', tabindex: '-1', 'aria-label': pr.name, 'data-id': pr.id }, av, h('span', { class: 'pf-name', text: pr.name }),
+      pr.kids ? h('span', { class: 'kids-badge', text: 'Infantil' }) : null);
+    b._act = () => manageProfiles ? openEditor(pr) : enterProfile(pr);
+    return b;
+  });
+  if (profiles.length < MAX_PROFILES) {
+    const add = h('button', { class: 'f pf pf-add', tabindex: '-1', 'aria-label': 'Adicionar perfil' },
+      h('span', { class: 'av' }, svgFrom(PLUS_SVG)), h('span', { class: 'pf-name', text: 'Adicionar perfil' }));
+    add._act = () => openEditor(null);
+    items.push(add);
+  }
+  $('#pfList').replaceChildren(...items);
+  if ($('#profiles').hidden) openPane('profiles', { back: profilesBack });
+  const target = (focusId && $('#pfList [data-id="' + focusId + '"]')) || $('#pfList [data-id="' + profileId + '"]') || $('#pfList .pf');
+  setFocus(target);
+}
+// Voltar: sai do "Gerenciar"; ou volta ao perfil de antes (se ainda existir). Ao ligar, fica aqui.
+function profilesBack() {
+  if (manageProfiles) { openProfiles(false); return; }
+  if (activeProfile() && !kidsTimeUp()) closePane('profiles');
+}
+$('#pfManage')._act = () => openProfiles(!manageProfiles);
+
+let draft = null;
+function defaultKidsApps() {
+  return apps.filter(a => a.brand === 'youtube' || a.brand === 'disney' || /kids|kid|infantil|gloob|cartoon|discovery|nick/i.test(a.name + ' ' + a.pkg)).map(a => a.pkg).slice(0, 12);
+}
+function openEditor(pr) {
+  const used = new Set(profiles.map(x => x.av));
+  let free = 0; while (free < AVATARS_N - 1 && used.has(free)) free++;
+  draft = pr ? { id: pr.id, name: pr.name, av: pr.av, photo: pr.photo, kids: pr.kids, allow: pr.allow.slice(), limit: pr.limit, isNew: false }
+    : { id: newProfileId(), name: '', av: free, photo: null, kids: false, allow: defaultKidsApps(), limit: 60, isNew: true };
+  disarmDelete();
+  openPane('profileEdit');
+  renderDraft();
+  setFocus($('#peNameBtn'));
+}
+function renderDraft() {
+  avatarFill($('#pePreview'), draft);
+  $('#peName').textContent = draft.name || t('Sem nome');
+  $('#peBadge').hidden = !draft.kids;
+  $('#peTitle').textContent = t(draft.isNew ? 'Novo perfil' : 'Editar perfil');
+  $('#peNameVal').textContent = draft.name || t('Digite o nome');
+  const opts = AVATARS.map((_, i) => {
+    const b = h('button', { class: 'f av-opt' + (!draft.photo && draft.av === i ? ' sel' : ''), tabindex: '-1', 'aria-label': t('Avatar {0}', i + 1), 'data-av': i },
+      avatarFill(h('span', { class: 'av' }), { av: i, photo: null }));
+    b._act = () => { draft.av = i; draft.photo = null; renderDraft(); setFocus($('#peAvs [data-av="' + i + '"]')); };
+    return b;
+  });
+  if (Bridge.has('remoteStart')) {
+    const ph = h('button', { class: 'f av-photo' + (draft.photo ? ' sel' : ''), tabindex: '-1', id: 'pePhoto' }, svgFrom(PHONE_SVG), h('span', { text: 'Foto do celular' }));
+    ph._act = () => askPhoto(photo => { if (draft) { draft.photo = photo; renderDraft(); setFocus($('#pePhoto')); } });
+    opts.push(ph);
+  }
+  $('#peAvs').replaceChildren(...opts);
+  $('#peKidsSw').classList.toggle('on', draft.kids);
+  $('#peKidsOpts').hidden = !draft.kids;
+  $('#pePinVal').textContent = kidsPin ? t('•••• · OK troca') : t('Criar');
+  $('#peLimitVal').textContent = kidsLimitText(draft.limit);
+  $('#peAppsVal').textContent = t(draft.allow.length === 1 ? '{0} app' : '{0} apps', draft.allow.length);
+  $('#peDel').hidden = draft.isNew;
+}
+const kidsLimitText = m => !m ? t('Sem limite') : m < 60 ? t('{0} min', m) : m % 60 ? t('{0}h{1}', Math.floor(m / 60), m % 60) : t(m === 60 ? '{0} hora' : '{0} horas', m / 60);
+function otherAdult(id) { return profiles.some(x => x.id !== id && !x.kids); }
+btnAct('peNameBtn', () => openKeyboard({ title: 'Nome do perfil', value: draft.name, max: 14, caps: true, ph: t('Digite o nome'),
+  onDone: v => { draft.name = v; renderDraft(); setFocus($('#peNameBtn')); }, onCancel: () => setFocus($('#peNameBtn')) }));
+btnAct('peKids', () => {
+  if (!draft.kids && !otherAdult(draft.id)) { toast('Precisa ficar pelo menos um perfil de adulto'); return; }
+  draft.kids = !draft.kids;
+  renderDraft();
+});
+btnAct('pePin', () => openPin({ mode: 'set', title: 'PIN para sair do Modo Infantil', sub: 'Escolha 4 números. Só quem souber o PIN tira a criança do perfil infantil.',
+  onOk: v => { kidsPin = v; saveProfiles(); renderDraft(); setFocus($('#pePin')); toast('PIN salvo'); } }));
+btnAct('peLimit', () => { draft.limit = KIDS_LIMITS[(KIDS_LIMITS.indexOf(draft.limit) + 1) % KIDS_LIMITS.length]; renderDraft(); });
+btnAct('peApps', openKidsApps);
+btnAct('peCancel', () => closePane('profileEdit'));
+btnAct('peSave', () => {
+  const name = cleanText(draft.name, 14);
+  if (!name) { toast('Dê um nome ao perfil antes de salvar'); setFocus($('#peNameBtn')); return; }
+  if (draft.kids && !kidsPin) { toast('Crie o PIN para sair do Modo Infantil'); setFocus($('#pePin')); return; }
+  if (draft.kids && !draft.allow.length) { toast('Libere pelo menos um app para o perfil infantil'); setFocus($('#peApps')); return; }
+  let pr = profiles.find(x => x.id === draft.id);
+  if (!pr) { pr = cleanProfile({ id: draft.id, name, prefs: profilePrefsNow() }); profiles.push(pr); }
+  Object.assign(pr, { name, av: draft.av, photo: draft.photo, kids: draft.kids, allow: draft.allow.slice(), limit: draft.limit });
+  saveProfiles();
+  const id = draft.id; draft = null;
+  closePane('profileEdit', true);
+  if (id === profileId) { renderMe(); document.documentElement.classList.toggle('kids', pr.kids); renderApps(); kidsTick(); }
+  toast('Perfil salvo');
+  openProfiles(manageProfiles, id);
+});
+function disarmDelete() { clearTimeout(deleteArmed); deleteArmed = 0; $('#peDel span').textContent = t('Excluir perfil'); }
+btnAct('peDel', () => {
+  const pr = profiles.find(x => x.id === draft.id);
+  if (!pr) return;
+  if (!pr.kids && !otherAdult(pr.id)) { toast('Precisa ficar pelo menos um perfil de adulto'); return; }
+  if (!deleteArmed) { $('#peDel span').textContent = t('OK de novo para excluir'); deleteArmed = setTimeout(disarmDelete, 3000); return; }
+  disarmDelete();
+  profiles = profiles.filter(x => x !== pr);
+  forgetProfileData(pr.id);
+  if (profileId === pr.id) profileId = null;
+  saveProfiles();
+  draft = null;
+  closePane('profileEdit', true);
+  toast(t('Perfil {0} excluído', pr.name));
+  openProfiles(manageProfiles);
+});
+// Apaga os apps, recentes, recordes, clima e tempo de tela do perfil excluído.
+function forgetProfileData(id) {
+  try {
+    const own = k => id === FIRST_PROFILE ? k === HOME_KEY || k === USED_KEY || k === 'onix.weather' || /^onix\.best\.[a-z]+$/.test(k)
+      : k.slice(-(id.length + 1)) === '.' + id;
+    Object.keys(localStorage).filter(k => k.indexOf('onix.') === 0 && k !== PROFILES_KEY && own(k)).forEach(k => localStorage.removeItem(k));
+  } catch (_) {}
+}
+
+// Apps liberados no perfil infantil (marca e desmarca, como em "Organizar").
+function openKidsApps() {
+  const chosen = new Set(draft.allow);
+  $('#kaGrid').replaceChildren(...(apps.length ? apps.map(a => {
+    const art = appArt(a);
+    art.append(h('span', { class: 'mark' }, svgFrom(CHECK_SVG)));
+    const b = h('button', { class: 'f tile' + (chosen.has(a.pkg) ? ' on' : ''), tabindex: '-1', 'aria-label': a.name }, art, h('span', { class: 'tile-label', text: a.name }));
+    b._act = () => {
+      const i = draft.allow.indexOf(a.pkg);
+      if (i >= 0) draft.allow.splice(i, 1); else draft.allow.push(a.pkg);
+      b.classList.toggle('on', i < 0);
+    };
+    return b;
+  }) : [h('div', { class: 'info glass', text: 'Nenhum app encontrado nesta TV.' })]));
+  openPane('kidsApps', { back: kidsAppsDone });
+  focusIn($('#kaGrid'));
+}
+function kidsAppsDone() { closePane('kidsApps', true); renderDraft(); setFocus($('#peApps')); }
+btnAct('kaDone', kidsAppsDone);
+
+/* Entrar num perfil: as preferências dele (idioma e indicações) passam a valer e "Seus apps",
+   recentes e recordes são lidos de novo. */
+function enterProfile(pr, quiet) {
+  kidsFlush();
+  const langWas = LANG;
+  profileId = pr.id;
+  for (const k of PROFILE_PREFS) { if (k in pr.prefs) settings[k] = pr.prefs[k]; else pr.prefs[k] = settings[k]; }
+  saveSettings();
+  saveProfiles();
+  loadHome();
+  loadUsed();
+  document.documentElement.classList.toggle('kids', pr.kids);
+  closeAllPanes();
+  resolveLang();
+  if (LANG !== langWas) relang(); else { renderApps(); renderSettings(); }
+  renderMe();
+  if (Bridge.native) syncPicksChoice();
+  renderPicks();
+  showSection('home');
+  setFocus(pr.kids ? ($('#homeApps .tile') || $('.nav-item[data-section="games"]')) : $('#heroOpen'));
+  kidsMark = 0;
+  kidsTick();
+  weatherLoad();
+  if (!quiet && profiles.length > 1) toast(t('Olá, {0}!', pr.name));
+}
+
+/* ---------------- Modo Infantil: tempo por dia ----------------
+   Conta o tempo com o perfil infantil ativo, também dentro dos apps (a diferença é somada quando
+   o Onix volta para a frente; buracos de mais de 2 h, como a TV desligada, contam só 2 h). */
+const KIDS_TIME_KEY = 'onix.kidsTime';
+let kidsMark = 0, kidsTimer = 0;
+const dayKey = () => { const d = new Date(); return d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate(); };
+function kidsTimes() { try { const o = JSON.parse(localStorage.getItem(KIDS_TIME_KEY) || '{}'); return o && typeof o === 'object' ? o : {}; } catch (_) { return {}; } }
+function kidsUsed(id) { const e = kidsTimes()[id]; return e && e.day === dayKey() && typeof e.ms === 'number' ? e.ms : 0; }
+function kidsAdd(id, ms) {
+  const all = kidsTimes(), day = dayKey();
+  for (const k of Object.keys(all)) if (!all[k] || all[k].day !== day) delete all[k];
+  all[id] = { day, ms: kidsUsed(id) + ms };
+  try { localStorage.setItem(KIDS_TIME_KEY, JSON.stringify(all)); } catch (_) {}
+}
+function kidsTimeUp() { const pr = activeProfile(); return !!pr && pr.kids && pr.limit > 0 && kidsUsed(pr.id) >= pr.limit * 60000; }
+function kidsFlush() {
+  const pr = activeProfile();
+  if (pr && pr.kids && kidsMark) kidsAdd(pr.id, Math.min(Date.now() - kidsMark, 2 * 3600 * 1000));
+  kidsMark = pr && pr.kids ? Date.now() : 0;
+}
+function kidsTick() {
+  clearInterval(kidsTimer);
+  const pr = activeProfile(), chip = $('#kidsChip');
+  if (!pr || !pr.kids) { kidsMark = 0; chip.hidden = true; return; }
+  kidsFlush();
+  chip.hidden = false;
+  const left = pr.limit ? Math.max(0, pr.limit * 60000 - kidsUsed(pr.id)) : 0;
+  chip.textContent = pr.limit ? t('Modo Infantil · restam {0}', kidsLimitText(Math.ceil(left / 60000))) : t('Modo Infantil');
+  if (kidsTimeUp() && $('#kidsLock').hidden) {
+    closeAllPanes();
+    openPane('kidsLock', { back: false });
+    setFocus($('#klSwitch'));
+  }
+  kidsTimer = setInterval(kidsTick, 30000);
+}
+btnAct('klSwitch', switchProfile);
+
+/* ---------------- Boas-vindas ----------------
+   Só na primeira vez (o Onix sem nada salvo): idioma, o primeiro perfil e algumas preferências.
+   Tudo pode ser pulado, menos o nome, e mudado depois em Configurações. */
+const WL_SERVICES = [['netflix', 'Netflix', 'pickNetflix'], ['disney', 'Disney+', 'pickDisney'], ['max', 'HBO Max', 'pickMax'], ['globoplay', 'Globoplay', 'pickGloboplay']];
+let wl = null;
+function openWelcome() {
+  wl = { step: 0, name: '', av: 3, photo: null, services: ['netflix'], weather: false, city: null, h24: settings.h24 };
+  openPane('welcome', { back: () => { if (wl.step > 0) wlGo(wl.step - 1); } });
+  wlRender();
+}
+function wlGo(step) { wl.step = Math.max(0, Math.min(3, step)); wlRender(); }
+const wlOpt = (cls, label, sub, act, sel, extra) => {
+  const b = h('button', { class: 'f row-opt ' + cls + (sel ? ' sel' : ''), tabindex: '-1' },
+    h('span', { class: 'opt-text' }, h('span', { class: 'opt-name', text: label }), sub ? h('span', { class: 'opt-desc', text: sub }) : null), extra || null);
+  b._act = act;
+  return b;
+};
+function wlRender(focusSel) {
+  $('#wlProg').replaceChildren(...['Idioma', 'Perfil', 'Preferências', 'Pronto'].map((k, i) =>
+    h('li', { class: i < wl.step ? 'done' : i === wl.step ? 'cur' : '' }, h('i', null, i < wl.step ? '✓' : String(i + 1)), t(k))));
+  $('#wlSkip').hidden = wl.step === 1 || wl.step === 3;
+  $('#wlBack').hidden = wl.step === 0;
+  $('#wlNext span').textContent = t(wl.step === 3 ? 'Começar' : 'Continuar');
+  const body = $('#wlBody');
+  let step;
+  if (wl.step === 0) {
+    const langs = [['pt', 'Português', 'Brasil'], ['es', 'Español', 'España y Latinoamérica'], ['auto', 'Automático', 'Segue o idioma da TV']].map(([v, name, sub]) =>
+      wlOpt('', name, t(sub), () => { settings.lang = v; saveSettings(); const was = LANG; resolveLang(); if (LANG !== was) relang(); wlRender('[data-lang="' + v + '"]'); },
+        settings.lang === v, h('span', { class: 'radio' })));
+    langs.forEach((b, i) => b.setAttribute('data-lang', ['pt', 'es', 'auto'][i]));
+    step = h('div', { class: 'wl-step' },
+      h('div', { class: 'wl-intro' }, svgFrom('<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><circle cx="24" cy="24" r="10"/><ellipse cx="24" cy="24" rx="21" ry="6" transform="rotate(-20 24 24)"/></svg>'),
+        h('h2', { text: 'Bem-vindo ao Onix' }), h('p', { text: 'Vamos deixar a TV do seu jeito. Leva menos de um minuto.' })),
+      h('div', { class: 'wl-col wl-langs' }, h('span', { class: 'lbl', text: 'Escolha o idioma' }), ...langs));
+  } else if (wl.step === 1) {
+    const me = { av: wl.av, photo: wl.photo };
+    const opts = AVATARS.map((_, i) => {
+      const b = h('button', { class: 'f av-opt' + (!wl.photo && wl.av === i ? ' sel' : ''), tabindex: '-1', 'aria-label': t('Avatar {0}', i + 1), 'data-av': i },
+        avatarFill(h('span', { class: 'av' }), { av: i, photo: null }));
+      b._act = () => { wl.av = i; wl.photo = null; wlRender('[data-av="' + i + '"]'); };
+      return b;
+    });
+    if (Bridge.has('remoteStart')) {
+      const ph = h('button', { class: 'f av-photo' + (wl.photo ? ' sel' : ''), tabindex: '-1', id: 'wlPhoto' }, svgFrom(PHONE_SVG), h('span', { text: 'Foto do celular' }));
+      ph._act = () => askPhoto(photo => { if (wl) { wl.photo = photo; wlRender('#wlPhoto'); } });
+      opts.push(ph);
+    }
+    const nameBtn = h('button', { class: 'f row-opt', tabindex: '-1', id: 'wlName' }, h('span', { class: 'row-val', text: wl.name || t('Digite o nome') }), h('span', { class: 'opt-desc', text: 'OK para digitar' }));
+    nameBtn._act = () => openKeyboard({ title: 'Seu nome', value: wl.name, max: 14, caps: true, ph: t('Digite o nome'),
+      onDone: v => { wl.name = v; wlRender('#wlNext'); }, onCancel: () => setFocus($('#wlName')) });
+    step = h('div', { class: 'wl-step' },
+      h('div', { class: 'pe-left' }, avatar(me), h('span', { class: 'pe-name', text: wl.name || t('Seu nome') })),
+      h('div', { class: 'wl-col grow' }, h('h2', { text: 'Quem vai usar este perfil?' }), h('span', { class: 'lbl', text: 'Nome' }), nameBtn,
+        h('span', { class: 'lbl', text: 'Avatar' }), h('div', { class: 'av-grid' }, ...opts)));
+  } else if (wl.step === 2) {
+    const svcs = WL_SERVICES.map(([key, name]) => {
+      const on = wl.services.indexOf(key) >= 0;
+      const b = h('button', { class: 'f svc' + (on ? ' sel' : ''), tabindex: '-1', 'data-svc': key }, h('span', { class: 'ck' }), name);
+      b._act = () => {
+        const i = wl.services.indexOf(key);
+        if (i >= 0 && wl.services.length === 1) { toast('Deixe pelo menos um serviço ligado'); return; }
+        if (i >= 0) wl.services.splice(i, 1); else wl.services.push(key);
+        wlRender('[data-svc="' + key + '"]');
+      };
+      return b;
+    });
+    const sw = on => h('span', { class: 'switch' + (on ? ' on' : '') });
+    const clock = wlOpt('', 'Relógio de 24 horas', '19:30 em vez de 7:30', () => { wl.h24 = !wl.h24; wlRender('#wlClock'); }, false, sw(wl.h24));
+    clock.id = 'wlClock';
+    const wx = wlOpt('', 'Clima na tela inicial', 'Temperatura ao lado do relógio', () => {
+      wl.weather = !wl.weather;
+      if (wl.weather && !wl.city) openCity(c => { wl.city = c; wlRender('#wlCity'); }, () => wlRender('#wlWeather'));
+      else wlRender('#wlWeather');
+    }, false, sw(wl.weather));
+    wx.id = 'wlWeather';
+    const city = wlOpt('', 'Cidade', null, () => openCity(c => { wl.city = c; wlRender('#wlCity'); }, () => setFocus($('#wlCity'))), false,
+      h('span', { class: 'row-val', text: wl.city ? wl.city.name : t('Escolher') }));
+    city.id = 'wlCity';
+    city.hidden = !wl.weather;
+    step = h('div', { class: 'wl-step' }, h('div', { class: 'wl-col grow' },
+      h('h2', { text: 'Algumas preferências' }), h('p', { class: 'layer-sub', style: 'text-align:left;margin:0', text: 'Tudo isso pode ser mudado depois em Configurações.' }),
+      h('div', { class: 'wl-prefs' },
+        h('div', { class: 'wl-col' }, h('span', { class: 'lbl', text: 'Serviços para as indicações' }), h('div', { class: 'svc-list' }, ...svcs),
+          h('span', { class: 'opt-desc', text: 'As indicações da semana vêm destes serviços.' }), clock),
+        h('div', { class: 'wl-col' }, wx, city,
+          h('div', { class: 'privacy' }, svgFrom(LOCK_SVG), h('span', { text: 'O Onix não detecta sua localização. Só a cidade escolhida aqui é usada para buscar a previsão.' }))))));
+  } else {
+    const svcNames = WL_SERVICES.filter(s => wl.services.indexOf(s[0]) >= 0).map(s => s[1]).join(', ');
+    const langName = (CHOICES.lang.find(c => c[0] === settings.lang) || [0, ''])[1];
+    step = h('div', { class: 'wl-step' }, h('div', { class: 'wl-done' },
+      avatar({ av: wl.av, photo: wl.photo }), h('h2', null, t('Tudo pronto, {0}!', wl.name)),
+      h('div', { class: 'wl-sum glass' },
+        ...[['Idioma', t(langName)], ['Indicações', svcNames], ['Clima', wl.weather && wl.city ? wl.city.name : t('Desligado')], ['Relógio', t(wl.h24 ? '24 horas' : '12 horas')]]
+          .map(([k, v]) => h('div', null, h('span', { text: k }), h('b', null, v)))),
+      h('p', { class: 'layer-sub', text: 'Para mudar algo, vá em Configurações. Para adicionar outra pessoa, use Trocar perfil no menu.' })));
+  }
+  body.replaceChildren(step);
+  const f = focusSel && $(focusSel, $('#welcome'));
+  if (f) setFocus(f);
+  else if (wl.step === 0) setFocus($('#wlBody .sel'));
+  else if (wl.step === 1) setFocus(wl.name ? $('#wlNext') : $('#wlName'));
+  else if (wl.step === 2) setFocus($('#wlBody .svc'));
+  else setFocus($('#wlNext'));
+}
+btnAct('wlSkip', () => wlGo(wl.step === 2 ? 3 : wl.step + 1));
+btnAct('wlBack', () => wlGo(wl.step - 1));
+btnAct('wlNext', () => {
+  if (wl.step === 1 && !wl.name) { toast('Digite seu nome para continuar'); setFocus($('#wlName')); return; }
+  if (wl.step === 2 && wl.weather && !wl.city) { toast('Escolha uma cidade ou desligue o clima'); setFocus($('#wlCity')); return; }
+  if (wl.step < 3) { wlGo(wl.step + 1); return; }
+  // Começar: cria o primeiro perfil com as escolhas.
+  settings.h24 = wl.h24;
+  const only = wl.services.length === 1 && wl.services[0] === 'netflix';
+  settings.pickAuto = only;   // só a Netflix = o padrão "pelo que você assiste"
+  WL_SERVICES.forEach(([key, , k]) => { settings[k] = only ? DEFAULTS[k] : wl.services.indexOf(key) >= 0; });
+  saveSettings();
+  updateClock(true);
+  const pr = cleanProfile({ id: FIRST_PROFILE, name: wl.name, av: wl.av, prefs: profilePrefsNow(), weather: wl.weather && !!wl.city, city: wl.city });
+  pr.photo = wl.photo;
+  profiles = [pr];
+  wl = null;
+  enterProfile(pr, true);
+  toast('Perfil criado. Da próxima vez, o Onix entra direto.');
+});
+
+/* ---------------- Clima ----------------
+   Previsão do Open-Meteo para a cidade escolhida no perfil (nada de localização automática).
+   O nativo baixa (a página não tem rede) e devolve o JSON; aqui só passam números validados. */
+const WX_KEY = 'onix.weather', WX_FRESH = 30 * 60 * 1000;
+let wx = null, wxAsked = 0, cityQuery = '', cityTimer = 0;
+const WX_CODES = [
+  [[0], 'Céu limpo', 'clear'], [[1], 'Poucas nuvens', 'partly'], [[2], 'Parcialmente nublado', 'partly'], [[3], 'Nublado', 'cloud'],
+  [[45, 48], 'Neblina', 'fog'], [[51, 53, 55, 56, 57], 'Garoa', 'rain'], [[61, 63, 66, 80, 81], 'Chuva', 'rain'], [[65, 67, 82], 'Chuva forte', 'rain'],
+  [[71, 73, 75, 77, 85, 86], 'Neve', 'snow'], [[95, 96, 99], 'Tempestade', 'storm'],
+];
+const wxInfo = code => { const r = WX_CODES.find(c => c[0].indexOf(code) >= 0); return r ? { text: r[1], icon: r[2] } : { text: 'Nublado', icon: 'cloud' }; };
+const WX_ICONS = {
+  sun: '<g stroke="#ffd23f" stroke-width="2.6" stroke-linecap="round"><path d="M24 5v5M24 38v5M5 24h5M38 24h5M10.5 10.5l3.5 3.5M34 34l3.5 3.5M10.5 37.5L14 34M34 14l3.5-3.5"/></g><circle cx="24" cy="24" r="8.5" fill="#ffd23f"/>',
+  moon: '<path d="M30 8a15 15 0 1 0 10 26A12 12 0 1 1 30 8z" fill="#e8ecf6"/>',
+  cloud: '<path d="M14 36h20a8 8 0 0 0 .6-16A11 11 0 0 0 13.4 23 6.6 6.6 0 0 0 14 36z" fill="#eef1f6"/>',
+  sunCloud: '<g stroke="#ffd23f" stroke-width="2.4" stroke-linecap="round"><path d="M30 6v4M41 10.5l-2.8 2.8M45.5 21h-4M19 10.5l2.8 2.8"/></g><circle cx="30" cy="21" r="7" fill="#ffd23f"/><path d="M11 39h18a7 7 0 0 0 .5-14A9.5 9.5 0 0 0 11.3 28 5.6 5.6 0 0 0 11 39z" fill="#eef1f6"/>',
+  moonCloud: '<path d="M32 7a10 10 0 1 0 9 15 8 8 0 1 1-9-15z" fill="#e8ecf6"/><path d="M11 39h18a7 7 0 0 0 .5-14A9.5 9.5 0 0 0 11.3 28 5.6 5.6 0 0 0 11 39z" fill="#eef1f6"/>',
+  fog: '<path d="M14 26h20a8 8 0 0 0 .6-16A11 11 0 0 0 13.4 13 6.6 6.6 0 0 0 14 26z" fill="#eef1f6"/><g stroke="#c9d0dc" stroke-width="2.6" stroke-linecap="round"><path d="M10 32h28M14 38h22"/></g>',
+  rain: '<path d="M13 28h21a8 8 0 0 0 .6-16A11 11 0 0 0 12.4 15 6.6 6.6 0 0 0 13 28z" fill="#eef1f6"/><g stroke="#7cc4ff" stroke-width="2.6" stroke-linecap="round"><path d="M17 33l-2 5M24 33l-2 5M31 33l-2 5"/></g>',
+  snow: '<path d="M13 28h21a8 8 0 0 0 .6-16A11 11 0 0 0 12.4 15 6.6 6.6 0 0 0 13 28z" fill="#eef1f6"/><g fill="#eef1f6"><circle cx="16" cy="35" r="2"/><circle cx="24" cy="38" r="2"/><circle cx="32" cy="35" r="2"/></g>',
+  storm: '<path d="M13 28h21a8 8 0 0 0 .6-16A11 11 0 0 0 12.4 15 6.6 6.6 0 0 0 13 28z" fill="#c9d0dc"/><path d="M25 29l-6 9h5l-2 7 8-10h-5l3-6z" fill="#ffd23f"/>',
+};
+function wxIcon(icon, day) {
+  const k = icon === 'clear' ? (day ? 'sun' : 'moon') : icon === 'partly' ? (day ? 'sunCloud' : 'moonCloud') : icon;
+  return svgFrom('<svg viewBox="0 0 48 48" aria-hidden="true">' + (WX_ICONS[k] || WX_ICONS.cloud) + '</svg>');
+}
+// O JSON do Open-Meteo (forecast) vira só o que a tela usa.
+function sanitizeWeather(o) {
+  const num = (v, lo, hi) => typeof v === 'number' && v >= lo && v <= hi ? v : null;
+  const arr = (a, n) => Array.isArray(a) ? a.slice(0, n) : [];
+  const c = o && o.current, hr = o && o.hourly, d = o && o.daily;
+  if (!c || !hr || !d || typeof c.time !== 'string') return null;
+  const temp = num(c.temperature_2m, -90, 70), code = num(c.weather_code, 0, 99);
+  if (temp === null || code === null) return null;
+  const now = { temp, code, day: c.is_day !== 0, hum: num(c.relative_humidity_2m, 0, 100), wind: num(c.wind_speed_10m, 0, 400) };
+  const times = arr(hr.time, 200), hourKey = c.time.slice(0, 13);
+  let i0 = times.findIndex(x => typeof x === 'string' && x.slice(0, 13) >= hourKey);
+  if (i0 < 0) i0 = 0;
+  const hours = [];
+  for (let i = i0; i < times.length && hours.length < 6; i++) {
+    const tt = num((hr.temperature_2m || [])[i], -90, 70), cc = num((hr.weather_code || [])[i], 0, 99);
+    const hh = /T(\d\d):/.exec(String(times[i]));
+    if (tt === null || cc === null || !hh) continue;
+    hours.push({ h: Number(hh[1]), temp: tt, code: cc, day: (hr.is_day || [])[i] !== 0 });
+  }
+  const days = [];
+  arr(d.time, 7).forEach((x, i) => {
+    const hi = num((d.temperature_2m_max || [])[i], -90, 70), lo = num((d.temperature_2m_min || [])[i], -90, 70), cc = num((d.weather_code || [])[i], 0, 99);
+    if (typeof x !== 'string' || !/^\d{4}-\d\d-\d\d$/.test(x) || hi === null || lo === null || cc === null || days.length >= 5) return;
+    days.push({ date: x, hi, lo, code: cc, rain: num((d.precipitation_probability_max || [])[i], 0, 100) });
+  });
+  return days.length && hours.length ? { now, hours, days } : null;
+}
+function weatherLoad() {
+  wx = null;
+  try {
+    const o = JSON.parse(localStorage.getItem(pkey(WX_KEY)) || 'null');
+    const pr = activeProfile();
+    if (o && typeof o.at === 'number' && pr && pr.city && o.lat === pr.city.lat && o.lon === pr.city.lon) {
+      const w = sanitizeWeather(o.raw);
+      if (w) wx = { at: o.at, w };
+    }
+  } catch (_) {}
+  renderWeather();
+  refreshWeather(false);
+}
+function refreshWeather(force) {
+  const pr = activeProfile();
+  if (!pr || !pr.weather || !pr.city || pr.kids) return;
+  if (!force && wx && Date.now() - wx.at < WX_FRESH) return;
+  if (Date.now() - wxAsked < 20000) return;
+  wxAsked = Date.now();
+  Bridge.weather(pr.city.lat, pr.city.lon);
+}
+function onWeather(raw) {
+  wxAsked = 0;
+  const pr = activeProfile();
+  let o = null;
+  try { o = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (_) {}
+  const w = o && sanitizeWeather(o);
+  if (!w || !pr || !pr.city) return;
+  wx = { at: Date.now(), w };
+  try { localStorage.setItem(pkey(WX_KEY), JSON.stringify({ at: wx.at, lat: pr.city.lat, lon: pr.city.lon, raw: o })); } catch (_) {}
+  renderWeather();
+  if (!$('#wxPanel').hidden) renderWeatherPanel();
+}
+function renderWeather() {
+  const pr = activeProfile(), b = $('#wxBtn');
+  const show = !!(pr && pr.weather && pr.city && !pr.kids && wx);
+  b.hidden = !show;
+  if (!show) { if (current === b) setFocus($('#heroOpen')); return; }
+  const w = wx.w, info = wxInfo(w.now.code), today = w.days[0];
+  $('#wxIco').replaceChildren(wxIcon(info.icon, w.now.day));
+  $('#wxTemp').replaceChildren(document.createTextNode(Math.round(w.now.temp) + '°'), h('span', { text: info.text }));
+  $('#wxSub').textContent = t('Máx {0}° · Mín {1}° · {2}', Math.round(today.hi), Math.round(today.lo), pr.city.name);
+  b.setAttribute('aria-label', t('Clima: {0}°, {1}. Abrir previsão', Math.round(w.now.temp), t(info.text)));
+}
+function weekday(date, i) {
+  if (i === 0) return t('Hoje');
+  const d = new Date(date + 'T12:00:00');
+  const s = d.toLocaleDateString(LANG === 'es' ? 'es' : 'pt-BR', { weekday: 'short' }).replace('.', '');
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function renderWeatherPanel() {
+  const pr = activeProfile();
+  if (!wx || !pr || !pr.city) return;
+  const w = wx.w, info = wxInfo(w.now.code), today = w.days[0];
+  const lo = Math.min(...w.days.map(d => d.lo)), hi = Math.max(...w.days.map(d => d.hi)), span = Math.max(1, hi - lo);
+  const pct = v => ((v - lo) / span * 100).toFixed(1) + '%';
+  const extra = [w.now.hum !== null ? t('Umidade {0}%', Math.round(w.now.hum)) : '', w.now.wind !== null ? t('Vento {0} km/h', Math.round(w.now.wind)) : ''].filter(Boolean).join(' · ');
+  const close = h('button', { class: 'f btn', tabindex: '-1', id: 'wxClose' }, h('span', { text: 'Voltar' }));
+  close._act = () => closePane('wxPanel');
+  $('#wxCard').replaceChildren(
+    h('div', { class: 'wx-head' }, h('div', { class: 'wx-city', text: pr.city.name }), h('div', { class: 'wx-big' }, Math.round(w.now.temp) + '°'),
+      h('div', { class: 'wx-cond', text: info.text }), h('div', { class: 'wx-hl' }, t('Máx {0}° · Mín {1}°', Math.round(today.hi), Math.round(today.lo)))),
+    h('div', { class: 'wx-lbl' }, h('span', { text: 'Próximas horas' }), h('em', null, extra)),
+    h('div', { class: 'wx-hours' }, ...w.hours.map((x, i) => h('div', { class: 'wx-hour' }, h('b', null, i === 0 ? t('Agora') : t('{0}h', x.h)), wxIcon(wxInfo(x.code).icon, x.day), h('span', null, Math.round(x.temp) + '°')))),
+    h('div', { class: 'wx-lbl' }, h('span', { text: 'Próximos dias' })),
+    h('div', { class: 'wx-days' }, ...w.days.map((d, i) => {
+      const bar = h('div', { class: 'wx-bar' }, h('i', { style: 'left:' + pct(d.lo) + ';right:' + (100 - parseFloat(pct(d.hi))).toFixed(1) + '%' }));
+      if (i === 0) bar.append(h('u', { style: 'left:' + pct(Math.min(d.hi, Math.max(d.lo, w.now.temp))) }));
+      return h('div', { class: 'wx-day' }, h('b', null, weekday(d.date, i)),
+        h('div', { class: 'wx-dico' }, wxIcon(wxInfo(d.code).icon, true), d.rain >= 20 ? h('small', null, Math.round(d.rain) + '%') : null),
+        h('span', { class: 'wx-lo' }, Math.round(d.lo) + '°'), bar, h('span', { class: 'wx-hi' }, Math.round(d.hi) + '°'));
+    })),
+    h('div', { class: 'wx-foot' }, h('span', null, t('Open-Meteo · Atualizado às {0}', clockText(new Date(wx.at)))), close));
+}
+$('#wxBtn')._act = () => { renderWeatherPanel(); openPane('wxPanel'); setFocus($('#wxClose')); refreshWeather(false); };
+
+// Busca de cidade: teclado na tela + lista do Open-Meteo (geocoding) com estado e país.
+function openCity(onPick, onCancel) {
+  cityQuery = '';
+  openKeyboard({ title: 'Cidade do clima', value: '', max: 30, caps: true, ph: t('Digite sua cidade'),
+    onInput: q => {
+      cityQuery = q;
+      clearTimeout(cityTimer);
+      if (q.trim().length < 2) { kbResults([], ''); return; }
+      cityTimer = setTimeout(() => { kbResults([], t('Procurando…')); Bridge.searchCity(q.trim()); }, 450);
+    },
+    onDone: () => { if (onCancel) onCancel(); }, onCancel });
+  kb.pick = onPick;
+  kbResults([], t('O Onix não detecta sua localização. Só a cidade escolhida aqui é usada para buscar a previsão.'));
+}
+function onCities(raw, query) {
+  if (!kb || !kb.pick || $('#keyboard').hidden || (typeof query === 'string' && query !== cityQuery.trim())) return;
+  let o = null;
+  try { o = typeof raw === 'string' ? JSON.parse(raw) : raw; } catch (_) {}
+  const list = (o && Array.isArray(o.results) ? o.results : []).slice(0, 4).map(r => r && cleanCity({
+    name: r.name, lat: r.latitude, lon: r.longitude,
+    region: [r.admin1, r.country].filter(x => typeof x === 'string').join(', '),
+  })).filter(Boolean);
+  const pick = kb.pick;
+  kbResults(list.map(c => ({ name: c.name, sub: c.region, act: () => { closePane('keyboard', true); pick(c); } })),
+    t('Nenhuma cidade encontrada. Confira o nome.'));
+}
+// Configurações → Clima
+function toggleWeather() {
+  const pr = activeProfile();
+  if (!pr) return;
+  if (!pr.weather && !pr.city) { openCity(c => { pr.city = c; pr.weather = true; saveProfiles(); afterWeatherChange(); }, () => setFocus($('#optsList [data-act="weather"]'))); return; }
+  pr.weather = !pr.weather;
+  saveProfiles();
+  afterWeatherChange();
+}
+function chooseCity() {
+  const pr = activeProfile();
+  if (!pr) return;
+  openCity(c => { pr.city = c; pr.weather = true; saveProfiles(); wx = null; afterWeatherChange(); }, () => setFocus($('#optsList [data-act="city"]')));
+}
+function afterWeatherChange() {
+  const pr = activeProfile();
+  renderSettings();
+  setFocus($('#optsList [data-act="weather"]'));
+  wx = null;
+  weatherLoad();
+  refreshWeather(true);
+  toast(pr.weather ? t('Clima de {0} na tela inicial', pr.city.name) : t('Clima desligado'));
+}
+
+/* ---------------- Foto do celular (fica com o controle pelo celular) ---------------- */
+let photoCb = null;
+function askPhoto(cb) {
+  photoCb = cb;
+  phoneOpen('photo');
+}
+function phoneOpen(mode) { toast('Controle pelo celular: em breve'); }
+
 /* ---------------- Seções ---------------- */
 let activeSection = 'home';
 function showSection(name) {
@@ -3250,6 +4469,7 @@ function setFocus(el) {
   current = el;
   el.classList.add('is-focused');
   try { el.focus({ preventScroll: true }); } catch (_) { el.focus(); }
+  if (el.closest('.layer')) { el.scrollIntoView({ block: 'nearest', inline: 'nearest' }); return; }
   $('#sidebar').classList.toggle('nav-focus', inNav(el));
   if (inNav(el)) {
     if (el.dataset.section) queueSection(el.dataset.section);
@@ -3349,6 +4569,7 @@ function backStep() {
   // O mesmo Voltar pode chegar duas vezes (tecla na página e Voltar do Android): o que fechou o
   // gatinho não tira o foco do cartão Sobre.
   if (Date.now() - kittyClosed < 500) return true;
+  if (panes.length) { paneBack(); return true; }
   if (reader) { closeReader(); return true; }
   if (grabbed) { dropGrab(); return true; }
   flushSection();
@@ -3364,6 +4585,7 @@ let repeatLock = false;
 document.addEventListener('keyup', e => { if (game) gameKey(e, false); });
 document.addEventListener('keydown', e => {
   if (game) { gameKey(e, true); return; }
+  if (panes.length) { paneKey(e); return; }
   if (reader) { readerKey(e); return; }
   // Gatinho aberto: qualquer tecla fecha (Voltar passa pelo back() normal).
   if (kittyOpen && !(e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4)) {
@@ -3392,6 +4614,11 @@ document.addEventListener('keydown', e => {
 /* ---------------- Toque / mouse ---------------- */
 document.addEventListener('click', e => {
   if (kittyOpen) { hideKitty(); return; }
+  if (panes.length) {
+    const el = e.target.closest('.f');
+    if (el && topPane().el.contains(el)) { e.preventDefault(); setFocus(el); sfx('select'); activate(el); }
+    return;
+  }
   if (reader) {
     const rb = e.target.closest('#reader .f');
     if (rb) { e.preventDefault(); rb._act(); }
@@ -3873,7 +5100,7 @@ function resync() {
 }
 // Gancho para o lado nativo chamar via evaluateJavascript.
 Object.defineProperty(window, 'Launcher', {
-  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync() }),
+  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); kidsTick(); refreshWeather(false); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync(), onWeather: j => onWeather(j), onCities: (j, q) => onCities(j, q) }),
   writable: false, configurable: false,
 });
 
@@ -3909,6 +5136,7 @@ function init() {
   $('#editDone')._act = closeEditor;
   $('#editReset')._act = resetHome;
   $('#readerClose')._act = closeReader;
+  $('#meBtn')._act = switchProfile;
   // A ponte não sabe desligar a TV ou abrir os ajustes (Samsung): tira os botões em vez de deixá-los falhar.
   if (Bridge.native && !Bridge.has('powerOff')) $('#powerBtn').remove();
   // Sem openSettings na ponte (Samsung), o atalho some: lá ele não teria o que abrir.
@@ -3932,6 +5160,7 @@ function init() {
   startHeroRotation();
   armSaver();
   setFocus($('#heroOpen'));
+  startProfiles();
   announceUpdate();
   if (Bridge.native) {
     syncPicksChoice();
@@ -3939,9 +5168,28 @@ function init() {
     refreshUpdate();
   }
 }
+/* Ao abrir: sem nada salvo, boas-vindas; quem veio de uma versão sem perfis vira o primeiro perfil
+   (com as chaves de sempre, nada muda de lugar); um perfil só entra direto; mais de um, pergunta. */
+function startProfiles() {
+  if (!profiles.length) {
+    let fresh = true;
+    try { fresh = !Object.keys(localStorage).some(k => k.indexOf('onix.') === 0); } catch (_) {}
+    if (fresh) { openWelcome(); return; }
+    profiles = [cleanProfile({ id: FIRST_PROFILE, name: t('Meu perfil'), prefs: profilePrefsNow() })];
+    profileId = FIRST_PROFILE;
+    saveProfiles();
+  }
+  if (profiles.length === 1) enterProfile(profiles[0], true);
+  else { profileId = null; renderMe(); openProfiles(false); }
+  setInterval(() => refreshWeather(false), 10 * 60 * 1000);
+}
 // Configurações → Idioma: refaz na hora tudo que tem texto, sem recarregar a página.
 function changeLang() {
   resolveLang();
+  relang();
+  setFocus($('#optsList button[aria-label="' + t('Idioma') + '"]'));
+}
+function relang() {
   translateStatic();
   renderGames();
   renderNews();
@@ -3953,7 +5201,9 @@ function changeLang() {
   if (netOnline !== null) $('#netText').textContent = t(netOnline ? 'Conectado' : 'Sem internet');
   if (!refreshing) $('#refreshBtn span').textContent = t('Atualizar');
   if (!clearing) $('#ramBtn span').textContent = t('Limpar memória');
-  setFocus($('#optsList button[aria-label="' + t('Idioma') + '"]'));
+  renderMe();
+  renderWeather();
+  kidsTick();
 }
 // Primeira abertura depois de uma atualização: avisa e aponta para as Novidades.
 // Sem versão salva mas com dados do Onix = veio de uma versão anterior à 13.5.0.
