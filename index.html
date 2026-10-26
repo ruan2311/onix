@@ -677,7 +677,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.7.4 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '13.7.5 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -805,7 +805,6 @@ const ES = Object.freeze({
   "Procurando onde assistir {0}…": "Buscando dónde ver {0}…",
   "{0} não está instalado nesta TV": "{0} no está instalado en esta TV",
   "Busca indisponível nesta TV": "Búsqueda no disponible en esta TV",
-  "Contra a máquina · quem fizer 5 vence": "Contra la máquina · quien haga 5 gana",
   "▲ ▼ movem · estrelas: + cresce · − encolhe · » turbo · || congela o outro": "▲ ▼ mueven · estrellas: + crece · − encoge · » turbo · || congela al otro",
   "Rally {0}!": "¡Rally {0}!",
   "GOL!": "¡GOL!",
@@ -819,26 +818,17 @@ const ES = Object.freeze({
   "Turbo!": "¡Turbo!",
   "Você venceu!": "¡Ganaste!",
   "A máquina venceu": "Ganó la máquina",
-  "3 bolas · faça 10.000 pontos para vencer": "3 bolas · haz 10.000 puntos para ganar",
-  "◀ ▶ flíperes · OK lança · faça 10.000 pontos antes de perder as 3 bolas": "◀ ▶ flippers · OK lanza · haz 10.000 puntos antes de perder las 3 bolas",
   "OK lança a bola": "OK lanza la bola",
   "Alvos completos!": "¡Blancos completos!",
   "Bola salva!": "¡Bola salvada!",
-  "Faltaram {0} pontos": "Faltaron {0} puntos",
   "Tijolos": "Ladrillos",
-  "Quebre todos · pegue os bônus": "Rómpelos todos · atrapa los bonus",
   "◀ ▶ movem · W larga · ♥ vida · S lenta · F fogo · cuidado: − curta · R rápida": "◀ ▶ mueven · W ancha · ♥ vida · S lenta · F fuego · cuidado: − corta · R rápida",
   "Fase {0}": "Nivel {0}",
   "Raquete larga!": "¡Paleta ancha!",
   "Raquete curta!": "¡Paleta corta!",
   "Bola de fogo!": "¡Bola de fuego!",
   "Bola rápida!": "¡Bola rápida!",
-  "Sem bolas": "Sin bolas",
   "Cobrinha": "Serpiente",
-  "Coma, cresça e desvie das pedras": "Come, crece y esquiva las piedras",
-  "Setas mudam a direção · desvie das pedras: nasce uma nova a cada 3 maçãs": "Las flechas cambian la dirección · esquiva las piedras: aparece una nueva cada 3 manzanas",
-  "Tamanho {0} · {1} pedras": "Tamaño {0} · {1} piedras",
-  "A cobrinha bateu": "La serpiente chocó",
   "Recorde {0}": "Récord {0}",
   "OK para começar · Voltar para sair": "OK para empezar · Volver para salir",
   "Pausado": "En pausa",
@@ -1020,7 +1010,25 @@ const ES = Object.freeze({
   "Indicações da semana da Netflix Brasil, que abrem direto no título.": "Recomendaciones de la semana de Netflix Brasil, que abren directo en el título.",
   "Notícias de games (Adrenaline e Eurogamer.pt) com leitor e QR code.": "Noticias de videojuegos (Adrenaline y Eurogamer.pt) con lector y código QR.",
   "Quatro jogos: Pong, Pinball, Tijolos e Cobrinha.": "Cuatro juegos: Pong, Pinball, Ladrillos y Serpiente.",
-  "Entradas HDMI com banners editáveis, tela de descanso espacial, botão Atualizar e botão Desligar TV.": "Entradas HDMI con banners editables, salvapantallas espacial, botón Actualizar y botón Apagar TV."
+  "Entradas HDMI com banners editáveis, tela de descanso espacial, botão Atualizar e botão Desligar TV.": "Entradas HDMI con banners editables, salvapantallas espacial, botón Actualizar y botón Apagar TV.",
+  "Contra a máquina · 5 fases": "Contra la máquina · 5 niveles",
+  "Fase {0} de {1}": "Nivel {0} de {1}",
+  "quem fizer 5 passa de fase": "quien haga 5 pasa de nivel",
+  "A máquina venceu na fase {0}": "Ganó la máquina en el nivel {0}",
+  "Fase {0}!": "¡Nivel {0}!",
+  "5 fases · cada meta dá uma bola extra": "5 niveles · cada meta da una bola extra",
+  "◀ ▶ flíperes · OK lança · bata a meta de cada fase antes de perder as bolas": "◀ ▶ flippers · OK lanza · alcanza la meta de cada nivel antes de perder las bolas",
+  "Fase {0} · meta {1}": "Nivel {0} · meta {1}",
+  "Fase {0} · faltaram {1} pontos": "Nivel {0} · faltaron {1} puntos",
+  "8 fases · pegue os bônus": "8 niveles · atrapa los bonus",
+  "Sem bolas na fase {0}": "Sin bolas en el nivel {0}",
+  "5 fases · coma 10 maçãs em cada": "5 niveles · come 10 manzanas en cada uno",
+  "Setas mudam a direção · 10 maçãs passam de fase · desvie das pedras e dos muros": "Las flechas cambian la dirección · 10 manzanas pasan de nivel · esquiva las piedras y los muros",
+  "Fase {0} · maçãs {1}/10": "Nivel {0} · manzanas {1}/10",
+  "Tamanho {0}": "Tamaño {0}",
+  "A cobrinha bateu na fase {0}": "La serpiente chocó en el nivel {0}",
+  "*Jogos de cara nova:* Pong, Pinball, Tijolos e Cobrinha agora seguem o visual do Onix, com traços coloridos sobre o vidro escuro. Nos Tijolos, cada fileira é só um contorno na sua cor, e os de aço têm um contorno branco a mais.": "*Juegos con nueva cara:* Pong, Pinball, Ladrillos y Serpiente ahora siguen el estilo de Onix, con trazos de color sobre el vidrio oscuro. En Ladrillos, cada fila es solo un contorno de su color, y los de acero tienen un contorno blanco extra.",
+  "*Fases em todos os jogos:* o Pong tem 5 fases contra uma máquina cada vez mais rápida, o Pinball 5 metas (cada uma dá uma bola extra), os Tijolos 8 fases com desenhos diferentes e a Cobrinha 5 fases com muros novos.": "*Niveles en todos los juegos:* Pong tiene 5 niveles contra una máquina cada vez más rápida, Pinball 5 metas (cada una da una bola extra), Ladrillos 8 niveles con diseños diferentes y Serpiente 5 niveles con muros nuevos."
   });
 let LANG = 'pt';
 function resolveLang() {
@@ -1702,8 +1710,30 @@ function saveBest(id, v) { try { localStorage.setItem('onix.best.' + id, String(
 function line(ctx, x1, y1, x2, y2) { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke(); }
 function dot(ctx, x, y, r, fill) { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); fill ? ctx.fill() : ctx.stroke(); }
 
-// Cores sólidas dos jogos.
+// Cores dos jogos: só em traços (linhas e contornos) sobre o vidro escuro, como o resto do Onix.
 const COL = { cyan: '#22d3ee', pink: '#ff3d7f', yellow: '#ffd23f', green: '#3ddc84', orange: '#ff8c42', purple: '#8b5cf6', red: '#ef4444', blue: '#3b82f6' };
+const GLASS = 'rgba(255,255,255,.035)', EDGE = 'rgba(255,255,255,.16)', FAINT = 'rgba(255,255,255,.1)';
+// Retângulo arredondado (o ctx.roundRect não existe nos WebViews antigos).
+function rr(ctx, x, y, w, h, r) {
+  r = Math.min(r, w / 2, h / 2);
+  ctx.beginPath(); ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r); ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r); ctx.arcTo(x, y, x + w, y, r); ctx.closePath();
+}
+// Painel de vidro: fundo quase transparente e borda clara, igual aos cartões do Onix.
+function panel(ctx, x, y, w, h, r) {
+  rr(ctx, x, y, w, h, r);
+  ctx.fillStyle = GLASS; ctx.fill();
+  ctx.strokeStyle = EDGE; ctx.lineWidth = 2; ctx.stroke();
+}
+// Traço com brilho: uma passada larga e fraca por baixo e a linha por cima (sem shadowBlur, que pesa na TV).
+function glow(ctx, color, w, path) {
+  ctx.strokeStyle = color;
+  ctx.globalAlpha = .18; ctx.lineWidth = w * 3; path(); ctx.stroke();
+  ctx.globalAlpha = 1; ctx.lineWidth = w; path(); ctx.stroke();
+}
+const seg = (ctx, x1, y1, x2, y2) => () => { ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); };
+const circ = (ctx, x, y, r) => () => { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); };
 // Partículas e textos que sobem: efeito curto, compartilhado por todos os jogos (coordenadas da tela).
 const fx = {
   p: [], t: [],
@@ -1725,29 +1755,37 @@ const fx = {
     this.t.length = j;
   },
   draw(ctx) {
-    for (const q of this.p) { ctx.globalAlpha = Math.min(1, q.life * 2.5); ctx.fillStyle = q.color; ctx.fillRect(q.x - 3, q.y - 3, 6, 6); }
+    for (const q of this.p) { ctx.globalAlpha = Math.min(1, q.life * 2.5); ctx.fillStyle = q.color; ctx.fillRect(q.x - 2, q.y - 2, 4, 4); }
     ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
     for (const q of this.t) { ctx.globalAlpha = Math.min(1, q.life * 2); ctx.fillStyle = q.color; ctx.font = '700 ' + q.size + 'px ' + FONT; ctx.fillText(q.s, q.x, q.y); }
     ctx.globalAlpha = 1; ctx.textBaseline = 'alphabetic';
   },
 };
+// Passou de fase: aviso grande no meio da tela.
+function phaseUp(n) {
+  fx.text(GW / 2, GH / 2 - 40, t('Fase {0}!', n), COL.yellow, 56);
+  fx.burst(GW / 2, GH / 2 - 40, COL.yellow, 30, 420);
+}
 
+// Pong: 5 fases; quem fizer 5 passa de fase. A máquina e a bola ficam mais rápidas a cada fase.
 const pong = {
-  id: 'pong', name: 'Pong', sub: 'Contra a máquina · quem fizer 5 vence',
+  id: 'pong', name: 'Pong', sub: 'Contra a máquina · 5 fases',
   hint: '▲ ▼ movem · estrelas: + cresce · − encolhe · » turbo · || congela o outro',
-  WIN: 5,
+  WIN: 5, PHASES: 5,
   // Estrelas: valem para quem tocou a bola por último (grow/freeze ajudam, shrink atrapalha).
   POWERS: { grow: { c: COL.green, s: '+' }, shrink: { c: COL.red, s: '−' }, fast: { c: COL.orange, s: '»' }, freeze: { c: COL.blue, s: '||' } },
   art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M80 16v68" stroke-dasharray="4 7" opacity=".45"/><path d="M30 34v24M130 46v24"/><circle cx="100" cy="40" r="4" fill="#fff"/></svg>',
   T: 90, B: 690, PH: 110, R: 9,
-  reset() {
+  status() { return t('Fase {0} de {1}', this.phase, this.PHASES) + ' · ' + t('quem fizer 5 passa de fase'); },
+  reset() { this.phase = 1; this.startPhase(); },
+  startPhase() {
     this.p = this.c = (this.T + this.B) / 2; this.ps = this.cs = 0;
     this.ph = this.ch = this.PH; this.pt = this.ct = 0; this.pf = this.cf = 0; this.pw = null; this.pwT = 5;
     this.serve(1);
   },
   serve(dir) {
     const a = Math.random() * .8 - .4;
-    this.bx = GW / 2; this.by = (this.T + this.B) / 2; this.v = 520;
+    this.bx = GW / 2; this.by = (this.T + this.B) / 2; this.v = 480 + 35 * (this.phase - 1);
     this.vx = Math.cos(a) * this.v * dir; this.vy = Math.sin(a) * this.v; this.wait = .8;
     this.rally = 0; this.last = 0; this.trail = [];
   },
@@ -1791,9 +1829,9 @@ const pong = {
     const hp = this.ph / 2, hc = this.ch / 2;
     if (this.pf <= 0) this.p = clamp(this.p + ((keys.down ? 1 : 0) - (keys.up ? 1 : 0)) * 640 * dt, this.T + hp, this.B - hp);
     else this.p = clamp(this.p, this.T + hp, this.B - hp);
-    // A máquina só persegue a bola quando ela vem na sua direção; fica mais rápida se você estiver ganhando.
+    // A máquina só persegue a bola quando ela vem na sua direção; fica mais rápida a cada fase e se você estiver ganhando.
     const target = this.vx > 0 && this.bx > GW * .4 ? this.by : (this.T + this.B) / 2;
-    const cv = 380 + 30 * Math.max(0, this.ps - this.cs);
+    const cv = 330 + 45 * (this.phase - 1) + 30 * Math.max(0, this.ps - this.cs);
     const step = this.cf > 0 ? 0 : cv * dt;
     this.c = clamp(this.c + clamp(target - this.c, -step, step), this.T + hc, this.B - hc);
     if (this.pw) { if ((this.pw.t -= dt) <= 0) this.pw = null; }
@@ -1811,36 +1849,44 @@ const pong = {
     if (this.pw && this.last && Math.hypot(this.bx - this.pw.x, this.by - this.pw.y) < 24 + R) this.power();
     if (this.bx < -20) { this.cs++; this.goal(-1); this.serve(-1); }
     if (this.bx > GW + 20) { this.ps++; addScore(1); this.goal(1); this.serve(1); }
-    if (this.ps >= this.WIN) gameOver('Você venceu!');
-    else if (this.cs >= this.WIN) gameOver('A máquina venceu');
+    if (this.ps >= this.WIN) {
+      if (this.phase >= this.PHASES) { gameOver('Você venceu!'); return; }
+      this.phase++; phaseUp(this.phase); this.startPhase(); this.wait = 1.6;
+    } else if (this.cs >= this.WIN) gameOver(t('A máquina venceu na fase {0}', this.phase));
   },
   draw(ctx) {
-    const T = this.T, B = this.B, mid = (T + B) / 2;
-    // Rinque: gelo azul com áreas de gol coloridas.
-    ctx.fillStyle = '#0c2742'; ctx.fillRect(40, T, GW - 80, B - T);
-    ctx.fillStyle = '#0f4a63'; ctx.beginPath(); ctx.arc(40, mid, 120, -Math.PI / 2, Math.PI / 2); ctx.fill();
-    ctx.fillStyle = '#5a1838'; ctx.beginPath(); ctx.arc(GW - 40, mid, 120, Math.PI / 2, Math.PI * 1.5); ctx.fill();
-    ctx.fillStyle = '#1d4f80'; ctx.fillRect(40, T - 8, GW - 80, 8); ctx.fillRect(40, B, GW - 80, 8);
-    ctx.strokeStyle = 'rgba(255,255,255,.22)'; ctx.lineWidth = 3;
-    ctx.setLineDash([12, 14]); line(ctx, GW / 2, T, GW / 2, B); ctx.setLineDash([]);
+    const T = this.T, B = this.B, mid = (T + B) / 2, L = 40, Rt = GW - 40;
+    panel(ctx, L, T - 10, Rt - L, B - T + 20, 24);
+    // Áreas de gol: só o arco, na cor de cada lado.
+    ctx.lineWidth = 2; ctx.globalAlpha = .6;
+    ctx.strokeStyle = COL.cyan; ctx.beginPath(); ctx.arc(L, mid, 120, -Math.PI / 2, Math.PI / 2); ctx.stroke();
+    ctx.strokeStyle = COL.pink; ctx.beginPath(); ctx.arc(Rt, mid, 120, Math.PI / 2, Math.PI * 1.5); ctx.stroke();
+    ctx.globalAlpha = 1;
+    ctx.strokeStyle = FAINT;
+    ctx.setLineDash([10, 14]); line(ctx, GW / 2, T + 6, GW / 2, B - 6); ctx.setLineDash([]);
     dot(ctx, GW / 2, mid, 70, false);
-    ctx.font = '700 72px ' + FONT; ctx.textAlign = 'center';
+    ctx.font = '200 72px ' + FONT; ctx.textAlign = 'center';
     ctx.fillStyle = COL.cyan; ctx.fillText(this.ps, GW / 2 - 90, T + 90);
     ctx.fillStyle = COL.pink; ctx.fillText(this.cs, GW / 2 + 90, T + 90);
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
     if (this.pw) {
-      const w = this.pw, k = this.POWERS[w.kind], r = 26 + Math.sin(w.t * 8) * 3;
-      ctx.fillStyle = k.c; ctx.beginPath();
-      for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rr = i % 2 ? r * .5 : r; ctx.lineTo(w.x + Math.cos(a) * rr, w.y + Math.sin(a) * rr); }
-      ctx.closePath(); ctx.fill();
-      ctx.fillStyle = '#0a0b0e'; ctx.font = '800 16px ' + FONT; ctx.textBaseline = 'middle';
+      const w = this.pw, k = this.POWERS[w.kind], r = 24 + Math.sin(w.t * 8) * 3;
+      glow(ctx, k.c, 2.5, () => {
+        ctx.beginPath();
+        for (let i = 0; i < 10; i++) { const a = -Math.PI / 2 + i * Math.PI / 5, rad = i % 2 ? r * .5 : r; ctx.lineTo(w.x + Math.cos(a) * rad, w.y + Math.sin(a) * rad); }
+        ctx.closePath();
+      });
+      ctx.fillStyle = k.c; ctx.font = '800 15px ' + FONT; ctx.textBaseline = 'middle';
       ctx.fillText(k.s, w.x, w.y + 2); ctx.textBaseline = 'alphabetic';
     }
-    ctx.lineWidth = 14; ctx.lineCap = 'round';
-    ctx.strokeStyle = this.pf > 0 ? '#bfdbfe' : COL.cyan; line(ctx, 69, this.p - this.ph / 2 + 7, 69, this.p + this.ph / 2 - 7);
-    ctx.strokeStyle = this.cf > 0 ? '#bfdbfe' : COL.pink; line(ctx, GW - 69, this.c - this.ch / 2 + 7, GW - 69, this.c + this.ch / 2 - 7);
-    ctx.fillStyle = COL.yellow;
-    for (let i = 0; i < this.trail.length; i += 2) { ctx.globalAlpha = (i + 2) / this.trail.length * .35; dot(ctx, this.trail[i], this.trail[i + 1], this.R * .8, true); }
-    ctx.globalAlpha = 1; dot(ctx, this.bx, this.by, this.R, true);
+    glow(ctx, this.pf > 0 ? '#bfdbfe' : COL.cyan, 8, seg(ctx, 72, this.p - this.ph / 2 + 4, 72, this.p + this.ph / 2 - 4));
+    glow(ctx, this.cf > 0 ? '#bfdbfe' : COL.pink, 8, seg(ctx, GW - 72, this.c - this.ch / 2 + 4, GW - 72, this.c + this.ch / 2 - 4));
+    // Rastro: anéis que somem.
+    ctx.strokeStyle = COL.yellow; ctx.lineWidth = 2;
+    for (let i = 0; i < this.trail.length; i += 2) { ctx.globalAlpha = (i + 2) / this.trail.length * .4; dot(ctx, this.trail[i], this.trail[i + 1], this.R * .8, false); }
+    ctx.globalAlpha = 1;
+    glow(ctx, COL.yellow, 2.5, circ(ctx, this.bx, this.by, this.R));
+    ctx.fillStyle = INK; dot(ctx, this.bx, this.by, this.R * .45, true);
   },
 };
 
@@ -1851,12 +1897,14 @@ const PB = { X: (GW - 440) / 2, Y: 20, R: 9, G: 900,
   SLINGS: [[0, 500, 120, 593], [400, 500, 280, 593]],
   LANES: [140, 200, 260],
   BUMPER_COL: [COL.pink, COL.yellow, COL.cyan],
+  // Meta de pontos de cada fase; bater a meta dá uma bola extra.
+  GOALS: [10000, 25000, 45000, 70000, 100000],
 };
 // Colisão bola × segmento com espessura; "fl" (flíper) soma a velocidade da superfície no ponto de contato.
 function pbCollide(b, ax, ay, cx, cy, rad, e, fl) {
   const dx = cx - ax, dy = cy - ay;
-  const t = clamp(((b.x - ax) * dx + (b.y - ay) * dy) / (dx * dx + dy * dy), 0, 1);
-  const px = ax + dx * t, py = ay + dy * t, min = PB.R + rad;
+  const k = clamp(((b.x - ax) * dx + (b.y - ay) * dy) / (dx * dx + dy * dy), 0, 1);
+  const px = ax + dx * k, py = ay + dy * k, min = PB.R + rad;
   let nx = b.x - px, ny = b.y - py;
   const d = Math.hypot(nx, ny);
   if (d >= min || d === 0) return false;
@@ -1868,13 +1916,16 @@ function pbCollide(b, ax, ay, cx, cy, rad, e, fl) {
   return true;
 }
 const pinball = {
-  id: 'pinball', name: 'Pinball', sub: '3 bolas · faça 10.000 pontos para vencer',
-  hint: '◀ ▶ flíperes · OK lança · faça 10.000 pontos antes de perder as 3 bolas',
-  GOAL: 10000,
+  id: 'pinball', name: 'Pinball', sub: '5 fases · cada meta dá uma bola extra',
+  hint: '◀ ▶ flíperes · OK lança · bata a meta de cada fase antes de perder as bolas',
   art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M40 70V28l10-10h60l10 10v42M40 70l18 12M120 70l-18 12" opacity=".45"/><circle cx="64" cy="38" r="7"/><circle cx="96" cy="38" r="7"/><circle cx="80" cy="56" r="7"/><path d="M58 82l12 4M102 82l-12 4" stroke-width="5"/><circle cx="108" cy="62" r="3.5" fill="#fff"/></svg>',
-  status() { return t(this.lane ? 'OK lança a bola' : 'Bola {0} de 3', 4 - this.balls) + ' · x' + this.mult + ' · meta ' + num(this.GOAL); },
+  goal() { return PB.GOALS[this.phase - 1]; },
+  status() {
+    return t('Fase {0} · meta {1}', this.phase, num(this.goal())) + '\n'
+      + (this.lane ? t('OK lança a bola') : this.balls + (this.balls === 1 ? ' bola' : ' bolas')) + ' · x' + this.mult;
+  },
   reset() {
-    this.balls = 3; this.mult = 1; this.won = false;
+    this.balls = 3; this.mult = 1; this.won = false; this.phase = 1;
     this.fl = [{ x: 120, y: 600, rest: .5, up: -.45, key: 'left' }, { x: 280, y: 600, rest: Math.PI - .5, up: Math.PI + .45, key: 'right' }];
     this.fl.forEach(f => { f.th = f.rest; f.w = 0; });
     this.bumpers = [{ x: 120, y: 170 }, { x: 280, y: 170 }, { x: 200, y: 265 }].map((p, i) => Object.assign(p, { r: 24, lit: 0, c: PB.BUMPER_COL[i] }));
@@ -1886,7 +1937,13 @@ const pinball = {
   toLane() { this.b = { x: 420, y: 680 - PB.R - 1, vx: 0, vy: 0 }; this.lane = true; this.save = 0; },
   score(n, x, y, c) {
     addScore(n * this.mult); fx.text(PB.X + x, PB.Y + y - 20, '+' + n * this.mult, c || INK, 20);
-    if (gScore >= this.GOAL && !this.won) { this.won = true; fx.burst(PB.X + 200, PB.Y + 300, COL.yellow, 40, 480); }
+    if (this.won || gScore < this.goal()) return;
+    if (this.phase >= PB.GOALS.length) { this.won = true; fx.burst(PB.X + 200, PB.Y + 300, COL.yellow, 40, 480); return; }
+    // Meta batida: próxima fase, uma bola a mais e a mesa acesa de novo.
+    this.phase++; this.balls = Math.min(this.balls + 1, 6);
+    phaseUp(this.phase);
+    fx.text(PB.X + 200, PB.Y + 440, '+1 bola', COL.green, 26);
+    this.targets.forEach(q => { q.up = true; }); this.lanes = [false, false, false];
   },
   ok() {
     if (!this.lane) return false;
@@ -1894,7 +1951,7 @@ const pinball = {
     return true;
   },
   update(dt) {
-    const n = 6, s = dt / n, b = this.b;
+    const n = 6, s = dt / n, b = this.b, g = PB.G * (1 + .06 * (this.phase - 1));
     for (const p of this.bumpers) p.lit = Math.max(0, p.lit - dt);
     this.slingLit = this.slingLit.map(v => Math.max(0, v - dt));
     if (this.save > 0 && !this.lane) this.save -= dt;
@@ -1906,7 +1963,7 @@ const pinball = {
         f.w = (f.th - prev) / s;
       }
       if (this.lane) continue;
-      b.vy += PB.G * s; b.x += b.vx * s; b.y += b.vy * s;
+      b.vy += g * s; b.x += b.vx * s; b.y += b.vy * s;
       for (const w of PB.WALLS) pbCollide(b, w[0], w[1], w[2], w[3], 1.5, .6, null);
       PB.SLINGS.forEach((w, k) => {
         if (pbCollide(b, w[0], w[1], w[2], w[3], 3, .6, null) && !this.slingLit[k] && Math.hypot(b.vx, b.vy) > 250) {
@@ -1936,9 +1993,9 @@ const pinball = {
         }
       });
       // Alvos que caem: derrubar os três vale bônus e os levanta de novo.
-      for (const t of this.targets) {
-        if (!t.up || !pbCollide(b, t.x, 380, t.x + 30, 380, 4, .5, null)) continue;
-        t.up = false; this.score(250, t.x + 15, 380, COL.green); fx.burst(PB.X + t.x + 15, PB.Y + 380, COL.green, 8, 200);
+      for (const tg of this.targets) {
+        if (!tg.up || !pbCollide(b, tg.x, 380, tg.x + 30, 380, 4, .5, null)) continue;
+        tg.up = false; this.score(250, tg.x + 15, 380, COL.green); fx.burst(PB.X + tg.x + 15, PB.Y + 380, COL.green, 8, 200);
         if (this.targets.every(q => !q.up)) {
           this.targets.forEach(q => { q.up = true; });
           this.score(1500, 200, 420, COL.green);
@@ -1955,57 +2012,72 @@ const pinball = {
         if (this.save > 0) { fx.text(PB.X + 200, PB.Y + 520, 'Bola salva!', COL.green, 30); this.toLane(); break; }
         fx.text(PB.X + 200, PB.Y + 520, 'Bola perdida', COL.red, 30);
         this.mult = 1;
-        if (--this.balls <= 0) { gameOver(t('Faltaram {0} pontos', num(this.GOAL - gScore))); return; }
+        if (--this.balls <= 0) { gameOver(t('Fase {0} · faltaram {1} pontos', this.phase, num(this.goal() - gScore))); return; }
         this.toLane(); break;
       }
     }
   },
   draw(ctx) {
     ctx.save(); ctx.translate(PB.X, PB.Y);
-    // Mesa: roxo sólido, canal de lançamento mais escuro.
-    ctx.fillStyle = '#2a1655'; ctx.beginPath();
-    ctx.moveTo(0, 690); ctx.lineTo(0, 60); ctx.lineTo(60, 0); ctx.lineTo(380, 0); ctx.lineTo(440, 60); ctx.lineTo(440, 690); ctx.closePath(); ctx.fill();
-    ctx.fillStyle = '#1a0d38'; ctx.fillRect(400, 200, 40, 490);
-    ctx.fillStyle = '#3a2070'; ctx.beginPath(); ctx.arc(200, 200, 150, 0, Math.PI * 2); ctx.fill();
-    ctx.strokeStyle = '#b9a6ff'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    ctx.lineCap = 'round'; ctx.lineJoin = 'round';
+    // Mesa: vidro com contorno branco; o círculo do meio é só decoração.
+    ctx.beginPath();
+    ctx.moveTo(0, 690); ctx.lineTo(0, 60); ctx.lineTo(60, 0); ctx.lineTo(380, 0); ctx.lineTo(440, 60); ctx.lineTo(440, 690); ctx.closePath();
+    ctx.fillStyle = GLASS; ctx.fill();
+    ctx.strokeStyle = FAINT; ctx.lineWidth = 2; dot(ctx, 200, 200, 150, false);
+    ctx.strokeStyle = 'rgba(255,255,255,.55)'; ctx.lineWidth = 3;
     for (const w of PB.WALLS) line(ctx, w[0], w[1], w[2], w[3]);
-    ctx.lineWidth = 8;
-    PB.SLINGS.forEach((w, k) => { ctx.strokeStyle = this.slingLit[k] ? INK : COL.orange; line(ctx, w[0], w[1], w[2], w[3]); });
-    PB.LANES.forEach((x, k) => { ctx.fillStyle = this.lanes[k] ? COL.yellow : '#4b3590'; dot(ctx, x, 60, 9, true); });
-    ctx.lineWidth = 8;
-    for (const t of this.targets) if (t.up) { ctx.strokeStyle = COL.green; line(ctx, t.x + 3, 380, t.x + 27, 380); }
+    PB.SLINGS.forEach((w, k) => glow(ctx, this.slingLit[k] ? INK : COL.orange, 4, seg(ctx, w[0], w[1], w[2], w[3])));
+    PB.LANES.forEach((x, k) => {
+      ctx.strokeStyle = COL.yellow; ctx.lineWidth = 2; dot(ctx, x, 60, 9, false);
+      if (this.lanes[k]) { ctx.fillStyle = COL.yellow; dot(ctx, x, 60, 4.5, true); }
+    });
+    for (const tg of this.targets) if (tg.up) glow(ctx, COL.green, 4, seg(ctx, tg.x + 3, 380, tg.x + 27, 380));
     for (const p of this.bumpers) {
-      ctx.fillStyle = p.lit ? INK : p.c; dot(ctx, p.x, p.y, p.lit ? p.r + 3 : p.r, true);
-      ctx.fillStyle = '#2a1655'; dot(ctx, p.x, p.y, 9, true);
+      glow(ctx, p.lit ? INK : p.c, 3, circ(ctx, p.x, p.y, p.lit ? p.r + 3 : p.r));
+      ctx.strokeStyle = p.c; ctx.lineWidth = 2; ctx.globalAlpha = .5; dot(ctx, p.x, p.y, 9, false); ctx.globalAlpha = 1;
     }
     // Luz da bola salva acima dos flíperes.
-    if (this.save > 0 && !this.lane) { ctx.fillStyle = COL.green; dot(ctx, 200, 640, 7, true); }
-    ctx.strokeStyle = COL.orange; ctx.lineWidth = 14;
-    for (const f of this.fl) line(ctx, f.x, f.y, f.x + 66 * Math.cos(f.th), f.y + 66 * Math.sin(f.th));
-    ctx.fillStyle = '#e8ecf4'; dot(ctx, this.b.x, this.b.y, PB.R, true);
+    if (this.save > 0 && !this.lane) { ctx.strokeStyle = COL.green; ctx.lineWidth = 2; dot(ctx, 200, 640, 7, false); ctx.fillStyle = COL.green; dot(ctx, 200, 640, 3, true); }
+    for (const f of this.fl) glow(ctx, COL.orange, 7, seg(ctx, f.x, f.y, f.x + 66 * Math.cos(f.th), f.y + 66 * Math.sin(f.th)));
+    ctx.fillStyle = INK; dot(ctx, this.b.x, this.b.y, PB.R, true);
     ctx.restore();
   },
 };
 
+// Cor de cada fileira; o tijolo é só o contorno nessa cor, com o vidro aparecendo por dentro.
 const BRICK_COL = [COL.red, COL.orange, COL.yellow, COL.green, COL.cyan, COL.purple];
-// bad = malefício: a cápsula vem com borda e letra na cor, sobre fundo escuro.
+// bad = malefício: a cápsula vem com contorno tracejado.
 const DROPS = { wide: { c: COL.green, s: 'W' }, life: { c: COL.pink, s: '♥' }, slow: { c: COL.cyan, s: 'S' }, fire: { c: COL.purple, s: 'F' },
   shrink: { c: COL.red, s: '−', bad: true }, fast: { c: COL.orange, s: 'R', bad: true } };
+// Desenho dos tijolos em cada fase (6 fileiras × 10 colunas): true = tem tijolo.
+const BRICK_LAYOUTS = [
+  () => true,
+  (r, c) => Math.abs(c - 4.5) <= r + .5,                                  // pirâmide
+  (r, c) => (r + c) % 2 === 0,                                            // xadrez
+  (r, c) => Math.abs(c - 4.5) / 5 + Math.abs(r - 2.5) / 3 <= 1,           // losango
+  (r, c) => c % 3 !== 2,                                                  // colunas
+  (r, c) => r === 0 || r === 5 || c === 0 || c === 9 || (r > 1 && r < 4 && c > 2 && c < 7),   // moldura
+  (r, c) => c < 4 || c > 5,                                               // dois blocos
+  () => true,
+];
 const bricks = {
-  id: 'bricks', name: 'Tijolos', sub: 'Quebre todos · pegue os bônus',
+  id: 'bricks', name: 'Tijolos', sub: '8 fases · pegue os bônus',
   hint: '◀ ▶ movem · W larga · ♥ vida · S lenta · F fogo · cuidado: − curta · R rápida',
   art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><g><rect x="34" y="18" width="16" height="7" rx="1.5"/><rect x="53" y="18" width="16" height="7" rx="1.5"/><rect x="72" y="18" width="16" height="7" rx="1.5"/><rect x="91" y="18" width="16" height="7" rx="1.5"/><rect x="110" y="18" width="16" height="7" rx="1.5"/></g><g opacity=".6"><rect x="34" y="30" width="16" height="7" rx="1.5"/><rect x="72" y="30" width="16" height="7" rx="1.5"/><rect x="91" y="30" width="16" height="7" rx="1.5"/><rect x="110" y="30" width="16" height="7" rx="1.5"/></g><path d="M64 84h30" stroke-width="5"/><circle cx="88" cy="62" r="3.5" fill="#fff"/></svg>',
-  L: 240, Rt: 1040, T: 90, PY: 660, PW0: 65, R: 9,
-  status() { return t('Fase {0}', this.level) + ' · ' + this.lives + (this.lives === 1 ? ' bola' : ' bolas'); },
+  L: 240, Rt: 1040, T: 90, PY: 660, PW0: 65, R: 9, PHASES: 8,
+  status() { return t('Fase {0} de {1}', this.level, this.PHASES) + ' · ' + this.lives + (this.lives === 1 ? ' bola' : ' bolas'); },
   reset() { this.level = 1; this.lives = 3; this.px = GW / 2; this.build(); this.serve(); },
   build() {
     // Tijolos de aço (2 batidas) aparecem mais a cada fase.
-    const steel = Math.min(.35, (this.level - 1) * .08);
+    const steel = Math.min(.4, (this.level - 1) * .06), has = BRICK_LAYOUTS[(this.level - 1) % BRICK_LAYOUTS.length];
     this.b = [];
-    for (let r = 0; r < 6; r++) for (let c = 0; c < 10; c++) this.b.push({ x: this.L + c * 80 + 5, y: 140 + r * 34, w: 70, h: 24, r, hp: Math.random() < steel ? 2 : 1 });
+    for (let r = 0; r < 6; r++) for (let c = 0; c < 10; c++) {
+      if (has(r, c)) this.b.push({ x: this.L + c * 80 + 5, y: 140 + r * 34, w: 70, h: 24, r, hp: Math.random() < steel ? 2 : 1 });
+    }
     this.left = this.b.length; this.drops = [];
   },
-  serve() { this.v = 430 + this.level * 50; this.vx = this.vy = 0; this.wait = 1; this.bx = this.px; this.by = this.PY - this.R; this.PW = this.PW0; this.wideT = 0; this.fireT = 0; },
+  serve() { this.v = 430 + this.level * 45; this.vx = this.vy = 0; this.wait = 1; this.bx = this.px; this.by = this.PY - this.R; this.PW = this.PW0; this.wideT = 0; this.fireT = 0; },
   catchDrop(d) {
     const k = DROPS[d.kind];
     fx.burst(d.x, d.y, k.c, 14, 260);
@@ -2059,59 +2131,88 @@ const bricks = {
         }
         if (this.fireT <= 0) break;
       }
-      if (!this.left) { this.level++; fx.text(GW / 2, GH / 2, t('Fase {0}', this.level), COL.yellow, 52); this.build(); this.serve(); return; }
+      if (!this.left) {
+        if (this.level >= this.PHASES) { gameOver('Você venceu!'); return; }
+        this.level++; phaseUp(this.level); this.build(); this.serve(); this.wait = 1.6; return;
+      }
       if (this.by > GH + 20) {
-        if (--this.lives <= 0) { gameOver('Sem bolas'); return; }
+        if (--this.lives <= 0) { gameOver(t('Sem bolas na fase {0}', this.level)); return; }
         this.serve(); return;
       }
     }
   },
   draw(ctx) {
-    ctx.fillStyle = '#121626'; ctx.fillRect(this.L, this.T, this.Rt - this.L, GH - this.T);
-    ctx.fillStyle = '#2b3350'; ctx.fillRect(this.L - 8, this.T - 8, 8, GH - this.T + 8); ctx.fillRect(this.Rt, this.T - 8, 8, GH - this.T + 8);
-    ctx.fillRect(this.L, this.T - 8, this.Rt - this.L, 8);
+    panel(ctx, this.L - 12, this.T - 12, this.Rt - this.L + 24, GH - this.T + 40, 22);
+    ctx.lineJoin = 'round';
     for (const k of this.b) {
       if (!k.hp) continue;
-      ctx.fillStyle = k.hp > 1 ? '#9aa4b8' : BRICK_COL[k.r]; ctx.fillRect(k.x, k.y, k.w, k.h);
-      ctx.fillStyle = 'rgba(255,255,255,.28)'; ctx.fillRect(k.x, k.y, k.w, 4);
-      if (k.hp > 1) { ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(k.x + 6, k.y + 10, k.w - 12, 4); }
+      const c = BRICK_COL[k.r];
+      rr(ctx, k.x + 2, k.y + 2, k.w - 4, k.h - 4, 6);
+      ctx.fillStyle = c; ctx.globalAlpha = .07; ctx.fill(); ctx.globalAlpha = 1;
+      ctx.strokeStyle = k.hp > 1 ? INK : c; ctx.lineWidth = 2; ctx.stroke();
+      // Aço (2 batidas): contorno branco com a cor da fileira por dentro; na primeira batida, fica só a cor.
+      if (k.hp > 1) { rr(ctx, k.x + 7, k.y + 7, k.w - 14, k.h - 14, 3); ctx.strokeStyle = c; ctx.stroke(); }
     }
-    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '700 16px ' + FONT;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.font = '700 15px ' + FONT;
     for (const d of this.drops) {
       const k = DROPS[d.kind];
-      if (k.bad) { ctx.fillStyle = '#1a1b20'; ctx.fillRect(d.x - 18, d.y - 10, 36, 20); ctx.strokeStyle = k.c; ctx.lineWidth = 3; ctx.strokeRect(d.x - 17, d.y - 9, 34, 18); ctx.fillStyle = k.c; }
-      else { ctx.fillStyle = k.c; ctx.fillRect(d.x - 18, d.y - 10, 36, 20); ctx.fillStyle = '#0a0b0e'; }
-      ctx.fillText(k.s, d.x, d.y + 1);
+      rr(ctx, d.x - 18, d.y - 10, 36, 20, 10);
+      ctx.strokeStyle = k.c; ctx.lineWidth = 2;
+      if (k.bad) ctx.setLineDash([4, 4]);
+      ctx.stroke(); ctx.setLineDash([]);
+      ctx.fillStyle = k.c; ctx.fillText(k.s, d.x, d.y + 1);
     }
     ctx.textBaseline = 'alphabetic';
-    ctx.lineWidth = 14; ctx.lineCap = 'round'; ctx.strokeStyle = this.wideT > 0 ? (this.PW < this.PW0 ? COL.red : COL.green) : COL.cyan;
-    line(ctx, this.px - this.PW + 7, this.PY + 7, this.px + this.PW - 7, this.PY + 7);
-    if (this.fireT > 0) { ctx.fillStyle = COL.orange; dot(ctx, this.bx, this.by, this.R + 5, true); ctx.fillStyle = COL.yellow; }
-    else ctx.fillStyle = INK;
+    ctx.lineCap = 'round';
+    const pc = this.wideT > 0 ? (this.PW < this.PW0 ? COL.red : COL.green) : COL.cyan;
+    glow(ctx, pc, 6, seg(ctx, this.px - this.PW + 4, this.PY + 7, this.px + this.PW - 4, this.PY + 7));
+    if (this.fireT > 0) glow(ctx, COL.orange, 2.5, circ(ctx, this.bx, this.by, this.R + 5));
+    ctx.fillStyle = this.fireT > 0 ? COL.yellow : INK;
     dot(ctx, this.bx, this.by, this.R, true);
   },
 };
 
 const DIRS = { up: { x: 0, y: -1 }, down: { x: 0, y: 1 }, left: { x: -1, y: 0 }, right: { x: 1, y: 0 } };
+// Muros de cada fase (grade 36×20). A linha 10, à esquerda, fica livre: é onde a cobrinha nasce.
+function snakeWalls(phase) {
+  const w = [];
+  const hl = (y, x1, x2) => { for (let x = x1; x <= x2; x++) w.push({ x, y }); };
+  const vl = (x, y1, y2) => { for (let y = y1; y <= y2; y++) w.push({ x, y }); };
+  if (phase === 2) { hl(5, 6, 29); hl(14, 6, 29); }
+  else if (phase === 3) {
+    hl(6, 13, 22); hl(13, 13, 22); vl(13, 6, 13); vl(22, 6, 13);
+    // Caixa no meio com uma porta em cada lado.
+    return w.filter(p => !((p.y === 6 || p.y === 13) && (p.x === 17 || p.x === 18)) && !((p.x === 13 || p.x === 22) && (p.y === 9 || p.y === 10)));
+  } else if (phase === 4) {
+    hl(3, 4, 10); vl(4, 3, 7); hl(3, 25, 31); vl(31, 3, 7);
+    hl(16, 4, 10); vl(4, 12, 16); hl(16, 25, 31); vl(31, 12, 16);
+  } else if (phase === 5) {
+    hl(4, 8, 28); hl(15, 8, 28);
+    vl(18, 2, 7); vl(18, 13, 17);
+  }
+  return w;
+}
 const snake = {
-  id: 'snake', name: 'Cobrinha', sub: 'Coma, cresça e desvie das pedras',
-  hint: 'Setas mudam a direção · desvie das pedras: nasce uma nova a cada 3 maçãs',
+  id: 'snake', name: 'Cobrinha', sub: '5 fases · coma 10 maçãs em cada',
+  hint: 'Setas mudam a direção · 10 maçãs passam de fase · desvie das pedras e dos muros',
   art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M28 72h36V42h40v22h22" stroke-width="7"/><circle cx="126" cy="64" r="5.5" fill="#fff" stroke="none"/><circle cx="126" cy="30" r="4.5" stroke-width="2.5"/></svg>',
-  C: 30, cols: 36, rows: 20, ox: 100, oy: 90,
-  status() { return t('Tamanho {0} · {1} pedras', this.body.length, this.rocks.length); },
-  reset() {
+  C: 30, cols: 36, rows: 20, ox: 100, oy: 90, PHASES: 5, GOAL: 10,
+  status() { return t('Fase {0} · maçãs {1}/10', this.phase, this.eaten) + ' · ' + t('Tamanho {0}', this.body.length); },
+  reset() { this.phase = 1; this.startPhase(); },
+  startPhase() {
     this.body = [{ x: 8, y: 10 }, { x: 7, y: 10 }, { x: 6, y: 10 }];
-    this.dir = DIRS.right; this.queue = []; this.t = 0; this.step = .12; this.eaten = 0; this.gold = null;
-    this.rocks = []; this.f = null;
-    for (let i = 0; i < 6; i++) this.addRock();
+    this.dir = DIRS.right; this.queue = []; this.t = 0; this.step = .12 - .01 * (this.phase - 1); this.eaten = 0; this.gold = null;
+    this.walls = snakeWalls(this.phase); this.rocks = []; this.f = null;
+    for (let i = 0; i < 3 + this.phase; i++) this.addRock();
     this.f = this.free();
   },
-  // Célula vazia (sem cobra, pedra nem maçã); "far" afasta da cabeça para a pedra nunca nascer na cara.
+  blocked(p) { return this.rocks.some(q => q.x === p.x && q.y === p.y) || this.walls.some(q => q.x === p.x && q.y === p.y); },
+  // Célula vazia (sem cobra, pedra, muro nem maçã); "far" afasta da cabeça para a pedra nunca nascer na cara.
   free(far) {
     const hd = this.body[0], same = (a, b) => a && a.x === b.x && a.y === b.y;
     let f, n = 0;
     do f = { x: Math.floor(Math.random() * this.cols), y: Math.floor(Math.random() * this.rows) };
-    while (++n < 500 && (this.body.some(p => same(p, f)) || this.rocks.some(p => same(p, f)) || same(this.f, f) || same(this.gold, f) ||
+    while (++n < 500 && (this.body.some(p => same(p, f)) || this.blocked(f) || same(this.f, f) || same(this.gold, f) ||
       (far && (Math.abs(f.x - hd.x) + Math.abs(f.y - hd.y) < 6 || f.y === hd.y))));
     return f;
   },
@@ -2128,17 +2229,22 @@ const snake = {
     if (this.queue.length) this.dir = this.queue.shift();
     if (this.gold && (this.gold.t -= this.step) <= 0) this.gold = null;
     const hd = this.body[0], n = { x: hd.x + this.dir.x, y: hd.y + this.dir.y };
-    if (n.x < 0 || n.y < 0 || n.x >= this.cols || n.y >= this.rows || this.body.slice(0, -1).some(p => p.x === n.x && p.y === n.y) ||
-        this.rocks.some(p => p.x === n.x && p.y === n.y)) {
+    if (n.x < 0 || n.y < 0 || n.x >= this.cols || n.y >= this.rows || this.body.slice(0, -1).some(p => p.x === n.x && p.y === n.y) || this.blocked(n)) {
       fx.burst(this.ox + hd.x * this.C + this.C / 2, this.oy + hd.y * this.C + this.C / 2, COL.red, 20, 300);
-      gameOver('A cobrinha bateu'); return false;
+      gameOver(t('A cobrinha bateu na fase {0}', this.phase)); return false;
     }
     this.body.unshift(n);
     const cx = this.ox + n.x * this.C + this.C / 2, cy = this.oy + n.y * this.C + this.C / 2;
     if (n.x === this.f.x && n.y === this.f.y) {
       addScore(10); this.step = Math.max(.065, this.step * .97); this.f = this.free();
       fx.burst(cx, cy, COL.red, 10, 200); fx.text(cx, cy - 24, '+10', INK, 20);
-      if (++this.eaten % 5 === 0 && !this.gold) this.gold = Object.assign(this.free(), { t: 6 });
+      // 10 maçãs: próxima fase, com muros novos (a cobrinha volta ao começo e espera um pouco).
+      if (++this.eaten >= this.GOAL) {
+        if (this.phase >= this.PHASES) { gameOver('Você venceu!'); return false; }
+        this.phase++; phaseUp(this.phase); this.startPhase(); this.t = -1.2;
+        return;
+      }
+      if (this.eaten % 5 === 0 && !this.gold) this.gold = Object.assign(this.free(), { t: 6 });
       if (this.eaten % 3 === 0) { this.addRock(); const r = this.rocks.at(-1); fx.burst(this.ox + r.x * this.C + this.C / 2, this.oy + r.y * this.C + this.C / 2, '#9aa4b8', 10, 180); }
     } else if (this.gold && n.x === this.gold.x && n.y === this.gold.y) {
       addScore(50); this.gold = null;
@@ -2147,33 +2253,31 @@ const snake = {
   },
   draw(ctx) {
     const C = this.C, X = p => this.ox + p.x * C + C / 2, Y = p => this.oy + p.y * C + C / 2;
-    // Gramado xadrez em dois verdes sólidos.
-    ctx.fillStyle = '#16351f'; ctx.fillRect(this.ox, this.oy, this.cols * C, this.rows * C);
-    ctx.fillStyle = '#1b4026';
-    for (let y = 0; y < this.rows; y++) for (let x = (y & 1); x < this.cols; x += 2) ctx.fillRect(this.ox + x * C, this.oy + y * C, C, C);
-    ctx.strokeStyle = '#2f6b3d'; ctx.lineWidth = 4; ctx.strokeRect(this.ox - 2, this.oy - 2, this.cols * C + 4, this.rows * C + 4);
-    // Pedras: cinza com brilho no alto e sombra embaixo.
-    for (const r of this.rocks) {
-      const x = this.ox + r.x * C, y = this.oy + r.y * C;
-      ctx.fillStyle = '#6b7280'; ctx.fillRect(x + 2, y + 2, C - 4, C - 4);
-      ctx.fillStyle = '#9ca3af'; ctx.fillRect(x + 2, y + 2, C - 4, 6);
-      ctx.fillStyle = '#4b5563'; ctx.fillRect(x + 2, y + C - 8, C - 4, 6);
-    }
-    // Maçã vermelha com folha; a dourada pisca no fim.
-    ctx.fillStyle = COL.red; dot(ctx, X(this.f), Y(this.f), C * .36, true);
-    ctx.fillStyle = COL.green; ctx.fillRect(X(this.f) + 1, Y(this.f) - C * .48, 6, 6);
-    if (this.gold && (this.gold.t > 2 || Math.floor(this.gold.t * 6) % 2)) { ctx.fillStyle = COL.yellow; dot(ctx, X(this.gold), Y(this.gold), C * .4, true); }
-    ctx.strokeStyle = '#3ddc84'; ctx.lineWidth = C * .7; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.beginPath(); ctx.moveTo(X(this.body[0]), Y(this.body[0]));
-    for (const p of this.body) ctx.lineTo(X(p), Y(p));
-    ctx.stroke();
+    panel(ctx, this.ox - 10, this.oy - 10, this.cols * C + 20, this.rows * C + 20, 20);
+    // Grade de pontinhos, bem de leve.
+    ctx.fillStyle = 'rgba(255,255,255,.07)';
+    for (let y = 1; y < this.rows; y++) for (let x = 1; x < this.cols; x++) ctx.fillRect(this.ox + x * C - 1, this.oy + y * C - 1, 2, 2);
+    // Muros: contorno branco; pedras: contorno cinza, menores.
+    ctx.lineWidth = 2; ctx.lineJoin = 'round'; ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(255,255,255,.6)';
+    for (const r of this.walls) { rr(ctx, this.ox + r.x * C + 3, this.oy + r.y * C + 3, C - 6, C - 6, 5); ctx.stroke(); }
+    ctx.strokeStyle = '#9aa4b8';
+    for (const r of this.rocks) { rr(ctx, this.ox + r.x * C + 6, this.oy + r.y * C + 6, C - 12, C - 12, 6); ctx.stroke(); }
+    // Maçã: contorno vermelho com o cabinho verde; a dourada pisca no fim.
+    glow(ctx, COL.red, 2.5, circ(ctx, X(this.f), Y(this.f), C * .3));
+    ctx.strokeStyle = COL.green; ctx.lineWidth = 2.5; line(ctx, X(this.f), Y(this.f) - C * .3, X(this.f) + 5, Y(this.f) - C * .46);
+    if (this.gold && (this.gold.t > 2 || Math.floor(this.gold.t * 6) % 2)) glow(ctx, COL.yellow, 2.5, circ(ctx, X(this.gold), Y(this.gold), C * .34));
+    // Corpo: traço verde com brilho; a cabeça é um anel com olhos.
+    glow(ctx, COL.green, 8, () => {
+      ctx.beginPath(); ctx.moveTo(X(this.body[0]), Y(this.body[0]));
+      for (const p of this.body) ctx.lineTo(X(p), Y(p));
+    });
     const hx = X(this.body[0]), hy = Y(this.body[0]), d = this.dir;
-    ctx.fillStyle = '#22a85a'; dot(ctx, hx, hy, C * .42, true);
+    ctx.fillStyle = '#060709'; dot(ctx, hx, hy, C * .4, true);
+    ctx.strokeStyle = COL.green; ctx.lineWidth = 3; dot(ctx, hx, hy, C * .4, false);
     // Olhos olhando para a direção do movimento.
     ctx.fillStyle = INK;
-    dot(ctx, hx + d.x * 5 - d.y * 6, hy + d.y * 5 + d.x * 6, 4, true); dot(ctx, hx + d.x * 5 + d.y * 6, hy + d.y * 5 - d.x * 6, 4, true);
-    ctx.fillStyle = '#0a0b0e';
-    dot(ctx, hx + d.x * 7 - d.y * 6, hy + d.y * 7 + d.x * 6, 2, true); dot(ctx, hx + d.x * 7 + d.y * 6, hy + d.y * 7 - d.x * 6, 2, true);
+    dot(ctx, hx + d.x * 4 - d.y * 5, hy + d.y * 4 + d.x * 5, 2.5, true); dot(ctx, hx + d.x * 4 + d.y * 5, hy + d.y * 4 - d.x * 5, 2.5, true);
   },
 };
 const GAMES = [pong, pinball, bricks, snake];
@@ -2244,12 +2348,13 @@ function drawGame() {
   fx.draw(ctx);
   ctx.textBaseline = 'alphabetic';
   ctx.textAlign = 'left'; ctx.fillStyle = INK; ctx.font = '600 26px ' + FONT;
-  ctx.fillText(t(game.name), 48, 58);
-  if (game.status) { ctx.fillStyle = DIM; ctx.font = '400 20px ' + FONT; ctx.fillText(game.status(), 48, 88); }
+  ctx.fillText(t(game.name), 48, 44);
+  // Status em uma ou mais linhas ("\n"), acima do painel do jogo.
+  if (game.status) { ctx.fillStyle = DIM; ctx.font = '400 19px ' + FONT; game.status().split('\n').forEach((s, i) => ctx.fillText(s, 48, 70 + i * 24)); }
   if (game.id !== 'pong') {
     ctx.textAlign = 'right'; ctx.fillStyle = INK; ctx.font = '200 40px ' + FONT;
-    ctx.fillText(gScore, GW - 48, 62);
-    ctx.fillStyle = DIM; ctx.font = '400 18px ' + FONT; ctx.fillText(t('Recorde {0}', Math.max(gBest, gScore)), GW - 48, 90);
+    ctx.fillText(gScore, GW - 48, 48);
+    ctx.fillStyle = DIM; ctx.font = '400 18px ' + FONT; ctx.fillText(t('Recorde {0}', Math.max(gBest, gScore)), GW - 48, 72);
   }
   if (gState === 'play') return;
   const msg = {
@@ -2257,8 +2362,12 @@ function drawGame() {
     pause: ['Pausado', '', 'OK para continuar · Voltar para sair'],
     over: [gEnd, game.id === 'pong' ? '' : t('Pontos {0} · Recorde {1}', gScore, gBest), 'OK para jogar de novo · Voltar para sair'],
   }[gState].map(x => t(x));
-  ctx.fillStyle = 'rgba(6,7,9,.78)'; ctx.fillRect(0, 0, GW, GH);
-  ctx.textAlign = 'center'; ctx.fillStyle = INK; ctx.font = '600 56px ' + FONT;
+  ctx.fillStyle = 'rgba(6,7,9,.72)'; ctx.fillRect(0, 0, GW, GH);
+  ctx.font = '400 24px ' + FONT;
+  const w = Math.min(GW - 80, Math.max(620, ctx.measureText(msg[1]).width + 120));
+  ctx.fillStyle = 'rgba(14,16,21,.92)'; rr(ctx, (GW - w) / 2, GH / 2 - 130, w, 250, 28); ctx.fill();
+  ctx.strokeStyle = EDGE; ctx.lineWidth = 2; ctx.stroke();
+  ctx.textAlign = 'center'; ctx.fillStyle = INK; ctx.font = '600 52px ' + FONT;
   ctx.fillText(msg[0], GW / 2, GH / 2 - 30);
   ctx.font = '400 24px ' + FONT;
   if (msg[1]) { ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.fillText(msg[1], GW / 2, GH / 2 + 20); }
@@ -2821,6 +2930,10 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '13.7.5 beta', date: 'outubro de 2026', items: [
+    ['new', '*Jogos de cara nova:* Pong, Pinball, Tijolos e Cobrinha agora seguem o visual do Onix, com traços coloridos sobre o vidro escuro. Nos Tijolos, cada fileira é só um contorno na sua cor, e os de aço têm um contorno branco a mais.'],
+    ['new', '*Fases em todos os jogos:* o Pong tem 5 fases contra uma máquina cada vez mais rápida, o Pinball 5 metas (cada uma dá uma bola extra), os Tijolos 8 fases com desenhos diferentes e a Cobrinha 5 fases com muros novos.'],
+  ] },
   { version: '13.7.4 beta', date: 'outubro de 2026', items: [
     ['new', '*Novo idioma: espanhol.* Em Configurações → Idioma, escolha Português, Español ou Automático (segue o idioma da TV). As notícias e as sinopses das indicações continuam em português.'],
   ] },

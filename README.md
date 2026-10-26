@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.4%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.5%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -102,14 +102,14 @@ O histórico completo está no [CHANGELOG.md](CHANGELOG.md) e na [página de Rel
 - Grade com todos os apps instalados, com o banner oficial de TV de cada um quando existir.
 
 ### Jogos
-Quatro jogos feitos para o controle remoto, com música chiptune e recorde salvo:
+Quatro jogos feitos para o controle remoto, no visual do Onix (traços coloridos sobre o vidro escuro), com fases, música chiptune e recorde salvo:
 
-| Jogo | Como ganhar | Poderes e malefícios |
+| Jogo | Fases | Poderes e malefícios |
 |---|---|---|
-| **Pong** | Quem fizer 5 pontos primeiro vence | `+` raquete maior · `−` raquete menor · `»` turbo · `\|\|` congela o adversário |
-| **Pinball** | Fazer 10.000 pontos antes de perder as 3 bolas | Faixas que sobem o multiplicador, alvos e bumpers |
-| **Tijolos** | Quebrar todos os tijolos de cada fase | Bons: **W** larga, **♥** vida, **S** lenta, **F** fogo · Ruins: **−** curta, **R** rápida |
-| **Cobrinha** | Crescer o máximo possível | Pedras surgem a cada 3 maçãs; a maçã dourada vale 50 |
+| **Pong** | 5 fases: quem fizer 5 pontos passa; a máquina fica mais rápida a cada uma | `+` raquete maior · `−` raquete menor · `»` turbo · `\|\|` congela o adversário |
+| **Pinball** | 5 metas (10.000 a 100.000 pontos); cada uma dá uma bola extra | Faixas que sobem o multiplicador, alvos e bumpers |
+| **Tijolos** | 8 fases, cada uma com um desenho de tijolos | Bons: **W** larga, **♥** vida, **S** lenta, **F** fogo · Ruins: **−** curta, **R** rápida |
+| **Cobrinha** | 5 fases de 10 maçãs, com muros novos em cada | Pedras surgem a cada 3 maçãs; a maçã dourada vale 50 |
 
 ### Notícias dos games
 - As últimas notícias da **Adrenaline** e da **Eurogamer.pt**, atualizadas a cada 3 horas.

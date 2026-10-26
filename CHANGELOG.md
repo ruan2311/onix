@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.7.5 beta (outubro de 2026)
+
+- **Jogos de cara nova:** Pong, Pinball, Tijolos e Cobrinha agora seguem o visual do Onix: painel de vidro, traços coloridos com brilho leve e nada de blocos chapados. Nos Tijolos, cada fileira é só um contorno na sua cor; os de aço têm um contorno branco a mais, que some na primeira batida. O aviso de começo, pausa e fim virou um cartão de vidro.
+- **Fases em todos os jogos:** Pong com 5 fases (a máquina e a bola aceleram a cada uma), Pinball com 5 metas de 10.000 a 100.000 pontos (cada meta dá uma bola extra e a gravidade aumenta), Tijolos com 8 fases de desenhos diferentes (pirâmide, xadrez, losango, colunas, moldura…) e Cobrinha com 5 fases de 10 maçãs e muros novos.
+
 ## 13.7.4 beta (outubro de 2026)
 
 - **Novo idioma: espanhol.** Em **Configurações → Idioma**, escolha **Português**, **Español** ou **Automático** (segue o idioma da TV, também na Samsung e na LG). Troca na hora, sem reiniciar o Onix. As notícias e as sinopses das indicações continuam em português, porque vêm de sites brasileiros.
