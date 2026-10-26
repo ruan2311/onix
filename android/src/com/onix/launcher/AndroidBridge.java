@@ -36,6 +36,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.regex.Pattern;
 
@@ -622,7 +623,9 @@ public class AndroidBridge {
         }
         Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN)
                 .putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, admin)
-                .putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "Permite que o botão Desligar TV do Onix coloque a TV em standby.");
+                .putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "es".equals(Locale.getDefault().getLanguage())
+                        ? "Permite que el botón Apagar TV de Onix ponga la TV en standby."
+                        : "Permite que o botão Desligar TV do Onix coloque a TV em standby.");
         return start(i) ? "ask" : "fail";
     }
 

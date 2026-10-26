@@ -661,9 +661,9 @@ function h(tag, props, ...kids) {
   if (props) for (const k of Object.keys(props)) {
     const v = props[k];
     if (k === 'class') el.className = v;
-    else if (k === 'text') el.textContent = v;
+    else if (k === 'text') el.textContent = t(v);
     else if (k === 'style') el.setAttribute('style', v);
-    else el.setAttribute(k, v);
+    else el.setAttribute(k, k === 'aria-label' ? t(v) : v);
   }
   for (const c of kids) if (c != null) el.append(c);
   return el;
@@ -677,15 +677,16 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '13.7.3 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '13.7.4 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
-  anim: 'suave', heroFx: 'fade', tabFx: false });
+  anim: 'suave', heroFx: 'fade', tabFx: false, lang: 'auto' });
 // Opções de escolha (OK passa para a próxima): valor salvo -> nome na tela.
 const CHOICES = Object.freeze({
   anim: [['suave', 'Suave'], ['elastica', 'Elástica'], ['rapida', 'Rápida'], ['flutuar', 'Flutuar'], ['pulsar', 'Pulsar']],
   heroFx: [['fade', 'Esmaecer'], ['slide', 'Deslizar'], ['zoom', 'Zoom']],
+  lang: [['auto', 'Automático'], ['pt', 'Português'], ['es', 'Español']],
 });
 const settings = Object.assign({}, DEFAULTS);
 try {
@@ -706,6 +707,348 @@ function applySettings() {
   cl.toggle('tab-fx', settings.tabFx);
 }
 applySettings();
+
+/* ---------------- Idioma ----------------
+   O texto em português é a chave: t('Abrindo {0}…', nome) devolve a tradução (ou o próprio texto)
+   com os {0}, {1}… trocados. "Automático" segue o idioma da TV (navigator.language). Notícias e
+   sinopses das indicações chegam em português dos sites e ficam como estão. */
+const ES = Object.freeze({
+  "Menu principal": "Menú principal",
+  "Início": "Inicio",
+  "Jogos": "Juegos",
+  "Configurações": "Configuración",
+  "Desligar TV": "Apagar TV",
+  "Atualizar": "Actualizar",
+  "Limpar memória": "Liberar memoria",
+  "Configurações da TV": "Configuración de la TV",
+  "Sem internet": "Sin internet",
+  "Próxima": "Siguiente",
+  "Seus apps": "Tus apps",
+  "Indicações da semana": "Recomendaciones de la semana",
+  "· Netflix em primeiro · renovadas toda segunda-feira": "· Netflix primero · se renuevan cada lunes",
+  "Todos os apps": "Todas las apps",
+  "Recentes": "Recientes",
+  "· abertos pelo Onix nos últimos 30 dias, o último primeiro": "· abiertas desde Onix en los últimos 30 días, la última primero",
+  "Não usados": "Sin usar",
+  "· sem abrir há mais de 30 dias": "· sin abrir hace más de 30 días",
+  "Ajustes de imagem da TV": "Ajustes de imagen de la TV",
+  "Notícias dos games": "Noticias de videojuegos",
+  "· Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code": "· Adrenaline y Eurogamer.pt, en portugués · OK abre el resumen y el código QR",
+  "Organizar seus apps": "Organizar tus apps",
+  "Na fileira de cima, aperte OK num app para pegá-lo, use ◀ ▶ para mudar a posição e OK de novo para soltar. Em “Adicionar ou remover”, OK marca ou desmarca o app na tela inicial. Tudo é salvo na hora.": "En la fila de arriba, pulsa OK en una app para tomarla, usa ◀ ▶ para cambiar su posición y OK otra vez para soltarla. En “Agregar o quitar”, OK marca o desmarca la app en la pantalla de inicio. Todo se guarda al instante.",
+  "Concluir": "Listo",
+  "Restaurar padrão": "Restablecer",
+  "Na tela inicial": "En la pantalla de inicio",
+  "Adicionar ou remover": "Agregar o quitar",
+  "Configurações do Onix": "Configuración de Onix",
+  "Gatinho do Onix": "Gatito de Onix",
+  "Miau! Você achou o gatinho do Onix": "¡Miau! Encontraste al gatito de Onix",
+  "Ele cuida da sua TV enquanto você assiste. Qualquer tecla volta.": "Cuida tu TV mientras ves. Cualquier tecla vuelve.",
+  "Continue lendo no celular": "Sigue leyendo en el celular",
+  "Aponte a câmera do celular para o código e a matéria completa abre em": "Apunta la cámara del celular al código y la nota completa se abre en",
+  "Voltar": "Volver",
+  "App não instalado nesta TV": "App no instalada en esta TV",
+  "Pacote bloqueado": "Paquete bloqueado",
+  "Abrindo {0}…": "Abriendo {0}…",
+  "Não foi possível abrir {0}": "No se pudo abrir {0}",
+  "abriria {0} (simulação no navegador)": "abriría {0} (simulación en el navegador)",
+  "Nenhum app na tela inicial. Escolha abaixo.": "Ninguna app en la pantalla de inicio. Elige abajo.",
+  "Limite de {0} apps na tela inicial": "Límite de {0} apps en la pantalla de inicio",
+  "{0} adicionado ao fim de “Seus apps”": "{0} se agregó al final de “Tus apps”",
+  "{0} removido de “Seus apps”": "{0} se quitó de “Tus apps”",
+  "◀ ▶ mudam a posição · OK solta": "◀ ▶ cambian la posición · OK suelta",
+  "“Seus apps” voltou ao padrão": "“Tus apps” volvió a lo original",
+  "Nenhum app encontrado nesta TV.": "No se encontraron apps en esta TV.",
+  "Nenhum app escolhido. Use “Organizar” para adicionar.": "Ninguna app elegida. Usa “Organizar” para agregar.",
+  "Os apps que você abrir pelo Onix aparecem aqui, o último primeiro.": "Las apps que abras desde Onix aparecen aquí, la última primero.",
+  "Você abriu todos os seus apps no último mês.": "Abriste todas tus apps en el último mes.",
+  "Parece que você está sem conexão. As indicações da semana aparecem assim que a internet voltar.": "Parece que no tienes conexión. Las recomendaciones de la semana aparecen en cuanto vuelva internet.",
+  "As indicações da semana aparecem assim que a TV estiver conectada à internet.": "Las recomendaciones de la semana aparecen en cuanto la TV se conecte a internet.",
+  " e ": " y ",
+  "Netflix em primeiro": "Netflix primero",
+  ", escolhidos por você": ", elegidos por ti",
+  ", escolhido por você": ", elegido por ti",
+  ", pelos apps que você mais abre": ", según las apps que más abres",
+  " · renovadas toda segunda-feira": " · se renuevan cada lunes",
+  "na Netflix": "en Netflix",
+  "no Disney+": "en Disney+",
+  "na HBO Max": "en HBO Max",
+  "no Globoplay": "en Globoplay",
+  "Indicação da semana": "Recomendación de la semana",
+  "Série": "Serie",
+  "Filme": "Película",
+  "Ação": "Acción",
+  "Animação": "Animación",
+  "Comédia": "Comedia",
+  "Crime": "Crimen",
+  "Documentário": "Documental",
+  "Fantasia": "Fantasía",
+  "História": "Historia",
+  "Família": "Familia",
+  "Suspense": "Suspenso",
+  "Ficção científica": "Ciencia ficción",
+  "Esporte": "Deporte",
+  "Faroeste": "Western",
+  "Assistir {0}": "Ver {0}",
+  "Onde assistir": "Dónde ver",
+  "Sem conexão": "Sin conexión",
+  "Parece que você está sem conexão": "Parece que no tienes conexión",
+  "Confira o Wi-Fi ou o cabo de rede da TV. As indicações da semana aparecem aqui assim que a internet voltar.": "Revisa el Wi-Fi o el cable de red de la TV. Las recomendaciones de la semana aparecen aquí en cuanto vuelva internet.",
+  "Tentar de novo": "Reintentar",
+  "Buscando as indicações…": "Buscando las recomendaciones…",
+  "As capas da semana aparecem aqui em instantes.": "Las portadas de la semana aparecen aquí en unos instantes.",
+  "Abriria {0} {1} (simulação no navegador)": "Abriría {0} {1} (simulación en el navegador)",
+  "Buscaria onde assistir {0} (simulação no navegador)": "Buscaría dónde ver {0} (simulación en el navegador)",
+  "Abrindo {0} {1}…": "Abriendo {0} {1}…",
+  "Abrindo {0}… procure por {1}": "Abriendo {0}… busca {1}",
+  "o app": "la app",
+  "Procurando onde assistir {0}…": "Buscando dónde ver {0}…",
+  "{0} não está instalado nesta TV": "{0} no está instalado en esta TV",
+  "Busca indisponível nesta TV": "Búsqueda no disponible en esta TV",
+  "Contra a máquina · quem fizer 5 vence": "Contra la máquina · quien haga 5 gana",
+  "▲ ▼ movem · estrelas: + cresce · − encolhe · » turbo · || congela o outro": "▲ ▼ mueven · estrellas: + crece · − encoge · » turbo · || congela al otro",
+  "Rally {0}!": "¡Rally {0}!",
+  "GOL!": "¡GOL!",
+  "Gol da máquina": "Gol de la máquina",
+  "Raquete maior!": "¡Paleta más grande!",
+  "Máquina cresceu": "La máquina creció",
+  "Raquete menor!": "¡Paleta más pequeña!",
+  "Máquina encolheu": "La máquina se encogió",
+  "Máquina congelada!": "¡Máquina congelada!",
+  "Você congelou!": "¡Te congelaste!",
+  "Turbo!": "¡Turbo!",
+  "Você venceu!": "¡Ganaste!",
+  "A máquina venceu": "Ganó la máquina",
+  "3 bolas · faça 10.000 pontos para vencer": "3 bolas · haz 10.000 puntos para ganar",
+  "◀ ▶ flíperes · OK lança · faça 10.000 pontos antes de perder as 3 bolas": "◀ ▶ flippers · OK lanza · haz 10.000 puntos antes de perder las 3 bolas",
+  "OK lança a bola": "OK lanza la bola",
+  "Alvos completos!": "¡Blancos completos!",
+  "Bola salva!": "¡Bola salvada!",
+  "Faltaram {0} pontos": "Faltaron {0} puntos",
+  "Tijolos": "Ladrillos",
+  "Quebre todos · pegue os bônus": "Rómpelos todos · atrapa los bonus",
+  "◀ ▶ movem · W larga · ♥ vida · S lenta · F fogo · cuidado: − curta · R rápida": "◀ ▶ mueven · W ancha · ♥ vida · S lenta · F fuego · cuidado: − corta · R rápida",
+  "Fase {0}": "Nivel {0}",
+  "Raquete larga!": "¡Paleta ancha!",
+  "Raquete curta!": "¡Paleta corta!",
+  "Bola de fogo!": "¡Bola de fuego!",
+  "Bola rápida!": "¡Bola rápida!",
+  "Sem bolas": "Sin bolas",
+  "Cobrinha": "Serpiente",
+  "Coma, cresça e desvie das pedras": "Come, crece y esquiva las piedras",
+  "Setas mudam a direção · desvie das pedras: nasce uma nova a cada 3 maçãs": "Las flechas cambian la dirección · esquiva las piedras: aparece una nueva cada 3 manzanas",
+  "Tamanho {0} · {1} pedras": "Tamaño {0} · {1} piedras",
+  "A cobrinha bateu": "La serpiente chocó",
+  "Recorde {0}": "Récord {0}",
+  "OK para começar · Voltar para sair": "OK para empezar · Volver para salir",
+  "Pausado": "En pausa",
+  "OK para continuar · Voltar para sair": "OK para continuar · Volver para salir",
+  "Pontos {0} · Recorde {1}": "Puntos {0} · Récord {1}",
+  "OK para jogar de novo · Voltar para sair": "OK para jugar otra vez · Volver para salir",
+  "agora": "ahora",
+  "há {0} min": "hace {0} min",
+  "há {0} h": "hace {0} h",
+  "ontem": "ayer",
+  "há {0} dias": "hace {0} días",
+  "Parece que você está sem conexão. As notícias aparecem assim que a internet voltar.": "Parece que no tienes conexión. Las noticias aparecen en cuanto vuelva internet.",
+  "As notícias aparecem assim que a TV estiver conectada à internet (atualizadas a cada 3 horas).": "Las noticias aparecen en cuanto la TV se conecte a internet (se actualizan cada 3 horas).",
+  "Mudaria para {0} (simulação no navegador)": "Cambiaría a {0} (simulación en el navegador)",
+  "{0} não encontrada nesta TV": "{0} no encontrada en esta TV",
+  "Mudando para {0}…": "Cambiando a {0}…",
+  "Este aparelho não tem entradas HDMI para trocar (por exemplo, Chromecast ou TV box). Elas aparecem aqui quando o Onix roda numa TV.": "Este dispositivo no tiene entradas HDMI para cambiar (por ejemplo, Chromecast o TV box). Aparecen aquí cuando Onix se ejecuta en una TV.",
+  "TV (antena e cabo)": "TV (antena y cable)",
+  "Antena e cabo": "Antena y cable",
+  "Trocar o banner da {0}": "Cambiar el banner de {0}",
+  "Videogame": "Consola",
+  "Computador": "Computadora",
+  "banner padrão": "banner original",
+  "Abriria as configurações da TV (simulação no navegador)": "Abriría la configuración de la TV (simulación en el navegador)",
+  "Não foi possível abrir as configurações": "No se pudo abrir la configuración",
+  "Aperte OK de novo para desligar a TV": "Pulsa OK otra vez para apagar la TV",
+  "Desligaria a TV (simulação no navegador)": "Apagaría la TV (simulación en el navegador)",
+  "Autorize o Onix a desligar a TV e aperte de novo": "Autoriza a Onix a apagar la TV y pulsa otra vez",
+  "Este aparelho não deixou o Onix desligar a tela. Pelo adb: dpm set-active-admin com.aurora.launcher/.PowerAdmin": "Este dispositivo no dejó que Onix apague la pantalla. Por adb: dpm set-active-admin com.aurora.launcher/.PowerAdmin",
+  "Abriria os ajustes de imagem da TV (simulação no navegador)": "Abriría los ajustes de imagen de la TV (simulación en el navegador)",
+  "Não foi possível abrir os ajustes de imagem": "No se pudieron abrir los ajustes de imagen",
+  "A TV não deixou abrir este app": "La TV no permitió abrir esta app",
+  "A TV não deixou abrir a antena": "La TV no permitió abrir la antena",
+  "A TV não deixou abrir esta entrada": "La TV no permitió abrir esta entrada",
+  "Português ou espanhol. Automático segue o idioma da TV. OK troca.": "Portugués o español. Automático sigue el idioma de la TV. OK cambia.",
+  "Desempenho": "Rendimiento",
+  "Brilho ao focar": "Brillo al enfocar",
+  "Feixe de luz que passa sobre o item selecionado.": "Haz de luz que pasa sobre el elemento seleccionado.",
+  "Zoom ao focar": "Zoom al enfocar",
+  "Aumenta o item selecionado. Desligado, só o contorno branco marca o foco.": "Agranda el elemento seleccionado. Desactivado, solo el borde blanco marca el foco.",
+  "Transições suaves": "Transiciones suaves",
+  "Animações de foco, do destaque e dos avisos. Desligado, tudo muda na hora.": "Animaciones del foco, del destacado y de los avisos. Desactivado, todo cambia al instante.",
+  "Sombras e reflexos": "Sombras y reflejos",
+  "Sombras projetadas e reflexo do vidro. Desligar alivia a GPU da TV.": "Sombras proyectadas y reflejo del vidrio. Desactivarlas alivia la GPU de la TV.",
+  "Modo desempenho máximo": "Modo de máximo rendimiento",
+  "Desliga brilho, zoom, transições e sombras de uma vez.": "Desactiva brillo, zoom, transiciones y sombras de una vez.",
+  "Animações": "Animaciones",
+  "Estilo do foco": "Estilo del foco",
+  "Como o item selecionado se mexe: suave, elástica (com um leve quique), rápida, flutuar ou pulsar. OK troca.": "Cómo se mueve el elemento seleccionado: suave, elástica (con un leve rebote), rápida, flotar o pulsar. OK cambia.",
+  "Troca do destaque": "Cambio del destacado",
+  "Como uma indicação dá lugar à próxima: esmaecer, deslizar ou zoom. OK troca.": "Cómo una recomendación da paso a la siguiente: desvanecer, deslizar o zoom. OK cambia.",
+  "Transição entre abas": "Transición entre pestañas",
+  "A aba nova aparece subindo de leve ao trocar pelo menu.": "La pestaña nueva aparece subiendo levemente al cambiar desde el menú.",
+  "Trocar destaque sozinho": "Cambiar el destacado solo",
+  "Passa para a próxima indicação a cada 9 segundos.": "Pasa a la siguiente recomendación cada 9 segundos.",
+  "Relógio de 24 horas": "Reloj de 24 horas",
+  "Desligado, mostra 1:00 em vez de 13:00.": "Desactivado, muestra 1:00 en lugar de 13:00.",
+  "Sons do menu": "Sonidos del menú",
+  "Toque suave ao navegar, abrir e voltar.": "Sonido suave al navegar, abrir y volver.",
+  "Tela de descanso": "Salvapantallas",
+  "Planetas e asteroides passam pela tela após 10 minutos sem usar o controle.": "Planetas y asteroides pasan por la pantalla tras 10 minutos sin usar el control.",
+  "Descansar agora": "Activar ahora",
+  "Entra na tela de descanso na hora, mesmo com ela desligada acima. Qualquer tecla volta ao Onix.": "Activa el salvapantallas al instante, aunque esté desactivado arriba. Cualquier tecla vuelve a Onix.",
+  "Indicações": "Recomendaciones",
+  "Pelo que você assiste": "Según lo que ves",
+  "A Netflix sempre, mais Disney+, HBO Max e Globoplay quando você abre o app mais de 3 vezes pelo Onix. Desligado, você escolhe os serviços abaixo.": "Netflix siempre, más Disney+, HBO Max y Globoplay cuando abres la app más de 3 veces desde Onix. Desactivado, eliges los servicios abajo.",
+  "Indicações da Netflix.": "Recomendaciones de Netflix.",
+  "Indicações do Disney+.": "Recomendaciones de Disney+.",
+  "Indicações da HBO Max.": "Recomendaciones de HBO Max.",
+  "Indicações do Globoplay.": "Recomendaciones de Globoplay.",
+  "Atualizações": "Actualizaciones",
+  "Procurar atualizações": "Buscar actualizaciones",
+  "Confere no GitHub se saiu uma versão nova do Onix.": "Revisa en GitHub si salió una versión nueva de Onix.",
+  "Atualizar automaticamente": "Actualizar automáticamente",
+  "Baixa as versões novas sozinho e abre a confirmação de instalação quando você volta ao Onix.": "Descarga las versiones nuevas por sí solo y abre la confirmación de instalación cuando vuelves a Onix.",
+  "Volta todas as opções do Onix ao original.": "Devuelve todas las opciones de Onix a lo original.",
+  "Sobre": "Acerca de",
+  "Novidades": "Novedades",
+  "O que mudou em cada versão do Onix, da mais nova para a mais antiga.": "Lo que cambió en cada versión de Onix, de la más nueva a la más antigua.",
+  "Novo": "Nuevo",
+  "Correção": "Ajuste",
+  "Bug": "Error",
+  "outubro de 2026": "octubre de 2026",
+  "Flutuar": "Flotar",
+  "Esmaecer": "Desvanecer",
+  "desconhecido": "desconocido",
+  "Criado por": "Creado por",
+  "Versão": "Versión",
+  "Navegador da TV": "Navegador de la TV",
+  "Deixe pelo menos um serviço ligado": "Deja al menos un servicio activado",
+  "Indicações pelo que você assiste": "Recomendaciones según lo que ves",
+  "Escolha os serviços das indicações logo abaixo": "Elige los servicios de las recomendaciones justo abajo",
+  "Indicações: {0}": "Recomendaciones: {0}",
+  "Sobre o Onix": "Acerca de Onix",
+  "Obrigado por usar meu app :)": "¡Gracias por usar mi app! :)",
+  "Dica: aperte OK 5 vezes aqui para uma surpresa": "Pista: pulsa OK 5 veces aquí para una sorpresa",
+  " (ligue \"Transições suaves\" para ver)": " (activa \"Transiciones suaves\" para verlo)",
+  "Modo desempenho máximo ativado": "Modo de máximo rendimiento activado",
+  "Configurações restauradas": "Configuración restablecida",
+  "Valeu, de coração! :)": "¡Gracias de corazón! :)",
+  "Mais {0}…": "{0} más…",
+  "Miau!": "¡Miau!",
+  "No app da TV, o Onix procura versões novas no GitHub sozinho.": "En la app de la TV, Onix busca versiones nuevas en GitHub por sí solo.",
+  "Procurando atualizações…": "Buscando actualizaciones…",
+  "Conferindo a última versão no GitHub.": "Revisando la última versión en GitHub.",
+  "Instalar a versão {0}": "Instalar la versión {0}",
+  "Saiu uma versão nova do Onix. Aperte OK para baixar e instalar.": "Salió una versión nueva de Onix. Pulsa OK para descargarla e instalarla.",
+  "Baixando a versão {0}…": "Descargando la versión {0}…",
+  "A confirmação de instalação abre quando o download terminar.": "La confirmación de instalación se abre cuando termine la descarga.",
+  "Já está baixada. Aperte OK e confirme na tela da TV.": "Ya está descargada. Pulsa OK y confirma en la pantalla de la TV.",
+  "Instalando a versão {0}…": "Instalando la versión {0}…",
+  "Confirme na tela da TV. O Onix reabre sozinho na versão nova.": "Confirma en la pantalla de la TV. Onix se vuelve a abrir solo en la versión nueva.",
+  "Versão {0} disponível": "Versión {0} disponible",
+  "Baixe a versão nova no GitHub e instale de novo.": "Descarga la versión nueva en GitHub e instálala otra vez.",
+  "Não deu para procurar agora (sem internet ou o GitHub não respondeu). Aperte OK para tentar de novo.": "No se pudo buscar ahora (sin internet o GitHub no respondió). Pulsa OK para reintentar.",
+  "Você está na versão mais recente ({0})": "Tienes la versión más reciente ({0})",
+  ", conferida às {0}": ", revisada a las {0}",
+  "Saiu a versão {0} do Onix! Veja em Configurações → Atualizações": "¡Salió la versión {0} de Onix! Mírala en Configuración → Actualizaciones",
+  "O Onix já está na versão mais recente": "Onix ya tiene la versión más reciente",
+  "Não deu para procurar atualizações agora": "No se pudieron buscar actualizaciones ahora",
+  "O download da atualização falhou: {0}": "La descarga de la actualización falló: {0}",
+  "tente de novo": "inténtalo otra vez",
+  "Procuraria uma versão nova no GitHub (simulação no navegador)": "Buscaría una versión nueva en GitHub (simulación en el navegador)",
+  "Só um instante…": "Un momento…",
+  "Baixe a versão {0} no GitHub e instale de novo": "Descarga la versión {0} en GitHub e instálala otra vez",
+  "Confirme a instalação na tela da TV": "Confirma la instalación en la pantalla de la TV",
+  "Permita que o Onix instale apps e volte aqui para apertar OK de novo": "Permite que Onix instale apps y vuelve aquí para pulsar OK otra vez",
+  "Não foi possível instalar agora": "No se pudo instalar ahora",
+  "Não foi possível procurar atualizações": "No se pudieron buscar actualizaciones",
+  "Na LG, baixe o onix-webos.ipk no GitHub e instale de novo pelo webOS Dev Manager ou pelo Homebrew Channel.": "En LG, descarga onix-webos.ipk en GitHub e instálalo otra vez con webOS Dev Manager o Homebrew Channel.",
+  "Na Samsung, baixe o onix-tizen.zip no GitHub e repita o passo 5 do tutorial.": "En Samsung, descarga onix-tizen.zip en GitHub y repite el paso 5 del tutorial.",
+  "Onix atualizado para a {0}! Veja o que mudou em Configurações → Novidades": "¡Onix actualizado a la {0}! Mira lo que cambió en Configuración → Novedades",
+  "Já estou atualizando…": "Ya estoy actualizando…",
+  "Atualizaria notícias, indicações e apps (simulação no navegador)": "Actualizaría noticias, recomendaciones y apps (simulación en el navegador)",
+  "Não foi possível atualizar agora": "No se pudo actualizar ahora",
+  "Atualizando…": "Actualizando…",
+  "Baixando notícias, indicações e apps…": "Descargando noticias, recomendaciones y apps…",
+  "Tudo atualizado": "Todo actualizado",
+  "Sem conexão com os sites: mantive o que já estava salvo": "Sin conexión con los sitios: mantuve lo que ya estaba guardado",
+  "Já estou limpando…": "Ya estoy liberando…",
+  "Fecharia os apps parados em segundo plano (simulação no navegador)": "Cerraría las apps detenidas en segundo plano (simulación en el navegador)",
+  "Não foi possível limpar a memória agora": "No se pudo liberar la memoria ahora",
+  "Limpando…": "Liberando…",
+  "A TV não respondeu. Tente de novo.": "La TV no respondió. Inténtalo otra vez.",
+  " · livre: {0} de {1}": " · libre: {0} de {1}",
+  "Este Android não deixa fechar outros apps: ele mesmo libera a memória quando precisa": "Este Android no permite cerrar otras apps: él mismo libera la memoria cuando la necesita",
+  "Memória liberada: {0} MB": "Memoria liberada: {0} MB",
+  "A memória já estava livre": "La memoria ya estaba libre",
+  "*Novo idioma: espanhol.* Em Configurações → Idioma, escolha Português, Español ou Automático (segue o idioma da TV). As notícias e as sinopses das indicações continuam em português.": "*Nuevo idioma: español.* En Configuración → Idioma, elige Português, Español o Automático (sigue el idioma de la TV). Las noticias y las sinopsis de las recomendaciones siguen en portugués.",
+  "Botão *Limpar memória*, ao lado de Atualizar: fecha os apps parados em segundo plano (nunca o próprio Onix nem o que está tocando) e mostra quanto liberou. No Android 14 ou mais novo, o sistema não deixa um app fechar outros, e o botão só mostra a memória livre.": "Botón *Liberar memoria*, junto a Actualizar: cierra las apps detenidas en segundo plano (nunca el propio Onix ni lo que se está reproduciendo) y muestra cuánto liberó. En Android 14 o más nuevo, el sistema no permite que una app cierre otras, y el botón solo muestra la memoria libre.",
+  "*Android novo:* em TVs e TV boxes com Android recente, o Play Protect bloqueava a instalação dizendo que o app foi feito para uma versão antiga do Android. O Onix agora segue as regras do Android 15.": "*Android nuevo:* en TVs y TV boxes con Android reciente, Play Protect bloqueaba la instalación diciendo que la app se hizo para una versión antigua de Android. Onix ahora sigue las reglas de Android 15.",
+  "*TV boxes com navegador interno antigo:* os ícones dos apps não apareciam e a tela ficava grande demais, cortada na direita. Agora o Onix se ajusta também ao Android System WebView antigo.": "*TV boxes con navegador interno antiguo:* los íconos de las apps no aparecían y la pantalla quedaba demasiado grande, cortada a la derecha. Ahora Onix también se ajusta al Android System WebView antiguo.",
+  "O cartão *Sobre*, no fim das Configurações, mostra a versão do navegador interno da TV. Se algo aparecer estranho, mande essa informação junto.": "La tarjeta *Acerca de*, al final de la Configuración, muestra la versión del navegador interno de la TV. Si algo se ve raro, envía ese dato junto.",
+  "Fechar o gatinho do cartão *Sobre* com *Voltar* não leva mais o foco para o menu.": "Cerrar el gatito de la tarjeta *Acerca de* con *Volver* ya no lleva el foco al menú.",
+  "Por dentro, o código do Onix agora se chama *com.onix.launcher*. Nada muda para você: a atualização instala por cima e mantém tudo.": "Por dentro, el código de Onix ahora se llama *com.onix.launcher*. Nada cambia para ti: la actualización se instala encima y conserva todo.",
+  "*TVs LG (webOS):* o Onix agora tem uma versão para LG (TVs de 2022 em diante). Experimental: pode apresentar falhas. O passo a passo está no GitHub.": "*TVs LG (webOS):* Onix ahora tiene una versión para LG (TVs de 2022 en adelante). Experimental: puede presentar fallas. El paso a paso está en GitHub.",
+  "O aviso \"O Onix já está na versão mais recente\" só aparece quando você mesmo procura atualizações, e não mais ao abrir.": "El aviso \"Onix ya tiene la versión más reciente\" solo aparece cuando tú mismo buscas actualizaciones, y ya no al abrir.",
+  "*Etiquetas nas Novidades:* cada mudança mostra se é *Novo*, *Correção* ou *Bug* corrigido.": "*Etiquetas en las Novedades:* cada cambio muestra si es *Nuevo*, *Ajuste* o *Error* corregido.",
+  "Tem um segredo escondido no cartão *Sobre*, no fim das Configurações. A dica está lá. :)": "Hay un secreto escondido en la tarjeta *Acerca de*, al final de la Configuración. La pista está ahí. :)",
+  "*Voltar ao Onix sem sumir nada:* às vezes, ao voltar de outro app, a tela abria vazia, sem os apps, as entradas, as indicações e as notícias baixadas, e com os destaques de demonstração da primeira versão. Corrigido: tudo aparece como você deixou.": "*Volver a Onix sin que desaparezca nada:* a veces, al volver de otra app, la pantalla abría vacía, sin las apps, las entradas, las recomendaciones y las noticias descargadas, y con los destacados de demostración de la primera versión. Corregido: todo aparece como lo dejaste.",
+  "*Sem internet:* no lugar dos destaques de fachada, o Onix agora avisa \"Parece que você está sem conexão\", com atalho para as configurações da TV.": "*Sin internet:* en lugar de los destacados de muestra, Onix ahora avisa \"Parece que no tienes conexión\", con un acceso directo a la configuración de la TV.",
+  "*Configurações da TV* saiu das configurações do Onix e agora fica ao lado do botão *Atualizar*, na tela inicial.": "*Configuración de la TV* salió de la configuración de Onix y ahora está junto al botón *Actualizar*, en la pantalla de inicio.",
+  "*Mais animações:* em Configurações → Animações, escolha o estilo do foco (suave, elástica, rápida, flutuar ou pulsar), como o destaque troca (esmaecer, deslizar ou zoom) e ligue a transição entre abas.": "*Más animaciones:* en Configuración → Animaciones, elige el estilo del foco (suave, elástica, rápida, flotar o pulsar), cómo cambia el destacado (desvanecer, deslizar o zoom) y activa la transición entre pestañas.",
+  "*Apps organizados:* a aba Apps separa os *Recentes* (abertos pelo Onix nos últimos 30 dias, o último primeiro) dos *Não usados*, que ficam lá embaixo.": "*Apps organizadas:* la pestaña Apps separa las *Recientes* (abiertas desde Onix en los últimos 30 días, la última primero) de las *Sin usar*, que quedan al fondo.",
+  "As indicações do *Disney+*, da *HBO Max* e do *Globoplay* agora mostram o ícone oficial de cada serviço no selo da capa.": "Las recomendaciones de *Disney+*, *HBO Max* y *Globoplay* ahora muestran el ícono oficial de cada servicio en el sello de la portada.",
+  "Em *Entradas*, a TV e os banners de PlayStation 5, Xbox e Nintendo Switch ganharam o mesmo visual das HDMI: vidro escuro com o símbolo em branco.": "En *Entradas*, la TV y los banners de PlayStation 5, Xbox y Nintendo Switch tienen el mismo estilo que las HDMI: vidrio oscuro con el símbolo en blanco.",
+  "*TV em Entradas:* a primeira entrada agora é a *TV* (antena e cabo), para voltar aos canais abertos sem sair do Onix, mesmo se a TV estava numa HDMI.": "*TV en Entradas:* la primera entrada ahora es la *TV* (antena y cable), para volver a los canales abiertos sin salir de Onix, aunque la TV estuviera en una HDMI.",
+  "Os pontinhos do destaque da tela inicial agora ficam centralizados embaixo da capa, sem encostar nela.": "Los puntitos del destacado de la pantalla de inicio ahora quedan centrados debajo de la portada, sin tocarla.",
+  "*Atualizações pelo próprio Onix:* ele procura versões novas no GitHub, avisa na tela e baixa sozinho. Você só confirma a instalação na tela da TV. Fica em Configurações → Atualizações.": "*Actualizaciones desde el propio Onix:* busca versiones nuevas en GitHub, avisa en pantalla y las descarga solo. Tú solo confirmas la instalación en la pantalla de la TV. Está en Configuración → Actualizaciones.",
+  "*Escolha suas indicações:* em Configurações → Indicações, desligue \"Pelo que você assiste\" e marque você mesmo Netflix, Disney+, HBO Max ou Globoplay.": "*Elige tus recomendaciones:* en Configuración → Recomendaciones, desactiva \"Según lo que ves\" y marca tú mismo Netflix, Disney+, HBO Max o Globoplay.",
+  "*Seu aparelho no topo:* o chip mostra o que está rodando o Onix, como Google TV · Philips, Android TV ou Celular Android.": "*Tu dispositivo arriba:* el chip muestra en qué se está ejecutando Onix, como Google TV · Philips, Android TV o Celular Android.",
+  "*Conectado de verdade:* o Onix testa a internet a cada 30 segundos e mostra \"Sem internet\" quando o Wi-Fi está ligado mas a internet caiu.": "*Conectado de verdad:* Onix prueba internet cada 30 segundos y muestra \"Sin internet\" cuando el Wi-Fi está encendido pero internet se cayó.",
+  "*Indicações do que você assiste:* abra o *Disney+*, a *HBO Max* ou o *Globoplay* mais de 3 vezes pelo Onix e as indicações da semana passam a trazer títulos deles, junto com os da Netflix.": "*Recomendaciones de lo que ves:* abre *Disney+*, *HBO Max* o *Globoplay* más de 3 veces desde Onix y las recomendaciones de la semana empiezan a incluir sus títulos, junto con los de Netflix.",
+  "Ficou uma semana sem abrir um desses apps? Ele sai das indicações sozinho, e elas voltam a ser só da Netflix.": "¿Pasaste una semana sin abrir una de esas apps? Sale sola de las recomendaciones, y vuelven a ser solo de Netflix.",
+  "*Assistir no Disney+, na HBO Max e no Globoplay* abre direto na página do título, como já acontecia com a Netflix.": "*Ver en Disney+, HBO Max y Globoplay* abre directo en la página del título, como ya pasaba con Netflix.",
+  "*Novidades:* esta tela, em Configurações, com o que mudou em cada versão. O Onix também avisa quando é atualizado.": "*Novedades:* esta pantalla, en Configuración, con lo que cambió en cada versión. Onix también avisa cuando se actualiza.",
+  "*TVs Samsung:* o Onix agora tem uma versão para Tizen (TVs de 2022 em diante), em beta. O passo a passo está no GitHub.": "*TVs Samsung:* Onix ahora tiene una versión para Tizen (TVs de 2022 en adelante), en beta. El paso a paso está en GitHub.",
+  "Primeira versão pública do Onix.": "Primera versión pública de Onix.",
+  "Indicações da semana da Netflix Brasil, que abrem direto no título.": "Recomendaciones de la semana de Netflix Brasil, que abren directo en el título.",
+  "Notícias de games (Adrenaline e Eurogamer.pt) com leitor e QR code.": "Noticias de videojuegos (Adrenaline y Eurogamer.pt) con lector y código QR.",
+  "Quatro jogos: Pong, Pinball, Tijolos e Cobrinha.": "Cuatro juegos: Pong, Pinball, Ladrillos y Serpiente.",
+  "Entradas HDMI com banners editáveis, tela de descanso espacial, botão Atualizar e botão Desligar TV.": "Entradas HDMI con banners editables, salvapantallas espacial, botón Actualizar y botón Apagar TV."
+  });
+let LANG = 'pt';
+function resolveLang() {
+  LANG = settings.lang === 'auto' ? (/^es\b/i.test(navigator.language || '') ? 'es' : 'pt') : settings.lang;
+  document.documentElement.lang = LANG === 'es' ? 'es' : 'pt-BR';
+}
+resolveLang();
+function t(s, ...a) {
+  const r = (LANG === 'es' && typeof s === 'string' && ES[s]) || s;
+  return a.length ? String(r).replace(/\{(\d)\}/g, (m, i) => a[i]) : r;
+}
+// HTML fixo: guarda, uma vez, os textos e aria-label que têm tradução, para trocar de idioma sem recarregar.
+let staticTexts = null;
+function translateStatic() {
+  if (!staticTexts) {
+    staticTexts = [];
+    const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    for (let n = walk.nextNode(); n; n = walk.nextNode()) {
+      const key = n.nodeValue.trim();
+      if (ES[key] && !n.parentNode.closest('script')) staticTexts.push({ n, orig: n.nodeValue, key });
+    }
+    $$('[aria-label]').forEach(el => { const key = el.getAttribute('aria-label'); if (ES[key]) staticTexts.push({ el, key }); });
+  }
+  for (const it of staticTexts) {
+    if (it.el) it.el.setAttribute('aria-label', t(it.key));
+    else it.n.nodeValue = it.orig.replace(it.key, t(it.key));
+  }
+}
 
 /* ---------------- Ícones oficiais (SVG estilizado) ---------------- */
 const BRAND_SVG = {
@@ -996,22 +1339,23 @@ function launch(app, context) {
   if (Bridge.native) {
     // Só lança pacotes que vieram da própria lista nativa.
     if (!allowedPkgs.has(app.pkg) || !PKG_RE.test(app.pkg)) { toast('Pacote bloqueado'); return; }
-    if (Bridge.launch(app.pkg)) { markUsed(app); toast('Abrindo ' + app.name + '…'); }
-    else toast('Não foi possível abrir ' + app.name);
+    if (Bridge.launch(app.pkg)) { markUsed(app); toast(t('Abrindo {0}…', app.name)); }
+    else toast(t('Não foi possível abrir {0}', app.name));
   } else {
     markUsed(app); refreshUsed();
-    toast((context ? context + ' — ' : '') + 'abriria ' + app.name + ' (simulação no navegador)');
+    toast((context ? context + ' — ' : '') + t('abriria {0} (simulação no navegador)', app.name));
   }
 }
 
 /* ---------------- Toast ---------------- */
 let toastTimer = 0;
 function toast(msg) {
-  const t = $('#toast');
-  t.textContent = msg;
-  t.classList.add('show');
+  msg = t(msg);
+  const el = $('#toast');
+  el.textContent = msg;
+  el.classList.add('show');
   clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => t.classList.remove('show'), Math.max(2600, msg.length * 55));   // texto longo fica mais tempo
+  toastTimer = setTimeout(() => el.classList.remove('show'), Math.max(2600, msg.length * 55));   // texto longo fica mais tempo
 }
 
 /* ---------------- Relógio ---------------- */
@@ -1021,7 +1365,7 @@ function clockText(d) {
   if (!settings.h24) hh = hh % 12 || 12;
   return String(hh).padStart(settings.h24 ? 2 : 1, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
 }
-const dateText = d => d.toLocaleDateString('pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
+const dateText = d => d.toLocaleDateString(LANG === 'es' ? 'es' : 'pt-BR', { weekday: 'long', day: 'numeric', month: 'long' });
 function updateClock(force) {
   const d = new Date();
   const txt = clockText(d);
@@ -1066,23 +1410,23 @@ let netOnline = null;   // null = o Android ainda não disse
 function loadPicks() { picks = Bridge.getPicks(); }
 function openPick(p) {
   const pv = PICK_PROVIDERS[p.provider];
-  if (!Bridge.native) { toast((pv ? 'Abriria ' + p.title + ' ' + pv.em : 'Buscaria onde assistir ' + p.title) + ' (simulação no navegador)'); return; }
+  if (!Bridge.native) { toast(pv ? t('Abriria {0} {1} (simulação no navegador)', p.title, t(pv.em)) : t('Buscaria onde assistir {0} (simulação no navegador)', p.title)); return; }
   const r = Bridge.openPick(p.rawTitle);
   if (r === 'title' || r === 'app') markUsed(findApp(p.provider));
-  if (r === 'title') toast('Abrindo ' + p.title + ' ' + pv.em + '…');
-  else if (r === 'app') toast('Abrindo ' + (pv ? pv.name : 'o app') + '… procure por ' + p.title);
-  else if (r === 'search') toast('Procurando onde assistir ' + p.title + '…');
-  else toast(pv ? pv.name + ' não está instalado nesta TV' : 'Busca indisponível nesta TV');
+  if (r === 'title') toast(t('Abrindo {0} {1}…', p.title, t(pv.em)));
+  else if (r === 'app') toast(t('Abrindo {0}… procure por {1}', pv ? pv.name : t('o app'), p.title));
+  else if (r === 'search') toast(t('Procurando onde assistir {0}…', p.title));
+  else toast(pv ? t('{0} não está instalado nesta TV', pv.name) : 'Busca indisponível nesta TV');
 }
 // Itens do destaque: indicações da semana; sem nada em cache, um aviso (sem conexão ou baixando).
 function heroItems() {
   if (picks.length) return picks.map(p => {
     const pv = PICK_PROVIDERS[p.provider];
-    const em = pv ? pv.em.charAt(0).toUpperCase() + pv.em.slice(1) : 'Indicação da semana';
+    const em = pv ? t(pv.em).charAt(0).toUpperCase() + t(pv.em).slice(1) : t('Indicação da semana');
     return {
-      kicker: [em, p.kind, p.genre, p.year].filter(Boolean).join(' · '),
+      kicker: [em, t(p.kind), t(p.genre), p.year].filter(Boolean).join(' · '),
       title: p.title, desc: p.summary, h1: pv ? pv.color : p.color, h2: p.color, poster: p.poster,
-      label: pv ? 'Assistir ' + pv.em : 'Onde assistir', act: () => openPick(p),
+      label: pv ? t('Assistir {0}', t(pv.em)) : t('Onde assistir'), act: () => openPick(p),
     };
   });
   if (netOnline === false) return [{
@@ -1119,10 +1463,10 @@ function renderHero(animate) {
       heroArtKey = artKey;
       $('#heroArt').replaceChildren(f.poster ? h('img', { src: f.poster, alt: '', draggable: 'false', decoding: 'async' }) : svgFrom(f.offline ? OFFLINE_ART : HERO_ART));
     }
-    $('#heroKicker').textContent = f.kicker;
-    $('#heroTitle').textContent = f.title;
-    $('#heroDesc').textContent = f.desc;
-    $('#heroOpen span').textContent = f.label;
+    $('#heroKicker').textContent = t(f.kicker);
+    $('#heroTitle').textContent = t(f.title);
+    $('#heroDesc').textContent = t(f.desc);
+    $('#heroOpen span').textContent = t(f.label);
     $$('#heroDots i').forEach((d, i) => d.classList.toggle('on', i === heroIdx));
     hero.classList.remove('swap');
   };
@@ -1260,7 +1604,7 @@ function renderEditRow(focusPkg) {
     return b;
   }));
   if (!editList.length) row.append(h('div', { class: 'info glass', text: 'Nenhum app na tela inicial. Escolha abaixo.' }));
-  $('#editCount').textContent = '· ' + editList.length + ' de ' + MAX_HOME;
+  $('#editCount').textContent = '· ' + editList.length + ' / ' + MAX_HOME;
   if (focusPkg) setFocus(Array.from(row.children).find(b => b.dataset.pkg === focusPkg));
 }
 function renderEditGrid() {
@@ -1277,12 +1621,12 @@ function renderEditGrid() {
 function toggleHome(app, tile) {
   const i = editList.indexOf(app.pkg);
   if (i >= 0) editList.splice(i, 1);
-  else if (editList.length >= MAX_HOME) { toast('Limite de ' + MAX_HOME + ' apps na tela inicial'); return; }
+  else if (editList.length >= MAX_HOME) { toast(t('Limite de {0} apps na tela inicial', MAX_HOME)); return; }
   else editList.push(app.pkg);
   tile.classList.toggle('on', i < 0);
   saveEdit();
   renderEditRow();
-  toast(i < 0 ? app.name + ' adicionado ao fim de “Seus apps”' : app.name + ' removido de “Seus apps”');
+  toast(t(i < 0 ? '{0} adicionado ao fim de “Seus apps”' : '{0} removido de “Seus apps”', app.name));
 }
 function toggleGrab(tile) {
   const pkg = tile.dataset.pkg;
@@ -1333,11 +1677,11 @@ function renderPicks() {
   // "Netflix em primeiro", a lista dos serviços pelo uso (ex.: "Netflix, Disney+ e Globoplay")
   // ou os escolhidos em Configurações → Indicações.
   const names = Object.keys(PICK_PROVIDERS).filter(k => picks.some(p => p.provider === k)).map(k => PICK_PROVIDERS[k].name);
-  const list = names.length > 1 ? names.slice(0, -1).join(', ') + ' e ' + names[names.length - 1] : names[0];
-  let sub = 'Netflix em primeiro';
-  if (list && !settings.pickAuto) sub = list + (names.length > 1 ? ', escolhidos por você' : ', escolhido por você');
-  else if (names.length > 1) sub = list + ', pelos apps que você mais abre';
-  $('#picksSub').textContent = '· ' + sub + ' · renovadas toda segunda-feira';
+  const list = names.length > 1 ? names.slice(0, -1).join(', ') + t(' e ') + names[names.length - 1] : names[0];
+  let sub = t('Netflix em primeiro');
+  if (list && !settings.pickAuto) sub = list + t(names.length > 1 ? ', escolhidos por você' : ', escolhido por você');
+  else if (names.length > 1) sub = list + t(', pelos apps que você mais abre');
+  $('#picksSub').textContent = '· ' + sub + t(' · renovadas toda segunda-feira');
   renderHero(false);
 }
 
@@ -1371,7 +1715,7 @@ const fx = {
       this.p.push({ x, y, vx: Math.cos(a) * v, vy: Math.sin(a) * v, life: .45 + Math.random() * .3, color });
     }
   },
-  text(x, y, s, color, size) { this.t.push({ x, y, s, color, size: size || 24, life: .9 }); },
+  text(x, y, s, color, size) { this.t.push({ x, y, s: t(s), color, size: size || 24, life: .9 }); },
   busy() { return this.p.length > 0 || this.t.length > 0; },
   update(dt) {
     let j = 0;
@@ -1414,7 +1758,7 @@ const pong = {
     this.bx = face + this.R * dir;
     this.rally++; this.last = dir;
     fx.burst(face, this.by, dir > 0 ? COL.cyan : COL.pink, 8, 220);
-    if (this.rally > 0 && this.rally % 5 === 0) fx.text(GW / 2, this.T + 150, 'Rally ' + this.rally + '!', COL.yellow, 30);
+    if (this.rally > 0 && this.rally % 5 === 0) fx.text(GW / 2, this.T + 150, t('Rally {0}!', this.rally), COL.yellow, 30);
   },
   goal(side) {
     const x = side > 0 ? GW - 40 : 40, c = side > 0 ? COL.cyan : COL.pink;
@@ -1528,7 +1872,7 @@ const pinball = {
   hint: '◀ ▶ flíperes · OK lança · faça 10.000 pontos antes de perder as 3 bolas',
   GOAL: 10000,
   art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><path d="M40 70V28l10-10h60l10 10v42M40 70l18 12M120 70l-18 12" opacity=".45"/><circle cx="64" cy="38" r="7"/><circle cx="96" cy="38" r="7"/><circle cx="80" cy="56" r="7"/><path d="M58 82l12 4M102 82l-12 4" stroke-width="5"/><circle cx="108" cy="62" r="3.5" fill="#fff"/></svg>',
-  status() { return (this.lane ? 'OK lança a bola' : 'Bola ' + (4 - this.balls) + ' de 3') + ' · x' + this.mult + ' · meta ' + num(this.GOAL); },
+  status() { return t(this.lane ? 'OK lança a bola' : 'Bola {0} de 3', 4 - this.balls) + ' · x' + this.mult + ' · meta ' + num(this.GOAL); },
   reset() {
     this.balls = 3; this.mult = 1; this.won = false;
     this.fl = [{ x: 120, y: 600, rest: .5, up: -.45, key: 'left' }, { x: 280, y: 600, rest: Math.PI - .5, up: Math.PI + .45, key: 'right' }];
@@ -1611,7 +1955,7 @@ const pinball = {
         if (this.save > 0) { fx.text(PB.X + 200, PB.Y + 520, 'Bola salva!', COL.green, 30); this.toLane(); break; }
         fx.text(PB.X + 200, PB.Y + 520, 'Bola perdida', COL.red, 30);
         this.mult = 1;
-        if (--this.balls <= 0) { gameOver('Faltaram ' + num(this.GOAL - gScore) + ' pontos'); return; }
+        if (--this.balls <= 0) { gameOver(t('Faltaram {0} pontos', num(this.GOAL - gScore))); return; }
         this.toLane(); break;
       }
     }
@@ -1652,7 +1996,7 @@ const bricks = {
   hint: '◀ ▶ movem · W larga · ♥ vida · S lenta · F fogo · cuidado: − curta · R rápida',
   art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round"><g><rect x="34" y="18" width="16" height="7" rx="1.5"/><rect x="53" y="18" width="16" height="7" rx="1.5"/><rect x="72" y="18" width="16" height="7" rx="1.5"/><rect x="91" y="18" width="16" height="7" rx="1.5"/><rect x="110" y="18" width="16" height="7" rx="1.5"/></g><g opacity=".6"><rect x="34" y="30" width="16" height="7" rx="1.5"/><rect x="72" y="30" width="16" height="7" rx="1.5"/><rect x="91" y="30" width="16" height="7" rx="1.5"/><rect x="110" y="30" width="16" height="7" rx="1.5"/></g><path d="M64 84h30" stroke-width="5"/><circle cx="88" cy="62" r="3.5" fill="#fff"/></svg>',
   L: 240, Rt: 1040, T: 90, PY: 660, PW0: 65, R: 9,
-  status() { return 'Fase ' + this.level + ' · ' + this.lives + (this.lives === 1 ? ' bola' : ' bolas'); },
+  status() { return t('Fase {0}', this.level) + ' · ' + this.lives + (this.lives === 1 ? ' bola' : ' bolas'); },
   reset() { this.level = 1; this.lives = 3; this.px = GW / 2; this.build(); this.serve(); },
   build() {
     // Tijolos de aço (2 batidas) aparecem mais a cada fase.
@@ -1715,7 +2059,7 @@ const bricks = {
         }
         if (this.fireT <= 0) break;
       }
-      if (!this.left) { this.level++; fx.text(GW / 2, GH / 2, 'Fase ' + this.level, COL.yellow, 52); this.build(); this.serve(); return; }
+      if (!this.left) { this.level++; fx.text(GW / 2, GH / 2, t('Fase {0}', this.level), COL.yellow, 52); this.build(); this.serve(); return; }
       if (this.by > GH + 20) {
         if (--this.lives <= 0) { gameOver('Sem bolas'); return; }
         this.serve(); return;
@@ -1754,7 +2098,7 @@ const snake = {
   hint: 'Setas mudam a direção · desvie das pedras: nasce uma nova a cada 3 maçãs',
   art: '<svg viewBox="0 0 160 100" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"><path d="M28 72h36V42h40v22h22" stroke-width="7"/><circle cx="126" cy="64" r="5.5" fill="#fff" stroke="none"/><circle cx="126" cy="30" r="4.5" stroke-width="2.5"/></svg>',
   C: 30, cols: 36, rows: 20, ox: 100, oy: 90,
-  status() { return 'Tamanho ' + this.body.length + ' · ' + this.rocks.length + ' pedras'; },
+  status() { return t('Tamanho {0} · {1} pedras', this.body.length, this.rocks.length); },
   reset() {
     this.body = [{ x: 8, y: 10 }, { x: 7, y: 10 }, { x: 6, y: 10 }];
     this.dir = DIRS.right; this.queue = []; this.t = 0; this.step = .12; this.eaten = 0; this.gold = null;
@@ -1900,19 +2244,19 @@ function drawGame() {
   fx.draw(ctx);
   ctx.textBaseline = 'alphabetic';
   ctx.textAlign = 'left'; ctx.fillStyle = INK; ctx.font = '600 26px ' + FONT;
-  ctx.fillText(game.name, 48, 58);
+  ctx.fillText(t(game.name), 48, 58);
   if (game.status) { ctx.fillStyle = DIM; ctx.font = '400 20px ' + FONT; ctx.fillText(game.status(), 48, 88); }
   if (game.id !== 'pong') {
     ctx.textAlign = 'right'; ctx.fillStyle = INK; ctx.font = '200 40px ' + FONT;
     ctx.fillText(gScore, GW - 48, 62);
-    ctx.fillStyle = DIM; ctx.font = '400 18px ' + FONT; ctx.fillText('Recorde ' + Math.max(gBest, gScore), GW - 48, 90);
+    ctx.fillStyle = DIM; ctx.font = '400 18px ' + FONT; ctx.fillText(t('Recorde {0}', Math.max(gBest, gScore)), GW - 48, 90);
   }
   if (gState === 'play') return;
   const msg = {
     ready: [game.name, game.hint, 'OK para começar · Voltar para sair'],
     pause: ['Pausado', '', 'OK para continuar · Voltar para sair'],
-    over: [gEnd, game.id === 'pong' ? '' : 'Pontos ' + gScore + ' · Recorde ' + gBest, 'OK para jogar de novo · Voltar para sair'],
-  }[gState];
+    over: [gEnd, game.id === 'pong' ? '' : t('Pontos {0} · Recorde {1}', gScore, gBest), 'OK para jogar de novo · Voltar para sair'],
+  }[gState].map(x => t(x));
   ctx.fillStyle = 'rgba(6,7,9,.78)'; ctx.fillRect(0, 0, GW, GH);
   ctx.textAlign = 'center'; ctx.fillStyle = INK; ctx.font = '600 56px ' + FONT;
   ctx.fillText(msg[0], GW / 2, GH / 2 - 30);
@@ -2246,15 +2590,15 @@ const DEMO_NEWS = [{
 }];
 let news = [];
 function loadNews() { news = Bridge.native ? Bridge.getNews() : DEMO_NEWS; }
-function ago(t) {
-  if (!t) return '';
-  const min = Math.round((Date.now() - t) / 60000);
-  if (min < 1) return 'agora';
-  if (min < 60) return 'há ' + min + ' min';
+function ago(when) {
+  if (!when) return '';
+  const min = Math.round((Date.now() - when) / 60000);
+  if (min < 1) return t('agora');
+  if (min < 60) return t('há {0} min', min);
   const hr = Math.round(min / 60);
-  if (hr < 24) return 'há ' + hr + ' h';
+  if (hr < 24) return t('há {0} h', hr);
   const d = Math.round(hr / 24);
-  return d === 1 ? 'ontem' : 'há ' + d + ' dias';
+  return d === 1 ? t('ontem') : t('há {0} dias', d);
 }
 const newsMeta = n => [n.source, ago(n.date)].filter(Boolean).join(' · ');
 function renderNews() {
@@ -2363,10 +2707,10 @@ const bannerOf = n => INPUT_BANNERS.find(b => b.id === inputBanners[n]) || INPUT
 let inputs = [];
 function loadInputs() { inputs = Bridge.getInputs(); }
 function openInput(inp) {
-  if (!Bridge.native) { toast('Mudaria para ' + inp.name + ' (simulação no navegador)'); return; }
-  if (!inp.id) { toast(inp.port + ' não encontrada nesta TV'); return; }
-  if (Bridge.openInput(inp.id)) toast('Mudando para ' + inp.name + '…');
-  else toast('Não foi possível abrir ' + inp.name);
+  if (!Bridge.native) { toast(t('Mudaria para {0} (simulação no navegador)', inp.name)); return; }
+  if (!inp.id) { toast(t('{0} não encontrada nesta TV', inp.port)); return; }
+  if (Bridge.openInput(inp.id)) toast(t('Mudando para {0}…', inp.name));
+  else toast(t('Não foi possível abrir {0}', inp.name));
 }
 function renderInputs() {
   // Aparelho sem HDMI de entrada (Chromecast, TV box): explica em vez de mostrar portas que não abrem.
@@ -2389,13 +2733,13 @@ function renderInputs() {
   });
   $('#inputsGrid').replaceChildren(...tvCells, ...hdmi.map((it, i) => {
     const n = i + 1, port = 'HDMI ' + n, ban = bannerOf(n);
-    const inp = { id: it.id, port, name: ban.name || port };
+    const inp = { id: it.id, port, name: t(ban.name) || port };
     const b = h('button', { class: 'f tile', tabindex: '-1', 'aria-label': inp.name },
       h('span', { class: 'tile-art' + (ban.glass ? ' glass' : '') }, svgFrom(ban.art)),
       h('span', { class: 'tile-label', text: inp.name }),
       h('span', { class: 'tile-sub', text: ban.name ? port : (it.label && it.label !== port ? it.label : 'Entrada') }));
     b._act = () => openInput(inp);
-    const pen = h('button', { class: 'f pen glass', tabindex: '-1', 'aria-label': 'Trocar o banner da ' + port }, svgFrom(PEN_SVG));
+    const pen = h('button', { class: 'f pen glass', tabindex: '-1', 'aria-label': t('Trocar o banner da {0}', port) }, svgFrom(PEN_SVG));
     pen._act = () => cycleBanner(n, tvCells.length + i);
     return h('div', { class: 'input-cell' }, b, pen);
   }));
@@ -2407,7 +2751,7 @@ function cycleBanner(n, i) {
   saveInputBanners();
   renderInputs();
   setFocus($('#inputsGrid').children[i].querySelector('.pen'));
-  toast('HDMI ' + n + ': ' + (next.name || 'banner padrão'));
+  toast('HDMI ' + n + ': ' + t(next.name || 'banner padrão'));
 }
 
 function openSettings() {
@@ -2440,6 +2784,8 @@ function openPictureSettings() {
 
 /* ---------------- Configurações do Onix ---------------- */
 const OPTIONS = [
+  { group: 'Idioma' },
+  { key: 'lang',   name: 'Idioma',                desc: 'Português ou espanhol. Automático segue o idioma da TV. OK troca.' },
   { group: 'Desempenho' },
   { key: 'shine',  name: 'Brilho ao focar',       desc: 'Feixe de luz que passa sobre o item selecionado.' },
   { key: 'zoom',   name: 'Zoom ao focar',         desc: 'Aumenta o item selecionado. Desligado, só o contorno branco marca o foco.' },
@@ -2475,6 +2821,9 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '13.7.4 beta', date: 'outubro de 2026', items: [
+    ['new', '*Novo idioma: espanhol.* Em Configurações → Idioma, escolha Português, Español ou Automático (segue o idioma da TV). As notícias e as sinopses das indicações continuam em português.'],
+  ] },
   { version: '13.7.3 beta', date: 'outubro de 2026', items: [
     ['new', 'Botão *Limpar memória*, ao lado de Atualizar: fecha os apps parados em segundo plano (nunca o próprio Onix nem o que está tocando) e mostra quanto liberou. No Android 14 ou mais novo, o sistema não deixa um app fechar outros, e o botão só mostra a memória livre.'],
     ['bug', '*Android novo:* em TVs e TV boxes com Android recente, o Play Protect bloqueava a instalação dizendo que o app foi feito para uma versão antiga do Android. O Onix agora segue as regras do Android 15.'],
@@ -2537,11 +2886,11 @@ function richText(t) {
 function openChangelog(from) {
   $('#readerArt').replaceChildren();
   $('#readerMeta').textContent = 'Onix ' + APP_VERSION;
-  $('#readerTitle').textContent = 'Novidades';
+  $('#readerTitle').textContent = t('Novidades');
   $('#readerText').replaceChildren(...[].concat(...CHANGELOG.map(v => [
     h('h3', { class: 'log-ver', text: v.version }, h('span', { text: v.date })),
-    h('ul', { class: 'log-list' }, ...v.items.map(([tag, t]) => h('li', null,
-      h('span', { class: 'log-tag ' + tag, text: LOG_TAGS[tag] }), ...richText(t)))),
+    h('ul', { class: 'log-list' }, ...v.items.map(([tag, item]) => h('li', null,
+      h('span', { class: 'log-tag ' + tag, text: LOG_TAGS[tag] }), ...richText(t(item))))),
   ])));
   $('#readerQr').replaceChildren();
   $('#reader').classList.add('log');
@@ -2569,7 +2918,7 @@ function setOption(key, on) {
   if (key === 'pickAuto' || PICK_KEYS.some(o => o.key === key)) {
     syncPicksChoice();
     toast(key === 'pickAuto' ? (on ? 'Indicações pelo que você assiste' : 'Escolha os serviços das indicações logo abaixo')
-      : 'Indicações: ' + PICK_KEYS.filter(o => settings[o.key]).map(o => o.name).join(', '));
+      : t('Indicações: {0}', PICK_KEYS.filter(o => settings[o.key]).map(o => o.name).join(', ')));
   }
   if (key === 'autoUpdate') Bridge.setAutoUpdate(on);
   armSaver();
@@ -2581,7 +2930,7 @@ function syncPicksChoice() {
 }
 function syncSwitches() {
   $$('#optsList .switch').forEach(sw => sw.classList.toggle('on', settings[sw.dataset.key]));
-  $$('#optsList .opt-val').forEach(v => { const c = CHOICES[v.dataset.key].find(c => c[0] === settings[v.dataset.key]); v.textContent = c ? c[1] : ''; });
+  $$('#optsList .opt-val').forEach(v => { const c = CHOICES[v.dataset.key].find(c => c[0] === settings[v.dataset.key]); v.textContent = c ? t(c[1]) : ''; });
 }
 function renderSettings() {
   // Os serviços só aparecem com a escolha manual; "Atualizar automaticamente", se a ponte instala.
@@ -2604,15 +2953,16 @@ function renderSettings() {
     if (o.key === 'pickAuto') b._act = () => {
       setOption('pickAuto', !settings.pickAuto);
       renderSettings();   // mostra/esconde os serviços
-      setFocus($('#optsList button[aria-label="' + o.name + '"]'));
+      setFocus($('#optsList button[aria-label="' + t(o.name) + '"]'));
     };
     else if (CHOICES[o.key]) b._act = () => {
       const list = CHOICES[o.key], i = list.findIndex(c => c[0] === settings[o.key]);
       const next = list[(i + 1) % list.length];
       setOption(o.key, next[0]); syncSwitches();
-      if (!settings.motion) toast(o.name + ': ' + next[1] + ' (ligue "Transições suaves" para ver)');
-      else if (o.key === 'heroFx') { toast(o.name + ': ' + next[1]); nextHero(); }
-      else toast(o.name + ': ' + next[1]);
+      if (o.key === 'lang') { changeLang(); toast(t(o.name) + ': ' + t(next[1])); }
+      else if (!settings.motion) toast(t(o.name) + ': ' + t(next[1]) + t(' (ligue "Transições suaves" para ver)'));
+      else if (o.key === 'heroFx') { toast(t(o.name) + ': ' + t(next[1])); nextHero(); }
+      else toast(t(o.name) + ': ' + t(next[1]));
     };
     else if (o.key) b._act = () => { setOption(o.key, !settings[o.key]); syncSwitches(); };
     else if (o.act === 'perf') b._act = () => {
@@ -2622,7 +2972,8 @@ function renderSettings() {
     else if (o.act === 'reset') b._act = () => {
       Object.assign(settings, DEFAULTS); setOption('h24', DEFAULTS.h24);
       syncPicksChoice(); Bridge.setAutoUpdate(DEFAULTS.autoUpdate);
-      renderSettings(); setFocus($('#optsList button[aria-label="' + o.name + '"]'));
+      const was = LANG; resolveLang(); if (LANG !== was) changeLang();
+      renderSettings(); setFocus($('#optsList button[aria-label="' + t(o.name) + '"]'));
       toast('Configurações restauradas');
     };
     else if (o.act === 'saver') b._act = showSaver;
@@ -2641,7 +2992,7 @@ function aboutTap() {
   aboutTaps++;
   if (aboutTaps >= 5) { aboutTaps = 0; showKitty(); return; }
   aboutTimer = setTimeout(() => { aboutTaps = 0; }, 2000);
-  toast(aboutTaps === 1 ? 'Valeu, de coração! :)' : 'Mais ' + (5 - aboutTaps) + '…');
+  toast(aboutTaps === 1 ? 'Valeu, de coração! :)' : t('Mais {0}…', 5 - aboutTaps));
 }
 function showKitty() {
   kittyOpen = true;
@@ -2668,18 +3019,18 @@ function renderUpdate() {
   const has = !!update && !!update.latest && ['available', 'downloading', 'ready', 'installing', 'manual'].indexOf(update.state) >= 0;
   if (nav) nav.classList.toggle('has-update', has);
   if (!b) return;
-  let name = 'Procurar atualizações', desc;
+  let name = t('Procurar atualizações'), desc;
   const v = update && update.latest;
-  if (!Bridge.native) desc = 'No app da TV, o Onix procura versões novas no GitHub sozinho.';
-  else if (!update) desc = 'Confere no GitHub se saiu uma versão nova do Onix.';
-  else if (update.state === 'checking') { name = 'Procurando atualizações…'; desc = 'Conferindo a última versão no GitHub.'; }
-  else if (update.state === 'available') { name = 'Instalar a versão ' + v; desc = 'Saiu uma versão nova do Onix. Aperte OK para baixar e instalar.'; }
-  else if (update.state === 'downloading') { name = 'Baixando a versão ' + v + '…'; desc = 'A confirmação de instalação abre quando o download terminar.'; }
-  else if (update.state === 'ready') { name = 'Instalar a versão ' + v; desc = 'Já está baixada. Aperte OK e confirme na tela da TV.' + (update.error ? ' (' + update.error + ')' : ''); }
-  else if (update.state === 'installing') { name = 'Instalando a versão ' + v + '…'; desc = 'Confirme na tela da TV. O Onix reabre sozinho na versão nova.'; }
-  else if (update.state === 'manual') { name = 'Versão ' + v + ' disponível'; desc = update.hint || 'Baixe a versão nova no GitHub e instale de novo.'; }
-  else if (update.state === 'error') desc = 'Não deu para procurar agora (sem internet ou o GitHub não respondeu). Aperte OK para tentar de novo.';
-  else desc = 'Você está na versão mais recente (' + (update.current || APP_VERSION) + ')' + (update.checked ? ', conferida às ' + timeText(update.checked) : '') + '.';
+  if (!Bridge.native) desc = t('No app da TV, o Onix procura versões novas no GitHub sozinho.');
+  else if (!update) desc = t('Confere no GitHub se saiu uma versão nova do Onix.');
+  else if (update.state === 'checking') { name = t('Procurando atualizações…'); desc = t('Conferindo a última versão no GitHub.'); }
+  else if (update.state === 'available') { name = t('Instalar a versão {0}', v); desc = t('Saiu uma versão nova do Onix. Aperte OK para baixar e instalar.'); }
+  else if (update.state === 'downloading') { name = t('Baixando a versão {0}…', v); desc = t('A confirmação de instalação abre quando o download terminar.'); }
+  else if (update.state === 'ready') { name = t('Instalar a versão {0}', v); desc = t('Já está baixada. Aperte OK e confirme na tela da TV.') + (update.error ? ' (' + update.error + ')' : ''); }
+  else if (update.state === 'installing') { name = t('Instalando a versão {0}…', v); desc = t('Confirme na tela da TV. O Onix reabre sozinho na versão nova.'); }
+  else if (update.state === 'manual') { name = t('Versão {0} disponível', v); desc = t(update.hint || 'Baixe a versão nova no GitHub e instale de novo.'); }
+  else if (update.state === 'error') desc = t('Não deu para procurar agora (sem internet ou o GitHub não respondeu). Aperte OK para tentar de novo.');
+  else desc = t('Você está na versão mais recente ({0})', update.current || APP_VERSION) + (update.checked ? t(', conferida às {0}', timeText(update.checked)) : '') + '.';
   b.querySelector('.opt-name').textContent = name;
   b.querySelector('.opt-desc').textContent = desc;
   b.setAttribute('aria-label', name);
@@ -2695,7 +3046,7 @@ function refreshUpdate() {
     try { seen = localStorage.getItem('onix.updateSeen'); } catch (_) {}
     if (seen !== update.latest) {
       try { localStorage.setItem('onix.updateSeen', update.latest); } catch (_) {}
-      toast('Saiu a versão ' + update.latest + ' do Onix! Veja em Configurações → Atualizações');
+      toast(t('Saiu a versão {0} do Onix! Veja em Configurações → Atualizações', update.latest));
     }
   }
   // Resultado da procura só quando a pessoa pediu (a automática, ao abrir, fica quieta).
@@ -2703,17 +3054,17 @@ function refreshUpdate() {
     updateAsked = false;
     toast(update.state === 'none' ? 'O Onix já está na versão mais recente' : 'Não deu para procurar atualizações agora');
   }
-  if (before && before.state === 'downloading' && update && update.state === 'error') toast('O download da atualização falhou: ' + (update.error || 'tente de novo'));
+  if (before && before.state === 'downloading' && update && update.state === 'error') toast(t('O download da atualização falhou: {0}', update.error || t('tente de novo')));
 }
 function updateAction() {
   if (!Bridge.native) { toast('Procuraria uma versão nova no GitHub (simulação no navegador)'); return; }
   const st = update ? update.state : 'none';
   if (st === 'checking' || st === 'downloading' || st === 'installing') { toast('Só um instante…'); return; }
-  if (st === 'manual') { toast(update.hint || 'Baixe a versão ' + update.latest + ' no GitHub e instale de novo'); return; }
+  if (st === 'manual') { toast(update.hint || t('Baixe a versão {0} no GitHub e instale de novo', update.latest)); return; }
   if (st === 'available' || st === 'ready') {
     const r = Bridge.installUpdate();
     if (r === 'ok') toast('Confirme a instalação na tela da TV');
-    else if (r === 'downloading') toast('Baixando a versão ' + update.latest + '…');
+    else if (r === 'downloading') toast(t('Baixando a versão {0}…', update.latest));
     else if (r === 'permission') toast('Permita que o Onix instale apps e volte aqui para apertar OK de novo');
     else toast('Não foi possível instalar agora');
     refreshUpdate();
@@ -3321,7 +3672,7 @@ function refreshAll() {
   if (!Bridge.native) { toast('Atualizaria notícias, indicações e apps (simulação no navegador)'); return; }
   if (!Bridge.refreshAll()) { toast('Não foi possível atualizar agora'); return; }
   $('#refreshBtn').classList.add('busy');
-  $('#refreshBtn span').textContent = 'Atualizando…';
+  $('#refreshBtn span').textContent = t('Atualizando…');
   toast('Baixando notícias, indicações e apps…');
   // Sem resposta do Android em 60 s (rede travada), o botão volta ao normal.
   refreshing = setTimeout(() => onRefreshed(false, false), 60000);
@@ -3330,7 +3681,7 @@ function onRefreshed(newsOk, picksOk) {
   if (!refreshing) return;
   clearTimeout(refreshing); refreshing = 0;
   $('#refreshBtn').classList.remove('busy');
-  $('#refreshBtn span').textContent = 'Atualizar';
+  $('#refreshBtn span').textContent = t('Atualizar');
   if (newsOk) refreshNews();
   if (picksOk) refreshPicks();
   toast(newsOk || picksOk ? 'Tudo atualizado' : 'Sem conexão com os sites: mantive o que já estava salvo');
@@ -3342,19 +3693,19 @@ function clearMemory() {
   if (!Bridge.native) { toast('Fecharia os apps parados em segundo plano (simulação no navegador)'); return; }
   if (!Bridge.clearMemory()) { toast('Não foi possível limpar a memória agora'); return; }
   $('#ramBtn').classList.add('busy');
-  $('#ramBtn span').textContent = 'Limpando…';
+  $('#ramBtn span').textContent = t('Limpando…');
   clearing = setTimeout(() => onMemoryCleared(-1), 15000);
 }
 function onMemoryCleared(freed, free, total, limited) {
   if (!clearing) return;
   clearTimeout(clearing); clearing = 0;
   $('#ramBtn').classList.remove('busy');
-  $('#ramBtn span').textContent = 'Limpar memória';
+  $('#ramBtn span').textContent = t('Limpar memória');
   if (!(freed >= 0)) { toast('A TV não respondeu. Tente de novo.'); return; }
   const gb = mb => (mb / 1024).toFixed(1).replace('.', ',') + ' GB';
-  const livre = free > 0 && total > 0 ? ' · livre: ' + gb(free) + ' de ' + gb(total) : '';
-  if (limited) toast('Este Android não deixa fechar outros apps: ele mesmo libera a memória quando precisa' + livre);
-  else toast((freed >= 10 ? 'Memória liberada: ' + freed + ' MB' : 'A memória já estava livre') + livre);
+  const livre = free > 0 && total > 0 ? t(' · livre: {0} de {1}', gb(free), gb(total)) : '';
+  if (limited) toast(t('Este Android não deixa fechar outros apps: ele mesmo libera a memória quando precisa') + livre);
+  else toast((freed >= 10 ? t('Memória liberada: {0} MB', freed) : t('A memória já estava livre')) + livre);
 }
 // Samsung: as portas HDMI chegam depois de a página abrir (a consulta ao Tizen é assíncrona).
 function refreshInputs() {
@@ -3386,7 +3737,7 @@ Object.defineProperty(window, 'Launcher', {
    No app, o Android avisa via Launcher.onNetwork; no navegador, os eventos online/offline. */
 function setNetwork(on) {
   $('#netChip').classList.toggle('off', !on);
-  $('#netText').textContent = on ? 'Conectado' : 'Sem internet';
+  $('#netText').textContent = t(on ? 'Conectado' : 'Sem internet');
   if (netOnline === on) return;
   netOnline = on;
   if (!picks.length) { renderHero(false); renderPicks(); }
@@ -3399,6 +3750,7 @@ if (!Bridge.native) {
 
 /* ---------------- Inicialização ---------------- */
 function init() {
+  translateStatic();
   const mode = Bridge.native ? Bridge.platform : 'Modo navegador';
   $('#modeChip').textContent = mode;
   if (!Bridge.native) setNetwork(navigator.onLine !== false);
@@ -3443,6 +3795,22 @@ function init() {
     refreshUpdate();
   }
 }
+// Configurações → Idioma: refaz na hora tudo que tem texto, sem recarregar a página.
+function changeLang() {
+  resolveLang();
+  translateStatic();
+  renderGames();
+  renderNews();
+  renderInputs();
+  renderApps();
+  renderPicks();
+  renderSettings();
+  updateClock(true);
+  if (netOnline !== null) $('#netText').textContent = t(netOnline ? 'Conectado' : 'Sem internet');
+  if (!refreshing) $('#refreshBtn span').textContent = t('Atualizar');
+  if (!clearing) $('#ramBtn span').textContent = t('Limpar memória');
+  setFocus($('#optsList button[aria-label="' + t('Idioma') + '"]'));
+}
 // Primeira abertura depois de uma atualização: avisa e aponta para as Novidades.
 // Sem versão salva mas com dados do Onix = veio de uma versão anterior à 13.5.0.
 function announceUpdate() {
@@ -3451,7 +3819,7 @@ function announceUpdate() {
     if (prev === APP_VERSION) return;
     const updated = prev !== null || Object.keys(localStorage).some(k => k.indexOf('onix.') === 0);
     localStorage.setItem('onix.version', APP_VERSION);
-    if (updated) setTimeout(() => toast('Onix atualizado para a ' + APP_VERSION + '! Veja o que mudou em Configurações → Novidades'), 1500);
+    if (updated) setTimeout(() => toast(t('Onix atualizado para a {0}! Veja o que mudou em Configurações → Novidades', APP_VERSION)), 1500);
   } catch (_) {}
 }
 init();

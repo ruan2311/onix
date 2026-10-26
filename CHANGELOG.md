@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 13.7.4 beta (outubro de 2026)
+
+- **Novo idioma: espanhol.** Em **Configurações → Idioma**, escolha **Português**, **Español** ou **Automático** (segue o idioma da TV, também na Samsung e na LG). Troca na hora, sem reiniciar o Onix. As notícias e as sinopses das indicações continuam em português, porque vêm de sites brasileiros.
+- README: seção **🇪🇸 En español** com o passo a passo do Downloader.
+
 ## 13.7.3 beta (outubro de 2026)
 
 - Botão **Limpar memória** ao lado de **Atualizar**: fecha os apps parados em segundo plano com `killBackgroundProcesses` (nunca o próprio Onix nem o teclado; o Android também não fecha o que está tocando) e mostra quanto liberou. No Android 14 ou mais novo, o sistema só deixa cada app fechar a si mesmo, então lá o botão só mostra a memória livre.

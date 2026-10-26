@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.3%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-13.7.4%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -22,6 +22,7 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 
 ## Sumário
 
+- [🇪🇸 En español](#-en-español)
 - [Novidades da 13.6.0](#novidades-da-1360)
 - [Recursos](#recursos)
 - [Capturas de tela](#capturas-de-tela)
@@ -39,6 +40,24 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 - [Personalização](#personalização)
 - [Limitações conhecidas](#limitações-conhecidas)
 - [Créditos](#créditos)
+
+---
+
+## 🇪🇸 En español
+
+Onix está en **español**: en **Configuración → Idioma**, elige *Português*, *Español* o *Automático* (sigue el idioma de la TV). Las noticias de videojuegos y las sinopsis de las recomendaciones vienen de sitios brasileños y siguen en portugués.
+
+**Instalar en Android TV / Google TV con la app Downloader:**
+
+1. En la TV, abre **Play Store**, busca **Downloader** (ícono naranja, de *AFTVnews*) e instálala.
+2. Abre **Downloader** y haz clic en la barra naranja de arriba (**"Click here to enter a URL…"**).
+3. Escribe el enlace y haz clic en **Load**:
+   - Onix App: **`github.com/ruan2311/onix/releases/latest/download/onix-app.apk`**
+   - Onix Launcher (puede ser la pantalla de inicio): **`github.com/ruan2311/onix/releases/latest/download/onix-launcher.apk`**
+4. Si la TV dice que Downloader no puede instalar apps, entra en **Configuración**, activa **Downloader** y pulsa **Volver**.
+5. Haz clic en **Instalar** y después en **Abrir**.
+
+> Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
 
 ---
 
@@ -110,6 +129,7 @@ Quatro jogos feitos para o controle remoto, com música chiptune e recorde salvo
 - **Desligar TV** no menu: pede confirmação com um segundo OK e coloca a TV em standby.
 - **Aparelho e conexão no topo**: o chip da esquerda mostra o aparelho (*Google TV · Philips*, *Android TV*, *Celular Android*…) e o da direita fica vermelho com **Sem internet** quando a internet cai, mesmo com o Wi-Fi ligado (teste a cada 30 s).
 - **Atualizações**: o Onix avisa quando sai uma versão nova e se atualiza pelo próprio app. Veja [abaixo](#atualizações-automáticas).
+- **Português e español**: em **Configurações → Idioma**, escolha o idioma ou deixe no automático (segue o idioma da TV).
 - **Configurações do Onix**: desliga efeitos visuais para TVs mais fracas e controla relógio de 24 h, sons do menu e tela de descanso.
 
 ---
