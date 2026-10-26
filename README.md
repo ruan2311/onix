@@ -413,11 +413,11 @@ O `webos/build.sh` monta o `index.html` com o mesmo `tv/page.py` da Samsung (tro
 Depois de instalar o **Onix Launcher**, aperte **Home** no controle. Se aparecer a pergunta de qual tela inicial usar, escolha **Onix Launcher → Sempre**.
 
 ### Google TV
-✅ *Testado numa Philips Google TV:* depois de instalar o **Onix Launcher**, aperte **Home** no controle e, quando a TV perguntar qual tela inicial usar, escolha **Onix Launcher → Sempre**.
+Na Google TV, a TV **não pergunta** qual tela inicial usar: o **Home** sempre volta para a tela do Google. Para o Onix assumir, é preciso **desativar** a tela inicial do Google (ela **não é apagada** e pode ser reativada quando quiser).
 
-Em algumas Google TV (como o Chromecast), a TV não pergunta e o **Home** sempre volta para a tela do Google. Nesses aparelhos, dá para **desativar** a tela inicial do Google (ela **não é apagada** e pode ser reativada quando quiser):
+✅ *Testado numa Philips Google TV, com os dois comandos abaixo.*
 
-> 🧪 **Experimental:** pode apresentar falhas.
+> 🧪 **Experimental:** pode apresentar falhas. Ainda não foi testado no Android TV 14.
 >
 > ⚠️ **Antes, abra o Onix Launcher pela lista de apps e confirme que ele funciona.** Sem nenhuma tela inicial ativa, a TV fica sem tela inicial. Para voltar ao normal, veja [Desfazer](#como-desfazer-tudo).
 
