@@ -69,7 +69,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 - **Foto de perfil pelo celular.** Escolha uma foto da galeria do celular, recorte e mande para a TV pelo QR code. A foto fica só na TV.
 - **Boas-vindas.** Na primeira vez, o Onix ajuda a escolher o idioma, criar o seu perfil e acertar algumas preferências. Tudo dá para pular e mudar depois.
 - **Modo Infantil.** Um perfil para crianças que mostra só os apps liberados, com PIN para sair e limite de tempo por dia.
-- **Controle pelo celular.** Leia o QR code da TV e o celular vira controle e teclado, sem instalar nada: setas e OK, busca digitando com o teclado do próprio celular e "Seus apps" organizados na tela do celular. Funciona com o Onix na tela, no Android TV e no Google TV.
+- **Controle pelo celular.** O QR code fica à vista embaixo do menu: aponte a câmera do celular e ele vira controle e teclado, sem instalar nada e sem precisar do controle da TV. Depois da primeira vez, o celular conecta sozinho. Setas e OK, busca digitando com o teclado do próprio celular e "Seus apps" organizados na tela do celular. Funciona com o Onix na tela, no Android TV e no Google TV.
 - **Clima na tela inicial (opcional).** A temperatura ao lado do relógio e, com OK, a previsão das próximas horas e dos próximos 5 dias (dados do Open-Meteo). O Onix não detecta onde você está: só usa a cidade que você escolher nas Configurações.
 
 Na 13.7.5: os jogos ganharam o visual do Onix e fases. Na 13.7.4: o Onix passou a falar **espanhol**.
@@ -530,6 +530,7 @@ Pelo computador, é o mesmo com `adb shell` na frente (ex.: `adb shell pm enable
   - `connectivitycheck.gstatic.com`: teste de internet do chip **Conectado** (uma resposta vazia, a mesma que o Android usa)
   - `api.open-meteo.com` e `geocoding-api.open-meteo.com`: clima da tela inicial, só se você ligar, e a busca da cidade que você digitar (o Onix não pede a sua localização)
 - Tudo o que vem da página para o código nativo é validado (nomes de pacote, IDs de entrada, títulos da lista atual).
+- **Controle pelo celular** (Android TV e Google TV): enquanto o Onix está aberto, ele atende na porta `8765`, só pela rede de casa e só por HTTP (numa rede local não existe certificado). Para conectar, o celular precisa da chave do QR code que está na tela, que muda a cada conexão e uma vez por dia; depois, cada pedido leva o token daquele celular, e a TV guarda só um resumo (hash) dele. Dá para desligar e desconectar todos os celulares em **Configurações → Controle pelo celular**. A foto de perfil é recortada e reduzida no celular e fica só na TV.
 
 ---
 
