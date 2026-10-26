@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:">
+<title>Onix Controle</title>
+<!--
+  Tela do Onix Controle (app de celular). Roda offline nos assets; a rede fica no Java
+  (MainActivity.Bridge, exposta como window.Onix). O Java avisa a página por onixEvent(tipo, dados).
+-->
+<style>
+:root{--bg:#0b0c0f;--fg:#f2f3f6;--muted:#9aa0ad;--line:rgba(255,255,255,.1);--card:rgba(255,255,255,.07);--ok:#4ade80;--warn:#ffb070;--bad:#ff6b6b}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:linear-gradient(170deg,#1a1c22,#08090b 70%) var(--bg);color:var(--fg);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  display:flex;flex-direction:column;user-select:none;-webkit-user-select:none;overscroll-behavior:none}
+button,input{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;touch-action:manipulation;padding:0}
+button:focus-visible,input:focus-visible{outline:2px solid #fff;outline-offset:2px}
+[hidden]{display:none!important}
+header{display:flex;align-items:center;gap:10px;padding:14px 14px 6px 18px}
+header>svg{width:28px;height:28px;flex:none}
+.t{display:flex;flex-direction:column;min-width:0;flex:1;text-align:left;padding:4px 0}
+.t b{font-size:15px;letter-spacing:.2em}
+.t small{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--warn);box-shadow:0 0 0 3px rgba(255,176,112,.2);flex:none}
+.dot.on{background:var(--ok);box-shadow:0 0 0 3px rgba(74,222,128,.2)}
+.icon{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex:none;position:relative}
+.icon:active{background:var(--card)}
+.icon svg{width:22px;height:22px}
+.badge{position:absolute;top:9px;right:9px;width:8px;height:8px;border-radius:50%;background:var(--ok)}
+main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
+.msg{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;min-height:100%;padding:24px}
+.msg svg{width:64px;height:64px}
+.msg h1{margin:0;font-size:22px;font-weight:600}
+.msg p{margin:0;color:var(--muted);line-height:1.5;max-width:32ch}
+.cta{background:#fff;color:#0b0c0f;font-weight:600;padding:13px 22px;border-radius:999px}
+.ghost{background:var(--card);border:1px solid var(--line);padding:11px 18px;border-radius:999px}
+.lbl{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:18px 0 8px}
+.hint{margin:12px 0 0;font-size:12px;color:var(--muted);line-height:1.5}
+
+/* TVs */
+.list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.list li{display:flex;align-items:center;gap:12px;padding:6px 6px 6px 14px;border-radius:16px;background:var(--card);border:1px solid var(--line)}
+.list .nm{flex:1;min-width:0;text-align:left;padding:10px 0;display:flex;flex-direction:column}
+.list .nm b{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list .nm small{color:var(--muted);font-size:12px}
+.list .x{padding:10px 12px;border-radius:12px;color:var(--muted);font-size:13px}
+.list .x:active{background:var(--card)}
+.list .empty{color:var(--muted);justify-content:center;padding:16px;font-size:14px;background:none;border-style:dashed}
+.spin{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.2);border-top-color:#fff;animation:spin .9s linear infinite;display:inline-block;vertical-align:-2px;margin-right:6px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.ip{display:flex;gap:8px}
+.ip input,.code input,#kbIn{flex:1;min-width:0;font-size:17px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:13px 16px;outline:none;user-select:text;-webkit-user-select:text}
+.ip input:focus,.code input:focus,#kbIn:focus{border-color:#fff}
+.ip button{padding:0 18px;border-radius:14px;background:#fff;color:#0b0c0f;font-weight:600}
+.code{display:flex;flex-direction:column;gap:14px;align-items:stretch;width:100%;max-width:320px}
+.code input{text-align:center;font:600 30px/1 ui-monospace,"Roboto Mono",monospace;letter-spacing:.35em;text-transform:uppercase;padding:16px 8px 16px calc(8px + .35em)}
+
+/* Controle */
+.now{display:flex;align-items:center;justify-content:center;gap:8px;margin:2px auto 0;padding:6px 14px;border-radius:999px;background:var(--card);border:1px solid var(--line);font-size:13px;color:var(--muted);width:max-content;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.now.onix{color:var(--fg);border-color:rgba(255,255,255,.35)}
+.now svg{width:18px;height:18px;flex:none}
+.top{display:flex;align-items:center;justify-content:space-between;margin-top:14px}
+.round{width:52px;height:52px;border-radius:50%;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center}
+.round svg{width:22px;height:22px}
+.round.power{color:var(--bad)}
+.round:active,.pill button:active,.keys button:active,.media button:active,.apps button:active{transform:scale(.94);background:rgba(255,255,255,.14)}
+.seg{display:flex;background:var(--card);border:1px solid var(--line);border-radius:999px;padding:3px}
+.seg button{padding:8px 14px;border-radius:999px;font-size:13px;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:#fff;color:#0b0c0f;font-weight:600}
+.dpad{position:relative;width:min(70vw,250px);aspect-ratio:1;margin:18px auto 16px;border-radius:50%;
+  background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.16);touch-action:none}
+.dpad .d{position:absolute;width:32%;height:32%;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.dpad .d svg{width:28px;height:28px}
+.dpad .up{top:2%;left:34%}.dpad .down{bottom:2%;left:34%}.dpad .left{left:2%;top:34%}.dpad .right{right:2%;top:34%}
+.dpad .ok{position:absolute;top:29%;left:29%;width:42%;height:42%;border-radius:50%;background:#fff;color:#0b0c0f;font-weight:700;font-size:18px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.dpad .ok:active{transform:scale(.93)}
+.dpad .d:active{background:rgba(255,255,255,.14)}
+.pad{position:relative;height:min(70vw,250px);margin:18px 0 16px;border-radius:28px;background:linear-gradient(160deg,rgba(255,255,255,.1),rgba(255,255,255,.03));
+  border:1px solid rgba(255,255,255,.16);touch-action:none;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:13px;line-height:1.6;overflow:hidden}
+.pad .ripple{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:rgba(255,255,255,.25);pointer-events:none;animation:rip .35s ease-out forwards}
+@keyframes rip{from{transform:scale(.4);opacity:1}to{transform:scale(1.6);opacity:0}}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.keys button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:12px}
+.keys svg{width:22px;height:22px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.pill{display:flex;align-items:center;justify-content:space-between;border-radius:18px;background:var(--card);border:1px solid var(--line);overflow:hidden}
+.pill button{flex:1;height:52px;display:flex;align-items:center;justify-content:center}
+.pill svg{width:22px;height:22px}
+.pill span{font-size:11px;color:var(--muted);min-width:44px;text-align:center;line-height:1.2}
+.pill span b{display:block;color:var(--fg);font-size:14px}
+.media{display:grid;grid-template-columns:repeat(3,1fr);border-radius:18px;background:var(--card);border:1px solid var(--line);overflow:hidden}
+.media button{height:52px;display:flex;align-items:center;justify-content:center}
+.media svg{width:22px;height:22px}
+.apps{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -18px;padding:0 18px 2px}
+.apps::-webkit-scrollbar{display:none}
+.apps button{flex:none;padding:11px 16px;border-radius:14px;background:var(--card);border:1px solid var(--line);font-weight:600;font-size:14px}
+
+/* Teclado (painel por cima) */
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;z-index:5}
+.sheet>div{width:100%;background:#15171c;border-top:1px solid rgba(255,255,255,.14);border-radius:22px 22px 0 0;padding:18px 18px 22px;display:flex;flex-direction:column;gap:12px}
+.sheet .lbl{margin:0}
+.sheet .row2{display:flex;gap:8px}
+.sheet .row2 button{flex:1;padding:13px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.sheet .row2 .cta{background:#fff;color:#0b0c0f;border:0}
+
+/* Configurações */
+.set{display:flex;flex-direction:column;border-radius:18px;background:var(--card);border:1px solid var(--line);overflow:hidden}
+.set>*+*{border-top:1px solid var(--line)}
+.opt{display:flex;align-items:center;gap:12px;padding:14px 16px;text-align:left;width:100%}
+.opt div{flex:1;min-width:0;display:flex;flex-direction:column}
+.opt small{color:var(--muted);font-size:12px;line-height:1.45}
+.sw{width:44px;height:26px;border-radius:999px;background:rgba(255,255,255,.18);position:relative;flex:none;transition:.2s}
+.sw::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:.2s}
+[aria-checked="true"] .sw{background:var(--ok)}
+[aria-checked="true"] .sw::after{left:21px}
+.upd{display:flex;flex-direction:column;gap:12px;padding:16px}
+.upd p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
+.upd .cta{align-self:flex-start;padding:11px 20px}
+.upd .cta:disabled{opacity:.5}
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,10px);opacity:0;transition:.25s;background:#1d1f25;border:1px solid rgba(255,255,255,.2);
+  padding:10px 16px;border-radius:999px;font-size:14px;pointer-events:none;max-width:90vw;text-align:center;z-index:9}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header>
+  <svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="24" cy="24" r="10"/><ellipse cx="24" cy="24" rx="21" ry="6" transform="rotate(-20 24 24)"/></svg>
+  <button class="t" id="tvBtn"><b>ONIX</b><small><span class="dot" id="dot"></span><span id="sub">Controle</span></small></button>
+  <button class="icon" id="setBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="badge" id="updBadge" hidden></span></button>
+</header>
+
+<main>
+  <!-- Escolher a TV -->
+  <section id="vTvs" hidden>
+    <div class="lbl">Suas TVs</div>
+    <ul class="list" id="pairedList"></ul>
+    <div class="lbl" id="nearLbl"><span class="spin"></span>Procurando TVs no Wi-Fi…</div>
+    <ul class="list" id="nearList"></ul>
+    <div class="lbl">Ou digite o IP da TV</div>
+    <div class="ip"><input id="ipIn" inputmode="decimal" placeholder="192.168.0.40" autocomplete="off"><button id="ipGo">Conectar</button></div>
+    <p class="hint">O celular precisa estar no mesmo Wi-Fi da TV. Funciona com Google TV e com o Onix. O IP fica na TV em Configurações → Rede e Internet → sua rede.</p>
+  </section>
+
+  <!-- Código de pareamento -->
+  <section class="msg" id="vCode" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="12.5" rx="2"/><path d="M8 20.5h8M12 17v3.5"/></svg>
+    <h1 id="codeTitle">Digite o código da TV</h1>
+    <p id="codeText">A TV está mostrando um código de 6 letras e números.</p>
+    <div class="code" id="codeBox">
+      <input id="codeIn" maxlength="6" autocomplete="off" autocapitalize="characters" spellcheck="false" aria-label="Código">
+      <button class="cta" id="codeGo">Conectar</button>
+      <button class="ghost" id="codeCancel">Cancelar</button>
+    </div>
+  </section>
+
+  <!-- Mensagens (conectando, sem conexão) -->
+  <section class="msg" id="vMsg" hidden>
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="4.5" width="19" height="12.5" rx="2"/><path d="M8 20.5h8M12 17v3.5"/></svg>
+    <h1 id="msgTitle"></h1>
+    <p id="msgText"></p>
+    <button class="cta" id="msgBtn" hidden></button>
+    <button class="ghost" id="msgBtn2" hidden></button>
+  </section>
+
+  <!-- Controle -->
+  <section id="vRemote" hidden>
+    <div class="now" id="now" hidden></div>
+    <div class="top">
+      <button class="round power" data-k="26" aria-label="Ligar ou desligar a TV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg></button>
+      <div class="seg" role="group" aria-label="Modo">
+        <button id="mDpad" aria-pressed="true">Setas</button>
+        <button id="mPad" aria-pressed="false">Deslizar</button>
+      </div>
+      <button class="round" id="kbBtn" aria-label="Teclado"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M8 14h8"/></svg></button>
+    </div>
+
+    <div class="dpad" id="dpad">
+      <button class="d up" data-k="19" data-hold aria-label="Cima"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></button>
+      <button class="d left" data-k="21" data-hold aria-label="Esquerda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <button class="ok" data-k="23">OK</button>
+      <button class="d right" data-k="22" data-hold aria-label="Direita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="d down" data-k="20" data-hold aria-label="Baixo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+    </div>
+    <div class="pad" id="pad" hidden><span id="padHint">Deslize para mover<br>Toque para OK</span></div>
+
+    <div class="keys">
+      <button data-k="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-5-5 5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Voltar</button>
+      <button data-k="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Início</button>
+      <button data-k="176"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Ajustes da TV</button>
+    </div>
+
+    <div class="row">
+      <div class="pill" aria-label="Volume">
+        <button data-k="25" data-hold aria-label="Diminuir volume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12"/></svg></button>
+        <span><b id="volLvl">–</b>Volume</span>
+        <button data-k="24" data-hold aria-label="Aumentar volume"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 12h12M12 6v12"/></svg></button>
+      </div>
+      <div class="pill">
+        <button data-k="164" aria-label="Mudo" id="muteBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path id="muteX" d="M17 9l4 6M21 9l-4 6"/></svg><span style="min-width:0;margin-left:8px">Mudo</span></button>
+      </div>
+    </div>
+
+    <div class="lbl">Mídia</div>
+    <div class="media">
+      <button data-k="89" aria-label="Voltar o vídeo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11 6v12l-8.5-6zM21 6v12l-8.5-6z"/></svg></button>
+      <button data-k="85" aria-label="Tocar ou pausar"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M4 5v14l9-7zM15 5h2.5v14H15zM19.5 5H22v14h-2.5z"/></svg></button>
+      <button data-k="90" aria-label="Avançar o vídeo"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M13 6v12l8.5-6zM3 6v12l8.5-6z"/></svg></button>
+    </div>
+
+    <div class="lbl">Abrir na TV</div>
+    <div class="apps" id="apps"></div>
+  </section>
+
+  <!-- Configurações -->
+  <section id="vSet" hidden>
+    <div class="lbl">Controle</div>
+    <div class="set">
+      <button class="opt" id="optVol" role="switch" aria-checked="true"><div>Botões de volume do celular<small>Com o app aberto, eles mudam o volume da TV.</small></div><span class="sw"></span></button>
+      <button class="opt" id="optVib" role="switch" aria-checked="true"><div>Vibrar ao tocar<small>Uma vibração curta a cada botão.</small></div><span class="sw"></span></button>
+      <button class="opt" id="optTvs"><div>TVs<small id="optTvsSub">Trocar de TV, parear outra ou esquecer uma.</small></div><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+    <div class="lbl">Atualização</div>
+    <div class="set">
+      <div class="upd">
+        <div><b>Onix Controle <span id="ver"></span></b></div>
+        <p id="updText">Procura versões novas na página do Onix no GitHub.</p>
+        <button class="cta" id="updBtn">Procurar atualização</button>
+      </div>
+    </div>
+    <p class="hint">Funciona com Google TV e com o Onix, no mesmo Wi-Fi. A conexão é direta com a TV, sem passar pela internet, e só fica aberta com o app na tela.</p>
+  </section>
+</main>
+
+<div class="sheet" id="kb" hidden>
+  <div>
+    <div class="lbl" id="kbLbl">Digitar na TV</div>
+    <input id="kbIn" type="text" autocomplete="off" autocapitalize="sentences" spellcheck="false" enterkeyhint="go" placeholder="Digite aqui, aparece na TV">
+    <p class="hint" id="kbHint" style="margin:0">Abra um campo de busca na TV. O que você digitar aqui aparece lá.</p>
+    <div class="row2"><button id="kbClear">Apagar tudo</button><button class="cta" id="kbEnter">Enter</button></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+'use strict';
+const APP_VERSION = '1.0.0';
+const $ = id => document.getElementById(id);
+const O = window.Onix;
+const ES = /^es\b/i.test(navigator.language || '');
+// Textos em espanhol (o português é a chave), como no Onix.
+const T = {
+  'Controle': 'Control', 'Suas TVs': 'Tus TVs', 'Procurando TVs no Wi-Fi…': 'Buscando TVs en el Wi-Fi…', 'Ou digite o IP da TV': 'O escribe la IP de la TV',
+  'Conectar': 'Conectar', 'Cancelar': 'Cancelar', 'Esquecer': 'Olvidar', 'Pareada': 'Vinculada', 'Toque para parear': 'Toca para vincular',
+  'Nenhuma TV pareada ainda.': 'Ninguna TV vinculada todavía.', 'Nenhuma TV nova achada no Wi-Fi.': 'No se encontró ninguna TV nueva en el Wi-Fi.',
+  'O celular precisa estar no mesmo Wi-Fi da TV. Funciona com Google TV e com o Onix. O IP fica na TV em Configurações → Rede e Internet → sua rede.': 'El celular debe estar en el mismo Wi-Fi que la TV. Funciona con Google TV y con Onix. La IP está en la TV en Configuración → Red e Internet → tu red.',
+  'Digite o código da TV': 'Escribe el código de la TV', 'A TV está mostrando um código de 6 letras e números.': 'La TV muestra un código de 6 letras y números.',
+  'Pedindo o código à TV…': 'Pidiendo el código a la TV…', 'Confira a TV: o código aparece em instantes.': 'Mira la TV: el código aparece en un momento.',
+  'Conectando…': 'Conectando…', 'Conectado': 'Conectado', 'Sem conexão': 'Sin conexión', 'Conectando à TV…': 'Conectando a la TV…',
+  'Sem conexão com a TV': 'Sin conexión con la TV', 'Tentando de novo…': 'Intentando de nuevo…',
+  'Confira se a TV está ligada e se o celular está no mesmo Wi-Fi.': 'Revisa que la TV esté encendida y que el celular esté en el mismo Wi-Fi.',
+  'Trocar de TV': 'Cambiar de TV', 'A TV não reconheceu este celular': 'La TV no reconoció este celular', 'Pareie de novo com o código que aparece na TV.': 'Vincula de nuevo con el código que aparece en la TV.',
+  'Parear de novo': 'Vincular de nuevo', 'Não deu certo': 'No funcionó', 'Tentar de novo': 'Intentar de nuevo',
+  'Setas': 'Flechas', 'Deslizar': 'Deslizar', 'Voltar': 'Atrás', 'Início': 'Inicio', 'Ajustes da TV': 'Ajustes de la TV', 'Volume': 'Volumen', 'Mudo': 'Silencio',
+  'Mídia': 'Multimedia', 'Abrir na TV': 'Abrir en la TV', 'na tela': 'en pantalla', 'Onix na tela': 'Onix en pantalla',
+  'Digitar na TV': 'Escribir en la TV', 'Digite aqui, aparece na TV': 'Escribe aquí, aparece en la TV', 'Apagar tudo': 'Borrar todo', 'Enter': 'Enter',
+  'Abra um campo de busca na TV. O que você digitar aqui aparece lá.': 'Abre un campo de búsqueda en la TV. Lo que escribas aquí aparece allá.',
+  'Digitando no campo da TV.': 'Escribiendo en el campo de la TV.', 'Abra um campo de texto na TV primeiro': 'Abre un campo de texto en la TV primero',
+  'Este app não abriu na TV': 'Esta app no se abrió en la TV', 'TV desconectada': 'TV desconectada',
+  'Botões de volume do celular': 'Botones de volumen del celular', 'Com o app aberto, eles mudam o volume da TV.': 'Con la app abierta, cambian el volumen de la TV.',
+  'Vibrar ao tocar': 'Vibrar al tocar', 'Uma vibração curta a cada botão.': 'Una vibración corta en cada botón.', 'TVs': 'TVs',
+  'Trocar de TV, parear outra ou esquecer uma.': 'Cambiar de TV, vincular otra u olvidar una.', 'Atualização': 'Actualización',
+  'Procura versões novas na página do Onix no GitHub.': 'Busca versiones nuevas en la página de Onix en GitHub.',
+  'Procurar atualização': 'Buscar actualización', 'Procurando…': 'Buscando…', 'Você está na versão mais nova.': 'Tienes la versión más nueva.',
+  'Baixando…': 'Descargando…', 'Instalar': 'Instalar', 'Abrindo o instalador…': 'Abriendo el instalador…',
+  'Permita a instalação para o Onix Controle e toque em Instalar de novo.': 'Permite la instalación para Onix Controle y toca Instalar otra vez.',
+  'Não deu para procurar agora. Confira a internet e tente de novo.': 'No se pudo buscar ahora. Revisa internet e inténtalo de nuevo.',
+  'Funciona com Google TV e com o Onix, no mesmo Wi-Fi. A conexão é direta com a TV, sem passar pela internet, e só fica aberta com o app na tela.': 'Funciona con Google TV y con Onix, en el mismo Wi-Fi. La conexión es directa con la TV, sin pasar por internet, y solo queda abierta con la app en pantalla.',
+  'Deslize para mover': 'Desliza para mover', 'Toque para OK': 'Toca para OK', 'IP inválido': 'IP inválida',
+  'O código tem 6 letras e números, como aparece na TV.': 'El código tiene 6 letras y números, como aparece en la TV.',
+  'Código errado. Confira o que está na TV e tente de novo.': 'Código incorrecto. Revisa lo que aparece en la TV e inténtalo de nuevo.',
+  'O tempo para digitar o código acabou.': 'Se acabó el tiempo para escribir el código.', 'A TV não aceitou o pareamento. Tente de novo.': 'La TV no aceptó la vinculación. Inténtalo de nuevo.',
+};
+const t = s => (ES && T[s]) || s;
+if (ES) {
+  document.documentElement.lang = 'es';
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = walk.nextNode(); n; n = walk.nextNode()) { const k = n.nodeValue.trim(); if (T[k]) n.nodeValue = n.nodeValue.replace(k, t(k)); }
+  $('kbIn').placeholder = t('Digite aqui, aparece na TV');
+  $('padHint').innerHTML = t('Deslize para mover') + '<br>' + t('Toque para OK');
+}
+
+const store = {
+  get(k, d) { try { const v = localStorage.getItem('onix.controle.' + k); return v === null ? d : JSON.parse(v); } catch (_) { return d; } },
+  set(k, v) { try { localStorage.setItem('onix.controle.' + k, JSON.stringify(v)); } catch (_) {} },
+};
+
+let view = 'tvs', prev = 'remote', conn = { s: 'idle' }, tvName = '', vibrate = store.get('vib', true);
+let toastT = 0;
+function toast(m) { const el = $('toast'); el.textContent = t(m); el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2400); }
+function show(v) {
+  if (v !== 'set' && v !== 'tvs') prev = v;
+  view = v;
+  ['tvs', 'code', 'msg', 'remote', 'set'].forEach(n => { $('v' + n.charAt(0).toUpperCase() + n.slice(1)).hidden = n !== v; });
+  if (v === 'tvs') renderTvs();
+}
+function msg(title, text, btn, act, btn2, act2) {
+  $('msgTitle').textContent = t(title);
+  $('msgText').textContent = t(text || '');
+  $('msgBtn').hidden = !btn; $('msgBtn2').hidden = !btn2;
+  if (btn) { $('msgBtn').textContent = t(btn); $('msgBtn').onclick = act; }
+  if (btn2) { $('msgBtn2').textContent = t(btn2); $('msgBtn2').onclick = act2; }
+  show('msg');
+}
+function tap() { if (vibrate && O) O.haptic(); }
+
+// --- TVs ---
+let tvs = { paired: [], nearby: [], last: '' };
+function renderTvs() {
+  const pl = $('pairedList'), nl = $('nearList');
+  pl.textContent = ''; nl.textContent = '';
+  const item = (tv, sub, onOpen, onX) => {
+    const li = document.createElement('li');
+    const b = document.createElement('button'); b.className = 'nm';
+    const nb = document.createElement('b'); nb.textContent = tv.name;
+    const sm = document.createElement('small'); sm.textContent = sub;
+    b.append(nb, sm); b.onclick = onOpen; li.append(b);
+    if (onX) { const x = document.createElement('button'); x.className = 'x'; x.textContent = t('Esquecer'); x.onclick = onX; li.append(x); }
+    return li;
+  };
+  const empty = (ul, s) => { const li = document.createElement('li'); li.className = 'empty'; li.textContent = t(s); ul.append(li); };
+  tvs.paired.forEach(tv => pl.append(item(tv, t('Pareada') + ' · ' + tv.host, () => { O.connect(tv.name, tv.host); }, () => { O.forget(tv.name); })));
+  if (!tvs.paired.length) empty(pl, 'Nenhuma TV pareada ainda.');
+  tvs.nearby.forEach(tv => nl.append(item(tv, t('Toque para parear') + ' · ' + tv.host, () => { O.connect(tv.name, tv.host); })));
+  if (!tvs.nearby.length) empty(nl, 'Nenhuma TV nova achada no Wi-Fi.');
+}
+$('ipGo').onclick = () => {
+  const ip = $('ipIn').value.trim();
+  if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) { toast('IP inválido'); return; }
+  O.connect('TV ' + ip, ip);
+};
+$('tvBtn').onclick = () => show(view === 'tvs' && conn.s === 'connected' ? 'remote' : 'tvs');
+$('optTvs').onclick = () => show('tvs');
+
+// --- pareamento ---
+$('codeIn').addEventListener('input', () => { $('codeIn').value = $('codeIn').value.toUpperCase().replace(/[^0-9A-F]/g, '').slice(0, 6); });
+$('codeGo').onclick = () => {
+  const c = $('codeIn').value;
+  if (c.length !== 6) { toast('O código tem 6 letras e números, como aparece na TV.'); return; }
+  $('codeTitle').textContent = t('Conectando…');
+  $('codeBox').hidden = true;
+  O.code(c);
+};
+$('codeIn').addEventListener('keydown', e => { if (e.key === 'Enter') $('codeGo').click(); });
+$('codeCancel').onclick = () => { O.disconnect(); conn = { s: 'idle' }; show('tvs'); };
+
+// --- estado da conexão (Tv.java) ---
+function setConn(d) {
+  conn = d;
+  if (d.name) tvName = d.name;
+  $('dot').classList.toggle('on', d.s === 'connected');
+  const sub = { connecting: 'Conectando…', connected: tvName, offline: 'Sem conexão', pairing: 'Conectando…', code: 'Conectando…' }[d.s];
+  $('sub').textContent = sub ? t(sub) : t('Controle');
+  if (d.s === 'pairing') {
+    $('codeTitle').textContent = t('Pedindo o código à TV…'); $('codeText').textContent = t('Confira a TV: o código aparece em instantes.');
+    $('codeBox').hidden = true; show('code');
+  } else if (d.s === 'code') {
+    $('codeTitle').textContent = t('Digite o código da TV'); $('codeText').textContent = t('A TV está mostrando um código de 6 letras e números.');
+    $('codeIn').value = ''; $('codeBox').hidden = false; show('code'); setTimeout(() => $('codeIn').focus(), 80);
+  } else if (d.s === 'connecting' && view !== 'remote' && view !== 'set') {
+    msg('Conectando à TV…', d.name || '');
+  } else if (d.s === 'connected') {
+    if (view !== 'set') show('remote');
+  } else if (d.s === 'offline') {
+    if (view === 'remote' || view === 'msg') msg('Sem conexão com a TV', 'Confira se a TV está ligada e se o celular está no mesmo Wi-Fi.', 'Trocar de TV', () => show('tvs'));
+    $('msgText').textContent = t('Confira se a TV está ligada e se o celular está no mesmo Wi-Fi.') + ' ' + t('Tentando de novo…');
+  } else if (d.s === 'unpaired') {
+    msg('A TV não reconheceu este celular', 'Pareie de novo com o código que aparece na TV.', 'Parear de novo', () => O.repair(tvName, d.host), 'Trocar de TV', () => show('tvs'));
+  } else if (d.s === 'error') {
+    msg('Não deu certo', d.msg || '', 'Tentar de novo', () => O.connect(tvName, d.host), 'Trocar de TV', () => show('tvs'));
+  }
+}
+
+// --- app na tela ---
+const APPS = {
+  'com.aurora.launcher': 'Onix', 'com.google.android.youtube.tv': 'YouTube', 'com.google.android.youtube.tvmusic': 'YouTube Music',
+  'com.netflix.ninja': 'Netflix', 'com.amazon.amazonvideo.livingroom': 'Prime Video', 'com.disney.disneyplus': 'Disney+', 'com.wbd.stream': 'Max',
+  'com.globo.globotv': 'Globoplay', 'tv.pluto.android': 'Pluto TV', 'com.spotify.tv.android': 'Spotify', 'com.google.android.apps.tv.launcherx': 'Google TV',
+  'com.mediatek.wwtv.tvcenter': 'TV', 'com.android.tv.settings': 'Configurações',
+};
+const SATURN = '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="3" stroke-linecap="round"><circle cx="24" cy="24" r="10"/><ellipse cx="24" cy="24" rx="21" ry="6" transform="rotate(-20 24 24)"/></svg>';
+function setApp(pkg) {
+  const el = $('now');
+  if (!pkg) { el.hidden = true; return; }
+  const onix = pkg === 'com.aurora.launcher';
+  let name = APPS[pkg];
+  if (!name) { const p = pkg.split('.'); name = p[p.length - 1]; name = name.charAt(0).toUpperCase() + name.slice(1); }
+  el.className = 'now' + (onix ? ' onix' : '');
+  el.innerHTML = onix ? SATURN : '';
+  el.append(onix ? t('Onix na tela') : name + ' ' + t('na tela'));
+  el.hidden = false;
+}
+
+// --- botões (Tv.key) com repetição ao segurar setas e volume ---
+document.querySelectorAll('[data-k]').forEach(b => {
+  const code = Number(b.dataset.k);
+  let rep = 0, hold = 0;
+  const stop = () => { clearTimeout(hold); clearInterval(rep); hold = rep = 0; };
+  b.addEventListener('pointerdown', e => {
+    if (conn.s !== 'connected') { toast('TV desconectada'); return; }
+    tap(); O.key(code);
+    if (b.hasAttribute('data-hold')) hold = setTimeout(() => { rep = setInterval(() => O.key(code), 110); }, 420);
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(ev => b.addEventListener(ev, stop));
+  b.addEventListener('click', e => e.preventDefault());
+});
+
+// --- modo deslizar: arrastar move (um passo a cada ~40 px), toque é OK ---
+const setMode = m => {
+  store.set('mode', m);
+  $('mDpad').setAttribute('aria-pressed', String(m === 'dpad')); $('mPad').setAttribute('aria-pressed', String(m === 'pad'));
+  $('dpad').hidden = m !== 'dpad'; $('pad').hidden = m !== 'pad';
+};
+$('mDpad').onclick = () => setMode('dpad');
+$('mPad').onclick = () => setMode('pad');
+setMode(store.get('mode', 'dpad'));
+(() => {
+  const pad = $('pad'), STEP = 40;
+  let st = null;
+  pad.addEventListener('pointerdown', e => { pad.setPointerCapture(e.pointerId); st = { x: e.clientX, y: e.clientY, moved: false, t: Date.now() }; });
+  pad.addEventListener('pointermove', e => {
+    if (!st || conn.s !== 'connected') return;
+    const dx = e.clientX - st.x, dy = e.clientY - st.y;
+    if (Math.max(Math.abs(dx), Math.abs(dy)) < STEP) return;
+    const code = Math.abs(dx) > Math.abs(dy) ? (dx > 0 ? 22 : 21) : (dy > 0 ? 20 : 19);
+    tap(); O.key(code);
+    st.x = e.clientX; st.y = e.clientY; st.moved = true;
+  });
+  pad.addEventListener('pointerup', e => {
+    if (st && !st.moved && Date.now() - st.t < 600) {
+      if (conn.s !== 'connected') toast('TV desconectada');
+      else {
+        tap(); O.key(23);
+        const r = pad.getBoundingClientRect(), dot = document.createElement('span');
+        dot.className = 'ripple'; dot.style.left = (e.clientX - r.left) + 'px'; dot.style.top = (e.clientY - r.top) + 'px';
+        pad.append(dot); setTimeout(() => dot.remove(), 400);
+      }
+    }
+    st = null;
+  });
+  pad.addEventListener('pointercancel', () => { st = null; });
+})();
+
+// --- atalhos de apps: links testados numa Google TV (Philips) que abrem o app direto ---
+const SHORTCUTS = [
+  ['YouTube', 'https://www.youtube.com'], ['Netflix', 'netflix://'], ['Prime Video', 'https://app.primevideo.com'],
+  ['Disney+', 'https://www.disneyplus.com'], ['Max', 'https://play.max.com'],
+];
+SHORTCUTS.forEach(([name, link]) => {
+  const b = document.createElement('button');
+  b.textContent = name;
+  b.onclick = () => { if (conn.s !== 'connected') { toast('TV desconectada'); return; } tap(); O.link(link); };
+  $('apps').append(b);
+});
+
+// --- teclado: o campo inteiro vai a cada mudança ---
+let field = { open: false, label: '' }, typing = 0, kbAuto = false;
+function openKb(auto) {
+  kbAuto = auto;
+  $('kbLbl').textContent = field.open && field.label ? field.label : t('Digitar na TV');
+  $('kbHint').textContent = t(field.open ? 'Digitando no campo da TV.' : 'Abra um campo de busca na TV. O que você digitar aqui aparece lá.');
+  $('kb').hidden = false;
+  setTimeout(() => $('kbIn').focus(), 60);
+}
+function closeKb() { $('kb').hidden = true; $('kbIn').blur(); }
+$('kbBtn').onclick = () => openKb(false);
+$('kb').addEventListener('click', e => { if (e.target === $('kb')) closeKb(); });
+$('kbIn').addEventListener('input', () => {
+  clearTimeout(typing);
+  typing = setTimeout(() => { if (!O.text($('kbIn').value)) toast('Abra um campo de texto na TV primeiro'); }, 90);
+});
+$('kbIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); O.key(66); } });
+$('kbEnter').onclick = () => { tap(); O.key(66); };
+$('kbClear').onclick = () => { $('kbIn').value = ''; O.text(''); };
+
+// --- configurações ---
+const sw = (el, on) => el.setAttribute('aria-checked', String(on));
+sw($('optVol'), O ? O.volumeKeys() : true);
+sw($('optVib'), vibrate);
+$('optVol').onclick = () => { const on = $('optVol').getAttribute('aria-checked') !== 'true'; sw($('optVol'), on); O.setVolumeKeys(on); };
+$('optVib').onclick = () => { vibrate = $('optVib').getAttribute('aria-checked') !== 'true'; sw($('optVib'), vibrate); store.set('vib', vibrate); };
+$('setBtn').onclick = () => { if (view === 'set') show(prev === 'set' ? 'tvs' : prev); else { show('set'); renderUpd(JSON.parse(O.update())); } };
+$('ver').textContent = APP_VERSION;
+
+let upd = {};
+function renderUpd(u) {
+  upd = u || {};
+  const b = $('updBtn'), txt = $('updText');
+  b.disabled = false;
+  $('updBadge').hidden = !(upd.state === 'available' || upd.state === 'ready');
+  if (upd.state === 'checking') { txt.textContent = t('Procurando…'); b.disabled = true; b.textContent = t('Procurar atualização'); }
+  else if (upd.state === 'available' || upd.state === 'ready') {
+    txt.textContent = (ES ? 'Versión ' : 'Versão ') + upd.latest + (ES ? ' disponible.' : ' disponível.');
+    b.textContent = upd.state === 'ready' ? t('Instalar') : (ES ? 'Descargar e instalar ' : 'Baixar e instalar ') + upd.latest;
+  }
+  else if (upd.state === 'downloading') { txt.textContent = t('Baixando…'); b.disabled = true; }
+  else if (upd.state === 'installing') { txt.textContent = t('Abrindo o instalador…'); b.disabled = true; }
+  else if (upd.state === 'error') { txt.textContent = t('Não deu para procurar agora. Confira a internet e tente de novo.'); b.textContent = t('Procurar atualização'); }
+  else { txt.textContent = upd.checked ? t('Você está na versão mais nova.') : t('Procura versões novas na página do Onix no GitHub.'); b.textContent = t('Procurar atualização'); }
+}
+$('updBtn').onclick = () => {
+  if (upd.state === 'available' || upd.state === 'ready') O.updateInstall();
+  else O.updateCheck();
+};
+
+// --- eventos do Java ---
+window.onixEvent = (type, d) => {
+  if (type === 'state') setConn(d);
+  else if (type === 'tvs') { tvs = d; if (view === 'tvs') renderTvs(); }
+  else if (type === 'app') setApp(d.pkg);
+  else if (type === 'volume') { $('volLvl').textContent = d.muted ? '–' : String(d.level); $('muteX').style.display = d.muted ? '' : 'none'; }
+  else if (type === 'field') {
+    const was = field.open;
+    field = d;
+    if (d.open && !was && view === 'remote') { $('kbIn').value = d.value || ''; openKb(true); }
+    else if (!d.open && was && kbAuto) closeKb();
+    else if (!$('kb').hidden) $('kbLbl').textContent = (d.open && d.label) || t('Digitar na TV');
+  }
+  else if (type === 'linkError') toast('Este app não abriu na TV');
+  else if (type === 'update') renderUpd(typeof d === 'string' ? JSON.parse(d) : d);
+  else if (type === 'installResult' && d === 'permission') toast('Permita a instalação para o Onix Controle e toque em Instalar de novo.');
+};
+// Botão Voltar do celular: fecha o teclado ou a tela aberta antes de sair do app.
+window.onixBack = () => {
+  if (!$('kb').hidden) { closeKb(); return true; }
+  if (view === 'set' || (view === 'tvs' && conn.s === 'connected')) { show(conn.s === 'connected' ? 'remote' : 'tvs'); return true; }
+  if (view === 'code') { $('codeCancel').click(); return true; }
+  return false;
+};
+$('muteX').style.display = 'none';
+
+// Começo: se o Java já tem uma TV pareada, ele conecta sozinho (o estado chega por onixEvent).
+if (O) {
+  tvs = JSON.parse(O.tvs());
+  renderUpd(JSON.parse(O.update()));
+  show(tvs.last ? 'msg' : 'tvs');
+  if (tvs.last) msg('Conectando à TV…', tvs.last);
+  // O Java pode ter conectado antes de a página carregar: aplica o que já aconteceu.
+  const snap = JSON.parse(O.snapshot());
+  ['state', 'app', 'volume', 'field'].forEach(k => { if (snap[k]) onixEvent(k, JSON.parse(snap[k])); });
+}
+})();
+</script>
+</body>
+</html>

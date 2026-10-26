@@ -22,3 +22,7 @@ onix-launcher.apk
 # Saída do build da versão LG (webos/build.sh)
 webos/build/
 onix-webos.ipk
+
+# Saída do build do Onix Controle (controle/build.sh)
+controle/build/
+onix-controle.apk
