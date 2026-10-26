@@ -31,6 +31,7 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 - [TVs Samsung (Tizen) · experimental](#tvs-samsung-tizen)
 - [TVs LG (webOS) · experimental](#tvs-lg-webos)
 - [Usar como tela inicial (Onix Launcher)](#usar-como-tela-inicial-onix-launcher)
+- [Onix Controle (app de celular)](#onix-controle-app-de-celular)
 - [Atualizações automáticas](#atualizações-automáticas)
 - [Ativar o botão "Desligar TV"](#ativar-o-botão-desligar-tv)
 - [Como desfazer tudo](#como-desfazer-tudo)
@@ -59,6 +60,8 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 > Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
 
+**Onix Controle (app para el celular Android):** convierte el celular en el control remoto de toda la TV (Google TV, en el mismo Wi-Fi), dentro de cualquier app. Descárgalo en el celular: **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.2/onix-controle.apk)**. Al abrirlo, elige tu TV, escribe el código de 6 caracteres que aparece en la TV y listo. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
+
 ---
 
 ## Novidades da 14.0.0
@@ -69,6 +72,8 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 - **Modo Infantil.** Um perfil para crianças que mostra só os apps liberados, com PIN para sair e limite de tempo por dia.
 - **Controle pelo celular.** Quando nenhum celular está conectado, a tela de descanso mostra um QR code discreto: aponte a câmera do celular e ele vira controle e teclado, sem instalar nada e sem precisar do controle da TV. Depois, salve o controle na tela inicial do celular e ele abre num toque, já conectado. Setas e OK, busca digitando com o teclado do próprio celular e "Seus apps" organizados na tela do celular. Funciona com o Onix na tela, no Android TV e no Google TV.
 - **Clima na tela inicial (opcional).** A temperatura ao lado do relógio e, com OK, a previsão das próximas horas e dos próximos 5 dias (dados do Open-Meteo). O Onix não detecta onde você está: só usa a cidade que você escolher nas Configurações.
+
+**Novo: [Onix Controle](#onix-controle-app-de-celular)**, um app de celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa.
 
 Na 13.7.5: os jogos ganharam o visual do Onix e fases. Na 13.7.4: o Onix passou a falar **espanhol**.
 
@@ -455,6 +460,50 @@ adb shell pm disable-user --user 0 com.google.android.tvlauncher
 
 ---
 
+## Onix Controle (app de celular)
+
+<img src="controle/res/mipmap-xxxhdpi/icon.png" alt="Ícone do Onix Controle" width="72" align="right">
+
+Um app para o **celular Android** que vira o **controle remoto da TV inteira**: dentro da Netflix, do YouTube, das configurações e, claro, no Onix. Ele usa o mesmo sistema de controle do app oficial do Google TV, direto pelo Wi-Fi de casa.
+
+✅ *Testado numa Philips Google TV (Android TV 14).*
+
+> 🧪 **Experimental:** pode apresentar falhas. Se algo não funcionar, [abra uma issue](https://github.com/ruan2311/onix/issues).
+
+**Funciona com:** TVs **Google TV** (com ou sem o Onix), no mesmo Wi-Fi do celular. Em Android TV "clássico" deve funcionar se a TV tiver o serviço de controle do Google, mas ainda não foi testado. Celular **Android 6 ou mais novo**. Não funciona em TVs Samsung e LG, nem em iPhone.
+
+### O que ele faz
+- **Setas ou "Deslizar":** use o direcional ou deslize o dedo na tela (cada deslizada é um passo; um toque é **OK**). Segurar uma seta repete.
+- **Ligar/desligar, Voltar, Início** e **Ajustes da TV**.
+- **Volume e mudo**, com o nível atual na tela. Com o app aberto, os **botões de volume do celular** mudam o volume da TV.
+- **Mídia:** voltar, tocar/pausar e avançar.
+- **Teclado:** abriu uma busca na TV? O teclado do celular aparece sozinho, com o nome do campo. Digite e apague normalmente, com ditado e corretor.
+- **Abrir apps na TV:** YouTube, Netflix, Prime Video, Disney+ e Max num toque.
+- **O que está na tela:** o app mostra qual app está aberto na TV, com destaque quando é o Onix.
+- Português e espanhol, no visual escuro do Onix.
+
+### Instalar
+1. No celular, abra este link no navegador e baixe o arquivo:
+   **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.2/onix-controle.apk)**
+2. Toque no arquivo baixado. Se o Android pedir, permita **instalar apps desta fonte** para o navegador (ou para o app de arquivos) e volte.
+3. Toque em **Instalar**. Se o **Play Protect** avisar que o app é desconhecido, toque em **Mais detalhes → Instalar mesmo assim** (o aviso aparece porque o app não vem da Play Store; o código está todo neste GitHub).
+
+### Primeiro uso
+1. Abra o **Onix Controle**. Ele procura as TVs no Wi-Fi sozinho; toque na sua.
+   Se ela não aparecer, digite o **IP da TV** (fica em **Configurações → Rede e Internet →** sua rede).
+2. A TV mostra um **código de 6 letras e números**. Digite no celular e toque em **Conectar**.
+3. Pronto. Das próximas vezes, ele conecta sozinho ao abrir.
+
+### Atualizações
+Em **Configurações** (a engrenagem, no alto) → **Atualização**, toque em **Procurar atualização**. O app também procura sozinho, uma vez a cada 6 horas, e mostra um ponto verde na engrenagem quando há versão nova. Ele baixa daqui do GitHub, confere o arquivo e o Android pede a confirmação para instalar.
+
+### E o QR code do Onix?
+São dois controles diferentes, e os dois continuam:
+- **QR code do Onix:** não instala nada, abre no navegador de qualquer celular (iPhone também), mas só controla o **Onix**.
+- **Onix Controle:** precisa instalar (só Android), mas controla a **TV inteira**, em qualquer app.
+
+---
+
 ## Atualizações automáticas
 
 A partir da **13.6.0**, o Onix se atualiza sozinho pela [página de Releases](https://github.com/ruan2311/onix/releases):
@@ -529,6 +578,7 @@ Pelo computador, é o mesmo com `adb shell` na frente (ex.: `adb shell pm enable
   - `api.open-meteo.com` e `geocoding-api.open-meteo.com`: clima da tela inicial, só se você ligar, e a busca da cidade que você digitar (o Onix não pede a sua localização)
 - Tudo o que vem da página para o código nativo é validado (nomes de pacote, IDs de entrada, títulos da lista atual).
 - **Controle pelo celular** (Android TV e Google TV): enquanto o Onix está aberto, ele atende na porta `8765`, só pela rede de casa e só por HTTP (numa rede local não existe certificado). Para conectar, o celular precisa da chave do QR code que está na tela, que muda a cada conexão e uma vez por dia; depois, cada pedido leva o token daquele celular, e a TV guarda só um resumo (hash) dele. Dá para desligar e desconectar todos os celulares em **Configurações → Controle pelo celular**. A foto de perfil é recortada e reduzida no celular e fica só na TV.
+- **Onix Controle** (app de celular): pede só `INTERNET`, `ACCESS_NETWORK_STATE` e `REQUEST_INSTALL_PACKAGES` (atualizações, sempre com confirmação). Fala direto com a TV pela rede de casa, nas portas `6466` e `6467` da própria TV, com conexão criptografada (TLS). No pareamento, o celular cria uma chave própria, que fica só no app, e guarda o certificado da TV: depois disso, ele só conversa com aquela TV. A conexão só fica aberta com o app na tela. Na internet, ele só acessa o GitHub para procurar versões novas.
 
 ---
 
@@ -554,6 +604,8 @@ O APK sai em `launcher-philips.apk` (ou `onix-launcher.apk` / `onix-app.apk`), n
 **Versão:** o `android:versionName` do `AndroidManifest.xml` manda. O `build.sh` copia esse valor para o `index.html`, e ele aparece no menu e em "Sobre".
 
 **Onix App × Onix Launcher:** os dois saem do mesmo código. O **Onix App** é o mesmo manifesto sem as categorias `HOME` e `DEFAULT` no `intent-filter` da `MainActivity` e com `android:label="Onix App"`; o `build.sh app` gera essa versão sem mexer no manifesto.
+
+**Onix Controle (celular):** `bash controle/build.sh` gera `onix-controle.apk`, com a mesma chave.
 
 **Samsung e LG:** `bash tizen/build.sh` e `bash webos/build.sh` (detalhes em [Samsung](#compilar-a-versão-samsung-a-partir-do-código)).
 
@@ -590,6 +642,19 @@ python3 -m http.server 8000
 │   ├── ipk.py                  # Empacota o .ipk (sem o ares-package)
 │   ├── Resize.java             # Ícones de 80 e 130 px a partir do ícone do Android
 │   └── build.sh                # Monta o app e o onix-webos.ipk
+├── controle/                   # Onix Controle (app de celular que controla a Google TV)
+│   ├── AndroidManifest.xml
+│   ├── build.sh                # Build sem Gradle, como o do Android
+│   ├── assets/controle.html    # A tela do controle (offline, no visual do Onix)
+│   ├── res/                    # Ícone (gerado pelo android/tools/GenArt.java)
+│   └── src/com/onix/controle/
+│       ├── MainActivity.java   # WebView, ponte JS e botões de volume do celular
+│       ├── Tv.java             # Protocolo de controle da TV: pareamento (6467) e controle (6466)
+│       ├── Proto.java          # Mensagens do protocolo (protobuf mínimo)
+│       ├── Cert.java           # Chave e certificado deste celular
+│       ├── Finder.java         # Procura as TVs no Wi-Fi (mDNS)
+│       ├── Updater.java        # Atualizações pelo GitHub (releases controle-vX.Y.Z)
+│       └── UpdateReceiver.java # Resposta do instalador do sistema
 ├── android/
 │   ├── AndroidManifest.xml
 │   ├── build.sh                # Build sem Gradle (javac → dx → aapt → zipalign → apksigner)
