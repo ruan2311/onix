@@ -7,8 +7,11 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="referrer" content="no-referrer">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob: 'self'; manifest-src 'self'; connect-src 'self'; base-uri 'none'; form-action 'none'">
 <title>Onix · Controle</title>
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" href="/icon.png">
+<link rel="apple-touch-icon" href="/icon.png">
 <!--
   Controle pelo celular do Onix. Esta página vem da própria TV (RemoteServer.java), pela rede de casa.
   Na primeira vez, o QR code do menu do Onix traz uma chave (#k=…) que vira um token deste celular,
@@ -77,6 +80,11 @@ nav button{display:flex;flex-direction:column;align-items:center;gap:4px;padding
 nav svg{width:22px;height:22px}
 nav button[aria-selected="true"]{color:var(--fg)}
 nav button[aria-selected="true"] svg{color:var(--ok)}
+.save{display:flex;flex-direction:column;gap:8px;margin:6px 0 4px;padding:14px 16px;border-radius:16px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.35)}
+.save b{font-size:15px}
+.save ol{margin:0;padding-left:20px;color:var(--muted);line-height:1.6}
+.save ol b{color:var(--fg);font-size:inherit}
+.save .row2{margin-top:4px}
 .toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translate(-50%,10px);opacity:0;transition:.25s;background:#1d1f25;border:1px solid rgba(255,255,255,.2);
   padding:10px 16px;border-radius:999px;font-size:14px;pointer-events:none;max-width:90vw;text-align:center}
 .toast.show{opacity:1;transform:translate(-50%,0)}
@@ -97,6 +105,11 @@ nav button[aria-selected="true"] svg{color:var(--ok)}
   </section>
 
   <section id="vRemote" hidden>
+    <div class="save" id="save" hidden>
+      <b>Salve o controle na tela inicial</b>
+      <ol id="saveSteps"></ol>
+      <div class="row2"><button id="saveDone">Já salvei</button><button id="saveLater">Agora não</button></div>
+    </div>
     <div class="dpad">
       <button class="d up" data-k="up" aria-label="Cima"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></button>
       <button class="d left" data-k="left" aria-label="Esquerda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
@@ -157,7 +170,7 @@ const ES = /^es\b/i.test(navigator.language || '');
 const T = {
   'Conectando…': 'Conectando…', 'Conectando à TV…': 'Conectando a la TV…', 'Conectado': 'Conectado',
   'Leia o QR code da TV': 'Lee el código QR de la TV',
-  'No menu do Onix, embaixo à esquerda, tem um QR code. Aponte a câmera do celular para ele.': 'En el menú de Onix, abajo a la izquierda, hay un código QR. Apunta la cámara del celular hacia él.',
+  'O QR code aparece na tela de descanso da TV e em Configurações → Controle pelo celular. Aponte a câmera do celular para ele.': 'El código QR aparece en el salvapantallas de la TV y en Configuración → Control desde el celular. Apunta la cámara del celular hacia él.',
   'Este QR code já foi usado': 'Este código QR ya se usó',
   'Leia de novo o QR code que está na TV agora: ele muda a cada conexão.': 'Lee otra vez el código QR que está ahora en la TV: cambia en cada conexión.',
   'Sem conexão com a TV': 'Sin conexión con la TV',
@@ -180,6 +193,14 @@ const T = {
   'Digite aqui, aparece na TV': 'Escribe aquí, aparece en la TV', 'Na TV': 'En la TV',
   'Use as setas para mudar a ordem de “Seus apps”. A TV muda na hora. Toque no nome para abrir.': 'Usa las flechas para cambiar el orden de “Tus apps”. La TV cambia al instante. Toca el nombre para abrir.',
 };
+Object.assign(T, {
+  'Salve o controle na tela inicial': 'Guarda el control en la pantalla de inicio', 'Já salvei': 'Ya lo guardé', 'Agora não': 'Ahora no',
+  'Toque em <b>Compartilhar</b> (o quadrado com a seta, embaixo).': 'Toca <b>Compartir</b> (el cuadrado con la flecha, abajo).',
+  'Escolha <b>Adicionar à Tela de Início</b>.': 'Elige <b>Agregar a inicio</b>.',
+  'Toque no menu <b>⋮</b> do navegador, no alto.': 'Toca el menú <b>⋮</b> del navegador, arriba.',
+  'Escolha <b>Adicionar à tela inicial</b>.': 'Elige <b>Agregar a la pantalla principal</b>.',
+  'Pronto: o ícone do Onix abre o controle num toque, já conectado.': 'Listo: el ícono de Onix abre el control con un toque, ya conectado.',
+});
 const t = s => (ES && T[s]) || s;
 if (ES) {
   document.documentElement.lang = 'es';
@@ -225,7 +246,6 @@ async function pair(key) {
       token = r.data.token;
       try { localStorage.setItem('onix.remote.token', token); } catch (_) {}
       toast('Celular conectado ao Onix');
-      setTimeout(() => toast('Dica: adicione esta página à tela inicial do celular para abrir o controle num toque.'), 2600);
       poll();
     } else msg('Este QR code já foi usado', 'Leia de novo o QR code que está na TV agora: ele muda a cada conexão.');
   } catch (_) { offline(); }
@@ -234,7 +254,7 @@ function offline() { msg('Sem conexão com a TV', 'Confira se o celular está no
 
 async function poll() {
   clearTimeout(polling);
-  if (!token) { msg('Leia o QR code da TV', 'No menu do Onix, embaixo à esquerda, tem um QR code. Aponte a câmera do celular para ele.'); return; }
+  if (!token) { msg('Leia o QR code da TV', 'O QR code aparece na tela de descanso da TV e em Configurações → Controle pelo celular. Aponte a câmera do celular para ele.'); return; }
   try {
     const r = await api('GET', 'state');
     if (r.status === 401) {
@@ -377,6 +397,25 @@ $('sendBtn').addEventListener('click', async () => {
   toast(ok ? 'Foto enviada para a TV' : 'A foto não foi enviada. Tente de novo.');
   if (ok) { img = null; $('cropBox').hidden = true; $('zoom').hidden = true; $('sendBtn').hidden = true; $('file').value = ''; }
 });
+
+// Atalho na tela inicial: sem HTTPS na rede de casa, o navegador não oferece "Instalar"; o cartão
+// mostra os dois toques de cada sistema e some de vez com "Já salvei" ou "Agora não".
+function saveCard() {
+  let seen = false;
+  try { seen = !!localStorage.getItem('onix.remote.saved'); } catch (_) {}
+  const standalone = window.navigator.standalone === true || (window.matchMedia && matchMedia('(display-mode: standalone)').matches);
+  if (seen || standalone) { $('save').hidden = true; return; }
+  const ios = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const steps = ios ? ['Toque em <b>Compartilhar</b> (o quadrado com a seta, embaixo).', 'Escolha <b>Adicionar à Tela de Início</b>.']
+    : ['Toque no menu <b>⋮</b> do navegador, no alto.', 'Escolha <b>Adicionar à tela inicial</b>.'];
+  steps.push('Pronto: o ícone do Onix abre o controle num toque, já conectado.');
+  $('saveSteps').innerHTML = steps.map(x => '<li>' + t(x) + '</li>').join('');
+  $('save').hidden = false;
+}
+const closeSave = () => { try { localStorage.setItem('onix.remote.saved', '1'); } catch (_) {} $('save').hidden = true; };
+$('saveDone').addEventListener('click', closeSave);
+$('saveLater').addEventListener('click', closeSave);
+saveCard();
 
 const m = /#k=([0-9a-f]{32})/.exec(location.hash);
 if (m) pair(m[1]); else poll();

@@ -62,7 +62,7 @@ final class RemoteServer {
     private volatile String state = "{}";
     private volatile String key;
     private volatile long keyAt;
-    private byte[] page;
+    private volatile long lastActive;   // último pedido de um celular conectado
 
     RemoteServer(Context ctx, Host host) {
         this.ctx = ctx.getApplicationContext();
@@ -126,6 +126,8 @@ final class RemoteServer {
             String ip = localIp();
             o.put("url", ip == null || socket == null ? "" : "http://" + ip + ":" + port + "/#k=" + currentKey());
             o.put("devices", devices().length());
+            // O controle aberto no celular fala com a TV a cada 1,5 s: sem nada há 20 s, não há ninguém.
+            o.put("active", System.currentTimeMillis() - lastActive < 20000);
         } catch (Exception ignored) {
         }
         return o.toString();
@@ -206,7 +208,18 @@ final class RemoteServer {
 
     private void route(Socket c, String method, String path, String token, String body) throws Exception {
         if (method.equals("GET") && (path.equals("/") || path.equals("/index.html"))) {
-            send(c, 200, "text/html; charset=utf-8", page());
+            send(c, 200, "text/html; charset=utf-8", asset("remote.html"));
+            return;
+        }
+        // Atalho na tela inicial do celular: nome e ícone do Onix.
+        if (method.equals("GET") && path.equals("/manifest.json")) {
+            send(c, 200, "application/manifest+json", ("{\"name\":\"Onix Controle\",\"short_name\":\"Onix\",\"start_url\":\"/\","
+                    + "\"display\":\"standalone\",\"background_color\":\"#0b0c0f\",\"theme_color\":\"#0b0c0f\","
+                    + "\"icons\":[{\"src\":\"/icon.png\",\"sizes\":\"192x192\",\"type\":\"image/png\"}]}").getBytes("UTF-8"));
+            return;
+        }
+        if (method.equals("GET") && path.equals("/icon.png")) {
+            send(c, 200, "image/png", asset("remote-icon.png"));
             return;
         }
         if (!path.startsWith("/api/")) {
@@ -231,6 +244,9 @@ final class RemoteServer {
             json(c, 401, "{\"error\":\"token\"}");
             return;
         }
+        boolean wasActive = System.currentTimeMillis() - lastActive < 20000;
+        lastActive = System.currentTimeMillis();
+        if (!wasActive) host.changed("active");
         if (method.equals("GET") && path.equals("/api/state")) {
             JSONObject o = new JSONObject(state);
             o.put("front", host.front());
@@ -301,16 +317,20 @@ final class RemoteServer {
         }
     }
 
-    private synchronized byte[] page() throws Exception {
-        if (page == null) {
-            InputStream in = ctx.getAssets().open("remote.html");
+    private final java.util.Map<String, byte[]> assets = new java.util.HashMap<String, byte[]>();
+
+    private synchronized byte[] asset(String name) throws Exception {
+        byte[] b = assets.get(name);
+        if (b == null) {
+            InputStream in = ctx.getAssets().open(name);
             try {
-                page = WeeklyPicks.readAll(in, 512 * 1024);
+                b = WeeklyPicks.readAll(in, 512 * 1024);
             } finally {
                 in.close();
             }
+            assets.put(name, b);
         }
-        return page;
+        return b;
     }
 
     /** IPv4 da rede de casa (Wi-Fi ou cabo). */

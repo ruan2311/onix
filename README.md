@@ -69,7 +69,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 - **Foto de perfil pelo celular.** Escolha uma foto da galeria do celular, recorte e mande para a TV pelo QR code. A foto fica só na TV.
 - **Boas-vindas.** Na primeira vez, o Onix ajuda a escolher o idioma, criar o seu perfil e acertar algumas preferências. Tudo dá para pular e mudar depois.
 - **Modo Infantil.** Um perfil para crianças que mostra só os apps liberados, com PIN para sair e limite de tempo por dia.
-- **Controle pelo celular.** O QR code fica à vista embaixo do menu: aponte a câmera do celular e ele vira controle e teclado, sem instalar nada e sem precisar do controle da TV. Depois da primeira vez, o celular conecta sozinho. Setas e OK, busca digitando com o teclado do próprio celular e "Seus apps" organizados na tela do celular. Funciona com o Onix na tela, no Android TV e no Google TV.
+- **Controle pelo celular.** Quando nenhum celular está conectado, a tela de descanso mostra um QR code discreto: aponte a câmera do celular e ele vira controle e teclado, sem instalar nada e sem precisar do controle da TV. Depois, salve o controle na tela inicial do celular e ele abre num toque, já conectado. Setas e OK, busca digitando com o teclado do próprio celular e "Seus apps" organizados na tela do celular. Funciona com o Onix na tela, no Android TV e no Google TV.
 - **Clima na tela inicial (opcional).** A temperatura ao lado do relógio e, com OK, a previsão das próximas horas e dos próximos 5 dias (dados do Open-Meteo). O Onix não detecta onde você está: só usa a cidade que você escolher nas Configurações.
 
 Na 13.7.5: os jogos ganharam o visual do Onix e fases. Na 13.7.4: o Onix passou a falar **espanhol**.

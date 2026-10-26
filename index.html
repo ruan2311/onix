@@ -295,15 +295,15 @@ svg{display:block}
 #kitty[hidden]{display:none}
 .kitty-card{position:relative;overflow:hidden;width:90vw;max-width:30rem;padding:1.6rem 2rem 2rem;border-radius:1.8rem;text-align:center;background:linear-gradient(160deg,#1a1b22,#0c0d11);
   animation:kittyIn .7s cubic-bezier(.34,1.56,.64,1) both}
-.kitty-cat{width:15rem;height:15rem;margin:0 auto;overflow:visible;animation:kittyBob 2.4s ease-in-out .7s infinite}
-.kitty-cat .kitty-tail{transform-box:fill-box;transform-origin:0% 60%;animation:kittyTail 1.2s ease-in-out infinite alternate}
-.kitty-cat .kitty-ear{transform-box:fill-box;transform-origin:50% 100%}
+.kitty-cat{position:relative;z-index:1;width:15rem;height:15rem;margin:0 auto;overflow:visible;animation:kittyBob 2.4s ease-in-out .7s infinite}
+.kitty-cat .kitty-tail{transform-box:fill-box;transform-origin:0% 96%;animation:kittyTail 1.2s ease-in-out infinite alternate}
+.kitty-cat .kitty-ear{transform-box:fill-box;transform-origin:50% 80%}
 .kitty-cat .kitty-ear.l{animation:kittyEarL 3.2s ease-in-out 1s infinite}
 .kitty-cat .kitty-ear.r{animation:kittyEarR 3.2s ease-in-out 2.1s infinite}
 .kitty-cat .kitty-eyes{transform-box:fill-box;transform-origin:50% 50%;animation:kittyBlink 3.6s ease-in-out .9s infinite}
 .kitty-cat .kitty-stars{animation:kittyTwinkle 1.8s ease-in-out infinite alternate}
 .kitty-cat .kitty-ring{transform-box:fill-box;transform-origin:50% 50%;animation:kittyRing 2.4s ease-in-out .7s infinite}
-.kitty-hearts{position:absolute;top:0;right:0;bottom:0;left:0;pointer-events:none}
+.kitty-hearts{position:absolute;z-index:0;top:0;right:0;bottom:0;left:0;pointer-events:none}
 .kitty-hearts i{position:absolute;left:var(--x);bottom:28%;width:1.5rem;height:1.5rem;opacity:0;animation:kittyHeart 3s ease-out var(--d) infinite}
 .kitty-hearts svg{width:100%;height:100%}
 .kitty-title{position:relative;font-size:1.5rem;font-weight:700;margin-top:.4rem}
@@ -312,8 +312,8 @@ svg{display:block}
 @keyframes kittyBob{0%,100%{transform:translateY(0)}50%{transform:translateY(-.5rem)}}
 @keyframes kittyRing{0%,100%{transform:scaleX(1);opacity:.45}50%{transform:scaleX(.92);opacity:.3}}
 @keyframes kittyTail{from{transform:rotate(-8deg)}to{transform:rotate(14deg)}}
-@keyframes kittyEarL{0%,86%,100%{transform:none}90%{transform:rotate(-14deg)}94%{transform:rotate(4deg)}}
-@keyframes kittyEarR{0%,86%,100%{transform:none}90%{transform:rotate(14deg)}94%{transform:rotate(-4deg)}}
+@keyframes kittyEarL{0%,86%,100%{transform:none}90%{transform:rotate(-9deg)}94%{transform:rotate(3deg)}}
+@keyframes kittyEarR{0%,86%,100%{transform:none}90%{transform:rotate(9deg)}94%{transform:rotate(-3deg)}}
 @keyframes kittyBlink{0%,90%,100%{transform:none}95%{transform:scaleY(.1)}}
 @keyframes kittyTwinkle{from{opacity:.35}to{opacity:1}}
 @keyframes kittyHeart{0%{opacity:0;transform:translateY(0) scale(.5)}15%{opacity:1}100%{opacity:0;transform:translateY(-9rem) scale(1.1) rotate(12deg)}}
@@ -328,6 +328,13 @@ svg{display:block}
 #saver canvas{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%}
 #saverClock{position:absolute;left:4vw;bottom:5vh;color:rgba(245,246,248,.45);font-weight:200;font-size:4.2rem;
   letter-spacing:.02em;line-height:1;font-variant-numeric:tabular-nums}
+/* QR do controle pelo celular: cinza médio em vez de branco (não acende a sala) e sempre no canto
+   oposto ao relógio, mudando junto com ele (painel OLED). Some com um celular conectado. */
+#saverQr{position:absolute;display:flex;align-items:center;gap:1rem;color:rgba(232,234,240,.4);font-size:.95rem;line-height:1.35}
+#saverQr[hidden]{display:none}
+#saverQr small{display:block;font-size:.8rem;color:rgba(232,234,240,.28)}
+#saverQrCode{display:block;flex:none;width:8rem;height:8rem;padding:.3rem;border-radius:.6rem;background:#8e9097}
+#saverQrCode svg{display:block;width:100%;height:100%;shape-rendering:crispEdges}
 #saverClock small{display:block;margin-top:.5rem;font-size:1rem;font-weight:400;letter-spacing:.08em;color:rgba(232,234,240,.35)}
 
 /* ---------- Navegador antigo (WebView de TV box) ----------
@@ -529,16 +536,11 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 
 /* Modo Infantil: só os apps liberados, sem destaque, indicações, Apps, Entradas, Configurações e Desligar TV. */
 html.kids #hero,html.kids .picks-title,html.kids #homePicks,html.kids .top-actions,html.kids #powerBtn,
-html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="inputs"],html.kids .nav-item[data-section="settings"]{display:none!important}
+html.kids #phoneBtn,html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="inputs"],html.kids .nav-item[data-section="settings"]{display:none!important}
 .chip.kids{color:#1a1400;background:#ffd23f;border-color:#ffd23f;font-weight:600}
 .chip[hidden]{display:none}
 
-/* Controle pelo celular: QR embaixo do menu (lido do sofá) e a camada com o QR grande. */
-.nav-qr[hidden]{display:none}
-.nav-qr{display:flex;flex-direction:column;align-items:center;gap:.55rem}
-.nav-qr-code{display:block;width:8.6rem;height:8.6rem;padding:.35rem;border-radius:.7rem;background:#fff}
-.nav-qr-code svg{display:block;width:100%;height:100%;shape-rendering:crispEdges}
-.nav-qr-txt{font-size:.75rem;color:var(--muted);text-align:center}
+/* Controle pelo celular: a camada com o QR grande. O pequeno fica na tela de descanso. */
 .pp{display:flex;gap:3rem;align-items:center;max-width:62rem;padding:0 2rem}
 .pp-qr{width:17rem;height:17rem}
 .pp-txt{display:flex;flex-direction:column;gap:.4rem;min-width:0}
@@ -626,7 +628,7 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="2"/><rect x="14" y="3" width="7" height="7" rx="2"/><rect x="3" y="14" width="7" height="7" rx="2"/><rect x="14" y="14" width="7" height="7" rx="2"/></svg><span>Apps</span></button>
   <button class="f nav-item" data-section="games" tabindex="-1">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5.5"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="15.5" cy="11.5" r=".6" fill="currentColor"/><circle cx="18" cy="14" r=".6" fill="currentColor"/></svg><span>Jogos</span></button>
-  <div class="nav-spacer"><div class="nav-qr" id="navQr" hidden><span class="nav-qr-code" id="navQrCode"></span><span class="nav-qr-txt">Controle pelo celular</span></div><svg class="nav-art" viewBox="0 0 160 170" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <div class="nav-spacer"><svg class="nav-art" viewBox="0 0 160 170" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <circle cx="80" cy="88" r="38" stroke-width="1.2" stroke-dasharray="0 5" opacity=".45"/>
     <circle cx="80" cy="88" r="62" stroke-width="1" stroke-dasharray="0 6" opacity=".3"/>
     <circle cx="80" cy="88" r="38" stroke-width="1" stroke-dasharray="14 225" stroke-dashoffset="-40" opacity=".35"/>
@@ -648,6 +650,8 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
   </svg></div>
   <button class="f nav-item" data-section="inputs" tabindex="-1">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 10.5h7M11 7.5l3 3-3 3"/></svg><span>Entradas</span></button>
+  <button class="f nav-item" id="phoneBtn" tabindex="-1" hidden aria-label="Controle pelo celular">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg><span>Celular</span></button>
   <button class="f nav-item" data-section="settings" tabindex="-1">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg><span>Configurações</span></button>
   <button class="f nav-item power" id="powerBtn" tabindex="-1">
@@ -763,7 +767,7 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
     <g class="kitty-stars" fill="#fff" stroke="none"><circle cx="34" cy="60" r="2.5"/><circle cx="206" cy="46" r="2"/><circle cx="214" cy="132" r="2.5"/><circle cx="26" cy="150" r="2"/>
       <path d="M196 84l2.5 6 6 2.5-6 2.5-2.5 6-2.5-6-6-2.5 6-2.5z"/><path d="M46 104l2 5 5 2-5 2-2 5-2-5-5-2 5-2z"/></g>
   </svg>
-    <div class="kitty-hearts"><i style="--x:18%;--d:0.0s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:34%;--d:0.9s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:52%;--d:0.4s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:68%;--d:1.4s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:82%;--d:0.7s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i></div>
+    <div class="kitty-hearts"><i style="--x:12%;--d:0.0s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:24%;--d:0.9s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:52%;--d:0.4s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:76%;--d:1.4s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i><i style="--x:88%;--d:0.7s"><svg viewBox="0 0 24 24"><path d="M12 21s-7.5-4.6-9.6-9.2C.9 8.3 3 4.5 6.7 4.5c2.2 0 3.6 1.2 4.3 2.4.7-1.2 2.1-2.4 4.3-2.4 3.7 0 5.8 3.8 4.3 7.3C19.5 16.4 12 21 12 21z" fill="#ff9ec4"/></svg></i></div>
     <div class="kitty-title">Miau! Você achou o gatinho do Onix</div>
     <div class="kitty-sub">Ele cuida da sua TV enquanto você assiste. Qualquer tecla volta.</div>
   </div>
@@ -884,7 +888,7 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
 
 <div id="toast" role="status" aria-live="polite"></div>
 
-<div id="saver" aria-hidden="true"><canvas id="saverSky" width="0" height="0"></canvas><canvas id="saverCanvas" width="0" height="0"></canvas><div id="saverClock"></div></div>
+<div id="saver" aria-hidden="true"><canvas id="saverSky" width="0" height="0"></canvas><canvas id="saverCanvas" width="0" height="0"></canvas><div id="saverClock"></div><div id="saverQr" hidden><span id="saverQrCode"></span><span>Controle pelo celular<small>Aponte a câmera do celular</small></span></div></div>
 
 <script>
 // Aparelhos com WebView antigo (Android TV 9 sem atualização): repõe o pouco de API recente que o Onix usa.
@@ -1451,14 +1455,15 @@ const ES = Object.freeze({
   "Aponte a câmera do celular para o código. Uma página abre no navegador e vira controle e teclado, sem instalar nada.": "Apunta la cámara del celular al código. Se abre una página en el navegador que funciona como control y teclado, sin instalar nada.",
   "O celular precisa estar no mesmo Wi-Fi da TV. Depois da primeira vez, ele conecta sozinho.": "El celular debe estar en la misma red Wi-Fi que la TV. Después de la primera vez, se conecta solo.",
   "O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.": "El celular se vuelve control y teclado, sin instalar nada. Funciona con Onix en pantalla, en la misma red Wi-Fi.",
-  "QR code embaixo do menu": "Código QR debajo del menú",
-  "Deixa o QR code à vista, para conectar o celular sem usar o controle da TV.": "Deja el código QR a la vista, para conectar el celular sin usar el control de la TV.",
   "Mostrar o QR code grande": "Mostrar el código QR grande",
   "Para ler de longe ou conectar mais um celular.": "Para leerlo de lejos o conectar otro celular.",
   "Desconectar os celulares": "Desconectar los celulares",
   "Cada celular precisa ler o QR code de novo para voltar.": "Cada celular debe leer el código QR otra vez para volver.",
   "1 celular conectado. Cada um precisa ler o QR code de novo para voltar.": "1 celular conectado. Cada uno debe leer el código QR otra vez para volver.",
-  "{0} celulares conectados. Cada um precisa ler o QR code de novo para voltar.": "{0} celulares conectados. Cada uno debe leer el código QR otra vez para volver."
+  "{0} celulares conectados. Cada um precisa ler o QR code de novo para voltar.": "{0} celulares conectados. Cada uno debe leer el código QR otra vez para volver.",
+  "Aponte a câmera do celular": "Apunta la cámara del celular",
+  "QR code na tela de descanso": "Código QR en el salvapantallas",
+  "Quando nenhum celular está conectado, a tela de descanso mostra o QR code, em tom escuro, para conectar sem usar o controle da TV.": "Cuando no hay ningún celular conectado, el salvapantallas muestra el código QR, en tono oscuro, para conectar sin usar el control de la TV."
   });
 let LANG = 'pt';
 function resolveLang() {
@@ -3492,7 +3497,7 @@ const OPTIONS = [
   { key: 'pickGloboplay', service: 'globoplay', name: 'Globoplay', desc: 'Indicações do Globoplay.' },
   { group: 'Controle pelo celular', phone: true },
   { key: 'remote', phone: true, name: 'Controle pelo celular', desc: 'O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.' },
-  { key: 'remoteQr', phone: true, name: 'QR code embaixo do menu', desc: 'Deixa o QR code à vista, para conectar o celular sem usar o controle da TV.' },
+  { key: 'remoteQr', phone: true, name: 'QR code na tela de descanso', desc: 'Quando nenhum celular está conectado, a tela de descanso mostra o QR code, em tom escuro, para conectar sem usar o controle da TV.' },
   { act: 'remoteBig', phone: true, name: 'Mostrar o QR code grande', desc: 'Para ler de longe ou conectar mais um celular.' },
   { act: 'remoteForget', phone: true, name: 'Desconectar os celulares', desc: 'Cada celular precisa ler o QR code de novo para voltar.' },
   { group: 'Atualizações' },
@@ -4519,19 +4524,37 @@ function readRemoteInfo() {
   try {
     const o = JSON.parse(AndroidBridge.remoteInfo());
     const url = typeof o.url === 'string' && /^http:\/\/[0-9.]{7,15}:\d{4,5}\/#k=[0-9a-f]{32}$/.test(o.url) ? o.url : '';
-    remoteInfo = { on: o.on === true, url, devices: Number.isInteger(o.devices) ? o.devices : 0 };
+    remoteInfo = { on: o.on === true, url, devices: Number.isInteger(o.devices) ? o.devices : 0, active: o.active === true };
   } catch (_) {}
 }
-// QR embaixo do menu, no lugar do desenho do planeta.
+// QR pequeno na tela de descanso: só com o controle ligado e nenhum celular conectado agora
+// (o celular com o controle aberto conversa com a TV a cada 1,5 s). Fica no canto oposto ao relógio.
+let saverQrTimer = 0, saverQrCorner = [true, true];
+function saverQr(right, top) {
+  if (right !== undefined) saverQrCorner = [right, top];
+  clearTimeout(saverQrTimer);
+  const el = $('#saverQr');
+  if (!saverOn) { el.hidden = true; return; }
+  readRemoteInfo();
+  const show = !!(remoteInfo && remoteInfo.on && remoteInfo.url && !remoteInfo.active && settings.remote && settings.remoteQr) && !isKids();
+  if (show && el.dataset.url !== remoteInfo.url) {
+    const svg = qrSvg(remoteInfo.url);
+    $('#saverQrCode').replaceChildren(...(svg ? [svg] : []));
+    el.dataset.url = remoteInfo.url;
+  }
+  el.hidden = !show;
+  const [r, tp] = saverQrCorner;
+  el.style.left = r ? 'auto' : (3 + Math.random() * 4) + 'vw';
+  el.style.right = r ? (3 + Math.random() * 4) + 'vw' : 'auto';
+  el.style.top = tp ? (6 + Math.random() * 5) + 'vh' : 'auto';
+  el.style.bottom = tp ? 'auto' : (6 + Math.random() * 5) + 'vh';
+  el.style.flexDirection = r ? 'row-reverse' : 'row';
+  el.style.textAlign = r ? 'right' : 'left';
+  saverQrTimer = setTimeout(() => saverQr(), 5000);
+}
 function renderRemoteQr() {
   readRemoteInfo();
-  const spot = $('#navQr'), show = !!(remoteInfo && remoteInfo.on && remoteInfo.url && settings.remote && settings.remoteQr) && !isKids();
-  spot.hidden = !show;
-  $('.nav-art').style.display = show ? 'none' : '';
-  if (show) {
-    const svg = qrSvg(remoteInfo.url);
-    $('#navQrCode').replaceChildren(...(svg ? [svg] : []));
-  }
+  if (saverOn) saverQr();
   if (!$('#phonePane').hidden) renderPhonePane();
   if (activeSection === 'settings' && !panes.length) { const was = current && current.dataset.act; renderSettings(); if (was) setFocus($('#optsList [data-act="' + was + '"]')); }
 }
@@ -4910,6 +4933,7 @@ function hideSaver() {
     $('#saver').classList.remove('show');
     // Devolve a memória das duas telas cheias (a TV tem pouca); os sprites ficam guardados.
     for (const c of $$('#saver canvas')) { c.width = 0; c.height = 0; }
+    saverQr();
     svCtx = null; svW = svH = 0; svMeteor = null;
   }
   armSaver();
@@ -4926,6 +4950,7 @@ function saverClock() {
   el.style.top = top ? (5 + Math.random() * 6) + 'vh' : 'auto';
   el.style.bottom = top ? 'auto' : (5 + Math.random() * 6) + 'vh';
   el.style.textAlign = right ? 'right' : 'left';
+  saverQr(!right, !top);
   svClockTimer = setTimeout(saverClock, 60050 - d.getSeconds() * 1000 - d.getMilliseconds());
 }
 
@@ -5358,6 +5383,9 @@ function init() {
   $('#editReset')._act = resetHome;
   $('#readerClose')._act = closeReader;
   $('#meBtn')._act = switchProfile;
+  // Botão do menu: QR grande para conectar o celular (só onde existe o controle, no Android).
+  $('#phoneBtn').hidden = !Bridge.has('remoteStart');
+  $('#phoneBtn')._act = () => phoneOpen('qr');
   // A ponte não sabe desligar a TV ou abrir os ajustes (Samsung): tira os botões em vez de deixá-los falhar.
   if (Bridge.native && !Bridge.has('powerOff')) $('#powerBtn').remove();
   // Sem openSettings na ponte (Samsung), o atalho some: lá ele não teria o que abrir.
