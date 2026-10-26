@@ -55,6 +55,7 @@ public class AndroidBridge {
     private final Activity activity;
     private final WeeklyPicks picks;
     private final GameNews news;
+    private final RemoteServer remote;
     private volatile boolean trusted;
     private volatile String cache;
     // Ícone já convertido de cada app; só é redesenhado quando o app é atualizado.
@@ -71,8 +72,9 @@ public class AndroidBridge {
         }
     }
 
-    AndroidBridge(Activity activity) {
+    AndroidBridge(Activity activity, RemoteServer remote) {
         this.activity = activity;
+        this.remote = remote;
         this.picks = WeeklyPicks.get(activity);
         this.news = GameNews.get(activity);
     }
@@ -550,6 +552,49 @@ public class AndroidBridge {
 
     private void js(String code) {
         if (activity instanceof MainActivity) ((MainActivity) activity).js(code);
+    }
+
+    /* ---------------- Controle pelo celular (RemoteServer) ---------------- */
+
+    /** Liga o servidor (se estiver ligado nas Configurações); a página só usa para saber que existe. */
+    @JavascriptInterface
+    public boolean remoteStart() {
+        if (!trusted) return false;
+        remote.start();
+        return remote.enabled();
+    }
+
+    /** {"on","url","devices"} — a url do QR já traz a chave de conexão. */
+    @JavascriptInterface
+    public String remoteInfo() {
+        if (!trusted) return "{}";
+        return remote.info();
+    }
+
+    /** O que o celular mostra: apps de "Seus apps", campo de texto aberto, foto esperada, perfil. */
+    @JavascriptInterface
+    public boolean remoteState(String json) {
+        if (!trusted || json == null || json.length() > 64 * 1024) return false;
+        try {
+            remote.setState(new JSONObject(json).toString());
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
+    }
+
+    @JavascriptInterface
+    public boolean remoteSetEnabled(boolean on) {
+        if (!trusted) return false;
+        remote.setEnabled(on);
+        return true;
+    }
+
+    @JavascriptInterface
+    public boolean remoteForget() {
+        if (!trusted) return false;
+        remote.forgetAll();
+        return true;
     }
 
     /* ---------------- Atualizações (Updater) ---------------- */

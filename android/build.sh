@@ -33,6 +33,8 @@ sed -i "s|^const APP_VERSION = '[^']*';|const APP_VERSION = '$VERSION';|" "$OUT/
 grep -q "^const APP_VERSION = '$VERSION';" "$OUT/assets/index.html" || { echo "APP_VERSION não encontrado no index.html" >&2; exit 1; }
 # Indicações embutidas para abrir sem internet (geradas por tools/gen_seed.py).
 [ -f assets/picks-seed.json ] && cp assets/picks-seed.json "$OUT/assets/"
+# Página do controle pelo celular (servida pelo RemoteServer na rede de casa).
+cp assets/remote.html "$OUT/assets/"
 
 # Variantes da página de Releases: mesmo código, só o nome e (no App) sem virar tela inicial.
 MANIFEST=AndroidManifest.xml

@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#0b0c0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="referrer" content="no-referrer">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data: blob:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<title>Onix · Controle</title>
+<!--
+  Controle pelo celular do Onix. Esta página vem da própria TV (RemoteServer.java), pela rede de casa.
+  Na primeira vez, o QR code do menu do Onix traz uma chave (#k=…) que vira um token deste celular,
+  guardado aqui; depois ele reconecta sozinho. Cada pedido leva o token no cabeçalho X-Onix-Token.
+-->
+<style>
+:root{--bg:#0b0c0f;--fg:#f2f3f6;--muted:#9aa0ad;--line:rgba(255,255,255,.1);--card:rgba(255,255,255,.07);--ok:#4ade80;--warn:#ffb070}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{background:linear-gradient(170deg,#1a1c22,#08090b 70%) var(--bg);color:var(--fg);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  display:flex;flex-direction:column;user-select:none;-webkit-user-select:none;overscroll-behavior:none}
+button,input{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;touch-action:manipulation}
+button:focus-visible,input:focus-visible{outline:2px solid #fff;outline-offset:2px}
+[hidden]{display:none!important}
+header{display:flex;align-items:center;gap:10px;padding:max(14px,env(safe-area-inset-top)) 18px 6px}
+header svg{width:28px;height:28px;flex:none}
+.t{display:flex;flex-direction:column;min-width:0;flex:1}
+.t b{font-size:15px;letter-spacing:.2em}
+.t small{font-size:12px;color:var(--muted);display:flex;align-items:center;gap:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 3px rgba(74,222,128,.2);flex:none}
+.dot.off{background:var(--warn);box-shadow:0 0 0 3px rgba(255,176,112,.2)}
+main{flex:1;min-height:0;overflow:auto;padding:8px 18px 12px}
+.msg{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:14px;min-height:100%;padding:24px}
+.msg svg{width:64px;height:64px}
+.msg h1{margin:0;font-size:22px;font-weight:600}
+.msg p{margin:0;color:var(--muted);line-height:1.5;max-width:30ch}
+.cta{background:#fff;color:#0b0c0f;font-weight:600;padding:13px 22px;border-radius:999px}
+.ghost{background:var(--card);border:1px solid var(--line);padding:11px 18px;border-radius:999px}
+.dpad{position:relative;width:236px;height:236px;margin:20px auto 18px;border-radius:50%;
+  background:linear-gradient(160deg,rgba(255,255,255,.12),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.16)}
+.dpad .d{position:absolute;width:76px;height:76px;display:flex;align-items:center;justify-content:center;border-radius:50%}
+.dpad .d svg{width:26px;height:26px}
+.dpad .up{top:4px;left:80px}.dpad .down{bottom:4px;left:80px}.dpad .left{left:4px;top:80px}.dpad .right{right:4px;top:80px}
+.dpad .ok{position:absolute;top:68px;left:68px;width:100px;height:100px;border-radius:50%;background:#fff;color:#0b0c0f;font-weight:700;font-size:18px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+.dpad button:active{transform:scale(.92)}
+.dpad .d:active{background:rgba(255,255,255,.14)}
+.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.keys button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:12px}
+.keys svg{width:22px;height:22px}
+.keys button:active{transform:scale(.95)}
+.hint{margin:14px 0 0;text-align:center;font-size:12px;color:var(--muted);line-height:1.5}
+.lbl{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:12px 0 8px}
+#kbIn{width:100%;font-size:17px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:14px 16px;outline:none;user-select:text;-webkit-user-select:text}
+#kbIn:focus{border-color:#fff}
+.nav3{display:grid;grid-template-columns:56px 1fr 56px;gap:8px;margin-top:10px}
+.nav3 button{height:52px;border-radius:14px;background:var(--card);display:flex;align-items:center;justify-content:center;min-width:0}
+.nav3 svg{width:22px;height:22px}
+.nav3 .go{background:#fff;color:#0b0c0f;font-weight:600}
+.row2{display:flex;gap:8px;margin-top:10px}
+.row2 button{flex:1;padding:12px;border-radius:12px;background:var(--card)}
+.row2 .cta{background:#fff;color:#0b0c0f;font-weight:600}
+.row2 button:disabled{opacity:.5}
+.al{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.al li{display:flex;align-items:center;gap:10px;padding:8px 8px 8px 12px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
+.al .pos{width:18px;text-align:center;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.al .nm{flex:1;min-width:0;text-align:left;padding:8px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.al .mv{width:38px;height:38px;border-radius:10px;background:rgba(255,255,255,.08);display:flex;align-items:center;justify-content:center}
+.al .mv:disabled{opacity:.25}
+.al .mv svg{width:16px;height:16px}
+.crop{position:relative;width:min(78vw,300px);aspect-ratio:1;margin:12px auto;border-radius:28%;overflow:hidden;background:#000;touch-action:none}
+.crop canvas{width:100%;height:100%;display:block}
+#zoom{width:100%;margin:6px 0 14px}
+nav{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid rgba(255,255,255,.08);padding:6px 8px max(14px,env(safe-area-inset-bottom));background:rgba(0,0,0,.25)}
+nav button{display:flex;flex-direction:column;align-items:center;gap:4px;padding:8px 0;color:var(--muted);font-size:11px;border-radius:12px}
+nav svg{width:22px;height:22px}
+nav button[aria-selected="true"]{color:var(--fg)}
+nav button[aria-selected="true"] svg{color:var(--ok)}
+.toast{position:fixed;left:50%;bottom:calc(84px + env(safe-area-inset-bottom));transform:translate(-50%,10px);opacity:0;transition:.25s;background:#1d1f25;border:1px solid rgba(255,255,255,.2);
+  padding:10px 16px;border-radius:999px;font-size:14px;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+</style>
+</head>
+<body>
+<header>
+  <svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="24" cy="24" r="10"/><ellipse cx="24" cy="24" rx="21" ry="6" transform="rotate(-20 24 24)"/></svg>
+  <div class="t"><b>ONIX</b><small><span class="dot" id="dot"></span><span id="sub">Conectando…</span></small></div>
+</header>
+
+<main>
+  <section class="msg" id="vMsg">
+    <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.6" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>
+    <h1 id="msgTitle">Conectando à TV…</h1>
+    <p id="msgText"></p>
+    <button class="cta" id="msgBtn" hidden></button>
+  </section>
+
+  <section id="vRemote" hidden>
+    <div class="dpad">
+      <button class="d up" data-k="up" aria-label="Cima"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg></button>
+      <button class="d left" data-k="left" aria-label="Esquerda"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <button class="ok" data-k="ok">OK</button>
+      <button class="d right" data-k="right" aria-label="Direita"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+      <button class="d down" data-k="down" aria-label="Baixo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></button>
+    </div>
+    <div class="keys">
+      <button data-k="back"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-5-5 5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Voltar</button>
+      <button data-k="home"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Início</button>
+      <button data-tab="kb"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg>Buscar</button>
+    </div>
+    <p class="hint">Funciona com o Onix na tela. Dentro da Netflix ou do YouTube, use o controle da TV.</p>
+  </section>
+
+  <section id="vKb" hidden>
+    <div class="lbl" id="kbLbl">Buscar na TV</div>
+    <input id="kbIn" type="text" autocomplete="off" autocapitalize="sentences" spellcheck="false" enterkeyhint="go" placeholder="Digite aqui, aparece na TV">
+    <p class="hint" style="text-align:left">Toque no campo: o teclado do seu celular abre normalmente, com ditado e corretor.</p>
+    <div class="lbl">Na TV</div>
+    <div class="nav3">
+      <button data-k="left" aria-label="Anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6l-6 6 6 6"/></svg></button>
+      <button class="go" data-k="ok" id="kbGo">Abrir</button>
+      <button data-k="right" aria-label="Próximo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
+    </div>
+    <div class="row2"><button id="kbClear">Limpar</button><button data-k="back">Fechar na TV</button></div>
+  </section>
+
+  <section id="vApps" hidden>
+    <p class="hint" style="text-align:left;margin:4px 0 12px" id="appsHint">Use as setas para mudar a ordem de “Seus apps”. A TV muda na hora. Toque no nome para abrir.</p>
+    <ul class="al" id="appList"></ul>
+  </section>
+
+  <section id="vPhoto" hidden>
+    <div class="lbl">Foto do perfil</div>
+    <p class="hint" style="text-align:left;margin:0" id="photoHint">A TV está esperando uma foto. Escolha da galeria ou tire uma agora.</p>
+    <div class="crop" id="cropBox" hidden><canvas id="crop" width="600" height="600"></canvas></div>
+    <input id="zoom" type="range" min="1" max="3" step="0.01" value="1" hidden aria-label="Zoom">
+    <input id="file" type="file" accept="image/*" hidden>
+    <div class="row2"><button class="cta" id="pickBtn">Escolher foto</button><button class="cta" id="sendBtn" hidden>Enviar para a TV</button></div>
+    <p class="hint">Arraste para enquadrar. Só a foto recortada e pequena vai para a TV, e ela fica só lá.</p>
+  </section>
+</main>
+
+<nav id="tabs" hidden>
+  <button data-tab="remote" aria-selected="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="3.2"/></svg>Controle</button>
+  <button data-tab="kb" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M8 14h8"/></svg>Teclado</button>
+  <button data-tab="apps" aria-selected="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="6" height="6" rx="1.5"/><rect x="14" y="4" width="6" height="6" rx="1.5"/><rect x="4" y="14" width="6" height="6" rx="1.5"/><rect x="14" y="14" width="6" height="6" rx="1.5"/></svg>Apps</button>
+</nav>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+(() => {
+'use strict';
+const $ = id => document.getElementById(id);
+const ES = /^es\b/i.test(navigator.language || '');
+// Textos em espanhol (o português é a chave), como no Onix.
+const T = {
+  'Conectando…': 'Conectando…', 'Conectando à TV…': 'Conectando a la TV…', 'Conectado': 'Conectado',
+  'Leia o QR code da TV': 'Lee el código QR de la TV',
+  'No menu do Onix, embaixo à esquerda, tem um QR code. Aponte a câmera do celular para ele.': 'En el menú de Onix, abajo a la izquierda, hay un código QR. Apunta la cámara del celular hacia él.',
+  'Este QR code já foi usado': 'Este código QR ya se usó',
+  'Leia de novo o QR code que está na TV agora: ele muda a cada conexão.': 'Lee otra vez el código QR que está ahora en la TV: cambia en cada conexión.',
+  'Sem conexão com a TV': 'Sin conexión con la TV',
+  'Confira se o celular está no mesmo Wi-Fi da TV e se o Onix está aberto. Redes de visitantes costumam bloquear isso.': 'Revisa que el celular esté en la misma red Wi-Fi que la TV y que Onix esté abierto. Las redes de invitados suelen bloquearlo.',
+  'Tentar de novo': 'Intentar de nuevo', 'Abra o Onix na TV': 'Abre Onix en la TV',
+  'O controle funciona com o Onix na tela. Volte para ele com o controle da TV (botão Início).': 'El control funciona con Onix en pantalla. Vuelve a él con el control de la TV (botón Inicio).',
+  'Este celular foi desconectado': 'Este celular fue desconectado', 'Leia o QR code da TV para conectar de novo.': 'Lee el código QR de la TV para conectar otra vez.',
+  'Buscar na TV': 'Buscar en la TV', 'Digitando no campo da TV': 'Escribiendo en el campo de la TV', 'Abrir': 'Abrir',
+  'Perfil infantil: organizar os apps fica com um adulto.': 'Perfil infantil: ordenar las apps queda a cargo de un adulto.',
+  'Nenhum app em “Seus apps”.': 'Ninguna app en “Tus apps”.', 'Foto enviada para a TV': 'Foto enviada a la TV',
+  'A foto não foi enviada. Tente de novo.': 'La foto no se envió. Inténtalo de nuevo.', 'Não deu para abrir esta foto': 'No se pudo abrir esta foto',
+  'Celular conectado ao Onix': 'Celular conectado a Onix', 'Abra o Onix na TV primeiro': 'Abre Onix en la TV primero',
+  'Dica: adicione esta página à tela inicial do celular para abrir o controle num toque.': 'Consejo: añade esta página a la pantalla de inicio del celular para abrir el control con un toque.',
+  'Controle': 'Control', 'Teclado': 'Teclado', 'Voltar': 'Volver', 'Início': 'Inicio', 'Buscar': 'Buscar', 'Limpar': 'Borrar', 'Fechar na TV': 'Cerrar en la TV',
+  'Escolher foto': 'Elegir foto', 'Enviar para a TV': 'Enviar a la TV', 'Foto do perfil': 'Foto del perfil',
+  'A TV está esperando uma foto. Escolha da galeria ou tire uma agora.': 'La TV está esperando una foto. Elige de la galería o toma una ahora.',
+  'Arraste para enquadrar. Só a foto recortada e pequena vai para a TV, e ela fica só lá.': 'Arrastra para encuadrar. Solo la foto recortada y pequeña va a la TV, y se queda solo allí.',
+  'Funciona com o Onix na tela. Dentro da Netflix ou do YouTube, use o controle da TV.': 'Funciona con Onix en pantalla. Dentro de Netflix o YouTube, usa el control de la TV.',
+  'Toque no campo: o teclado do seu celular abre normalmente, com ditado e corretor.': 'Toca el campo: el teclado de tu celular se abre normalmente, con dictado y corrector.',
+  'Digite aqui, aparece na TV': 'Escribe aquí, aparece en la TV', 'Na TV': 'En la TV',
+  'Use as setas para mudar a ordem de “Seus apps”. A TV muda na hora. Toque no nome para abrir.': 'Usa las flechas para cambiar el orden de “Tus apps”. La TV cambia al instante. Toca el nombre para abrir.',
+};
+const t = s => (ES && T[s]) || s;
+if (ES) {
+  document.documentElement.lang = 'es';
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n = walk.nextNode(); n; n = walk.nextNode()) { const k = n.nodeValue.trim(); if (T[k]) n.nodeValue = n.nodeValue.replace(k, t(k)); }
+  $('kbIn').placeholder = t('Digite aqui, aparece na TV');
+}
+
+let token = null;
+try { token = localStorage.getItem('onix.remote.token'); } catch (_) {}
+let st = null, tab = 'remote', polling = 0, failures = 0;
+
+let toastT = 0;
+function toast(m) { const el = $('toast'); el.textContent = t(m); el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2400); }
+function msg(title, text, btn, act) {
+  ['vRemote', 'vKb', 'vApps', 'vPhoto'].forEach(id => { $(id).hidden = true; });
+  $('tabs').hidden = true;
+  $('vMsg').hidden = false;
+  $('msgTitle').textContent = t(title);
+  $('msgText').textContent = t(text || '');
+  $('msgBtn').hidden = !btn;
+  if (btn) { $('msgBtn').textContent = t(btn); $('msgBtn').onclick = act; }
+}
+
+async function api(method, path, body) {
+  const r = await fetch('/api/' + path, {
+    method, cache: 'no-store',
+    headers: Object.assign({ 'Content-Type': 'application/json' }, token ? { 'X-Onix-Token': token } : {}),
+    body: body ? JSON.stringify(body) : undefined,
+  });
+  let data = {};
+  try { data = await r.json(); } catch (_) {}
+  return { status: r.status, data };
+}
+
+async function pair(key) {
+  msg('Conectando à TV…');
+  try {
+    const name = (/iPhone|iPad/.test(navigator.userAgent) ? 'iPhone' : /Android/.test(navigator.userAgent) ? 'Android' : 'Celular');
+    const r = await api('POST', 'pair', { key, name });
+    history.replaceState(null, '', location.pathname);
+    if (r.status === 200 && r.data.token) {
+      token = r.data.token;
+      try { localStorage.setItem('onix.remote.token', token); } catch (_) {}
+      toast('Celular conectado ao Onix');
+      setTimeout(() => toast('Dica: adicione esta página à tela inicial do celular para abrir o controle num toque.'), 2600);
+      poll();
+    } else msg('Este QR code já foi usado', 'Leia de novo o QR code que está na TV agora: ele muda a cada conexão.');
+  } catch (_) { offline(); }
+}
+function offline() { msg('Sem conexão com a TV', 'Confira se o celular está no mesmo Wi-Fi da TV e se o Onix está aberto. Redes de visitantes costumam bloquear isso.', 'Tentar de novo', () => poll()); }
+
+async function poll() {
+  clearTimeout(polling);
+  if (!token) { msg('Leia o QR code da TV', 'No menu do Onix, embaixo à esquerda, tem um QR code. Aponte a câmera do celular para ele.'); return; }
+  try {
+    const r = await api('GET', 'state');
+    if (r.status === 401) {
+      token = null;
+      try { localStorage.removeItem('onix.remote.token'); } catch (_) {}
+      msg('Este celular foi desconectado', 'Leia o QR code da TV para conectar de novo.');
+      return;
+    }
+    failures = 0;
+    st = r.data;
+    render();
+  } catch (_) {
+    if (++failures >= 2) { offline(); return; }
+  }
+  if (document.visibilityState === 'visible') polling = setTimeout(poll, 1500);
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible') poll(); });
+
+function render() {
+  $('dot').classList.toggle('off', !st.front);
+  $('sub').textContent = [st.tv, st.profile].filter(Boolean).join(' · ') || t('Conectado');
+  if (!st.front) { msg('Abra o Onix na TV', 'O controle funciona com o Onix na tela. Volte para ele com o controle da TV (botão Início).'); return; }
+  $('vMsg').hidden = true;
+  if (st.photo) { show('photo'); return; }
+  $('tabs').hidden = false;
+  if (tab === 'photo') tab = 'remote';
+  // Campo de texto aberto na TV (nome do perfil, cidade): o Teclado vai direto para ele.
+  if (st.text && st.text.open && !textWas) { tab = 'kb'; $('kbIn').value = st.text.value || ''; }
+  textWas = !!(st.text && st.text.open);
+  $('kbLbl').textContent = st.text && st.text.open ? (st.text.title || t('Digitando no campo da TV')) : t('Buscar na TV');
+  $('kbGo').textContent = st.text && st.text.sel ? t('Abrir') + ' ' + st.text.sel : t('Abrir');
+  show(tab);
+  if (tab === 'apps') renderApps();
+}
+let textWas = false;
+function show(name) {
+  ['remote', 'kb', 'apps', 'photo'].forEach(n => { $('v' + n.charAt(0).toUpperCase() + n.slice(1)).hidden = n !== name; });
+  document.querySelectorAll('nav [data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
+  if (name === 'photo') $('tabs').hidden = true;
+}
+document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => {
+  tab = b.dataset.tab;
+  show(tab);
+  if (tab === 'kb') { send('text', { v: $('kbIn').value }); setTimeout(() => $('kbIn').focus(), 50); }
+  if (tab === 'apps') renderApps();
+}));
+
+async function send(type, body) {
+  try {
+    const r = await api('POST', type, body);
+    if (r.status === 409) toast('Abra o Onix na TV primeiro');
+    else if (r.status === 401) poll();
+    return r.status === 200;
+  } catch (_) { return false; }
+}
+document.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', () => {
+  if (navigator.vibrate) navigator.vibrate(12);
+  send('key', { k: b.dataset.k });
+}));
+
+// Teclado: o texto inteiro vai a cada mudança (a TV mostra como está aqui).
+let typing = 0;
+$('kbIn').addEventListener('input', () => { clearTimeout(typing); typing = setTimeout(() => send('text', { v: $('kbIn').value.slice(0, 40) }), 120); });
+$('kbIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send('key', { k: 'ok' }); } });
+$('kbClear').addEventListener('click', () => { $('kbIn').value = ''; send('text', { v: '' }); });
+
+// Apps: ordem de "Seus apps" do perfil que está na TV.
+const UP = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 15l6-6 6 6"/></svg>';
+const DOWN = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>';
+let order = null;
+function renderApps() {
+  const list = $('appList');
+  list.textContent = '';
+  if (st.kids) { $('appsHint').textContent = t('Perfil infantil: organizar os apps fica com um adulto.'); return; }
+  $('appsHint').textContent = t('Use as setas para mudar a ordem de “Seus apps”. A TV muda na hora. Toque no nome para abrir.');
+  const apps = Array.isArray(st.apps) ? st.apps : [];
+  if (!order || order.length !== apps.length || !apps.every(a => order.some(o => o.pkg === a.pkg))) order = apps.slice();
+  if (!order.length) { const li = document.createElement('li'); li.textContent = t('Nenhum app em “Seus apps”.'); list.append(li); return; }
+  order.forEach((a, i) => {
+    const li = document.createElement('li');
+    const pos = document.createElement('span'); pos.className = 'pos'; pos.textContent = i + 1;
+    const nm = document.createElement('button'); nm.className = 'nm'; nm.textContent = a.name;
+    nm.onclick = () => send('open', { pkg: a.pkg });
+    const mv = (d, svg) => { const b = document.createElement('button'); b.className = 'mv'; b.innerHTML = svg; b.disabled = i + d < 0 || i + d >= order.length; b.onclick = () => move(i, d); return b; };
+    li.append(pos, nm, mv(-1, UP), mv(1, DOWN));
+    list.append(li);
+  });
+}
+function move(i, d) {
+  const j = i + d, x = order[i];
+  order[i] = order[j]; order[j] = x;
+  renderApps();
+  send('order', { pkgs: order.map(a => a.pkg) });
+}
+
+// Foto: recorte quadrado no próprio celular; só vai a versão pequena (320 px, JPEG).
+const cv = $('crop'), cx = cv.getContext('2d');
+let img = null, zoom = 1, ox = 0, oy = 0, drag = null;
+$('pickBtn').addEventListener('click', () => $('file').click());
+$('file').addEventListener('change', () => {
+  const f = $('file').files && $('file').files[0];
+  if (!f) return;
+  const url = URL.createObjectURL(f), im = new Image();
+  im.onload = () => { img = im; zoom = 1; ox = 0; oy = 0; $('zoom').value = 1; $('cropBox').hidden = false; $('zoom').hidden = false; $('sendBtn').hidden = false; draw(); };
+  im.onerror = () => toast('Não deu para abrir esta foto');
+  im.src = url;
+});
+function geom(size) {
+  const s = Math.min(img.naturalWidth, img.naturalHeight) / zoom;
+  const maxX = (img.naturalWidth - s) / 2, maxY = (img.naturalHeight - s) / 2;
+  ox = Math.max(-maxX, Math.min(maxX, ox)); oy = Math.max(-maxY, Math.min(maxY, oy));
+  return { sx: (img.naturalWidth - s) / 2 + ox, sy: (img.naturalHeight - s) / 2 + oy, s };
+}
+function draw() {
+  if (!img) return;
+  const g = geom();
+  cx.clearRect(0, 0, cv.width, cv.height);
+  cx.drawImage(img, g.sx, g.sy, g.s, g.s, 0, 0, cv.width, cv.height);
+}
+$('zoom').addEventListener('input', () => { zoom = Number($('zoom').value) || 1; draw(); });
+cv.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY }; cv.setPointerCapture(e.pointerId); });
+cv.addEventListener('pointermove', e => {
+  if (!drag || !img) return;
+  const g = geom(), k = g.s / cv.getBoundingClientRect().width;
+  ox -= (e.clientX - drag.x) * k; oy -= (e.clientY - drag.y) * k;
+  drag = { x: e.clientX, y: e.clientY };
+  draw();
+});
+cv.addEventListener('pointerup', () => { drag = null; });
+$('sendBtn').addEventListener('click', async () => {
+  if (!img) return;
+  const out = document.createElement('canvas');
+  out.width = out.height = 320;
+  const g = geom();
+  out.getContext('2d').drawImage(img, g.sx, g.sy, g.s, g.s, 0, 0, 320, 320);
+  const data = out.toDataURL('image/jpeg', 0.85);
+  $('sendBtn').disabled = true;
+  const ok = await send('photo', { data });
+  $('sendBtn').disabled = false;
+  toast(ok ? 'Foto enviada para a TV' : 'A foto não foi enviada. Tente de novo.');
+  if (ok) { img = null; $('cropBox').hidden = true; $('zoom').hidden = true; $('sendBtn').hidden = true; $('file').value = ''; }
+});
+
+const m = /#k=([0-9a-f]{32})/.exec(location.hash);
+if (m) pair(m[1]); else poll();
+})();
+</script>
+</body>
+</html>

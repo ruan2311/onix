@@ -44,6 +44,7 @@ public class MainActivity extends Activity {
 
     private WebView webView;
     private AndroidBridge bridge;
+    private RemoteServer remote;
     private BroadcastReceiver packageReceiver;
     private ConnectivityManager.NetworkCallback netCallback;
     private Boolean online;   // null = ainda não verificado
@@ -106,7 +107,25 @@ public class MainActivity extends Activity {
         s.setCacheMode(WebSettings.LOAD_NO_CACHE);
         s.setTextZoom(100);
 
-        bridge = new AndroidBridge(this);
+        // Controle pelo celular: o servidor fica de pé enquanto o Onix está aberto; só obedece com ele na frente.
+        remote = new RemoteServer(this, new RemoteServer.Host() {
+            @Override
+            public void command(String json) {
+                js("window.Launcher&&Launcher.onRemote&&Launcher.onRemote(" + AndroidBridge.quote(json) + ")");
+            }
+
+            @Override
+            public boolean front() {
+                return resumed;
+            }
+
+            @Override
+            public void changed(String event) {
+                js("window.Launcher&&Launcher.onRemoteInfo&&Launcher.onRemoteInfo(" + AndroidBridge.quote(event) + ")");
+            }
+        });
+        remote.start();
+        bridge = new AndroidBridge(this, remote);
         bridge.preload();
         webView.setWebViewClient(new SafeClient());
         webView.addJavascriptInterface(bridge, "AndroidBridge");
@@ -457,6 +476,8 @@ public class MainActivity extends Activity {
     private void pushNetwork() {
         if (webView == null || online == null) return;
         webView.evaluateJavascript("window.Launcher&&Launcher.onNetwork(" + online + ")", null);
+        // O IP da TV pode ter mudado: o QR do controle pelo celular é refeito.
+        webView.evaluateJavascript("window.Launcher&&Launcher.onRemoteInfo&&Launcher.onRemoteInfo('network')", null);
     }
 
     private void registerPackageReceiver() {
@@ -542,6 +563,7 @@ public class MainActivity extends Activity {
         ui.removeCallbacks(appsChanged);
         ui.removeCallbacks(netTick);
         Updater.get(this).setListener(null);
+        remote.stop();
         if (packageReceiver != null) unregisterReceiver(packageReceiver);
         if (webView != null) {
             bridge.setTrusted(false);
