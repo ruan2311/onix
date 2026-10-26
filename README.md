@@ -415,9 +415,9 @@ Depois de instalar o **Onix Launcher**, aperte **Home** no controle. Se aparecer
 ### Google TV
 Na Google TV, a TV **não pergunta** qual tela inicial usar: o **Home** sempre volta para a tela do Google. Para o Onix assumir, é preciso **desativar** a tela inicial do Google (ela **não é apagada** e pode ser reativada quando quiser).
 
-✅ *Testado numa Philips Google TV, com os dois comandos abaixo.*
+✅ *Testado numa Philips Google TV (Android TV 14), com os dois comandos abaixo.*
 
-> 🧪 **Experimental:** pode apresentar falhas. Ainda não foi testado no Android TV 14.
+> 🧪 **Experimental:** pode apresentar falhas.
 >
 > ⚠️ **Antes, abra o Onix Launcher pela lista de apps e confirme que ele funciona.** Sem nenhuma tela inicial ativa, a TV fica sem tela inicial. Para voltar ao normal, veja [Desfazer](#como-desfazer-tudo).
 
