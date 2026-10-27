@@ -288,23 +288,24 @@ svg{display:block}
 .about-row{display:flex;justify-content:space-between;gap:1rem;font-size:.95rem}
 .about-row span:first-child{color:var(--muted)}
 .about-row span:last-child{font-weight:600}
-/* Easter egg do gatinho */
 .about-hint{font-size:.78rem;color:var(--muted);margin-top:-.2rem}
 .about.is-focused .about-hint{color:rgba(10,11,14,.55)}
+/* Easter egg do gatinho. Anima mesmo com "Transições suaves" desligado: só aparece para quem procura
+   e some em 12 s (#kitty + !important vence o "html.no-motion *"). */
 #kitty{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;place-items:center;background:radial-gradient(50% 55% at 50% 45%,rgba(255,158,196,.16),transparent 70%),rgba(4,4,6,.94)}
 #kitty[hidden]{display:none}
-.kitty-card{position:relative;overflow:hidden;width:90vw;max-width:30rem;padding:1.6rem 2rem 2rem;border-radius:1.8rem;text-align:center;background:linear-gradient(160deg,#1a1b22,#0c0d11);
-  animation:kittyIn .7s cubic-bezier(.34,1.56,.64,1) both}
-.kitty-cat{position:relative;z-index:1;width:15rem;height:15rem;margin:0 auto;overflow:visible;animation:kittyBob 2.4s ease-in-out .7s infinite}
-.kitty-cat .kitty-tail{transform-box:fill-box;transform-origin:0% 96%;animation:kittyTail 1.2s ease-in-out infinite alternate}
-.kitty-cat .kitty-ear{transform-box:fill-box;transform-origin:50% 80%}
-.kitty-cat .kitty-ear.l{animation:kittyEarL 3.2s ease-in-out 1s infinite}
-.kitty-cat .kitty-ear.r{animation:kittyEarR 3.2s ease-in-out 2.1s infinite}
-.kitty-cat .kitty-eyes{transform-box:fill-box;transform-origin:50% 50%;animation:kittyBlink 3.6s ease-in-out .9s infinite}
-.kitty-cat .kitty-stars{animation:kittyTwinkle 1.8s ease-in-out infinite alternate}
-.kitty-cat .kitty-ring{transform-box:fill-box;transform-origin:50% 50%;animation:kittyRing 2.4s ease-in-out .7s infinite}
+#kitty .kitty-card{position:relative;overflow:hidden;width:90vw;max-width:30rem;padding:1.6rem 2rem 2rem;border-radius:1.8rem;text-align:center;background:linear-gradient(160deg,#1a1b22,#0c0d11);
+  animation:kittyIn .7s cubic-bezier(.34,1.56,.64,1) both!important}
+#kitty .kitty-cat{position:relative;z-index:1;width:15rem;height:15rem;margin:0 auto;overflow:visible;animation:kittyBob 2.4s ease-in-out .7s infinite!important}
+#kitty .kitty-tail{transform-box:fill-box;transform-origin:0% 96%;animation:kittyTail 1.2s ease-in-out infinite alternate!important}
+#kitty .kitty-ear{transform-box:fill-box;transform-origin:50% 80%}
+#kitty .kitty-ear.l{animation:kittyEarL 3.2s ease-in-out 1s infinite!important}
+#kitty .kitty-ear.r{animation:kittyEarR 3.2s ease-in-out 2.1s infinite!important}
+#kitty .kitty-eyes{transform-box:fill-box;transform-origin:50% 50%;animation:kittyBlink 3.6s ease-in-out .9s infinite!important}
+#kitty .kitty-stars{animation:kittyTwinkle 1.8s ease-in-out infinite alternate!important}
+#kitty .kitty-ring{transform-box:fill-box;transform-origin:50% 50%;animation:kittyRing 2.4s ease-in-out .7s infinite!important}
 .kitty-hearts{position:absolute;z-index:0;top:0;right:0;bottom:0;left:0;pointer-events:none}
-.kitty-hearts i{position:absolute;left:var(--x);bottom:28%;width:1.5rem;height:1.5rem;opacity:0;animation:kittyHeart 3s ease-out var(--d) infinite}
+#kitty .kitty-hearts i{position:absolute;left:var(--x);bottom:28%;width:1.5rem;height:1.5rem;opacity:0;animation:kittyHeart 3s ease-out var(--d) infinite!important}
 .kitty-hearts svg{width:100%;height:100%}
 .kitty-title{position:relative;font-size:1.5rem;font-weight:700;margin-top:.4rem}
 .kitty-sub{position:relative;font-size:.92rem;color:var(--muted);margin-top:.4rem}
@@ -385,6 +386,32 @@ html.hero-zoom .hero.swap .hero-art{opacity:0}
 html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 @keyframes tabIn{from{opacity:0;transform:translateY(.8rem)}to{opacity:1;transform:none}}
 
+/* ---------- Estilo da tela inicial: Clean Glass (Configurações → Início) ----------
+   O mesmo Onix com menos informação: sem enfeite no menu, sem o selo do aparelho (a rede só
+   aparece quando cai), botões do topo só com ícone (o nome aparece no focado), destaque mais baixo e sem sinopse, e o nome
+   dos apps só no item focado. Só esconde e encolhe: nada é recalculado. */
+html.home-clean .nav-art,html.home-clean .brand-by,html.home-clean #modeChip,html.home-clean #netChip:not(.off),
+html.home-clean .wx-sub,html.home-clean .top-actions .btn span,html.home-clean .hero p,html.home-clean #sec-home .row-sub{display:none}
+html.home-clean #clock{font-size:3.8rem}
+html.home-clean #date{font-size:.95rem}
+html.home-clean .top-actions{gap:.6rem}
+html.home-clean #refreshBtn,html.home-clean #ramBtn,html.home-clean #tvSettingsBtn{padding:.7rem;border-radius:50%}
+html.home-clean .top-actions .btn svg{width:1.25rem;height:1.25rem}
+/* Focado, o botão abre e mostra o nome. */
+html.home-clean .top-actions .btn.is-focused span{display:inline}
+html.home-clean #refreshBtn.is-focused,html.home-clean #ramBtn.is-focused,html.home-clean #tvSettingsBtn.is-focused{padding:.7rem 1.1rem;border-radius:2rem}
+html.home-clean .hero{min-height:13rem;padding:1.6rem 2rem}
+html.home-clean .hero-bg{opacity:.22}
+html.home-clean .hero h1{font-size:2rem;margin-bottom:1rem}
+html.home-clean .kicker{color:var(--muted)}
+html.home-clean .hero-art{width:12rem;height:12rem;margin-top:-6rem}
+html.home-clean .hero.is-pick .hero-art{width:7rem;height:10.5rem;margin-top:-5.9rem}
+html.home-clean .dots{width:12rem;bottom:.7rem}
+html.home-clean .hero.is-pick .dots{width:7rem}
+html.home-clean .row-title{font-size:1.05rem;font-weight:500;color:var(--muted)}
+html.home-clean #sec-home .tile-label{opacity:0}
+html.home-clean #sec-home .tile.is-focused .tile-label{opacity:1}
+
 /* ---------- Camadas da 14.0.0 (perfis, boas-vindas, teclado, PIN, clima, celular) ----------
    Telas por cima do Onix, cada uma com o próprio foco. Ficam abaixo do aviso (#toast) e da tela de descanso. */
 .layer{position:fixed;top:0;right:0;bottom:0;left:0;z-index:21;display:flex;flex-direction:column;align-items:center;justify-content:center;
@@ -426,6 +453,7 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 .me-txt{display:flex;flex-direction:column;min-width:0;line-height:1.2}
 .me-name{color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .me-sw{font-size:.72rem;font-weight:400}
+.nav-item.me.is-focused{background:#fff;border-color:#fff}
 .nav-item.me.is-focused .me-name{color:#0a0b0e}
 
 /* Editar perfil */
@@ -996,16 +1024,18 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '14.0.3 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '14.1.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
-  anim: 'suave', heroFx: 'fade', tabFx: false, lang: 'auto', remote: true, remoteQr: true });
+  anim: 'suave', heroFx: 'fade', tabFx: false, lang: 'auto', remote: true, remoteQr: true, soundFx: 'chime', homeStyle: 'glass' });
 // Opções de escolha (OK passa para a próxima): valor salvo -> nome na tela.
 const CHOICES = Object.freeze({
   anim: [['suave', 'Suave'], ['elastica', 'Elástica'], ['rapida', 'Rápida'], ['flutuar', 'Flutuar'], ['pulsar', 'Pulsar']],
   heroFx: [['fade', 'Esmaecer'], ['slide', 'Deslizar'], ['zoom', 'Zoom']],
   lang: [['auto', 'Automático'], ['pt', 'Português'], ['es', 'Español']],
+  soundFx: [['chime', 'Onix Chime'], ['crystal', 'Crystal'], ['sharp', 'Sharpness'], ['velvet', 'Velvet'], ['pulse', 'Pulse']],
+  homeStyle: [['glass', 'Onix Glass'], ['clean', 'Clean Glass']],
 });
 const settings = Object.assign({}, DEFAULTS);
 try {
@@ -1024,6 +1054,7 @@ function applySettings() {
   CHOICES.anim.forEach(c => cl.toggle('anim-' + c[0], settings.anim === c[0]));
   CHOICES.heroFx.forEach(c => cl.toggle('hero-' + c[0], settings.heroFx === c[0]));
   cl.toggle('tab-fx', settings.tabFx);
+  cl.toggle('home-clean', settings.homeStyle === 'clean');
 }
 applySettings();
 
@@ -1976,6 +2007,16 @@ const PICK_PROVIDERS = Object.freeze({
   disney: { name: 'Disney+', em: 'no Disney+', color: '#1a46d6', badge: DISNEY_ICON },
   max: { name: 'HBO Max', em: 'na HBO Max', color: '#5b2fd6', badge: HBOMAX_ICON },
   globoplay: { name: 'Globoplay', em: 'no Globoplay', color: '#ff2a54', badge: GLOBOPLAY_ICON },
+  "Som da navegação": "Sonido de navegación",
+  "Onix Chime (vidro), Crystal (cristal brilhante), Sharpness (clique seco), Velvet (grave e macio) ou Pulse (digital). OK troca e toca uma amostra.": "Onix Chime (vidrio), Crystal (cristal brillante), Sharpness (clic seco), Velvet (grave y suave) o Pulse (digital). OK cambia y reproduce una muestra.",
+  " (ligue \"Sons do menu\" para ouvir)": " (activa \"Sonidos del menú\" para oírlo)",
+  "Estilo da tela inicial": "Estilo de la pantalla de inicio",
+  "Onix Glass mostra tudo. Clean Glass deixa só o essencial: menos texto, botões só com ícone e nomes dos apps só no item focado. OK troca.": "Onix Glass muestra todo. Clean Glass deja solo lo esencial: menos texto, botones solo con ícono y nombres de las apps solo en el elemento enfocado. OK cambia.",
+  "*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), o novo *Clean Glass* deixa só o essencial: menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em *Configurações → Início*.": "*Estilo de la pantalla de inicio:* además de *Onix Glass* (el de siempre), el nuevo *Clean Glass* deja solo lo esencial: menos texto, botones de arriba solo con ícono (el nombre aparece al enfocarlos) y el nombre de las apps solo en el elemento seleccionado. En *Configuración → Inicio*.",
+  "*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.": "*Sonido de navegación:* cuatro sonidos nuevos además de *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* y *Pulse*. En *Configuración → Inicio*, OK cambia y reproduce una muestra.",
+  "Os sons do menu tocam com menos atraso: a saída de áudio da TV não \"dorme\" mais entre um toque e outro.": "Los sonidos del menú suenan con menos retraso: la salida de audio de la TV ya no se \"duerme\" entre un toque y otro.",
+  "O perfil no topo do menu, quando selecionado, fica branco com o nome legível (antes o texto ficava preto sobre o fundo escuro).": "El perfil arriba del menú, al seleccionarlo, se pone blanco con el nombre legible (antes el texto quedaba negro sobre el fondo oscuro).",
+  "O gatinho do cartão *Sobre* se mexe de novo com o *Modo desempenho máximo* ou as *Transições suaves* desligadas.": "El gatito de la tarjeta *Acerca de* se mueve de nuevo con el *Modo de máximo rendimiento* o las *Transiciones suaves* desactivadas."
 });
 let picks = [];
 let netOnline = null;   // null = o Android ainda não disse
@@ -3050,31 +3091,66 @@ function renderGames() {
 }
 
 /* ---------------- Sons do menu ----------------
-   Toques curtos de "vidro" sintetizados no Web Audio, no clima da interface: senoide com um
-   parcial agudo bem baixo que some primeiro, ataque rápido, cauda curta e um passa-baixa
-   para não ficar estridente. Contexto próprio (a música dos jogos suspende o dela) e criado
-   na primeira tecla, que é o gesto que o WebView exige para liberar o áudio. */
+   Toques curtos sintetizados no Web Audio, com ataque rápido, cauda curta e um passa-baixa para
+   não ficar estridente. Cinco timbres (Configurações → Som da navegação), todos com as mesmas
+   notas por papel: andar, menu lateral, abrir, voltar e borda. Contexto próprio (a música dos
+   jogos suspende o dela) e criado na primeira tecla, que é o gesto que o WebView exige para
+   liberar o áudio.
+   Atraso: no silêncio, a saída de áudio da TV "dorme" e cada toque esperava ela acordar. Um sinal
+   inaudível (-100 dB) em loop a mantém acordada enquanto o Onix está na tela; fora dela, ou com
+   os sons desligados, o contexto é suspenso. */
 let sCtx = null, sOut = null, sLast = 0;
 function sfxReady() {
   if (!settings.sound) return false;
   if (!sCtx) {
     const AC = window.AudioContext || window.webkitAudioContext;
     if (!AC) return false;
-    try { sCtx = new AC(); } catch (_) { return false; }
+    try { sCtx = new AC({ latencyHint: 'interactive' }); } catch (_) {
+      try { sCtx = new AC(); } catch (_) { return false; }
+    }
     const lp = sCtx.createBiquadFilter();
     lp.type = 'lowpass'; lp.frequency.value = 3200; lp.Q.value = .5;
     sOut = sCtx.createGain(); sOut.gain.value = .14;
     sOut.connect(lp); lp.connect(sCtx.destination);
+    const buf = sCtx.createBuffer(1, sCtx.sampleRate, sCtx.sampleRate), keep = sCtx.createBufferSource();
+    buf.getChannelData(0).fill(1e-5);
+    keep.buffer = buf; keep.loop = true; keep.connect(sCtx.destination); keep.start();
   }
   if (sCtx.state === 'suspended') sCtx.resume();
   return true;
 }
-function chime(freq, t, dur, vol) {
-  [[1, vol, dur], [2.76, vol * .18, dur * .45]].forEach(([mul, v, d]) => {
-    const o = sCtx.createOscillator(), g = sCtx.createGain();
-    o.type = 'sine'; o.frequency.value = freq * mul;
+function sfxSleep() { if (sCtx && sCtx.state === 'running') sCtx.suspend(); }
+document.addEventListener('visibilitychange', () => {
+  if (document.hidden) sfxSleep(); else if (sCtx && settings.sound) sCtx.resume();
+});
+/* Timbre: forma de onda, ataque, parciais [multiplicador da frequência, volume, duração] e glide
+   (a nota escorrega até freq × glide). Notas: move (conteúdo), nav (menu lateral, mais grave),
+   edge (bateu na borda), select e back (duas notas, com "gap" s entre elas). len e gain
+   ajustam a duração e o volume de todas. */
+const SOUND_KITS = {
+  // Vidro: senoide com um parcial agudo bem baixo que some primeiro (o som de sempre).
+  chime: { wave: 'sine', attack: .004, parts: [[1, 1, 1], [2.76, .18, .45]],
+    move: 1318.5, nav: 987.8, edge: 659.3, select: [987.8, 1318.5], back: [1318.5, 987.8], gap: .055, len: 1, gain: 1 },
+  // Cristal: mais agudo, com oitava e quinta por cima e uma cauda mais longa.
+  crystal: { wave: 'sine', attack: .002, parts: [[1, 1, 1], [2, .3, .6], [3.01, .12, .35]],
+    move: 1760, nav: 1318.5, edge: 880, select: [1318.5, 1975.5], back: [1975.5, 1318.5], gap: .06, len: 1.5, gain: .8 },
+  // Clique seco: triangular curtinha que cai de altura na hora.
+  sharp: { wave: 'triangle', attack: .001, glide: .6, parts: [[1, 1, 1]],
+    move: 2093, nav: 1568, edge: 784, select: [1568, 2349.3], back: [2349.3, 1568], gap: .04, len: .45, gain: 1 },
+  // Veludo: grave, ataque mais lento e cauda longa.
+  velvet: { wave: 'sine', attack: .012, glide: .97, parts: [[1, 1, 1], [2, .12, .5]],
+    move: 523.25, nav: 440, edge: 293.7, select: [440, 659.3], back: [659.3, 440], gap: .07, len: 1.6, gain: 1.3 },
+  // Digital: onda quadrada (bem mais baixa, ela soa forte) que sobe um pouquinho.
+  pulse: { wave: 'square', attack: .003, glide: 1.06, parts: [[1, 1, 1]],
+    move: 880, nav: 659.3, edge: 329.6, select: [659.3, 987.8], back: [987.8, 659.3], gap: .05, len: .7, gain: .32 },
+};
+function tone(k, freq, t, dur, vol) {
+  k.parts.forEach(([mul, pv, pd]) => {
+    const o = sCtx.createOscillator(), g = sCtx.createGain(), d = dur * k.len * pd;
+    o.type = k.wave; o.frequency.setValueAtTime(freq * mul, t);
+    if (k.glide) o.frequency.exponentialRampToValueAtTime(freq * mul * k.glide, t + d);
     g.gain.setValueAtTime(0, t);
-    g.gain.linearRampToValueAtTime(v, t + .004);
+    g.gain.linearRampToValueAtTime(vol * k.gain * pv, t + k.attack);
     g.gain.exponentialRampToValueAtTime(.0001, t + d);
     o.connect(g); g.connect(sOut); o.start(t); o.stop(t + d + .02);
   });
@@ -3082,17 +3158,17 @@ function chime(freq, t, dur, vol) {
 // move: no menu lateral a nota é um pouco mais grave; edge: bateu na borda (nada para onde ir).
 function sfx(kind) {
   if (!sfxReady()) return;
-  const t = sCtx.currentTime + .005;
+  const t = sCtx.currentTime, k = SOUND_KITS[settings.soundFx] || SOUND_KITS.chime;
   if (kind === 'move' || kind === 'nav') {
     if (t - sLast < .045) return;   // segurar a seta não vira uma metralhadora
     sLast = t;
-    chime(kind === 'nav' ? 987.8 : 1318.5, t, .09, .5);
+    tone(k, kind === 'nav' ? k.nav : k.move, t, .09, .5);
   } else if (kind === 'select') {
-    chime(987.8, t, .12, .45); chime(1318.5, t + .055, .22, .5);
+    tone(k, k.select[0], t, .12, .45); tone(k, k.select[1], t + k.gap, .22, .5);
   } else if (kind === 'back') {
-    chime(1318.5, t, .1, .35); chime(987.8, t + .05, .18, .35);
+    tone(k, k.back[0], t, .1, .35); tone(k, k.back[1], t + k.gap * .9, .18, .35);
   } else if (kind === 'edge') {
-    chime(659.3, t, .07, .22);
+    tone(k, k.edge, t, .07, .22);
   }
 }
 
@@ -3524,9 +3600,11 @@ const OPTIONS = [
   { key: 'heroFx', name: 'Troca do destaque',     desc: 'Como uma indicação dá lugar à próxima: esmaecer, deslizar ou zoom. OK troca.' },
   { key: 'tabFx',  name: 'Transição entre abas',  desc: 'A aba nova aparece subindo de leve ao trocar pelo menu.' },
   { group: 'Início' },
+  { key: 'homeStyle', name: 'Estilo da tela inicial', desc: 'Onix Glass mostra tudo. Clean Glass deixa só o essencial: menos texto, botões só com ícone e nomes dos apps só no item focado. OK troca.' },
   { key: 'rotate', name: 'Trocar destaque sozinho', desc: 'Passa para a próxima indicação a cada 9 segundos.' },
   { key: 'h24',    name: 'Relógio de 24 horas',   desc: 'Desligado, mostra 1:00 em vez de 13:00.' },
   { key: 'sound',  name: 'Sons do menu',          desc: 'Toque suave ao navegar, abrir e voltar.' },
+  { key: 'soundFx', name: 'Som da navegação',     desc: 'Onix Chime (vidro), Crystal (cristal brilhante), Sharpness (clique seco), Velvet (grave e macio) ou Pulse (digital). OK troca e toca uma amostra.' },
   { key: 'saver',  name: 'Tela de descanso',      desc: 'Planetas e asteroides passam pela tela após 10 minutos sem usar o controle.' },
   { act: 'saver',  name: 'Descansar agora',       desc: 'Entra na tela de descanso na hora, mesmo com ela desligada acima. Qualquer tecla volta ao Onix.' },
   { group: 'Clima' },
@@ -3551,6 +3629,13 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '14.1.0 beta', date: 'outubro de 2026', items: [
+    ['new', '*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), o novo *Clean Glass* deixa só o essencial: menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em *Configurações → Início*.'],
+    ['new', '*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.'],
+    ['fix', 'Os sons do menu tocam com menos atraso: a saída de áudio da TV não "dorme" mais entre um toque e outro.'],
+    ['bug', 'O perfil no topo do menu, quando selecionado, fica branco com o nome legível (antes o texto ficava preto sobre o fundo escuro).'],
+    ['bug', 'O gatinho do cartão *Sobre* se mexe de novo com o *Modo desempenho máximo* ou as *Transições suaves* desligadas.'],
+  ] },
   { version: '14.0.3 beta', date: 'outubro de 2026', items: [
     ['new', '*Baixar o Onix Controle:* em *Configurações → Controle pelo celular*, um QR code leva o celular à página do app que controla a TV inteira. Só para Google TV e celular Android (não funciona em iPhone, nem em TVs Samsung e LG).'],
     ['fix', 'O controle que abre no navegador do celular, pelo QR code, agora se chama *Controle web*.'],
@@ -3670,7 +3755,7 @@ function setOption(key, on) {
   saveSettings();
   applySettings();
   if (key === 'h24') updateClock(true);
-  if (key === 'sound' && on) sfx('select');
+  if (key === 'sound') { if (on) sfx('select'); else sfxSleep(); }
   if (key === 'pickAuto' || PICK_KEYS.some(o => o.key === key)) {
     syncPicksChoice();
     toast(key === 'pickAuto' ? (on ? 'Indicações pelo que você assiste' : 'Escolha os serviços das indicações logo abaixo')
@@ -3724,6 +3809,11 @@ function renderSettings() {
       const next = list[(i + 1) % list.length];
       setOption(o.key, next[0]); syncSwitches();
       if (o.key === 'lang') { changeLang(); toast(t(o.name) + ': ' + t(next[1])); }
+      else if (o.key === 'soundFx') {
+        toast(t(o.name) + ': ' + t(next[1]) + (settings.sound ? '' : t(' (ligue "Sons do menu" para ouvir)')));
+        setTimeout(() => sfx('select'), 260);   // amostra do som novo, depois do toque do OK
+      }
+      else if (o.key === 'homeStyle') toast(t(o.name) + ': ' + t(next[1]));
       else if (!settings.motion) toast(t(o.name) + ': ' + t(next[1]) + t(' (ligue "Transições suaves" para ver)'));
       else if (o.key === 'heroFx') { toast(t(o.name) + ': ' + t(next[1])); nextHero(); }
       else toast(t(o.name) + ': ' + t(next[1]));

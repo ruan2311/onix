@@ -11,7 +11,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aurora.launcher"
     android:versionCode="14"
-    android:versionName="14.0.3 beta">
+    android:versionName="14.1.0 beta">
 
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
 
