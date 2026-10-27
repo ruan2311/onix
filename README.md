@@ -60,7 +60,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 > Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
 
-**Onix Controle (app para el celular Android):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. **Solo para Google TV y celular Android** (no funciona en iPhone, ni en TVs Samsung y LG). Descárgalo en el celular: **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.2/onix-controle.apk)**. Al abrirlo, elige tu TV, escribe el código de 6 caracteres que aparece en la TV y listo. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
+**Onix Controle (app para el celular Android):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. **Solo para Google TV y celular Android** (no funciona en iPhone, ni en TVs Samsung y LG). Descárgalo en el celular: **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk)**. Al abrirlo, elige tu TV, escribe el código de 6 caracteres que aparece en la TV y listo. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
 
 ---
 
@@ -486,7 +486,7 @@ Um app para o **celular Android** que vira o **controle remoto da TV inteira**: 
 
 ### Instalar
 1. No celular, abra este link no navegador e baixe o arquivo (ou, na TV, vá em **Configurações → Controle pelo celular → Baixar o Onix Controle** e aponte a câmera do celular para o QR code):
-   **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.2/onix-controle.apk)**
+   **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk)**
 2. Toque no arquivo baixado. Se o Android pedir, permita **instalar apps desta fonte** para o navegador (ou para o app de arquivos) e volte.
 3. Toque em **Instalar**. Se o **Play Protect** avisar que o app é desconhecido, toque em **Mais detalhes → Instalar mesmo assim** (o aviso aparece porque o app não vem da Play Store; o código está todo neste GitHub).
 
