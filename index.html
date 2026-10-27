@@ -424,9 +424,10 @@ html.home-cosmos.on-home #cosmosArt{display:block}
 html.home-cosmos #main>.topbar,html.home-cosmos #main>.section{position:relative;z-index:1}
 #cosmosArt svg{display:block;width:100%;height:auto}
 .cz-orbit{position:absolute;left:70%;top:44.6%;width:57.5%;height:82.1%;border-radius:50%;
-  transform:translate(-50%,-50%);animation:czOrbit 48s linear infinite}
+  transform:translate(-50%,-50%) rotate(210deg);animation:czOrbit 48s linear infinite}
 .cz-orbit i{position:absolute;left:50%;top:0;width:.9rem;height:.9rem;margin:-.45rem 0 0 -.45rem;border-radius:50%;background:#fff;box-shadow:0 0 .9rem rgba(185,168,255,.9)}
-@keyframes czOrbit{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+/* Começa embaixo, à esquerda do planeta: parada (Transições suaves desligado), não cobre os botões do topo. */
+@keyframes czOrbit{from{transform:translate(-50%,-50%) rotate(210deg)}to{transform:translate(-50%,-50%) rotate(570deg)}}
 html.home-cosmos #hero{background:none;border-color:transparent;box-shadow:none;min-height:21rem;padding:1rem 0 1.2rem}
 html.home-cosmos .hero-bg,html.home-cosmos .hero-art{display:none}
 html.home-cosmos .hero-content{max-width:46%}
@@ -1150,7 +1151,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '14.1.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '15.0.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -3760,7 +3761,7 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
-  { version: '14.1.0 beta', date: 'outubro de 2026', items: [
+  { version: '15.0.0 beta', date: 'outubro de 2026', items: [
     ['new', '*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), dois estilos novos. *Clean Glass* é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. *Onix Cosmos* é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em *Configurações → Início*.'],
     ['new', '*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.'],
     ['new', '*Modo Infantil* com visual próprio: boas-vindas com o nome da criança e o gatinho do Onix num arco-íris, o gatinho no menu, desenhinhos no canto da tela e foco amarelo, mais redondo e colorido.'],

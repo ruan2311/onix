@@ -2,7 +2,7 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
-## 14.1.0 beta (outubro de 2026)
+## 15.0.0 beta (outubro de 2026)
 
 - **Estilo da tela inicial:** além do **Onix Glass** (o de sempre), dois estilos novos. **Clean Glass** é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. **Onix Cosmos** é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em **Configurações → Início**.
 - **Som da navegação:** quatro sons novos além do **Onix Chime**: **Crystal**, **Sharpness**, **Velvet** e **Pulse**. Em **Configurações → Início**, OK troca e toca uma amostra.
