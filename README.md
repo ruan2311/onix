@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-14.0.0%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-15.0.0%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -23,7 +23,7 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 ## Sumário
 
 - [🇪🇸 En español](#-en-español)
-- [Novidades da 14.0.0](#novidades-da-1400)
+- [Novidades da 15.0.0](#novidades-da-1500)
 - [Recursos](#recursos)
 - [Capturas de tela](#capturas-de-tela)
 - [Instalação: qual é a sua TV?](#instalação)
@@ -60,18 +60,29 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 > Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
 
+**Novedades de la 15.0.0:** dos estilos nuevos de pantalla de inicio en **Configuración → Inicio** (*Clean Glass*, minimalista, y *Onix Cosmos*, artístico), cuatro sonidos de navegación nuevos (*Crystal*, *Sharpness*, *Velvet* y *Pulse*), un **Modo Infantil** con estilo propio y el gatito de Onix, y sonidos del menú con menos retraso.
+
 **Onix Controle (app para el celular Android):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. **Solo para Google TV y celular Android** (no funciona en iPhone, ni en TVs Samsung y LG). Descárgalo en el celular: **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk)**. Al abrirlo, elige tu TV, escribe el código de 6 caracteres que aparece en la TV y listo. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
 
 ---
 
-## Novidades da 14.0.0
+## Novidades da 15.0.0
 
-- **Perfis.** Uma tela *Quem está assistindo?* com um avatar para cada pessoa da casa. Cada perfil tem os seus apps, recentes, indicações, recordes dos jogos e idioma. Com um perfil só, o Onix entra direto, sem perguntar nada. Quem já usa o Onix vira o primeiro perfil, sem perder nada.
-- **Foto de perfil pelo celular.** Escolha uma foto da galeria do celular, recorte e mande para a TV pelo QR code. A foto fica só na TV.
-- **Boas-vindas.** Na primeira vez, o Onix ajuda a escolher o idioma, criar o seu perfil e acertar algumas preferências. Tudo dá para pular e mudar depois.
-- **Modo Infantil.** Um perfil para crianças que mostra só os apps liberados, com PIN para sair e limite de tempo por dia.
-- **Controle pelo celular.** Quando nenhum celular está conectado, a tela de descanso mostra um QR code discreto: aponte a câmera do celular e ele vira controle e teclado, sem instalar nada e sem precisar do controle da TV. Depois, salve o controle na tela inicial do celular e ele abre num toque, já conectado. Setas e OK, busca digitando com o teclado do próprio celular e "Seus apps" organizados na tela do celular. Funciona com o Onix na tela, no Android TV e no Google TV.
-- **Clima na tela inicial (opcional).** A temperatura ao lado do relógio e, com OK, a previsão das próximas horas e dos próximos 5 dias (dados do Open-Meteo). O Onix não detecta onde você está: só usa a cidade que você escolher nas Configurações.
+- **Três estilos de tela inicial.** Em **Configurações → Início → Estilo da tela inicial**, OK troca entre:
+  - **Onix Glass**, o visual de sempre (padrão).
+  - **Clean Glass**, minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas, sem destaque nem selos.
+  - **Onix Cosmos**, artístico: o planeta do Onix, órbitas, luas, estrelas e um cometa desenhados atrás do destaque.
+- **Cinco sons de navegação.** Em **Configurações → Início → Som da navegação**: **Onix Chime** (o de sempre, de vidro), **Crystal** (cristal brilhante), **Sharpness** (clique seco), **Velvet** (grave e macio) e **Pulse** (digital). OK troca e toca uma amostra.
+- **Modo Infantil com visual próprio.** Boas-vindas com o nome da criança e o gatinho do Onix num arco-íris, o gatinho no menu, desenhinhos no canto da tela e foco amarelo, mais redondo e colorido.
+- **Sons com menos atraso.** A saída de áudio da TV não "dorme" mais entre um toque e outro.
+- Correções: o perfil no topo do menu fica legível quando selecionado, e o gatinho do cartão **Sobre** se mexe de novo com o **Modo desempenho máximo**.
+
+<p align="center">
+  <img src="docs/screenshots/estilo-onix-cosmos.png" alt="Estilo Onix Cosmos" width="49%">
+  <img src="docs/screenshots/estilo-clean-glass.png" alt="Estilo Clean Glass" width="49%">
+</p>
+
+Na 14.0.0: **perfis** (*Quem está assistindo?*, com os apps, recentes, indicações, recordes e idioma de cada um; com um perfil só, o Onix entra direto), **foto de perfil pelo celular**, **boas-vindas** na primeira vez, **Modo Infantil** (só os apps liberados, PIN para sair e limite de tempo por dia), **controle pelo celular** pelo QR code, sem instalar nada, e **clima na tela inicial** (opcional, dados do Open-Meteo, só da cidade que você escolher).
 
 **Novo: [Onix Controle](#onix-controle-app-de-celular)**, um app de celular que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. **Só para Google TV e celular Android** (não funciona em iPhone, nem em TVs Samsung e LG).
 
@@ -98,6 +109,7 @@ O histórico completo está no [CHANGELOG.md](CHANGELOG.md) e na [página de Rel
 ## Recursos
 
 ### Início
+- **Três estilos**: **Onix Glass** (padrão), **Clean Glass** (minimalista) e **Onix Cosmos** (artístico), em **Configurações → Início**.
 - **Destaque rotativo** com as indicações da semana. O botão **Assistir na Netflix** abre o título direto na página dele no app da Netflix.
 - **Seus apps**: uma fileira com os seus apps favoritos. Dá para adicionar, remover e reordenar na tela **Organizar seus apps**.
 - **Indicações da semana**: títulos populares no Brasil (via JustWatch) dos serviços que você usa, complementados pelos filmes mais vistos da iTunes Store. A lista é renovada toda segunda-feira.
@@ -141,11 +153,21 @@ Quatro jogos feitos para o controle remoto, no visual do Onix (traços coloridos
 - **Aparelho e conexão no topo**: o chip da esquerda mostra o aparelho (*Google TV · Philips*, *Android TV*, *Celular Android*…) e o da direita fica vermelho com **Sem internet** quando a internet cai, mesmo com o Wi-Fi ligado (teste a cada 30 s).
 - **Atualizações**: o Onix avisa quando sai uma versão nova e se atualiza pelo próprio app. Veja [abaixo](#atualizações-automáticas).
 - **Português e español**: em **Configurações → Idioma**, escolha o idioma ou deixe no automático (segue o idioma da TV).
+- **Perfis e Modo Infantil**: um perfil para cada pessoa da casa e um perfil infantil com visual próprio, só os apps liberados, PIN para sair e limite de tempo por dia.
+- **Sons do menu**: cinco timbres (**Onix Chime**, **Crystal**, **Sharpness**, **Velvet** e **Pulse**), ou nenhum.
 - **Configurações do Onix**: desliga efeitos visuais para TVs mais fracas e controla relógio de 24 h, sons do menu e tela de descanso.
 
 ---
 
 ## Capturas de tela
+
+| Onix Cosmos | Clean Glass |
+|---|---|
+| <img src="docs/screenshots/estilo-onix-cosmos.png" alt="Estilo Onix Cosmos"> | <img src="docs/screenshots/estilo-clean-glass.png" alt="Estilo Clean Glass"> |
+
+| Modo Infantil | Estilos e sons nas Configurações |
+|---|---|
+| <img src="docs/screenshots/modo-infantil.png" alt="Modo Infantil com o gatinho do Onix"> | <img src="docs/screenshots/configuracoes-inicio.png" alt="Estilo da tela inicial e Som da navegação"> |
 
 | Apps | Jogos e notícias |
 |---|---|
