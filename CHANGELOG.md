@@ -4,8 +4,9 @@ As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
 ## 14.1.0 beta (outubro de 2026)
 
-- **Estilo da tela inicial:** além do **Onix Glass** (o de sempre), o novo **Clean Glass** é minimalista: destaque sem caixa, menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em **Configurações → Início**.
+- **Estilo da tela inicial:** além do **Onix Glass** (o de sempre), dois estilos novos. **Clean Glass** é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. **Onix Cosmos** é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em **Configurações → Início**.
 - **Som da navegação:** quatro sons novos além do **Onix Chime**: **Crystal**, **Sharpness**, **Velvet** e **Pulse**. Em **Configurações → Início**, OK troca e toca uma amostra.
+- **Modo Infantil** com visual próprio: boas-vindas com o nome da criança e o gatinho do Onix num arco-íris, o gatinho no menu, desenhinhos no canto da tela e foco amarelo, mais redondo e colorido.
 - Os sons do menu tocam com menos atraso: a saída de áudio da TV não "dorme" mais entre um toque e outro.
 - O perfil no topo do menu, quando selecionado, fica branco com o nome legível (antes o texto ficava preto sobre o fundo escuro).
 - O gatinho do cartão **Sobre** se mexe de novo com o **Modo desempenho máximo** ou as **Transições suaves** desligadas.

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="on-home">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -386,35 +386,88 @@ html.hero-zoom .hero.swap .hero-art{opacity:0}
 html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 @keyframes tabIn{from{opacity:0;transform:translateY(.8rem)}to{opacity:1;transform:none}}
 
-/* ---------- Estilo da tela inicial: Clean Glass (Configurações → Início) ----------
-   O mesmo Onix com o mínimo: sem enfeite no menu, sem o selo do aparelho (a rede só aparece
-   quando cai), relógio menor, clima só com a temperatura, botões do topo só com ícone (o nome
-   aparece no focado), destaque sem caixa, sinopse, categoria nem pontinhos, títulos das fileiras
-   discretos e o nome dos apps só no item focado. Só esconde e encolhe: nada é recalculado. */
-html.home-clean .nav-art,html.home-clean .brand-by,html.home-clean #modeChip,html.home-clean #netChip:not(.off),
-html.home-clean .wx-sub,html.home-clean .wx-temp span,html.home-clean .top-actions .btn span,html.home-clean #sec-home .row-sub,
-html.home-clean .hero p,html.home-clean .hero .kicker,html.home-clean .hero-bg,html.home-clean .dots,html.home-clean #heroNext span{display:none}
-html.home-clean .topbar{align-items:center;margin-bottom:1rem}
-html.home-clean #clock{font-size:2.9rem}
-html.home-clean #date{font-size:.9rem;margin-top:.25rem}
-html.home-clean .wx-ico{width:2.2rem;height:2.2rem}
-html.home-clean .wx-temp{font-size:1.6rem}
-html.home-clean .top-actions{gap:.5rem}
-html.home-clean #refreshBtn,html.home-clean #ramBtn,html.home-clean #tvSettingsBtn{padding:.65rem;border-radius:50%;background:transparent;border-color:transparent;color:var(--muted)}
-html.home-clean .top-actions .btn svg{width:1.3rem;height:1.3rem}
-/* Focado, o botão abre e mostra o nome. */
+/* ---------- Estilos da tela inicial (Configurações → Início) ----------
+   Onix Glass é o padrão. Os outros só mudam o CSS da aba Início (o topo, com "html.on-home"):
+   nada é recalculado e o foco ignora o que fica escondido. */
+
+/* Clean Glass: tudo no centro e quase nada na tela. Relógio grande e fino, a data e a temperatura
+   embaixo, os apps numa fileira centralizada e as indicações em capas pequenas. Sem destaque;
+   os botões do topo viram ícones no canto (o nome aparece no focado). */
+html.home-clean.on-home .topbar{position:relative;flex-direction:column;align-items:center;justify-content:center;gap:0;margin:4.2rem 0 3rem;text-align:center}
+html.home-clean.on-home .topbar>div:first-child{display:flex;flex-direction:column;align-items:center}
+html.home-clean.on-home #clock{font-size:7.5rem;font-weight:100;letter-spacing:-.03em}
+html.home-clean.on-home #date{font-size:.85rem;letter-spacing:.24em;text-transform:uppercase;margin-top:.9rem}
+html.home-clean.on-home #wxBtn{margin:.5rem 0 0;padding:.25rem .8rem .25rem .5rem;gap:.45rem}
+html.home-clean.on-home .wx-ico{width:1.5rem;height:1.5rem}
+html.home-clean.on-home .wx-temp{font-size:1.05rem;font-weight:400;color:var(--muted)}
+html.home-clean.on-home .wx-sub,html.home-clean.on-home .wx-temp span,html.home-clean.on-home #modeChip,html.home-clean.on-home #netChip:not(.off),
+html.home-clean .top-actions .btn span,html.home-clean #hero,html.home-clean #homeAppsTitle,html.home-clean #sec-home .row-sub{display:none}
+html.home-clean.on-home .top-right{position:absolute;top:-3rem;right:0}
+html.home-clean .top-actions{gap:.4rem}
+html.home-clean #refreshBtn,html.home-clean #ramBtn,html.home-clean #tvSettingsBtn{padding:.6rem;border-radius:50%;background:transparent;border-color:transparent;color:var(--muted)}
+html.home-clean .top-actions .btn svg{width:1.2rem;height:1.2rem}
 html.home-clean .top-actions .btn.is-focused span{display:inline}
-html.home-clean #refreshBtn.is-focused,html.home-clean #ramBtn.is-focused,html.home-clean #tvSettingsBtn.is-focused{padding:.65rem 1.1rem;border-radius:2rem;background:rgba(255,255,255,.12);color:var(--text)}
-/* Destaque sem a caixa de vidro: só o título, os botões e a capa. */
-html.home-clean .hero{min-height:11rem;padding:.6rem 0 .4rem;background:none;border-color:transparent;box-shadow:none;justify-content:center}
-html.home-clean .hero h1{font-size:2.1rem;font-weight:600;margin-bottom:1.1rem}
-html.home-clean .hero-art{right:.5rem;width:10rem;height:10rem;margin-top:-5rem}
-html.home-clean .hero.is-pick .hero-art{width:6.6rem;height:9.9rem;margin-top:-4.95rem}
-html.home-clean .hero-art img{box-shadow:none}
-html.home-clean #heroNext{padding:.75rem;border-radius:50%}
-html.home-clean .row-title{font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:1.4rem}
+html.home-clean #refreshBtn.is-focused,html.home-clean #ramBtn.is-focused,html.home-clean #tvSettingsBtn.is-focused{padding:.6rem 1.1rem;border-radius:2rem;background:rgba(255,255,255,.12);color:var(--text)}
+/* Fileiras no centro: margem automática nas pontas (com muitos apps, rola normal a partir da esquerda). */
+html.home-clean #sec-home .row>:first-child{margin-left:auto}
+html.home-clean #sec-home .row>:last-child{margin-right:auto}
+html.home-clean #homeApps .tile{width:10.5rem}
 html.home-clean #sec-home .tile-label{opacity:0}
 html.home-clean #sec-home .tile.is-focused .tile-label{opacity:1}
+html.home-clean .picks-title{text-align:center;font-size:.75rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-top:2.6rem}
+html.home-clean #homePicks .tile.pick{width:6.8rem}
+
+/* Onix Cosmos: o planeta do Onix, órbitas, luas, estrelas e um cometa desenhados atrás do destaque,
+   que perde a caixa e a capa. Desenho estático; só uma lua gira (uma camada pequena, no compositor). */
+#cosmosArt{display:none;position:absolute;z-index:0;top:.5rem;right:-1rem;width:43rem;max-width:62%;pointer-events:none}
+html.home-cosmos.on-home #cosmosArt{display:block}
+html.home-cosmos #main>.topbar,html.home-cosmos #main>.section{position:relative;z-index:1}
+#cosmosArt svg{display:block;width:100%;height:auto}
+.cz-orbit{position:absolute;left:70%;top:44.6%;width:57.5%;height:82.1%;border-radius:50%;
+  transform:translate(-50%,-50%);animation:czOrbit 48s linear infinite}
+.cz-orbit i{position:absolute;left:50%;top:0;width:.9rem;height:.9rem;margin:-.45rem 0 0 -.45rem;border-radius:50%;background:#fff;box-shadow:0 0 .9rem rgba(185,168,255,.9)}
+@keyframes czOrbit{from{transform:translate(-50%,-50%) rotate(0)}to{transform:translate(-50%,-50%) rotate(360deg)}}
+html.home-cosmos #hero{background:none;border-color:transparent;box-shadow:none;min-height:21rem;padding:1rem 0 1.2rem}
+html.home-cosmos .hero-bg,html.home-cosmos .hero-art{display:none}
+html.home-cosmos .hero-content{max-width:46%}
+html.home-cosmos .kicker{color:#c4b5ff}
+html.home-cosmos .hero h1{font-size:2.9rem;font-weight:700;letter-spacing:-.01em}
+html.home-cosmos .hero p{-webkit-line-clamp:2}
+html.home-cosmos .dots{position:static;width:auto;justify-content:flex-start;margin-top:1.4rem}
+html.home-cosmos.on-home #modeChip,html.home-cosmos.on-home #netChip:not(.off){display:none}
+html.home-cosmos #sec-home .row-title::before{content:"";display:inline-block;width:.55rem;height:.55rem;margin-right:.7rem;border-radius:50%;
+  border:2px solid #c4b5ff;box-shadow:0 0 .5rem rgba(196,181,255,.6);vertical-align:.1rem}
+html.home-cosmos #sec-home .tile.is-focused .tile-art{box-shadow:0 0 0 .14rem #fff,0 .5rem 1.6rem rgba(140,110,255,.45)}
+
+/* ---------- Modo Infantil: visual próprio ----------
+   O mesmo Onix, mais redondo e colorido: boas-vindas com o gatinho, o gatinho no lugar do
+   desenho do menu, desenhinhos no canto e foco amarelo. Vale em qualquer estilo de tela inicial. */
+.kids-hello,.nav-kitty,#kidsDeco{display:none}
+html.kids .kids-hello{display:flex;align-items:center;justify-content:space-between;gap:1rem;min-height:12.5rem;padding:1.4rem 2rem 0 2.4rem;margin-bottom:.4rem;
+  border-radius:2rem;overflow:hidden;border:1px solid rgba(255,255,255,.14);
+  background:radial-gradient(60% 120% at 80% 100%,rgba(255,158,196,.22),transparent 70%),radial-gradient(50% 100% at 10% 0%,rgba(142,197,255,.18),transparent 70%),linear-gradient(160deg,#1a1b26,#0f1016)}
+.kh-txt{padding-bottom:1.4rem}
+.kh-hi{font-size:2.8rem;font-weight:800;line-height:1.05;letter-spacing:-.01em}
+.kh-sub{font-size:1.15rem;color:var(--muted);margin-top:.5rem}
+.kh-art{flex:none;align-self:flex-end;width:28rem;height:12rem}
+html.kids .nav-art{display:none}
+html.kids .nav-kitty{display:block;width:80%;max-height:100%}
+.kd-tail{transform-box:fill-box;transform-origin:0% 96%;animation:kittyTail 1.4s ease-in-out infinite alternate}
+html.kids.on-home #kidsDeco{display:block;position:fixed;z-index:0;right:1rem;bottom:.5rem;width:34rem;height:auto;opacity:.45;pointer-events:none}
+html.kids #main>.topbar,html.kids #main>.section{position:relative;z-index:1}
+html.kids #cosmosArt{display:none!important}
+html.kids .nav-item{border-radius:1.6rem}
+html.kids .nav-item.is-focused{background:#ffd23f;border-color:#ffd23f;color:#1a1400}
+html.kids .nav-item.me.is-focused{background:#ffd23f;border-color:#ffd23f}
+html.kids .nav-item.me.is-focused .me-name{color:#1a1400}
+html.kids .row-title{font-size:1.4rem;font-weight:800}
+html.kids .row-title::before{content:"";display:inline-block;width:.7rem;height:.7rem;margin-right:.7rem;border-radius:50%;background:#ffd23f;
+  box-shadow:1rem 0 0 #ff9ec4,2rem 0 0 #7ee0c3;vertical-align:.12rem;margin-right:2.7rem}
+html.kids .tile-art{border-radius:1.6rem}
+html.kids #homeApps .tile{width:11rem}
+html.kids .tile.is-focused .tile-art{border-color:#ffd23f;box-shadow:0 0 0 .22rem #ffd23f,0 .6rem 1.6rem rgba(255,158,196,.45)}
+html.kids .tile.is-focused .tile-label{color:#ffd23f;font-weight:700}
+html.kids .grid.games .tile-art{border-radius:1.6rem}
 
 /* ---------- Camadas da 14.0.0 (perfis, boas-vindas, teclado, PIN, clima, celular) ----------
    Telas por cima do Onix, cada uma com o próprio foco. Ficam abaixo do aviso (#toast) e da tela de descanso. */
@@ -689,6 +742,19 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
     <circle cx="96" cy="14" r="1" fill="#fff" stroke="none" opacity=".4"/>
     <circle cx="70" cy="160" r="1" fill="#fff" stroke="none" opacity=".4"/>
     <path d="M44 12l-16 10" stroke-width="1.2" opacity=".35"/>
+  </svg><svg class="nav-kitty" viewBox="0 0 240 240" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <ellipse cx="120" cy="204" rx="80" ry="11" stroke-width="3" opacity=".4"/><g class="kd-tail"><path d="M150 192c34 4 46-24 34-44-6-10-18-8-16 2"/></g>
+    <path d="M94 120c-16 22-18 56-6 76h64c12-20 10-54-6-76" fill="#0e1015"/><path d="M108 160c4 6 20 6 24 0" stroke-width="3" opacity=".35"/>
+      <ellipse cx="106" cy="197" rx="11" ry="6" fill="#0e1015"/><ellipse cx="134" cy="197" rx="11" ry="6" fill="#0e1015"/>
+      <path d="M90 78l2-38 26 20z" fill="#0e1015"/><path d="M95 66l1-14 9 8z" fill="#ff9ec4" stroke="none" opacity=".7"/>
+      <path d="M150 78l-2-38-26 20z" fill="#0e1015"/><path d="M145 66l-1-14-9 8z" fill="#ff9ec4" stroke="none" opacity=".7"/>
+      <circle cx="120" cy="90" r="38" fill="#0e1015"/>
+      <g fill="#fff" stroke="none"><ellipse cx="105" cy="88" rx="4.5" ry="6.5"/><ellipse cx="135" cy="88" rx="4.5" ry="6.5"/><circle cx="106.5" cy="85.5" r="1.6" fill="#0e1015"/><circle cx="136.5" cy="85.5" r="1.6" fill="#0e1015"/></g>
+      <circle cx="96" cy="101" r="5" fill="#ff9ec4" stroke="none" opacity=".5"/><circle cx="144" cy="101" r="5" fill="#ff9ec4" stroke="none" opacity=".5"/>
+      <path d="M116 98h8l-4 4z" fill="#ff9ec4" stroke="#ff9ec4" stroke-width="2"/><path d="M112 106q4 5 8 0q4 5 8 0" stroke-width="3"/>
+      <g stroke-width="2" opacity=".6"><path d="M90 98l-20-4M90 104l-20 2M150 98l20-4M150 104l20 2"/></g>
+    <path d="M40 49.2l3.12 7.68 7.68 3.12-7.68 3.12-3.12 7.68-3.12-7.68-7.68-3.12 7.68-3.12z" fill="#ffd23f" stroke="none"/><path d="M205 131l2.6 6.4 6.4 2.6-6.4 2.6-2.6 6.4-2.6-6.4-6.4-2.6 6.4-2.6z" fill="#8ec5ff" stroke="none"/><path transform="translate(200 50) scale(1.1)" d="M0 9s-9-5.5-11.5-11C-13.3-6.2-10.8-11-6.3-11c2.6 0 4.3 1.5 5.1 2.9.8-1.4 2.5-2.9 5.1-2.9 4.5 0 7 4.8 5.2 9C9 3.5 0 9 0 9z" fill="#ff9ec4" stroke="none"/>
+    <g fill="#fff" stroke="none" opacity=".7"><circle cx="30" cy="150" r="2.5"/><circle cx="214" cy="96" r="2"/></g>
   </svg></div>
   <button class="f nav-item" data-section="inputs" tabindex="-1">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><path d="M7 10.5h7M11 7.5l3 3-3 3"/></svg><span>Entradas</span></button>
@@ -700,6 +766,41 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
 </nav>
 
 <main id="main">
+  <!-- Desenhinhos do Modo Infantil, no canto de baixo (só enfeite). -->
+  <svg id="kidsDeco" viewBox="0 0 640 260" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+    <path transform="translate(110 200) scale(1.3)" d="M-30 10h60a14 14 0 0 0-4-27 20 20 0 0 0-37-6 15 15 0 0 0-19 33z" fill="#16182a" stroke-width="3"/><path transform="translate(470 120) scale(1)" d="M-30 10h60a14 14 0 0 0-4-27 20 20 0 0 0-37-6 15 15 0 0 0-19 33z" fill="#16182a" stroke-width="3"/>
+    <g transform="translate(560 150)"><path d="M0 26c-4 18 6 30 0 50" stroke-width="2" opacity=".7"/><ellipse cy="0" rx="20" ry="25" fill="#ff9ec4" fill-opacity=".25" stroke="#ff9ec4" stroke-width="3"/><path d="M-4 24h8l-4 6z" fill="#ff9ec4" stroke="#ff9ec4" stroke-width="2"/></g>
+    <g transform="translate(300 190) scale(1.2)"><path d="M-26 4A26 7 0 0 1 26 -4" transform="rotate(-20)" stroke-width="3"/><circle r="12" fill="#16182a" stroke-width="3"/><path d="M26 -4A26 7 0 0 1 -26 4" transform="rotate(-20)" stroke-width="3"/></g>
+    <path d="M220 79.2l3.12 7.68 7.68 3.12-7.68 3.12-3.12 7.68-3.12-7.68-7.68-3.12 7.68-3.12z" fill="#ffd23f" stroke="none"/><path d="M620 31l2.6 6.4 6.4 2.6-6.4 2.6-2.6 6.4-2.6-6.4-6.4-2.6 6.4-2.6z" fill="#8ec5ff" stroke="none"/><path d="M380 231l2.6 6.4 6.4 2.6-6.4 2.6-2.6 6.4-2.6-6.4-6.4-2.6 6.4-2.6z" fill="#7ee0c3" stroke="none"/><path transform="translate(40 110) scale(1)" d="M0 9s-9-5.5-11.5-11C-13.3-6.2-10.8-11-6.3-11c2.6 0 4.3 1.5 5.1 2.9.8-1.4 2.5-2.9 5.1-2.9 4.5 0 7 4.8 5.2 9C9 3.5 0 9 0 9z" fill="#ff9ec4" stroke="none"/>
+    <g fill="#fff" stroke="none" opacity=".6"><circle cx="160" cy="60" r="2.5"/><circle cx="420" cy="40" r="2"/><circle cx="600" cy="240" r="2.2"/></g>
+  </svg>
+  <!-- Desenho do estilo Onix Cosmos (Configurações → Início). Só enfeite, atrás do destaque. -->
+  <div id="cosmosArt" aria-hidden="true">
+  <svg viewBox="0 0 800 560" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+    <defs>
+      <radialGradient id="czGlow" cx="560" cy="250" r="300" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#7c5cff" stop-opacity=".38"/><stop offset=".45" stop-color="#3a63ff" stop-opacity=".12"/><stop offset="1" stop-color="#3a63ff" stop-opacity="0"/></radialGradient>
+      <radialGradient id="czBody" cx="520" cy="200" r="140" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3b3566"/><stop offset=".6" stop-color="#15162a"/><stop offset="1" stop-color="#090a12"/></radialGradient>
+      <linearGradient id="czTail" x1="110" y1="440" x2="240" y2="505" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".85"/></linearGradient>
+      <clipPath id="czClip"><circle cx="560" cy="250" r="92"/></clipPath>
+    </defs>
+    <circle cx="560" cy="250" r="300" fill="url(#czGlow)" stroke="none"/>
+    <circle cx="560" cy="250" r="230" stroke-width="1.4" stroke-dasharray="0 9" opacity=".35"/>
+    <circle cx="560" cy="250" r="320" stroke-width="1.2" stroke-dasharray="0 11" opacity=".22"/>
+    <g transform="rotate(-20 560 250)"><path d="M380 250A180 46 0 0 1 740 250" stroke-width="3" opacity=".9"/></g>
+    <circle cx="560" cy="250" r="92" fill="url(#czBody)" stroke-width="3"/>
+    <g clip-path="url(#czClip)" stroke-width="1.6" opacity=".22"><path d="M470 215c60 22 120 22 180 0M466 262c64 24 128 24 192 0M490 305c46 15 94 15 140 0"/></g>
+    <path d="M500 182a84 84 0 0 1 112-6" stroke-width="2.4" opacity=".55"/>
+    <g transform="rotate(-20 560 250)"><path d="M740 250A180 46 0 0 1 380 250" stroke="#0a0b0e" stroke-width="12"/><path d="M740 250A180 46 0 0 1 380 250" stroke-width="3"/></g>
+    <circle cx="400" cy="527" r="7" fill="#fff" stroke="none" opacity=".8"/>
+    <circle cx="330" cy="330" r="12" fill="#0e0f16" stroke-width="2.2" opacity=".85"/>
+    <g transform="translate(724 452)"><circle r="17" fill="#0e0f16" stroke-width="2"/><path d="M-30 6A31 8 0 0 1 30 -6" stroke-width="1.8" transform="rotate(-14)" opacity=".8"/></g>
+    <path d="M110 440L240 505" stroke="url(#czTail)" stroke-width="2.4"/>
+    <circle cx="242" cy="506" r="3.4" fill="#fff" stroke="none"/>
+    <g stroke-width="1.6" opacity=".8"><path d="M712 70v16M704 78h16"/><path d="M360 300v12M354 306h12" opacity=".6"/><path d="M780 300v10M775 305h10" opacity=".6"/><path d="M640 520v12M634 526h12" opacity=".7"/><path d="M470 40v10M465 45h10" opacity=".5"/></g>
+    <g fill="#fff" stroke="none"><circle cx="420" cy="90" r="1.6" opacity=".7"/><circle cx="760" cy="180" r="1.4" opacity=".6"/><circle cx="330" cy="420" r="1.5" opacity=".5"/><circle cx="560" cy="470" r="1.2" opacity=".5"/><circle cx="690" cy="380" r="1.6" opacity=".6"/><circle cx="790" cy="40" r="1.3" opacity=".5"/><circle cx="300" cy="260" r="1.1" opacity=".45"/><circle cx="520" cy="20" r="1.4" opacity=".55"/><circle cx="210" cy="330" r="1.2" opacity=".4"/></g>
+  </svg>
+  <div class="cz-orbit"><i></i></div>
+  </div>
   <header class="topbar">
     <div>
       <div id="clock">--:--</div>
@@ -721,6 +822,27 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
   </header>
 
   <section class="section" id="sec-home" aria-label="Início">
+    <!-- Modo Infantil: boas-vindas com o gatinho do Onix (só aparece no perfil infantil). -->
+    <div class="kids-hello" aria-hidden="true">
+      <div class="kh-txt"><div class="kh-hi" id="kidsHi"></div><div class="kh-sub">O que vamos assistir hoje?</div></div>
+      <svg class="kh-art" viewBox="0 0 560 240" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+        <g stroke-width="11" opacity=".75"><path d="M150 236a150 150 0 0 1 300 0" stroke="#ff9ec4"/><path d="M168 236a132 132 0 0 1 264 0" stroke="#ffd23f"/><path d="M186 236a114 114 0 0 1 228 0" stroke="#7ee0c3"/><path d="M204 236a96 96 0 0 1 192 0" stroke="#8ec5ff"/></g>
+        <path transform="translate(150 218) scale(1.1)" d="M-30 10h60a14 14 0 0 0-4-27 20 20 0 0 0-37-6 15 15 0 0 0-19 33z" fill="#16182a" stroke-width="3"/><path transform="translate(452 222) scale(1)" d="M-30 10h60a14 14 0 0 0-4-27 20 20 0 0 0-37-6 15 15 0 0 0-19 33z" fill="#16182a" stroke-width="3"/>
+        <g transform="translate(222 30) scale(.86)" stroke-width="4.5"><g class="kd-tail"><path d="M150 192c34 4 46-24 34-44-6-10-18-8-16 2"/></g><path d="M94 120c-16 22-18 56-6 76h64c12-20 10-54-6-76" fill="#0e1015"/><path d="M108 160c4 6 20 6 24 0" stroke-width="3" opacity=".35"/>
+      <ellipse cx="106" cy="197" rx="11" ry="6" fill="#0e1015"/><ellipse cx="134" cy="197" rx="11" ry="6" fill="#0e1015"/>
+      <path d="M90 78l2-38 26 20z" fill="#0e1015"/><path d="M95 66l1-14 9 8z" fill="#ff9ec4" stroke="none" opacity=".7"/>
+      <path d="M150 78l-2-38-26 20z" fill="#0e1015"/><path d="M145 66l-1-14-9 8z" fill="#ff9ec4" stroke="none" opacity=".7"/>
+      <circle cx="120" cy="90" r="38" fill="#0e1015"/>
+      <g fill="#fff" stroke="none"><ellipse cx="105" cy="88" rx="4.5" ry="6.5"/><ellipse cx="135" cy="88" rx="4.5" ry="6.5"/><circle cx="106.5" cy="85.5" r="1.6" fill="#0e1015"/><circle cx="136.5" cy="85.5" r="1.6" fill="#0e1015"/></g>
+      <circle cx="96" cy="101" r="5" fill="#ff9ec4" stroke="none" opacity=".5"/><circle cx="144" cy="101" r="5" fill="#ff9ec4" stroke="none" opacity=".5"/>
+      <path d="M116 98h8l-4 4z" fill="#ff9ec4" stroke="#ff9ec4" stroke-width="2"/><path d="M112 106q4 5 8 0q4 5 8 0" stroke-width="3"/>
+      <g stroke-width="2" opacity=".6"><path d="M90 98l-20-4M90 104l-20 2M150 98l20-4M150 104l20 2"/></g></g>
+        <path d="M92 48.3l3.38 8.32 8.32 3.38-8.32 3.38-3.38 8.32-3.38-8.32-8.32-3.38 8.32-3.38z" fill="#ffd23f" stroke="none"/><path d="M520 31l2.6 6.4 6.4 2.6-6.4 2.6-2.6 6.4-2.6-6.4-6.4-2.6 6.4-2.6z" fill="#fff" stroke="none"/><path d="M70 161.9l2.34 5.76 5.76 2.34-5.76 2.34-2.34 5.76-2.34-5.76-5.76-2.34 5.76-2.34z" fill="#8ec5ff" stroke="none"/><path d="M500 130.1l2.86 7.04 7.04 2.86-7.04 2.86-2.86 7.04-2.86-7.04-7.04-2.86 7.04-2.86z" fill="#ff9ec4" stroke="none"/>
+        <path transform="translate(470 80) scale(1.2)" d="M0 9s-9-5.5-11.5-11C-13.3-6.2-10.8-11-6.3-11c2.6 0 4.3 1.5 5.1 2.9.8-1.4 2.5-2.9 5.1-2.9 4.5 0 7 4.8 5.2 9C9 3.5 0 9 0 9z" fill="#ff9ec4" stroke="none"/><path transform="translate(120 118) scale(0.8)" d="M0 9s-9-5.5-11.5-11C-13.3-6.2-10.8-11-6.3-11c2.6 0 4.3 1.5 5.1 2.9.8-1.4 2.5-2.9 5.1-2.9 4.5 0 7 4.8 5.2 9C9 3.5 0 9 0 9z" fill="#ff9ec4" stroke="none"/>
+        <g transform="translate(60 40) scale(0.9)"><path d="M-26 4A26 7 0 0 1 26 -4" transform="rotate(-20)" stroke-width="3"/><circle r="12" fill="#16182a" stroke-width="3"/><path d="M26 -4A26 7 0 0 1 -26 4" transform="rotate(-20)" stroke-width="3"/></g>
+        <g fill="#fff" stroke="none" opacity=".7"><circle cx="40" cy="110" r="2.5"/><circle cx="540" cy="200" r="2"/><circle cx="380" cy="20" r="2"/><circle cx="190" cy="30" r="2.2"/></g>
+      </svg>
+    </div>
     <div class="hero glass" id="hero">
       <div class="hero-bg"></div>
       <div class="hero-art" id="heroArt"></div>
@@ -1039,7 +1161,7 @@ const CHOICES = Object.freeze({
   heroFx: [['fade', 'Esmaecer'], ['slide', 'Deslizar'], ['zoom', 'Zoom']],
   lang: [['auto', 'Automático'], ['pt', 'Português'], ['es', 'Español']],
   soundFx: [['chime', 'Onix Chime'], ['crystal', 'Crystal'], ['sharp', 'Sharpness'], ['velvet', 'Velvet'], ['pulse', 'Pulse']],
-  homeStyle: [['glass', 'Onix Glass'], ['clean', 'Clean Glass']],
+  homeStyle: [['glass', 'Onix Glass'], ['clean', 'Clean Glass'], ['cosmos', 'Onix Cosmos']],
 });
 const settings = Object.assign({}, DEFAULTS);
 try {
@@ -1058,7 +1180,9 @@ function applySettings() {
   CHOICES.anim.forEach(c => cl.toggle('anim-' + c[0], settings.anim === c[0]));
   CHOICES.heroFx.forEach(c => cl.toggle('hero-' + c[0], settings.heroFx === c[0]));
   cl.toggle('tab-fx', settings.tabFx);
-  cl.toggle('home-clean', settings.homeStyle === 'clean');
+  const kid = cl.contains('kids');   // o Modo Infantil tem o visual próprio
+  cl.toggle('home-clean', !kid && settings.homeStyle === 'clean');
+  cl.toggle('home-cosmos', !kid && settings.homeStyle === 'cosmos');
 }
 applySettings();
 
@@ -2015,12 +2139,15 @@ const PICK_PROVIDERS = Object.freeze({
   "Onix Chime (vidro), Crystal (cristal brilhante), Sharpness (clique seco), Velvet (grave e macio) ou Pulse (digital). OK troca e toca uma amostra.": "Onix Chime (vidrio), Crystal (cristal brillante), Sharpness (clic seco), Velvet (grave y suave) o Pulse (digital). OK cambia y reproduce una muestra.",
   " (ligue \"Sons do menu\" para ouvir)": " (activa \"Sonidos del menú\" para oírlo)",
   "Estilo da tela inicial": "Estilo de la pantalla de inicio",
-  "Onix Glass mostra tudo. Clean Glass é minimalista: destaque sem caixa, menos texto, botões só com ícone e nomes dos apps só no item focado. OK troca.": "Onix Glass muestra todo. Clean Glass es minimalista: destacado sin caja, menos texto, botones solo con ícono y nombres de las apps solo en el elemento enfocado. OK cambia.",
-  "*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), o novo *Clean Glass* é minimalista: destaque sem caixa, menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em *Configurações → Início*.": "*Estilo de la pantalla de inicio:* además de *Onix Glass* (el de siempre), el nuevo *Clean Glass* es minimalista: destacado sin caja, menos texto, botones de arriba solo con ícono (el nombre aparece al enfocarlos) y el nombre de las apps solo en el elemento seleccionado. En *Configuración → Inicio*.",
+  "Onix Glass é o de sempre. Clean Glass é minimalista: relógio no centro e só os apps e as indicações. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.": "Onix Glass es el de siempre. Clean Glass es minimalista: reloj en el centro y solo las apps y las recomendaciones. Onix Cosmos es artístico, con el planeta de Onix, órbitas y estrellas dibujados. OK cambia.",
+  "*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), dois estilos novos. *Clean Glass* é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. *Onix Cosmos* é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em *Configurações → Início*.": "*Estilo de la pantalla de inicio:* además de *Onix Glass* (el de siempre), dos estilos nuevos. *Clean Glass* es minimalista: reloj grande en el centro, las apps en una fila centrada y las recomendaciones en portadas pequeñas. *Onix Cosmos* es artístico: el planeta de Onix, órbitas, lunas y estrellas dibujados detrás del destacado. En *Configuración → Inicio*.",
   "*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.": "*Sonido de navegación:* cuatro sonidos nuevos además de *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* y *Pulse*. En *Configuración → Inicio*, OK cambia y reproduce una muestra.",
   "Os sons do menu tocam com menos atraso: a saída de áudio da TV não \"dorme\" mais entre um toque e outro.": "Los sonidos del menú suenan con menos retraso: la salida de audio de la TV ya no se \"duerme\" entre un toque y otro.",
   "O perfil no topo do menu, quando selecionado, fica branco com o nome legível (antes o texto ficava preto sobre o fundo escuro).": "El perfil arriba del menú, al seleccionarlo, se pone blanco con el nombre legible (antes el texto quedaba negro sobre el fondo oscuro).",
-  "O gatinho do cartão *Sobre* se mexe de novo com o *Modo desempenho máximo* ou as *Transições suaves* desligadas.": "El gatito de la tarjeta *Acerca de* se mueve de nuevo con el *Modo de máximo rendimiento* o las *Transiciones suaves* desactivadas."
+  "O gatinho do cartão *Sobre* se mexe de novo com o *Modo desempenho máximo* ou as *Transições suaves* desligadas.": "El gatito de la tarjeta *Acerca de* se mueve de nuevo con el *Modo de máximo rendimiento* o las *Transiciones suaves* desactivadas.",
+  "Oi, {0}!": "¡Hola, {0}!",
+  "O que vamos assistir hoje?": "¿Qué vamos a ver hoy?",
+  "*Modo Infantil* com visual próprio: boas-vindas com o nome da criança e o gatinho do Onix num arco-íris, o gatinho no menu, desenhinhos no canto da tela e foco amarelo, mais redondo e colorido.": "*Modo Infantil* con estilo propio: bienvenida con el nombre del niño y el gatito de Onix sobre un arcoíris, el gatito en el menú, dibujitos en la esquina de la pantalla y foco amarillo, más redondo y colorido."
 });
 let picks = [];
 let netOnline = null;   // null = o Android ainda não disse
@@ -3604,7 +3731,7 @@ const OPTIONS = [
   { key: 'heroFx', name: 'Troca do destaque',     desc: 'Como uma indicação dá lugar à próxima: esmaecer, deslizar ou zoom. OK troca.' },
   { key: 'tabFx',  name: 'Transição entre abas',  desc: 'A aba nova aparece subindo de leve ao trocar pelo menu.' },
   { group: 'Início' },
-  { key: 'homeStyle', name: 'Estilo da tela inicial', desc: 'Onix Glass mostra tudo. Clean Glass é minimalista: destaque sem caixa, menos texto, botões só com ícone e nomes dos apps só no item focado. OK troca.' },
+  { key: 'homeStyle', name: 'Estilo da tela inicial', desc: 'Onix Glass é o de sempre. Clean Glass é minimalista: relógio no centro e só os apps e as indicações. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.' },
   { key: 'rotate', name: 'Trocar destaque sozinho', desc: 'Passa para a próxima indicação a cada 9 segundos.' },
   { key: 'h24',    name: 'Relógio de 24 horas',   desc: 'Desligado, mostra 1:00 em vez de 13:00.' },
   { key: 'sound',  name: 'Sons do menu',          desc: 'Toque suave ao navegar, abrir e voltar.' },
@@ -3634,8 +3761,9 @@ const OPTIONS = [
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
   { version: '14.1.0 beta', date: 'outubro de 2026', items: [
-    ['new', '*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), o novo *Clean Glass* é minimalista: destaque sem caixa, menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em *Configurações → Início*.'],
+    ['new', '*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), dois estilos novos. *Clean Glass* é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. *Onix Cosmos* é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em *Configurações → Início*.'],
     ['new', '*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.'],
+    ['new', '*Modo Infantil* com visual próprio: boas-vindas com o nome da criança e o gatinho do Onix num arco-íris, o gatinho no menu, desenhinhos no canto da tela e foco amarelo, mais redondo e colorido.'],
     ['fix', 'Os sons do menu tocam com menos atraso: a saída de áudio da TV não "dorme" mais entre um toque e outro.'],
     ['bug', 'O perfil no topo do menu, quando selecionado, fica branco com o nome legível (antes o texto ficava preto sobre o fundo escuro).'],
     ['bug', 'O gatinho do cartão *Sobre* se mexe de novo com o *Modo desempenho máximo* ou as *Transições suaves* desligadas.'],
@@ -4183,6 +4311,7 @@ function renderMe() {
   if (!pr) return;
   avatarFill($('#meAv'), pr);
   $('#meName').textContent = pr.name;
+  $('#kidsHi').textContent = t('Oi, {0}!', pr.name);
   $('#meBtn').setAttribute('aria-label', t('Perfil: {0}. Trocar perfil', pr.name));
 }
 function switchProfile() {
@@ -4284,7 +4413,7 @@ btnAct('peSave', () => {
   saveProfiles();
   const id = draft.id; draft = null;
   closePane('profileEdit', true);
-  if (id === profileId) { renderMe(); document.documentElement.classList.toggle('kids', pr.kids); renderApps(); kidsTick(); }
+  if (id === profileId) { renderMe(); document.documentElement.classList.toggle('kids', pr.kids); applySettings(); renderApps(); kidsTick(); }
   toast('Perfil salvo');
   openProfiles(manageProfiles, id);
 });
@@ -4345,6 +4474,7 @@ function enterProfile(pr, quiet) {
   loadHome();
   loadUsed();
   document.documentElement.classList.toggle('kids', pr.kids);
+  applySettings();
   closeAllPanes();
   resolveLang();
   if (LANG !== langWas) relang(); else { renderApps(); renderSettings(); }
@@ -4892,6 +5022,7 @@ function showSection(name) {
   $$('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + name));
   $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.section === name));
   $('.top-actions').hidden = name !== 'home';
+  document.documentElement.classList.toggle('on-home', name === 'home');   // estilos da tela inicial mexem no topo só aqui
   $('#wxBtn').classList.toggle('home', name === 'home');
   $('#main').scrollTop = 0;
 }
