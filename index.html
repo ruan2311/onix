@@ -896,7 +896,7 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
 
 <div id="toast" role="status" aria-live="polite"></div>
 
-<div id="saver" aria-hidden="true"><canvas id="saverSky" width="0" height="0"></canvas><canvas id="saverCanvas" width="0" height="0"></canvas><div id="saverClock"></div><div id="saverQr" hidden><span id="saverQrCode"></span><span>Controle pelo celular<small>Aponte a câmera do celular</small></span></div></div>
+<div id="saver" aria-hidden="true"><canvas id="saverSky" width="0" height="0"></canvas><canvas id="saverCanvas" width="0" height="0"></canvas><div id="saverClock"></div><div id="saverQr" hidden><span id="saverQrCode"></span><span>Controle web<small>Aponte a câmera do celular</small></span></div></div>
 
 <script>
 // Aparelhos com WebView antigo (Android TV 9 sem atualização): repõe o pouco de API recente que o Onix usa.
@@ -996,7 +996,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '14.0.2 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '14.0.3 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1454,19 +1454,26 @@ const ES = Object.freeze({
   "Meu perfil": "Mi perfil",
   "Nenhum app liberado. Peça para um adulto liberar em Gerenciar perfis.": "Ninguna app permitida. Pide a un adulto que las permita en Administrar perfiles.",
   "Controle pelo celular": "Control desde el celular",
+  "Controle web": "Control web",
+  "Ligue o Controle web em Configurações": "Activa el Control web en Configuración",
+  "Baixar o Onix Controle": "Descargar Onix Controle",
+  "Mostra o QR code para baixar no celular o app que controla a TV inteira, dentro de qualquer app. Só para Google TV e celular Android (não funciona em iPhone, nem em TVs Samsung e LG).": "Muestra el código QR para descargar en el celular la app que controla toda la TV, dentro de cualquier app. Solo para Google TV y celular Android (no funciona en iPhone, ni en TVs Samsung y LG).",
+  "Aponte a câmera do celular (Android) para o código. Ele abre a página do Onix Controle no GitHub, com o link para baixar o app.": "Apunta la cámara del celular (Android) al código. Abre la página de Onix Controle en GitHub, con el enlace para descargar la app.",
+  "Funciona só em Google TV, com celular Android 6 ou mais novo (não funciona em iPhone, nem em TVs Samsung e LG). Na primeira vez, o app pede o código que aparece na TV.": "Funciona solo en Google TV, con celular Android 6 o más nuevo (no funciona en iPhone, ni en TVs Samsung y LG). La primera vez, la app pide el código que aparece en la TV.",
   "Fechar": "Cerrar",
   "Nenhum app com esse nome.": "Ninguna app con ese nombre.",
   "Esperando a foto…": "Esperando la foto…",
   "Foto recebida do celular": "Foto recibida del celular",
   "Celular conectado. Ele já pode controlar o Onix.": "Celular conectado. Ya puede controlar Onix.",
   "A TV não está numa rede Wi-Fi ou cabo agora": "La TV no está en una red Wi-Fi o por cable ahora",
-  "Ligue o Controle pelo celular em Configurações": "Activa el Control desde el celular en Configuración",
   "Se o celular já está conectado, abra o controle: ele mostra a tela da foto sozinho. Se não, aponte a câmera para o código.": "Si el celular ya está conectado, abre el control: muestra la pantalla de la foto solo. Si no, apunta la cámara al código.",
   "Aponte a câmera do celular para o código. Uma página abre no navegador e vira controle e teclado, sem instalar nada.": "Apunta la cámara del celular al código. Se abre una página en el navegador que funciona como control y teclado, sin instalar nada.",
   "O celular precisa estar no mesmo Wi-Fi da TV. Depois da primeira vez, ele conecta sozinho.": "El celular debe estar en la misma red Wi-Fi que la TV. Después de la primera vez, se conecta solo.",
   "O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.": "El celular se vuelve control y teclado, sin instalar nada. Funciona con Onix en pantalla, en la misma red Wi-Fi.",
   "Conectar celular": "Conectar celular",
-  "*Onix Controle:* um app para o celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. Está na página do Onix no GitHub.": "*Onix Controle:* una app para el celular (Android) que controla toda la TV, dentro de cualquier app, por el Wi-Fi de casa. Está en la página de Onix en GitHub.",
+  "*Baixar o Onix Controle:* em *Configurações → Controle pelo celular*, um QR code leva o celular à página do app que controla a TV inteira. Só para Google TV e celular Android (não funciona em iPhone, nem em TVs Samsung e LG).": "*Descargar Onix Controle:* en *Configuración → Control desde el celular*, un código QR lleva el celular a la página de la app que controla toda la TV. Solo para Google TV y celular Android (no funciona en iPhone, ni en TVs Samsung y LG).",
+  "O controle que abre no navegador do celular, pelo QR code, agora se chama *Controle web*.": "El control que se abre en el navegador del celular, por el código QR, ahora se llama *Control web*.",
+  "*Onix Controle:* um app para o celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. Só para Google TV e celular Android (não funciona em iPhone, nem em TVs Samsung e LG). Está na página do Onix no GitHub.": "*Onix Controle:* una app para el celular (Android) que controla toda la TV, dentro de cualquier app, por el Wi-Fi de casa. Solo para Google TV y celular Android (no funciona en iPhone, ni en TVs Samsung y LG). Está en la página de Onix en GitHub.",
   "A tecla de *configurações* do controle da TV (e do app *Onix Controle*) abre as configurações da TV com o Onix na tela. No Modo Infantil, ela não abre nada.": "La tecla de *configuración* del control de la TV (y de la app *Onix Controle*) abre la configuración de la TV con Onix en pantalla. En el Modo Infantil, no abre nada.",
   "*Conectar celular* saiu do menu e foi para *Configurações → Controle pelo celular*, logo abaixo de Perfil.": "*Conectar celular* salió del menú y pasó a *Configuración → Control desde el celular*, justo debajo de Perfil.",
   "*Teclado na tela* novo: fileira de números, tecla de maiúscula, *Apagar* ao lado das letras, acentos e sinais na tecla *áé* e um contador de letras. As teclas ficam sobre um fundo escuro, sem a tela de trás aparecendo.": "*Teclado en pantalla* nuevo: fila de números, tecla de mayúscula, *Borrar* al lado de las letras, acentos y signos en la tecla *áé* y un contador de letras. Las teclas quedan sobre un fondo oscuro, sin que se vea la pantalla de atrás.",
@@ -3500,9 +3507,10 @@ const OPTIONS = [
   { act: 'profiles', name: 'Gerenciar perfis', desc: 'Crie, edite ou exclua perfis, inclusive os infantis.' },
   { group: 'Controle pelo celular', phone: true },
   { act: 'remoteBig', phone: true, name: 'Conectar celular', desc: 'Mostra o QR code: aponte a câmera do celular e ele vira controle e teclado.' },
-  { key: 'remote', phone: true, name: 'Controle pelo celular', desc: 'O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.' },
+  { key: 'remote', phone: true, name: 'Controle web', desc: 'O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.' },
   { key: 'remoteQr', phone: true, name: 'QR code na tela de descanso', desc: 'Quando nenhum celular está conectado, a tela de descanso mostra o QR code, em tom escuro, para conectar sem usar o controle da TV.' },
   { act: 'remoteForget', phone: true, name: 'Desconectar os celulares', desc: 'Cada celular precisa ler o QR code de novo para voltar.' },
+  { act: 'controleApp', phone: true, name: 'Baixar o Onix Controle', desc: 'Mostra o QR code para baixar no celular o app que controla a TV inteira, dentro de qualquer app. Só para Google TV e celular Android (não funciona em iPhone, nem em TVs Samsung e LG).' },
   { group: 'Idioma' },
   { key: 'lang',   name: 'Idioma',                desc: 'Português ou espanhol. Automático segue o idioma da TV. OK troca.' },
   { group: 'Desempenho' },
@@ -3543,8 +3551,12 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '14.0.3 beta', date: 'outubro de 2026', items: [
+    ['new', '*Baixar o Onix Controle:* em *Configurações → Controle pelo celular*, um QR code leva o celular à página do app que controla a TV inteira. Só para Google TV e celular Android (não funciona em iPhone, nem em TVs Samsung e LG).'],
+    ['fix', 'O controle que abre no navegador do celular, pelo QR code, agora se chama *Controle web*.'],
+  ] },
   { version: '14.0.2 beta', date: 'outubro de 2026', items: [
-    ['new', '*Onix Controle:* um app para o celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. Está na página do Onix no GitHub.'],
+    ['new', '*Onix Controle:* um app para o celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. Só para Google TV e celular Android (não funciona em iPhone, nem em TVs Samsung e LG). Está na página do Onix no GitHub.'],
     ['bug', 'A tecla de *configurações* do controle da TV (e do app *Onix Controle*) abre as configurações da TV com o Onix na tela. No Modo Infantil, ela não abre nada.'],
   ] },
   { version: '14.0.1 beta', date: 'outubro de 2026', items: [
@@ -3734,6 +3746,7 @@ function renderSettings() {
     else if (o.act === 'profiles') b._act = () => openProfiles(true);
     else if (o.act === 'weather') b._act = toggleWeather;
     else if (o.act === 'remoteBig') b._act = () => phoneOpen('qr');
+    else if (o.act === 'controleApp') b._act = () => phoneOpen('app');
     else if (o.act === 'remoteForget') {
       if (remoteInfo) b.querySelector('.opt-desc').textContent = t(remoteInfo.devices === 1 ? '1 celular conectado. Cada um precisa ler o QR code de novo para voltar.' : '{0} celulares conectados. Cada um precisa ler o QR code de novo para voltar.', remoteInfo.devices);
       b._act = () => { Bridge.remoteForget(); toast('Celulares desconectados'); };
@@ -4711,14 +4724,16 @@ function onRemoteInfo(ev) {
   if (ev === 'paired') toast('Celular conectado. Ele já pode controlar o Onix.');
 }
 
-// Camada com o QR grande: para a foto do perfil (o celular já abre a tela da foto) ou só para conectar.
+// Camada com o QR grande: para a foto do perfil (o celular já abre a tela da foto), só para conectar
+// ou ('app') para baixar o Onix Controle, o app de celular que controla a TV inteira.
+const CONTROLE_URL = 'https://github.com/ruan2311/onix#onix-controle-app-de-celular';
 let phoneMode = 'qr';
 function phoneOpen(mode) {
   phoneMode = mode;
   readRemoteInfo();
-  if (!remoteInfo || !remoteInfo.on || !remoteInfo.url) {
+  if (mode !== 'app' && (!remoteInfo || !remoteInfo.on || !remoteInfo.url)) {
     photoCb = null;
-    toast(settings.remote ? 'A TV não está numa rede Wi-Fi ou cabo agora' : 'Ligue o Controle pelo celular em Configurações');
+    toast(settings.remote ? 'A TV não está numa rede Wi-Fi ou cabo agora' : 'Ligue o Controle web em Configurações');
     return;
   }
   openPane('phonePane', { back: () => { photoCb = null; closePane('phonePane'); pushRemote(); } });
@@ -4731,10 +4746,19 @@ function askPhoto(cb) {
   phoneOpen('photo');
 }
 function renderPhonePane() {
+  if (phoneMode === 'app') {
+    const svg = qrSvg(CONTROLE_URL);
+    $('#ppQr').replaceChildren(...(svg ? [svg] : []));
+    $('#ppTitle').textContent = 'Onix Controle';
+    $('#ppText').textContent = t('Aponte a câmera do celular (Android) para o código. Ele abre a página do Onix Controle no GitHub, com o link para baixar o app.');
+    $('#ppNote').textContent = t('Funciona só em Google TV, com celular Android 6 ou mais novo (não funciona em iPhone, nem em TVs Samsung e LG). Na primeira vez, o app pede o código que aparece na TV.');
+    $('#ppWait').hidden = true;
+    return;
+  }
   if (!remoteInfo) return;
   const svg = remoteInfo.url && qrSvg(remoteInfo.url);
   $('#ppQr').replaceChildren(...(svg ? [svg] : []));
-  $('#ppTitle').textContent = t(phoneMode === 'photo' ? 'Foto do celular' : 'Controle pelo celular');
+  $('#ppTitle').textContent = t(phoneMode === 'photo' ? 'Foto do celular' : 'Controle web');
   $('#ppText').textContent = t(phoneMode === 'photo'
     ? 'Se o celular já está conectado, abra o controle: ele mostra a tela da foto sozinho. Se não, aponte a câmera para o código.'
     : 'Aponte a câmera do celular para o código. Uma página abre no navegador e vira controle e teclado, sem instalar nada.');

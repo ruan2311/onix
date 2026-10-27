@@ -60,7 +60,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 > Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
 
-**Onix Controle (app para el celular Android):** convierte el celular en el control remoto de toda la TV (Google TV, en el mismo Wi-Fi), dentro de cualquier app. Descárgalo en el celular: **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.2/onix-controle.apk)**. Al abrirlo, elige tu TV, escribe el código de 6 caracteres que aparece en la TV y listo. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
+**Onix Controle (app para el celular Android):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. **Solo para Google TV y celular Android** (no funciona en iPhone, ni en TVs Samsung y LG). Descárgalo en el celular: **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.2/onix-controle.apk)**. Al abrirlo, elige tu TV, escribe el código de 6 caracteres que aparece en la TV y listo. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
 
 ---
 
@@ -73,7 +73,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 - **Controle pelo celular.** Quando nenhum celular está conectado, a tela de descanso mostra um QR code discreto: aponte a câmera do celular e ele vira controle e teclado, sem instalar nada e sem precisar do controle da TV. Depois, salve o controle na tela inicial do celular e ele abre num toque, já conectado. Setas e OK, busca digitando com o teclado do próprio celular e "Seus apps" organizados na tela do celular. Funciona com o Onix na tela, no Android TV e no Google TV.
 - **Clima na tela inicial (opcional).** A temperatura ao lado do relógio e, com OK, a previsão das próximas horas e dos próximos 5 dias (dados do Open-Meteo). O Onix não detecta onde você está: só usa a cidade que você escolher nas Configurações.
 
-**Novo: [Onix Controle](#onix-controle-app-de-celular)**, um app de celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa.
+**Novo: [Onix Controle](#onix-controle-app-de-celular)**, um app de celular que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. **Só para Google TV e celular Android** (não funciona em iPhone, nem em TVs Samsung e LG).
 
 Na 13.7.5: os jogos ganharam o visual do Onix e fases. Na 13.7.4: o Onix passou a falar **espanhol**.
 
@@ -464,6 +464,8 @@ adb shell pm disable-user --user 0 com.google.android.tvlauncher
 
 <img src="controle/res/mipmap-xxxhdpi/icon.png" alt="Ícone do Onix Controle" width="72" align="right">
 
+> ⚠️ **Só para Google TV e celular Android.** Não funciona em iPhone, nem em TVs Samsung e LG.
+
 Um app para o **celular Android** que vira o **controle remoto da TV inteira**: dentro da Netflix, do YouTube, das configurações e, claro, no Onix. Ele usa o mesmo sistema de controle do app oficial do Google TV, direto pelo Wi-Fi de casa.
 
 ✅ *Testado numa Philips Google TV (Android TV 14).*
@@ -474,7 +476,7 @@ Um app para o **celular Android** que vira o **controle remoto da TV inteira**: 
 
 ### O que ele faz
 - **Setas ou "Deslizar":** use o direcional ou deslize o dedo na tela (cada deslizada é um passo; um toque é **OK**). Segurar uma seta repete.
-- **Ligar/desligar, Voltar, Início** e **Ajustes da TV**.
+- **Ligar/desligar, Voltar** e **Início**.
 - **Volume e mudo**, com o nível atual na tela. Com o app aberto, os **botões de volume do celular** mudam o volume da TV.
 - **Mídia:** voltar, tocar/pausar e avançar.
 - **Teclado:** abriu uma busca na TV? O teclado do celular aparece sozinho, com o nome do campo. Digite e apague normalmente, com ditado e corretor.
@@ -483,7 +485,7 @@ Um app para o **celular Android** que vira o **controle remoto da TV inteira**: 
 - Português e espanhol, no visual escuro do Onix.
 
 ### Instalar
-1. No celular, abra este link no navegador e baixe o arquivo:
+1. No celular, abra este link no navegador e baixe o arquivo (ou, na TV, vá em **Configurações → Controle pelo celular → Baixar o Onix Controle** e aponte a câmera do celular para o QR code):
    **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.2/onix-controle.apk)**
 2. Toque no arquivo baixado. Se o Android pedir, permita **instalar apps desta fonte** para o navegador (ou para o app de arquivos) e volte.
 3. Toque em **Instalar**. Se o **Play Protect** avisar que o app é desconhecido, toque em **Mais detalhes → Instalar mesmo assim** (o aviso aparece porque o app não vem da Play Store; o código está todo neste GitHub).
@@ -499,8 +501,8 @@ Em **Configurações** (a engrenagem, no alto) → **Atualização**, toque em *
 
 ### E o QR code do Onix?
 São dois controles diferentes, e os dois continuam:
-- **QR code do Onix:** não instala nada, abre no navegador de qualquer celular (iPhone também), mas só controla o **Onix**.
-- **Onix Controle:** precisa instalar (só Android), mas controla a **TV inteira**, em qualquer app.
+- **Controle web** (o QR code do Onix): não instala nada, abre no navegador de qualquer celular (iPhone também), mas só controla o **Onix**.
+- **Onix Controle:** precisa instalar (só celular Android e só Google TV), mas controla a **TV inteira**, em qualquer app.
 
 ---
 

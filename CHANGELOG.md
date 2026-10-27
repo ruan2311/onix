@@ -2,9 +2,14 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 14.0.3 beta (outubro de 2026)
+
+- **Baixar o Onix Controle:** em **Configurações → Controle pelo celular**, um QR code leva o celular à página do app que controla a TV inteira. Só para Google TV e celular Android (não funciona em iPhone, nem em TVs Samsung e LG).
+- O controle que abre no navegador do celular, pelo QR code, agora se chama **Controle web**.
+
 ## 14.0.2 beta (outubro de 2026)
 
-- **Onix Controle:** um app para o celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. Está na página do Onix no GitHub.
+- **Onix Controle:** um app para o celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. Só para Google TV e celular Android (não funciona em iPhone, nem em TVs Samsung e LG). Está na página do Onix no GitHub.
 - Bug: a tecla de **configurações** do controle da TV (e do app **Onix Controle**) abre as configurações da TV com o Onix na tela. No Modo Infantil, ela não abre nada.
 
 ## 14.0.1 beta (outubro de 2026)

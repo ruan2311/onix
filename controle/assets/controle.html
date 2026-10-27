@@ -82,7 +82,7 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
   border:1px solid rgba(255,255,255,.16);touch-action:none;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:13px;line-height:1.6;overflow:hidden}
 .pad .ripple{position:absolute;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;background:rgba(255,255,255,.25);pointer-events:none;animation:rip .35s ease-out forwards}
 @keyframes rip{from{transform:scale(.4);opacity:1}to{transform:scale(1.6);opacity:0}}
-.keys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.keys{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
 .keys button{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 0;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:12px}
 .keys svg{width:22px;height:22px}
 .row{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
@@ -141,7 +141,7 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
     <ul class="list" id="nearList"></ul>
     <div class="lbl">Ou digite o IP da TV</div>
     <div class="ip"><input id="ipIn" inputmode="decimal" placeholder="192.168.0.40" autocomplete="off"><button id="ipGo">Conectar</button></div>
-    <p class="hint">O celular precisa estar no mesmo Wi-Fi da TV. Funciona com Google TV e com o Onix. O IP fica na TV em Configurações → Rede e Internet → sua rede.</p>
+    <p class="hint">O celular precisa estar no mesmo Wi-Fi da TV. Funciona só com Google TV (com ou sem o Onix); não funciona em TVs Samsung e LG. O IP fica na TV em Configurações → Rede e Internet → sua rede.</p>
   </section>
 
   <!-- Código de pareamento -->
@@ -189,7 +189,6 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
     <div class="keys">
       <button data-k="4"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14l-5-5 5-5"/><path d="M4 9h10a6 6 0 0 1 0 12h-3"/></svg>Voltar</button>
       <button data-k="3"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Início</button>
-      <button data-k="176"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 7h10M18 7h2M4 17h4M12 17h8"/><circle cx="16" cy="7" r="2"/><circle cx="10" cy="17" r="2"/></svg>Ajustes da TV</button>
     </div>
 
     <div class="row">
@@ -230,7 +229,7 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
         <button class="cta" id="updBtn">Procurar atualização</button>
       </div>
     </div>
-    <p class="hint">Funciona com Google TV e com o Onix, no mesmo Wi-Fi. A conexão é direta com a TV, sem passar pela internet, e só fica aberta com o app na tela.</p>
+    <p class="hint">Funciona só com Google TV (com ou sem o Onix), no mesmo Wi-Fi; não funciona em TVs Samsung e LG. A conexão é direta com a TV, sem passar pela internet, e só fica aberta com o app na tela.</p>
   </section>
 </main>
 
@@ -247,7 +246,7 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '1.0.2';
+const APP_VERSION = '1.0.3';
 const $ = id => document.getElementById(id);
 const O = window.Onix;
 const ES = /^es\b/i.test(navigator.language || '');
@@ -256,7 +255,7 @@ const T = {
   'Controle': 'Control', 'Suas TVs': 'Tus TVs', 'Procurando TVs no Wi-Fi…': 'Buscando TVs en el Wi-Fi…', 'Ou digite o IP da TV': 'O escribe la IP de la TV',
   'Conectar': 'Conectar', 'Cancelar': 'Cancelar', 'Esquecer': 'Olvidar', 'Pareada': 'Vinculada', 'Toque para parear': 'Toca para vincular',
   'Nenhuma TV pareada ainda.': 'Ninguna TV vinculada todavía.', 'Nenhuma TV nova achada no Wi-Fi.': 'No se encontró ninguna TV nueva en el Wi-Fi.',
-  'O celular precisa estar no mesmo Wi-Fi da TV. Funciona com Google TV e com o Onix. O IP fica na TV em Configurações → Rede e Internet → sua rede.': 'El celular debe estar en el mismo Wi-Fi que la TV. Funciona con Google TV y con Onix. La IP está en la TV en Configuración → Red e Internet → tu red.',
+  'O celular precisa estar no mesmo Wi-Fi da TV. Funciona só com Google TV (com ou sem o Onix); não funciona em TVs Samsung e LG. O IP fica na TV em Configurações → Rede e Internet → sua rede.': 'El celular debe estar en el mismo Wi-Fi que la TV. Funciona solo con Google TV (con o sin Onix); no funciona en TVs Samsung y LG. La IP está en la TV en Configuración → Red e Internet → tu red.',
   'Digite o código da TV': 'Escribe el código de la TV', 'A TV está mostrando um código de 6 letras e números.': 'La TV muestra un código de 6 letras y números.',
   'Pedindo o código à TV…': 'Pidiendo el código a la TV…', 'Confira a TV: o código aparece em instantes.': 'Mira la TV: el código aparece en un momento.',
   'Conectando…': 'Conectando…', 'Conectado': 'Conectado', 'Sem conexão': 'Sin conexión', 'Conectando à TV…': 'Conectando a la TV…',
@@ -264,7 +263,7 @@ const T = {
   'Confira se a TV está ligada e se o celular está no mesmo Wi-Fi.': 'Revisa que la TV esté encendida y que el celular esté en el mismo Wi-Fi.',
   'Trocar de TV': 'Cambiar de TV', 'A TV não reconheceu este celular': 'La TV no reconoció este celular', 'Pareie de novo com o código que aparece na TV.': 'Vincula de nuevo con el código que aparece en la TV.',
   'Parear de novo': 'Vincular de nuevo', 'Não deu certo': 'No funcionó', 'Tentar de novo': 'Intentar de nuevo',
-  'Setas': 'Flechas', 'Deslizar': 'Deslizar', 'Voltar': 'Atrás', 'Início': 'Inicio', 'Ajustes da TV': 'Ajustes de la TV', 'Volume': 'Volumen', 'Mudo': 'Silencio',
+  'Setas': 'Flechas', 'Deslizar': 'Deslizar', 'Voltar': 'Atrás', 'Início': 'Inicio', 'Volume': 'Volumen', 'Mudo': 'Silencio',
   'Mídia': 'Multimedia', 'Abrir na TV': 'Abrir en la TV', 'na tela': 'en pantalla', 'Onix na tela': 'Onix en pantalla',
   'Digitar na TV': 'Escribir en la TV', 'Digite aqui, aparece na TV': 'Escribe aquí, aparece en la TV', 'Apagar tudo': 'Borrar todo', 'Enter': 'Enter',
   'Abra um campo de busca na TV. O que você digitar aqui aparece lá.': 'Abre un campo de búsqueda en la TV. Lo que escribas aquí aparece allá.',
@@ -278,7 +277,7 @@ const T = {
   'Baixando…': 'Descargando…', 'Instalar': 'Instalar', 'Abrindo o instalador…': 'Abriendo el instalador…',
   'Permita a instalação para o Onix Controle e toque em Instalar de novo.': 'Permite la instalación para Onix Controle y toca Instalar otra vez.',
   'Não deu para procurar agora. Confira a internet e tente de novo.': 'No se pudo buscar ahora. Revisa internet e inténtalo de nuevo.',
-  'Funciona com Google TV e com o Onix, no mesmo Wi-Fi. A conexão é direta com a TV, sem passar pela internet, e só fica aberta com o app na tela.': 'Funciona con Google TV y con Onix, en el mismo Wi-Fi. La conexión es directa con la TV, sin pasar por internet, y solo queda abierta con la app en pantalla.',
+  'Funciona só com Google TV (com ou sem o Onix), no mesmo Wi-Fi; não funciona em TVs Samsung e LG. A conexão é direta com a TV, sem passar pela internet, e só fica aberta com o app na tela.': 'Funciona solo con Google TV (con o sin Onix), en el mismo Wi-Fi; no funciona en TVs Samsung y LG. La conexión es directa con la TV, sin pasar por internet, y solo queda abierta con la app en pantalla.',
   'Deslize para mover': 'Desliza para mover', 'Toque para OK': 'Toca para OK', 'IP inválido': 'IP inválida',
   'O código tem 6 letras e números, como aparece na TV.': 'El código tiene 6 letras y números, como aparece en la TV.',
   'Código errado. Confira o que está na TV e tente de novo.': 'Código incorrecto. Revisa lo que aparece en la TV e inténtalo de nuevo.',
