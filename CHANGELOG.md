@@ -4,7 +4,7 @@ As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
 ## 14.1.0 beta (outubro de 2026)
 
-- **Estilo da tela inicial:** além do **Onix Glass** (o de sempre), o novo **Clean Glass** deixa só o essencial: menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em **Configurações → Início**.
+- **Estilo da tela inicial:** além do **Onix Glass** (o de sempre), o novo **Clean Glass** é minimalista: destaque sem caixa, menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em **Configurações → Início**.
 - **Som da navegação:** quatro sons novos além do **Onix Chime**: **Crystal**, **Sharpness**, **Velvet** e **Pulse**. Em **Configurações → Início**, OK troca e toca uma amostra.
 - Os sons do menu tocam com menos atraso: a saída de áudio da TV não "dorme" mais entre um toque e outro.
 - O perfil no topo do menu, quando selecionado, fica branco com o nome legível (antes o texto ficava preto sobre o fundo escuro).

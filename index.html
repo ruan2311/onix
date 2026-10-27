@@ -387,28 +387,32 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
 @keyframes tabIn{from{opacity:0;transform:translateY(.8rem)}to{opacity:1;transform:none}}
 
 /* ---------- Estilo da tela inicial: Clean Glass (Configurações → Início) ----------
-   O mesmo Onix com menos informação: sem enfeite no menu, sem o selo do aparelho (a rede só
-   aparece quando cai), botões do topo só com ícone (o nome aparece no focado), destaque mais baixo e sem sinopse, e o nome
-   dos apps só no item focado. Só esconde e encolhe: nada é recalculado. */
+   O mesmo Onix com o mínimo: sem enfeite no menu, sem o selo do aparelho (a rede só aparece
+   quando cai), relógio menor, clima só com a temperatura, botões do topo só com ícone (o nome
+   aparece no focado), destaque sem caixa, sinopse, categoria nem pontinhos, títulos das fileiras
+   discretos e o nome dos apps só no item focado. Só esconde e encolhe: nada é recalculado. */
 html.home-clean .nav-art,html.home-clean .brand-by,html.home-clean #modeChip,html.home-clean #netChip:not(.off),
-html.home-clean .wx-sub,html.home-clean .top-actions .btn span,html.home-clean .hero p,html.home-clean #sec-home .row-sub{display:none}
-html.home-clean #clock{font-size:3.8rem}
-html.home-clean #date{font-size:.95rem}
-html.home-clean .top-actions{gap:.6rem}
-html.home-clean #refreshBtn,html.home-clean #ramBtn,html.home-clean #tvSettingsBtn{padding:.7rem;border-radius:50%}
-html.home-clean .top-actions .btn svg{width:1.25rem;height:1.25rem}
+html.home-clean .wx-sub,html.home-clean .wx-temp span,html.home-clean .top-actions .btn span,html.home-clean #sec-home .row-sub,
+html.home-clean .hero p,html.home-clean .hero .kicker,html.home-clean .hero-bg,html.home-clean .dots,html.home-clean #heroNext span{display:none}
+html.home-clean .topbar{align-items:center;margin-bottom:1rem}
+html.home-clean #clock{font-size:2.9rem}
+html.home-clean #date{font-size:.9rem;margin-top:.25rem}
+html.home-clean .wx-ico{width:2.2rem;height:2.2rem}
+html.home-clean .wx-temp{font-size:1.6rem}
+html.home-clean .top-actions{gap:.5rem}
+html.home-clean #refreshBtn,html.home-clean #ramBtn,html.home-clean #tvSettingsBtn{padding:.65rem;border-radius:50%;background:transparent;border-color:transparent;color:var(--muted)}
+html.home-clean .top-actions .btn svg{width:1.3rem;height:1.3rem}
 /* Focado, o botão abre e mostra o nome. */
 html.home-clean .top-actions .btn.is-focused span{display:inline}
-html.home-clean #refreshBtn.is-focused,html.home-clean #ramBtn.is-focused,html.home-clean #tvSettingsBtn.is-focused{padding:.7rem 1.1rem;border-radius:2rem}
-html.home-clean .hero{min-height:13rem;padding:1.6rem 2rem}
-html.home-clean .hero-bg{opacity:.22}
-html.home-clean .hero h1{font-size:2rem;margin-bottom:1rem}
-html.home-clean .kicker{color:var(--muted)}
-html.home-clean .hero-art{width:12rem;height:12rem;margin-top:-6rem}
-html.home-clean .hero.is-pick .hero-art{width:7rem;height:10.5rem;margin-top:-5.9rem}
-html.home-clean .dots{width:12rem;bottom:.7rem}
-html.home-clean .hero.is-pick .dots{width:7rem}
-html.home-clean .row-title{font-size:1.05rem;font-weight:500;color:var(--muted)}
+html.home-clean #refreshBtn.is-focused,html.home-clean #ramBtn.is-focused,html.home-clean #tvSettingsBtn.is-focused{padding:.65rem 1.1rem;border-radius:2rem;background:rgba(255,255,255,.12);color:var(--text)}
+/* Destaque sem a caixa de vidro: só o título, os botões e a capa. */
+html.home-clean .hero{min-height:11rem;padding:.6rem 0 .4rem;background:none;border-color:transparent;box-shadow:none;justify-content:center}
+html.home-clean .hero h1{font-size:2.1rem;font-weight:600;margin-bottom:1.1rem}
+html.home-clean .hero-art{right:.5rem;width:10rem;height:10rem;margin-top:-5rem}
+html.home-clean .hero.is-pick .hero-art{width:6.6rem;height:9.9rem;margin-top:-4.95rem}
+html.home-clean .hero-art img{box-shadow:none}
+html.home-clean #heroNext{padding:.75rem;border-radius:50%}
+html.home-clean .row-title{font-size:.78rem;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-top:1.4rem}
 html.home-clean #sec-home .tile-label{opacity:0}
 html.home-clean #sec-home .tile.is-focused .tile-label{opacity:1}
 
@@ -2011,8 +2015,8 @@ const PICK_PROVIDERS = Object.freeze({
   "Onix Chime (vidro), Crystal (cristal brilhante), Sharpness (clique seco), Velvet (grave e macio) ou Pulse (digital). OK troca e toca uma amostra.": "Onix Chime (vidrio), Crystal (cristal brillante), Sharpness (clic seco), Velvet (grave y suave) o Pulse (digital). OK cambia y reproduce una muestra.",
   " (ligue \"Sons do menu\" para ouvir)": " (activa \"Sonidos del menú\" para oírlo)",
   "Estilo da tela inicial": "Estilo de la pantalla de inicio",
-  "Onix Glass mostra tudo. Clean Glass deixa só o essencial: menos texto, botões só com ícone e nomes dos apps só no item focado. OK troca.": "Onix Glass muestra todo. Clean Glass deja solo lo esencial: menos texto, botones solo con ícono y nombres de las apps solo en el elemento enfocado. OK cambia.",
-  "*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), o novo *Clean Glass* deixa só o essencial: menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em *Configurações → Início*.": "*Estilo de la pantalla de inicio:* además de *Onix Glass* (el de siempre), el nuevo *Clean Glass* deja solo lo esencial: menos texto, botones de arriba solo con ícono (el nombre aparece al enfocarlos) y el nombre de las apps solo en el elemento seleccionado. En *Configuración → Inicio*.",
+  "Onix Glass mostra tudo. Clean Glass é minimalista: destaque sem caixa, menos texto, botões só com ícone e nomes dos apps só no item focado. OK troca.": "Onix Glass muestra todo. Clean Glass es minimalista: destacado sin caja, menos texto, botones solo con ícono y nombres de las apps solo en el elemento enfocado. OK cambia.",
+  "*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), o novo *Clean Glass* é minimalista: destaque sem caixa, menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em *Configurações → Início*.": "*Estilo de la pantalla de inicio:* además de *Onix Glass* (el de siempre), el nuevo *Clean Glass* es minimalista: destacado sin caja, menos texto, botones de arriba solo con ícono (el nombre aparece al enfocarlos) y el nombre de las apps solo en el elemento seleccionado. En *Configuración → Inicio*.",
   "*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.": "*Sonido de navegación:* cuatro sonidos nuevos además de *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* y *Pulse*. En *Configuración → Inicio*, OK cambia y reproduce una muestra.",
   "Os sons do menu tocam com menos atraso: a saída de áudio da TV não \"dorme\" mais entre um toque e outro.": "Los sonidos del menú suenan con menos retraso: la salida de audio de la TV ya no se \"duerme\" entre un toque y otro.",
   "O perfil no topo do menu, quando selecionado, fica branco com o nome legível (antes o texto ficava preto sobre o fundo escuro).": "El perfil arriba del menú, al seleccionarlo, se pone blanco con el nombre legible (antes el texto quedaba negro sobre el fondo oscuro).",
@@ -3600,7 +3604,7 @@ const OPTIONS = [
   { key: 'heroFx', name: 'Troca do destaque',     desc: 'Como uma indicação dá lugar à próxima: esmaecer, deslizar ou zoom. OK troca.' },
   { key: 'tabFx',  name: 'Transição entre abas',  desc: 'A aba nova aparece subindo de leve ao trocar pelo menu.' },
   { group: 'Início' },
-  { key: 'homeStyle', name: 'Estilo da tela inicial', desc: 'Onix Glass mostra tudo. Clean Glass deixa só o essencial: menos texto, botões só com ícone e nomes dos apps só no item focado. OK troca.' },
+  { key: 'homeStyle', name: 'Estilo da tela inicial', desc: 'Onix Glass mostra tudo. Clean Glass é minimalista: destaque sem caixa, menos texto, botões só com ícone e nomes dos apps só no item focado. OK troca.' },
   { key: 'rotate', name: 'Trocar destaque sozinho', desc: 'Passa para a próxima indicação a cada 9 segundos.' },
   { key: 'h24',    name: 'Relógio de 24 horas',   desc: 'Desligado, mostra 1:00 em vez de 13:00.' },
   { key: 'sound',  name: 'Sons do menu',          desc: 'Toque suave ao navegar, abrir e voltar.' },
@@ -3630,7 +3634,7 @@ const OPTIONS = [
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
   { version: '14.1.0 beta', date: 'outubro de 2026', items: [
-    ['new', '*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), o novo *Clean Glass* deixa só o essencial: menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em *Configurações → Início*.'],
+    ['new', '*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), o novo *Clean Glass* é minimalista: destaque sem caixa, menos texto, botões do topo só com ícone (o nome aparece no focado) e o nome dos apps só no item selecionado. Em *Configurações → Início*.'],
     ['new', '*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.'],
     ['fix', 'Os sons do menu tocam com menos atraso: a saída de áudio da TV não "dorme" mais entre um toque e outro.'],
     ['bug', 'O perfil no topo do menu, quando selecionado, fica branco com o nome legível (antes o texto ficava preto sobre o fundo escuro).'],
