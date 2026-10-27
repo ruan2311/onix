@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
@@ -505,6 +506,21 @@ public class MainActivity extends Activity {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    /**
+     * Tecla de configurações (controle da TV ou Onix Controle): na Google TV quem a trata é a tela
+     * do Google; com o Onix como tela inicial ninguém tratava. A página decide (Modo Infantil não abre).
+     */
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.KEYCODE_SETTINGS) {
+            if (e.getAction() == KeyEvent.ACTION_UP && webView != null) {
+                webView.evaluateJavascript("window.Launcher&&Launcher.onSettingsKey&&Launcher.onSettingsKey()", null);
+            }
+            return true;
+        }
+        return super.dispatchKeyEvent(e);
     }
 
     @Override

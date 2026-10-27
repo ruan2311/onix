@@ -956,7 +956,8 @@ if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', { value(i)
   O nativo pode chamar  Launcher.onAppsChanged()  quando apps forem instalados/removidos,
   Launcher.onInputsChanged()  quando a lista de entradas mudar, Launcher.onMessage(texto) para um aviso,
   Launcher.onNewsChanged()  quando as notícias dos games forem atualizadas,
-  e  Launcher.onBack()  (true = tratado pela página) na tecla Voltar do controle.
+  Launcher.onBack()  (true = tratado pela página) na tecla Voltar do controle
+  e  Launcher.onSettingsKey() na tecla de configurações do controle.
   Launcher.onResume()  ao voltar para o launcher (zera a contagem da tela de descanso).
   "banner": true indica que "icon" é um banner 16:9 da TV.
   Opcional: AndroidBridge.platform() -> nome do aparelho no chip do topo (ex.: "Google TV · Philips").
@@ -995,7 +996,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '14.0.1 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '14.0.2 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1465,6 +1466,8 @@ const ES = Object.freeze({
   "O celular precisa estar no mesmo Wi-Fi da TV. Depois da primeira vez, ele conecta sozinho.": "El celular debe estar en la misma red Wi-Fi que la TV. Después de la primera vez, se conecta solo.",
   "O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.": "El celular se vuelve control y teclado, sin instalar nada. Funciona con Onix en pantalla, en la misma red Wi-Fi.",
   "Conectar celular": "Conectar celular",
+  "*Onix Controle:* um app para o celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. Está na página do Onix no GitHub.": "*Onix Controle:* una app para el celular (Android) que controla toda la TV, dentro de cualquier app, por el Wi-Fi de casa. Está en la página de Onix en GitHub.",
+  "A tecla de *configurações* do controle da TV (e do app *Onix Controle*) abre as configurações da TV com o Onix na tela. No Modo Infantil, ela não abre nada.": "La tecla de *configuración* del control de la TV (y de la app *Onix Controle*) abre la configuración de la TV con Onix en pantalla. En el Modo Infantil, no abre nada.",
   "*Conectar celular* saiu do menu e foi para *Configurações → Controle pelo celular*, logo abaixo de Perfil.": "*Conectar celular* salió del menú y pasó a *Configuración → Control desde el celular*, justo debajo de Perfil.",
   "*Teclado na tela* novo: fileira de números, tecla de maiúscula, *Apagar* ao lado das letras, acentos e sinais na tecla *áé* e um contador de letras. As teclas ficam sobre um fundo escuro, sem a tela de trás aparecendo.": "*Teclado en pantalla* nuevo: fila de números, tecla de mayúscula, *Borrar* al lado de las letras, acentos y signos en la tecla *áé* y un contador de letras. Las teclas quedan sobre un fondo oscuro, sin que se vea la pantalla de atrás.",
   "O clima da tela inicial não fica mais cortado pelos botões do topo, e a data aparece como *Segunda-feira, 26 de outubro*.": "El clima de la pantalla de inicio ya no queda cortado por los botones de arriba, y la fecha aparece como *Lunes, 26 de octubre*.",
@@ -3460,6 +3463,13 @@ function openSettings() {
   if (!Bridge.openSettings()) toast('Não foi possível abrir as configurações');
 }
 
+// Tecla de configurações do controle: abre as da TV, menos no Modo Infantil.
+function settingsKey() {
+  wakeSaver();
+  if (isKids()) { toast('Este app não está liberado neste perfil'); return; }
+  openSettings();
+}
+
 // Desligar TV: o primeiro OK arma (botão vermelho por 3 s), o segundo desliga. Evita desligar por engano.
 let powerArmed = 0;
 function powerOff() {
@@ -3533,6 +3543,10 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '14.0.2 beta', date: 'outubro de 2026', items: [
+    ['new', '*Onix Controle:* um app para o celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. Está na página do Onix no GitHub.'],
+    ['bug', 'A tecla de *configurações* do controle da TV (e do app *Onix Controle*) abre as configurações da TV com o Onix na tela. No Modo Infantil, ela não abre nada.'],
+  ] },
   { version: '14.0.1 beta', date: 'outubro de 2026', items: [
     ['fix', '*Conectar celular* saiu do menu e foi para *Configurações → Controle pelo celular*, logo abaixo de Perfil.'],
     ['fix', '*Teclado na tela* novo: fileira de números, tecla de maiúscula, *Apagar* ao lado das letras, acentos e sinais na tecla *áé* e um contador de letras. As teclas ficam sobre um fundo escuro, sem a tela de trás aparecendo.'],
@@ -5415,7 +5429,7 @@ function resync() {
 }
 // Gancho para o lado nativo chamar via evaluateJavascript.
 Object.defineProperty(window, 'Launcher', {
-  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); kidsTick(); refreshWeather(false); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync(), onWeather: j => onWeather(j), onCities: (j, q) => onCities(j, q), onRemote: j => onRemote(j), onRemoteInfo: e => onRemoteInfo(e) }),
+  value: Object.freeze({ onAppsChanged: () => refreshApps(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); kidsTick(); refreshWeather(false); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync(), onWeather: j => onWeather(j), onCities: (j, q) => onCities(j, q), onRemote: j => onRemote(j), onRemoteInfo: e => onRemoteInfo(e), onSettingsKey: () => settingsKey() }),
   writable: false, configurable: false,
 });
 

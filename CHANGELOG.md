@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 14.0.2 beta (outubro de 2026)
+
+- **Onix Controle:** um app para o celular (Android) que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. Está na página do Onix no GitHub.
+- Bug: a tecla de **configurações** do controle da TV (e do app **Onix Controle**) abre as configurações da TV com o Onix na tela. No Modo Infantil, ela não abre nada.
+
 ## 14.0.1 beta (outubro de 2026)
 
 - **Conectar celular** saiu do menu e foi para **Configurações → Controle pelo celular**, logo abaixo de Perfil.
