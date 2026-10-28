@@ -2,6 +2,10 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 15.0.2 beta (outubro de 2026)
+
+- Os avatares dos perfis ganharam o fundo de vidro escuro do Onix, com um brilho suave de cor atrás de cada rosto, no lugar das cores fortes.
+
 ## 15.0.1 beta (outubro de 2026)
 
 - **Avatares novos:** dez rostos desenhados no traço do gatinho do Onix para os perfis: o próprio gatinho, cachorro, bebê, homem, mulher, menino, menina, vovô, vovó e astronauta. Quem usava um desenho antigo ganha o novo do mesmo lugar da lista; dá para trocar em **Editar perfil**.
