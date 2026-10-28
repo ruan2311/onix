@@ -35,7 +35,8 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .hero{display:flex;gap:2.6rem;align-items:stretch;padding:2rem;border-radius:1.8rem;height:21rem;
   background:linear-gradient(110deg,rgba(255,61,154,.14),rgba(61,225,255,.06) 60%,rgba(255,255,255,.03));border:1px solid var(--line)}
 .hero .shot{flex:none;width:30rem;border-radius:1.2rem;overflow:hidden;background:#000;position:relative}
-.hero .shot img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.hero .shot>img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.hero .shot .box{position:absolute;left:1rem;bottom:1rem;width:7.4rem;aspect-ratio:3/4;border-radius:.7rem;box-shadow:0 .6rem 1.6rem rgba(0,0,0,.6)}
 .hero .shot .cover{position:absolute;inset:0;aspect-ratio:auto;border-radius:0}
 .hero .info{display:flex;flex-direction:column;justify-content:center;gap:.9rem;min-width:0}
 .hero .kicker{font-size:1.1rem;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);font-weight:700}
@@ -238,10 +239,13 @@ function homePage() {
   if (rec.length) {
     const g = rec[0], c = consoleOf(g.console);
     const shot = h('div', { class: 'shot' });
+    // A tela de onde parou, com a capa pequena por cima; sem a tela, só a capa inteira.
     if (g.resume) {
       const img = h('img', { src: 'shot/' + INFO.profile + '/' + g.id + '/auto.jpg?t=' + g.last, alt: '' });
-      img.onerror = () => { img.remove(); shot.append(coverEl(g, { tag: false, title: true })); };
-      shot.append(img);
+      const box = g.cover ? coverEl(g, { tag: false }) : null;
+      if (box) box.classList.add('box');
+      img.onerror = () => { img.remove(); if (box) box.remove(); shot.append(coverEl(g, { tag: false, title: true })); };
+      shot.append(img, box);
     } else shot.append(coverEl(g, { tag: false, title: true }));
     const play = h('button', { class: 'f btn primary', act: () => play_(g, g.resume ? 'resume' : 'new') }, icon('play'), g.resume ? t('Continuar') : t('Jogar'));
     page.append(h('div', { class: 'hero' }, shot, h('div', { class: 'info' },

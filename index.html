@@ -190,8 +190,9 @@ svg{display:block}
 .hub-text b{font-size:1.1rem}
 .hub-text span{font-size:.85rem;color:var(--muted);line-height:1.45}
 .hub-text .hub-note{color:#ffd27a}
-.tile.hub .tile-art img{padding:0;object-fit:cover;image-rendering:pixelated}
-.tile.hub .tile-art img.cover{object-fit:contain;background:#0e0820}
+.tile.hub .tile-art img{padding:0;object-fit:cover}
+.tile.hub .tile-art img.shot{image-rendering:pixelated}
+.tile.hub .hub-tag{position:absolute;z-index:3;left:.45rem;top:.45rem;font-size:.62rem;font-weight:700;letter-spacing:.06em;padding:.15rem .45rem;border-radius:.4rem;background:rgba(0,0,0,.7)}
 .tile.hub .tile-art .hub-console{position:absolute;top:0;right:0;bottom:0;left:0;display:grid;place-items:center}
 .tile.hub .tile-art .hub-console svg{position:static;width:58%;height:auto}
 .hub-bar{display:flex;gap:.8rem;flex-wrap:wrap;margin:-.2rem 0 .6rem}
@@ -2221,7 +2222,7 @@ const PICK_PROVIDERS = Object.freeze({
   "Abrir o GameHub": "Abrir GameHub",
   "Versão {v}": "Versión {v}",
   "Nintendinho": "Nintendo (NES)",
-  "· Continuar jogando e os emuladores": "· Seguir jugando y los emuladores",
+  "· Emuladores": "· Emuladores", "· Onix GameHub · OK volta de onde parou": "· Onix GameHub · OK vuelve donde lo dejaste", "Continuar": "Continuar",
   "Atualizar o GameHub ({v})": "Actualizar GameHub ({v})",
   "Desinstalar o GameHub": "Desinstalar GameHub",
   "Não deu para abrir o GameHub": "No se pudo abrir GameHub",
@@ -3293,10 +3294,10 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) pause
    desinstalar. No Modo Infantil só aparece se já estiver instalado, sem instalar/desinstalar. */
 const HUB_MARK = '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14.5h16a9.5 9.5 0 0 1 9.2 7.1l2.3 8.9a5 5 0 0 1-8.9 4.2L31 30H17l-3.6 4.7a5 5 0 0 1-8.9-4.2l2.3-8.9A9.5 9.5 0 0 1 16 14.5z"/><path d="M15 19.5v6M12 22.5h6"/><circle cx="32.5" cy="20.6" r="1.25" fill="#fff" stroke="none"/><circle cx="35.9" cy="24" r="1.25" fill="#fff" stroke="none"/></svg>';
 const HUB_CONSOLES = [
-  ['nes', 'Nintendinho', '#ff5a6e', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="8" width="56" height="26" rx="3"/><path d="M4 18h56M10 26h12M40 24h6M50 24h4"/><rect x="12" y="11" width="22" height="4" rx="1"/></svg>'],
-  ['snes', 'Super Nintendo', '#a78bfa', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 12h48a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6v-6a6 6 0 0 1 6-6z"/><rect x="18" y="5" width="28" height="9" rx="2"/><circle cx="48" cy="21" r="2.2"/><circle cx="54" cy="21" r="2.2"/><path d="M10 21h8M14 17v8"/></svg>'],
-  ['gba', 'Game Boy Advance', '#38bdf8', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 6h40a10 10 0 0 1 10 10v8a10 10 0 0 1-10 10H12A10 10 0 0 1 2 24v-8A10 10 0 0 1 12 6z"/><rect x="20" y="11" width="24" height="18" rx="2"/><path d="M7 20h7M10.5 16.5v7"/><circle cx="52" cy="18" r="2"/><circle cx="56" cy="22" r="2"/></svg>'],
-  ['md', 'Mega Drive', '#fbbf24', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 14l6-6h44l6 6v18H4z"/><circle cx="24" cy="21" r="7"/><path d="M38 18h16M38 24h16M10 28h6"/></svg>'],
+  ['nes', 'Nintendinho', '#ff5a6e', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="8" width="56" height="26" rx="3"/><path d="M4 18h56M10 26h12M40 24h6M50 24h4"/><rect x="12" y="11" width="22" height="4" rx="1"/></svg>', 'NES'],
+  ['snes', 'Super Nintendo', '#a78bfa', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 12h48a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6v-6a6 6 0 0 1 6-6z"/><rect x="18" y="5" width="28" height="9" rx="2"/><circle cx="48" cy="21" r="2.2"/><circle cx="54" cy="21" r="2.2"/><path d="M10 21h8M14 17v8"/></svg>', 'SNES'],
+  ['gba', 'Game Boy Advance', '#38bdf8', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 6h40a10 10 0 0 1 10 10v8a10 10 0 0 1-10 10H12A10 10 0 0 1 2 24v-8A10 10 0 0 1 12 6z"/><rect x="20" y="11" width="24" height="18" rx="2"/><path d="M7 20h7M10.5 16.5v7"/><circle cx="52" cy="18" r="2"/><circle cx="56" cy="22" r="2"/></svg>', 'GBA'],
+  ['md', 'Mega Drive', '#fbbf24', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 14l6-6h44l6 6v18H4z"/><circle cx="24" cy="21" r="7"/><path d="M38 18h16M38 24h16M10 28h6"/></svg>', 'MD'],
 ];
 let hubChecked = false;
 function openHub(target) {
@@ -3327,18 +3328,24 @@ function renderHub() {
         h('span', { text: 'Emulador de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive, com capas, saves e estados salvos por perfil. É um app à parte e opcional: dá para desinstalar quando quiser.' }),
         note ? h('span', { class: 'hub-note', text: note }) : null), btn));
   } else {
-    const row = h('div', { class: 'row' });
-    for (const g of st.recent.slice(0, 4)) {
-      const art = h('span', { class: 'tile-art glass' });
-      const pic = g.shot || g.cover;
-      if (pic) art.append(h('img', { src: pic, alt: '', class: g.shot ? '' : 'cover' }));
-      else { const c = HUB_CONSOLES.find(x => x[0] === g.console); art.append(h('span', { class: 'hub-console', style: 'color:' + c[2] }, svgFrom(c[3]))); }
-      const b = h('button', { class: 'f tile hub', tabindex: '-1', 'aria-label': g.name }, art,
-        h('span', { class: 'tile-label', text: g.name }), h('span', { class: 'tile-sub', text: g.resume ? 'Continuar jogando' : 'Jogar' }));
+    // "Continuar jogando": a capa do jogo em pé, como os pôsteres das indicações. Sem capa, a tela de
+    // onde parou; sem nenhuma das duas, o desenho do console.
+    const played = h('div', { class: 'row' });
+    for (const g of st.recent.slice(0, 8)) {
+      const c = HUB_CONSOLES.find(x => x[0] === g.console);
+      const art = h('span', { class: 'tile-art glass', style: 'background:linear-gradient(160deg,' + c[2] + '33,#111 75%)' });
+      const pic = g.cover || g.shot;
+      if (pic) art.append(h('img', { src: pic, alt: '', class: g.cover ? '' : 'shot' }));
+      else art.append(h('span', { class: 'hub-console', style: 'color:' + c[2] }, svgFrom(c[3])));
+      art.append(h('span', { class: 'hub-tag', style: 'color:' + c[2], text: c[4] }));
+      const b = h('button', { class: 'f tile pick hub', tabindex: '-1', 'aria-label': g.name }, art,
+        h('span', { class: 'tile-label', text: g.name }), h('span', { class: 'tile-sub', text: g.resume ? 'Continuar' : 'Jogar' }));
       b.dataset.key = 'g' + g.id;
       b._act = () => openHub((g.resume ? 'resume:' : 'game:') + g.id);
-      row.append(b);
+      played.append(b);
     }
+    if (st.recent.length) kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Continuar jogando' }), h('span', { class: 'row-sub', text: '· Onix GameHub · OK volta de onde parou' })), played);
+    const row = h('div', { class: 'row' });
     for (const [id, name, color, art] of HUB_CONSOLES) {
       const n = st.counts[id] || 0;
       const b = h('button', { class: 'f tile hub', tabindex: '-1', 'aria-label': name },
@@ -3354,7 +3361,7 @@ function renderHub() {
     all.dataset.key = 'open';
     all._act = () => openHub('home');
     row.append(all);
-    kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Onix GameHub' }), h('span', { class: 'row-sub', text: '· Continuar jogando e os emuladores' })), row);
+    kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Onix GameHub' }), h('span', { class: 'row-sub', text: '· Emuladores' })), row);
     if (!isKids()) {
       const bar = h('div', { class: 'hub-bar' });
       if (st.latest) {
