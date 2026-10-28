@@ -16,9 +16,9 @@ import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
- * Tela principal do Game Hub (biblioteca, consoles, adicionar jogos, configurações), numa
+ * Tela principal do GameHub (biblioteca, consoles, adicionar jogos, configurações), numa
  * WebView. Aberto pela aba Jogos do Onix (com o perfil e o que abrir) ou pelo ícone, para quem
- * instalou só o Game Hub.
+ * instalou só o GameHub.
  *
  * Extras vindos do Onix: profile, profileName, kids, lang ("pt"/"es"), open ("home",
  * "console:<id>", "game:<id>" ou "resume:<id>", que já entra no jogo).
@@ -104,7 +104,7 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         if (direct) startGame(open.substring(7), "resume");
     }
 
-    /** Abre o jogo no processo dele (um núcleo travado não derruba o Game Hub). */
+    /** Abre o jogo no processo dele (um núcleo travado não derruba o GameHub). */
     boolean startGame(String id, String mode) {
         JSONObject g = Library.game(this, id);
         if (g == null || (kids && !g.optBoolean("kids"))) return false;
@@ -178,7 +178,7 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         return super.dispatchKeyEvent(e);
     }
 
-    /** No menu do Game Hub, A confirma, B volta e Start abre (como num console). */
+    /** No menu do GameHub, A confirma, B volta e Start abre (como num console). */
     static int navKey(int code) {
         switch (code) {
             case KeyEvent.KEYCODE_BUTTON_A:

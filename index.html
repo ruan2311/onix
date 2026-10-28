@@ -181,10 +181,10 @@ svg{display:block}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(9.2rem,1fr));gap:1.4rem 1.1rem;padding:.8rem 0 1rem}
 .grid .tile{width:auto}
 .grid.games{grid-template-columns:repeat(auto-fill,minmax(14rem,1fr))}
-/* Onix Game Hub na aba Jogos (Android): convite para instalar ou os atalhos para dentro dele. */
+/* Onix GameHub na aba Jogos (Android): convite para instalar ou os atalhos para dentro dele. */
 .hub-promo{display:flex;align-items:center;gap:1.4rem;padding:1.2rem 1.4rem;margin:.9rem 0 .4rem;border-radius:var(--radius);
   border:1px solid var(--glass-border);background:rgba(255,255,255,.04);max-width:60rem}
-.hub-mark{flex:none;width:4.4rem;height:4.4rem;border-radius:1.1rem;background:linear-gradient(145deg,#1b0f3d,#07040f);display:grid;place-items:center}
+.hub-mark{flex:none;width:4.4rem;height:4.4rem;border-radius:1.1rem;background:#0a0a0b;border:1px solid var(--glass-border);display:grid;place-items:center}
 .hub-mark svg{width:3.4rem;height:3.4rem}
 .hub-text{flex:1;display:flex;flex-direction:column;gap:.3rem;min-width:0}
 .hub-text b{font-size:1.1rem}
@@ -1827,7 +1827,7 @@ const Bridge = (() => {
       if (!has('setPicksChoice')) return false;
       try { return b.setPicksChoice(JSON.stringify(choice)) === true; } catch (e) { console.warn('setPicksChoice falhou', e); return false; }
     },
-    // Onix Game Hub (só Android): estado validado, atalhos e instalar/desinstalar.
+    // Onix GameHub (só Android): estado validado, atalhos e instalar/desinstalar.
     gameHub(profile, kids) {
       if (!has('gameHub')) return null;
       try {
@@ -2205,26 +2205,26 @@ const PICK_PROVIDERS = Object.freeze({
   "A chave *Clima na tela inicial* das Configurações aparecia desligada mesmo com o clima ligado.": "El interruptor *Clima en la pantalla de inicio* de Ajustes aparecía apagado aunque el clima estuviera encendido.",
   "O botão *Organizar* da tela inicial abria *Novo perfil* em vez de organizar os apps.": "El botón *Organizar* de la pantalla de inicio abría *Nuevo perfil* en lugar de organizar las apps.",
   "Os avatares dos perfis ganharam o fundo de vidro escuro do Onix, com um brilho suave de cor atrás de cada rosto, no lugar das cores fortes.": "Los avatares de los perfiles ahora tienen el fondo de vidrio oscuro de Onix, con un brillo suave de color detrás de cada cara, en lugar de los colores fuertes.",
-  // Onix Game Hub
+  // Onix GameHub
   "Baixando…": "Descargando…",
   "Instalando…": "Instalando…",
-  "Instalar o Game Hub": "Instalar Game Hub",
-  "Baixando o Onix Game Hub…": "Descargando Onix Game Hub…",
-  "O Game Hub ainda não foi publicado. Ele chega numa próxima atualização.": "Game Hub todavía no fue publicado. Llega en una próxima actualización.",
-  "Não deu para baixar o Game Hub. Confira a internet e tente de novo.": "No se pudo descargar Game Hub. Revisa internet e inténtalo de nuevo.",
+  "Instalar o GameHub": "Instalar GameHub",
+  "Baixando o Onix GameHub…": "Descargando Onix GameHub…",
+  "O GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "GameHub todavía no fue publicado. Llega en una próxima actualización.",
+  "Não deu para baixar o GameHub. Confira a internet e tente de novo.": "No se pudo descargar GameHub. Revisa internet e inténtalo de nuevo.",
   "Emulador de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive, com capas, saves e estados salvos por perfil. É um app à parte e opcional: dá para desinstalar quando quiser.": "Emulador de Nintendo (NES), Super Nintendo, Game Boy Advance y Mega Drive, con portadas, partidas y estados guardados por perfil. Es una app aparte y opcional: puedes desinstalarla cuando quieras.",
   "Continuar jogando": "Seguir jugando",
   "Jogar": "Jugar",
   "jogo": "juego",
   "jogos": "juegos",
   "Emulador": "Emulador",
-  "Abrir o Game Hub": "Abrir Game Hub",
+  "Abrir o GameHub": "Abrir GameHub",
   "Versão {v}": "Versión {v}",
   "Nintendinho": "Nintendo (NES)",
   "· Continuar jogando e os emuladores": "· Seguir jugando y los emuladores",
-  "Atualizar o Game Hub ({v})": "Actualizar Game Hub ({v})",
-  "Desinstalar o Game Hub": "Desinstalar Game Hub",
-  "Não deu para abrir o Game Hub": "No se pudo abrir Game Hub",
+  "Atualizar o GameHub ({v})": "Actualizar GameHub ({v})",
+  "Desinstalar o GameHub": "Desinstalar GameHub",
+  "Não deu para abrir o GameHub": "No se pudo abrir GameHub",
 });
 let picks = [];
 let netOnline = null;   // null = o Android ainda não disse
@@ -3287,11 +3287,11 @@ function gameKey(e, down) {
 }
 document.addEventListener('visibilitychange', () => { if (document.hidden) pauseGame(); });
 
-/* ---------------- Onix Game Hub ----------------
+/* ---------------- Onix GameHub ----------------
    App opcional de emuladores (Google TV). Sem ele: um convite para instalar. Com ele: "Continuar
-   jogando" e os 4 consoles, que abrem o Game Hub direto naquele ponto, além de atualizar e
+   jogando" e os 4 consoles, que abrem o GameHub direto naquele ponto, além de atualizar e
    desinstalar. No Modo Infantil só aparece se já estiver instalado, sem instalar/desinstalar. */
-const HUB_MARK = '<svg viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="hubg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#3de1ff"/></linearGradient></defs><g stroke="url(#hubg)" stroke-width="2.6"><path d="M14 15h20a7 7 0 0 1 6.6 9.4L39 29a4.5 4.5 0 0 1-7.8.9L29 27H19l-2.2 2.9A4.5 4.5 0 0 1 9 29l-1.6-4.6A7 7 0 0 1 14 15z"/><path d="M12.5 23.5h6M15.5 20.5v6"/><ellipse cx="24" cy="25" rx="23" ry="5.5" transform="rotate(-18 24 25)"/></g><circle cx="32" cy="24.2" r="1.9" fill="#3de1ff"/><circle cx="36.4" cy="21" r="1.9" fill="#3de1ff"/></svg>';
+const HUB_MARK = '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14.5h16a9.5 9.5 0 0 1 9.2 7.1l2.3 8.9a5 5 0 0 1-8.9 4.2L31 30H17l-3.6 4.7a5 5 0 0 1-8.9-4.2l2.3-8.9A9.5 9.5 0 0 1 16 14.5z"/><path d="M15 19.5v6M12 22.5h6"/><circle cx="32.5" cy="20.6" r="1.25" fill="#fff" stroke="none"/><circle cx="35.9" cy="24" r="1.25" fill="#fff" stroke="none"/></svg>';
 const HUB_CONSOLES = [
   ['nes', 'Nintendinho', '#ff5a6e', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="8" width="56" height="26" rx="3"/><path d="M4 18h56M10 26h12M40 24h6M50 24h4"/><rect x="12" y="11" width="22" height="4" rx="1"/></svg>'],
   ['snes', 'Super Nintendo', '#a78bfa', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 12h48a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6v-6a6 6 0 0 1 6-6z"/><rect x="18" y="5" width="28" height="9" rx="2"/><circle cx="48" cy="21" r="2.2"/><circle cx="54" cy="21" r="2.2"/><path d="M10 21h8M14 17v8"/></svg>'],
@@ -3301,11 +3301,11 @@ const HUB_CONSOLES = [
 let hubChecked = false;
 function openHub(target) {
   const pr = activeProfile();
-  if (!Bridge.openGameHub(pr ? pr.id : FIRST_PROFILE, pr ? pr.name : '', isKids(), LANG, target)) toast('Não deu para abrir o Game Hub');
+  if (!Bridge.openGameHub(pr ? pr.id : FIRST_PROFILE, pr ? pr.name : '', isKids(), LANG, target)) toast('Não deu para abrir o GameHub');
 }
 function renderHub() {
   const box = $('#hubBox');
-  // Só com a aba Jogos aberta: perguntar ao Game Hub acorda o processo dele.
+  // Só com a aba Jogos aberta: perguntar ao GameHub acorda o processo dele.
   if (!box || activeSection !== 'games') return;
   const pr = activeProfile();
   const st = Bridge.gameHub(pr ? pr.id : FIRST_PROFILE, isKids());
@@ -3317,13 +3317,13 @@ function renderHub() {
   const busyText = st.state === 'downloading' ? t('Baixando…') + ' ' + st.progress + '%' : st.state === 'checking' ? t('Procurando…') : t('Instalando…');
   const kids = [];
   if (!st.installed) {
-    const btn = h('button', { class: 'f btn primary', tabindex: '-1' }, h('span', { text: busy ? busyText : 'Instalar o Game Hub' }));
+    const btn = h('button', { class: 'f btn primary', tabindex: '-1' }, h('span', { text: busy ? busyText : 'Instalar o GameHub' }));
     btn.dataset.key = 'install';
-    btn._act = () => { if (busy) return; Bridge.installGameHub(); toast('Baixando o Onix Game Hub…'); };
-    const note = st.state === 'error' && st.error === 'missing' ? 'O Game Hub ainda não foi publicado. Ele chega numa próxima atualização.'
-      : st.state === 'error' && st.error ? 'Não deu para baixar o Game Hub. Confira a internet e tente de novo.' : null;
+    btn._act = () => { if (busy) return; Bridge.installGameHub(); toast('Baixando o Onix GameHub…'); };
+    const note = st.state === 'error' && st.error === 'missing' ? 'O GameHub ainda não foi publicado. Ele chega numa próxima atualização.'
+      : st.state === 'error' && st.error ? 'Não deu para baixar o GameHub. Confira a internet e tente de novo.' : null;
     kids.push(h('div', { class: 'hub-promo' }, h('div', { class: 'hub-mark' }, svgFrom(HUB_MARK)),
-      h('div', { class: 'hub-text' }, h('b', { text: 'Onix Game Hub' }),
+      h('div', { class: 'hub-text' }, h('b', { text: 'Onix GameHub' }),
         h('span', { text: 'Emulador de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive, com capas, saves e estados salvos por perfil. É um app à parte e opcional: dá para desinstalar quando quiser.' }),
         note ? h('span', { class: 'hub-note', text: note }) : null), btn));
   } else {
@@ -3348,22 +3348,22 @@ function renderHub() {
       b._act = () => openHub('console:' + id);
       row.append(b);
     }
-    const all = h('button', { class: 'f tile hub', tabindex: '-1', 'aria-label': 'Abrir o Game Hub' },
-      h('span', { class: 'tile-art glass', style: 'background:linear-gradient(145deg,#1b0f3d,#07040f)' }, h('span', { class: 'hub-console' }, svgFrom(HUB_MARK))),
-      h('span', { class: 'tile-label', text: 'Abrir o Game Hub' }), h('span', { class: 'tile-sub', text: t('Versão {v}').replace('{v}', st.version) }));
+    const all = h('button', { class: 'f tile hub', tabindex: '-1', 'aria-label': 'Abrir o GameHub' },
+      h('span', { class: 'tile-art glass', style: 'background:#0a0a0b' }, h('span', { class: 'hub-console' }, svgFrom(HUB_MARK))),
+      h('span', { class: 'tile-label', text: 'Abrir o GameHub' }), h('span', { class: 'tile-sub', text: t('Versão {v}').replace('{v}', st.version) }));
     all.dataset.key = 'open';
     all._act = () => openHub('home');
     row.append(all);
-    kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Onix Game Hub' }), h('span', { class: 'row-sub', text: '· Continuar jogando e os emuladores' })), row);
+    kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Onix GameHub' }), h('span', { class: 'row-sub', text: '· Continuar jogando e os emuladores' })), row);
     if (!isKids()) {
       const bar = h('div', { class: 'hub-bar' });
       if (st.latest) {
-        const up = h('button', { class: 'f btn primary', tabindex: '-1' }, h('span', { text: busy ? busyText : t('Atualizar o Game Hub ({v})').replace('{v}', st.latest) }));
+        const up = h('button', { class: 'f btn primary', tabindex: '-1' }, h('span', { text: busy ? busyText : t('Atualizar o GameHub ({v})').replace('{v}', st.latest) }));
         up.dataset.key = 'update';
         up._act = () => { if (!busy) Bridge.installGameHub(); };
         bar.append(up);
       }
-      const rm = h('button', { class: 'f btn', tabindex: '-1' }, h('span', { text: 'Desinstalar o Game Hub' }));
+      const rm = h('button', { class: 'f btn', tabindex: '-1' }, h('span', { text: 'Desinstalar o GameHub' }));
       rm.dataset.key = 'remove';
       rm._act = () => Bridge.uninstallGameHub();
       bar.append(rm);

@@ -1,4 +1,4 @@
-/* Onix Game Hub: índigo profundo, traços neon (magenta -> ciano) e uma cor por console.
+/* Onix GameHub: índigo profundo, traços neon (magenta -> ciano) e uma cor por console.
    1rem = 1/96 da largura da tela, então tudo escala igual em qualquer TV. */
 :root{
   --bg1:#1b0f3d; --bg2:#07040f; --ink:#f1edff; --dim:#a99fd0; --mute:#6f6699;
@@ -23,10 +23,10 @@ svg{display:block}
 
 /* Marca */
 .brand{display:flex;align-items:center;gap:.9rem}
-.brand svg{width:4.4rem;height:4.4rem;flex:none}
-.brand b{font-size:1.15rem;letter-spacing:.32em;color:var(--dim);font-weight:600;display:block}
-.brand i{font-style:normal;font-size:1.9rem;font-weight:800;letter-spacing:.06em;
-  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:block;line-height:1}
+.brand>span{display:flex;align-items:baseline;gap:.9rem}
+.brand svg{width:3.4rem;height:3.4rem;flex:none}
+.brand b{font-size:1.45rem;letter-spacing:.3em;font-weight:500;color:var(--ink);white-space:nowrap}
+.brand small{font-size:.95rem;font-weight:400;letter-spacing:.06em;color:var(--dim);white-space:nowrap;margin-left:-.3rem}
 
 /* Foco: anel neon e um leve aumento */
 .f{position:relative;transition:transform .14s ease,box-shadow .14s ease,background .14s ease}

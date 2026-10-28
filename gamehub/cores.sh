@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Compila os 4 núcleos libretro do Game Hub a partir do código-fonte, nas versões travadas abaixo,
+# Compila os 4 núcleos libretro do GameHub a partir do código-fonte, nas versões travadas abaixo,
 # para arm64-v8a e armeabi-v7a (muitas Google TVs rodam Android de 32 bits).
 #   bash gamehub/cores.sh        # gera gamehub/build/cores/<abi>/lib<núcleo>.so
 # Precisa do Android NDK (NDK=~/sdk/android-ndk-r27c) e, para o mGBA, de cmake e ninja no PATH.

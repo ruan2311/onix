@@ -2,7 +2,7 @@ package com.onix.gamehub;
 
 import java.util.Locale;
 
-/** Os 4 consoles do Game Hub: núcleo, extensões, banco de nomes e pasta das capas do libretro. */
+/** Os 4 consoles do GameHub: núcleo, extensões, banco de nomes e pasta das capas do libretro. */
 final class Consoles {
 
     static final class Console {

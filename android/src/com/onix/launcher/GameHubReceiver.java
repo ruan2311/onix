@@ -5,7 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInstaller;
 
-/** Resposta do instalador do sistema para a instalação do Onix Game Hub (GameHub.install). */
+/** Resposta do instalador do sistema para a instalação do Onix GameHub (GameHub.install). */
 public class GameHubReceiver extends BroadcastReceiver {
 
     @Override

@@ -1,5 +1,5 @@
 /*
- * Frontend libretro do Onix Game Hub: carrega um núcleo (.so), roda os quadros na thread do
+ * Frontend libretro do Onix GameHub: carrega um núcleo (.so), roda os quadros na thread do
  * GLSurfaceView, desenha com OpenGL ES 2, toca o som pelo OpenSL ES e recebe os botões do Java.
  *
  * Threads:

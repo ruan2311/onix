@@ -29,8 +29,8 @@ import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Atualizações do Onix Game Hub pela página de Releases do GitHub (ruan2311/onix).
- * As versões do Game Hub têm releases próprias, com tag gamehub-vX.Y.Z e o arquivo
+ * Atualizações do Onix GameHub pela página de Releases do GitHub (ruan2311/onix).
+ * As versões do GameHub têm releases próprias, com tag gamehub-vX.Y.Z e o arquivo
  * onix-gamehub.apk; elas nunca são marcadas como "latest", que continua sendo a do Onix da TV.
  * Confere o SHA-256 publicado pelo GitHub e o pacote, e instala pelo instalador do sistema
  * (o Android sempre pede confirmação e só aceita a APK assinada com a mesma chave).
@@ -229,7 +229,7 @@ final class Updater {
             }
             PackageInfo info = ctx.getPackageManager().getPackageArchiveInfo(tmp.getPath(), 0);
             if (info == null || !ctx.getPackageName().equals(info.packageName) || !newer(info.versionName, current())) {
-                throw new Exception("a APK baixada não é uma versão nova do Onix Game Hub");
+                throw new Exception("a APK baixada não é uma versão nova do Onix GameHub");
             }
             if (apk.exists()) apk.delete();
             if (!tmp.renameTo(apk)) throw new Exception("sem espaço para a atualização");

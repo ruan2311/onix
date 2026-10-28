@@ -6,7 +6,7 @@ import android.os.StatFs;
 import org.json.JSONObject;
 
 /**
- * Espaço da TV. O Game Hub nunca enche a memória: sempre sobra para o sistema o maior valor entre
+ * Espaço da TV. O GameHub nunca enche a memória: sempre sobra para o sistema o maior valor entre
  * 2 GB e 10% do total. O que passar disso é "livre para jogos".
  */
 final class Storage {

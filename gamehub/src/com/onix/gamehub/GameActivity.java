@@ -33,7 +33,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 /**
  * Tela do jogo, num processo só dela (:game): imagem nativa (GLSurfaceView + jni/retro.c) e o
- * menu do Game Hub numa WebView transparente por cima, que só aparece com o jogo pausado.
+ * menu do GameHub numa WebView transparente por cima, que só aparece com o jogo pausado.
  *
  * Botões: cada controle vira um jogador (o primeiro a apertar é o 1). O controle remoto da TV
  * também joga (OK = A, Play = Start) e Voltar abre o menu. Em todos os 4 consoles, L2 e R2

@@ -1,5 +1,5 @@
 'use strict';
-/* Código comum do Game Hub (hub.html e menu.html): traduções, elementos, navegação pelo
+/* Código comum do GameHub (hub.html e menu.html): traduções, elementos, navegação pelo
    controle remoto, camadas, avisos, consoles e o gerador de QR. */
 
 /* ---------------- Idioma ----------------
@@ -14,8 +14,8 @@ const ES = {
   'Sua biblioteca está vazia': 'Tu biblioteca está vacía',
   'Mande seus jogos pelo celular: abra Adicionar jogos e leia o QR code com a câmera.': 'Manda tus juegos desde el celular: abre Agregar juegos y lee el código QR con la cámara.',
   'Nenhum jogo liberado ainda': 'Todavía no hay juegos permitidos',
-  'Peça para um adulto liberar jogos no Game Hub (no jogo, Liberar no Modo Infantil).': 'Pide a un adulto que permita juegos en Game Hub (en el juego, Permitir en Modo Infantil).',
-  'Sem controle': 'Sin control', 'controle': 'control', 'controles': 'controles',
+  'Peça para um adulto liberar jogos no GameHub (no jogo, Liberar no Modo Infantil).': 'Pide a un adulto que permita juegos en GameHub (en el juego, Permitir en Modo Infantil).',
+  'Sem controle': 'Sin control', '{n} livres': '{n} libres', 'controle': 'control', 'controles': 'controles',
   'Conecte um controle': 'Conecta un control',
   'Para jogar de verdade, use um controle Bluetooth (Xbox, PlayStation, 8BitDo…). O controle remoto da TV também joga, mas só com poucos botões.': 'Para jugar de verdad, usa un control Bluetooth (Xbox, PlayStation, 8BitDo…). El control remoto de la TV también juega, pero con pocos botones.',
   'Conectar controle': 'Conectar control', 'Jogar com o controle remoto': 'Jugar con el control remoto',
@@ -35,10 +35,10 @@ const ES = {
   'Ou digite no navegador: {u}': 'O escribe en el navegador: {u}',
   'Sem rede: conecte a TV ao Wi-Fi para mandar jogos.': 'Sin red: conecta la TV al Wi-Fi para mandar juegos.',
   'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip': 'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin y .zip',
-  'Use só jogos que você tem o direito de usar. Nenhum jogo vem com o Game Hub.': 'Usa solo juegos que tengas derecho a usar. Ningún juego viene con Game Hub.',
+  'Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.': 'Usa solo juegos que tengas derecho a usar. Ningún juego viene con GameHub.',
   'Recebendo': 'Recibiendo', 'Pronto': 'Listo', 'Já estava na biblioteca': 'Ya estaba en la biblioteca', 'Aguardando arquivos…': 'Esperando archivos…',
   'Armazenamento': 'Almacenamiento', 'Jogos': 'Juegos', 'Livre para jogos': 'Libre para juegos', 'Reservado para a TV': 'Reservado para la TV',
-  'O Game Hub sempre deixa livre para o sistema o maior valor entre 2 GB e 10% da memória da TV.': 'Game Hub siempre deja libre para el sistema el mayor valor entre 2 GB y 10% de la memoria de la TV.',
+  'O GameHub sempre deixa livre para o sistema o maior valor entre 2 GB e 10% da memória da TV.': 'GameHub siempre deja libre para el sistema el mayor valor entre 2 GB y 10% de la memoria de la TV.',
   'Imagem': 'Imagen', 'Som': 'Sonido', 'Jogo': 'Juego', 'Controles': 'Controles', 'Sobre': 'Acerca de',
   'Filtro': 'Filtro', 'Nítido': 'Nítido', 'Pixel puro': 'Píxel puro', 'Suave': 'Suave', 'CRT (TV antiga)': 'CRT (TV antigua)', 'LCD (portátil)': 'LCD (portátil)',
   'Tamanho': 'Tamaño', 'Ajustar à tela': 'Ajustar a la pantalla', 'Pixel perfeito': 'Píxel perfecto', 'Esticar': 'Estirar',
@@ -64,12 +64,12 @@ const ES = {
   'Em dia': 'Al día', 'Procurando…': 'Buscando…', 'Baixando…': 'Descargando…', 'Instalando…': 'Instalando…', 'Sem conexão com o GitHub': 'Sin conexión con GitHub',
   'Créditos e licenças': 'Créditos y licencias', 'Emuladores de código aberto do projeto libretro:': 'Emuladores de código abierto del proyecto libretro:',
   'Nomes dos jogos: libretro-database (No-Intro), CC BY-SA 4.0. Capas: libretro-thumbnails.': 'Nombres de los juegos: libretro-database (No-Intro), CC BY-SA 4.0. Portadas: libretro-thumbnails.',
-  'O Game Hub é gratuito e de código aberto (GPL-3.0). Nunca terá anúncios nem será vendido.': 'Game Hub es gratuito y de código abierto (GPL-3.0). Nunca tendrá anuncios ni se venderá.',
+  'O GameHub é gratuito e de código aberto (GPL-3.0). Nunca terá anúncios nem será vendido.': 'GameHub es gratuito y de código abierto (GPL-3.0). Nunca tendrá anuncios ni se venderá.',
   'Abrir licença': 'Abrir licencia', 'Fechar': 'Cerrar', 'Novo código': 'Nuevo código', 'Descrição (opcional)': 'Descripción (opcional)', 'Código': 'Código',
   'Os códigos (Game Genie, Action Replay, GameShark…) ligam e desligam na hora, pelo menu do jogo.': 'Los códigos (Game Genie, Action Replay, GameShark…) se activan y desactivan al instante, desde el menú del juego.',
   'Nenhum código ainda.': 'Todavía no hay códigos.', 'Adicionar código': 'Agregar código', 'Apagar código': 'Borrar código',
-  'Nova versão do Game Hub: {v}': 'Nueva versión de Game Hub: {v}', 'Atualizar': 'Actualizar',
-  'Perfil': 'Perfil', 'Modo Infantil': 'Modo Infantil', 'Sair do Game Hub': 'Salir de Game Hub',
+  'Nova versão do GameHub: {v}': 'Nueva versión de GameHub: {v}', 'Atualizar': 'Actualizar',
+  'Perfil': 'Perfil', 'Modo Infantil': 'Modo Infantil', 'Sair do GameHub': 'Salir de GameHub',
   'Esse tipo de arquivo não é de NES, SNES, GBA ou Mega Drive.': 'Ese tipo de archivo no es de NES, SNES, GBA o Mega Drive.',
   'O .zip não tem nenhum jogo de NES, SNES, GBA ou Mega Drive.': 'El .zip no tiene ningún juego de NES, SNES, GBA o Mega Drive.',
   'O arquivo não parece um jogo desse console.': 'El archivo no parece un juego de esa consola.',
@@ -143,8 +143,8 @@ const ICON = {
   lr: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg>',
 };
 const icon = name => svg(ICON[name]);
-// A marca do Game Hub: controle em traço com o anel do Saturno do Onix (o mesmo desenho do ícone).
-const MARK = '<svg viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round"><defs><linearGradient id="mg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff3d9a"/><stop offset="1" stop-color="#3de1ff"/></linearGradient></defs><g stroke="url(#mg)" stroke-width="2.4"><path d="M14 15h20a7 7 0 0 1 6.6 9.4L39 29a4.5 4.5 0 0 1-7.8.9L29 27H19l-2.2 2.9A4.5 4.5 0 0 1 9 29l-1.6-4.6A7 7 0 0 1 14 15z"/><path d="M12.5 23.5h6M15.5 20.5v6"/><ellipse cx="24" cy="25" rx="23" ry="5.5" transform="rotate(-18 24 25)" opacity=".9"/></g><circle cx="32" cy="24.2" r="1.8" fill="#3de1ff"/><circle cx="36.4" cy="21" r="1.8" fill="#3de1ff"/></svg>';
+// A marca do GameHub, no traço do Onix: o controle em linha branca fina (grade 48x48, como o Saturno).
+const MARK = '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14.5h16a9.5 9.5 0 0 1 9.2 7.1l2.3 8.9a5 5 0 0 1-8.9 4.2L31 30H17l-3.6 4.7a5 5 0 0 1-8.9-4.2l2.3-8.9A9.5 9.5 0 0 1 16 14.5z"/><path d="M15 19.5v6M12 22.5h6"/><circle cx="32.5" cy="20.6" r="1.25" fill="#fff" stroke="none"/><circle cx="35.9" cy="24" r="1.25" fill="#fff" stroke="none"/></svg>';
 
 /* ---------------- Consoles ---------------- */
 const CONSOLES = [

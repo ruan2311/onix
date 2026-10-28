@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build do Onix Game Hub com as mesmas ferramentas do Onix (javac, dx, aapt, zipalign, apksigner)
+# Build do Onix GameHub com as mesmas ferramentas do Onix (javac, dx, aapt, zipalign, apksigner)
 # mais o Android NDK para o frontend nativo (jni/retro.c).
 #   bash gamehub/build.sh          # gera onix-gamehub.apk na raiz do projeto
 # Os núcleos vêm de gamehub/build/cores (bash gamehub/cores.sh compila a partir do código-fonte).
@@ -25,7 +25,7 @@ IFS=. read -r MA MI PA <<< "$VERSION"
 echo "    $VERSION ($CODE)"
 
 echo "[2/8] Arte (ícone e banner)"
-[ -f res/drawable-xxxhdpi/icon.png ] || java -Djava.awt.headless=true tools/Art.java res
+[ -f res/drawable-xxxhdpi/icon.png ] || { echo "Falta o ícone: rode python3 gamehub/tools/art.py gamehub/res" >&2; exit 1; }
 
 echo "[3/8] Assets"
 cp -r assets/. "$OUT/assets/"

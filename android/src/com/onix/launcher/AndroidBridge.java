@@ -597,18 +597,18 @@ public class AndroidBridge {
         return true;
     }
 
-    /* ---------------- Onix Game Hub ---------------- */
+    /* ---------------- Onix GameHub ---------------- */
 
     private static final Pattern PROFILE_ID = Pattern.compile("^p\\d{1,9}$");
 
-    /** Estado do Game Hub para a aba Jogos (instalado, versão, baixando…, "Continuar jogando"). */
+    /** Estado do GameHub para a aba Jogos (instalado, versão, baixando…, "Continuar jogando"). */
     @JavascriptInterface
     public String gameHub(String profile, boolean kids) {
         if (!trusted) return "{}";
         return GameHub.get(activity).json(profile != null && PROFILE_ID.matcher(profile).matches() ? profile : "default", kids);
     }
 
-    /** Procura a versão publicada do Game Hub (para "Instalar" e "Atualizar"). */
+    /** Procura a versão publicada do GameHub (para "Instalar" e "Atualizar"). */
     @JavascriptInterface
     public boolean gameHubCheck() {
         if (!trusted) return false;
@@ -795,7 +795,7 @@ public class AndroidBridge {
         for (ResolveInfo ri : list) {
             if (ri.activityInfo == null) continue;
             String pkg = ri.activityInfo.packageName;
-            // O Game Hub abre pela aba Jogos, não pela lista de apps.
+            // O GameHub abre pela aba Jogos, não pela lista de apps.
             if (pkg == null || pkg.equals(self) || pkg.equals(GameHub.PKG) || user.containsKey(pkg) || system.containsKey(pkg) || !PKG.matcher(pkg).matches()) continue;
             (isUserApp(ri.activityInfo.applicationInfo) ? user : system).put(pkg, ri);
         }

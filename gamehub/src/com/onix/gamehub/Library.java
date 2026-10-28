@@ -13,7 +13,7 @@ import java.util.List;
 
 /**
  * Biblioteca (library.json, a mesma para a casa toda) e o que cada perfil jogou (played.json).
- * Os dois processos (Game Hub e o jogo) leem do arquivo; cada escrita relê antes de gravar.
+ * Os dois processos (GameHub e o jogo) leem do arquivo; cada escrita relê antes de gravar.
  */
 final class Library {
 

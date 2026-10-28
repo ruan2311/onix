@@ -29,13 +29,13 @@ import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Onix Game Hub, o app opcional de emuladores: instalar, atualizar, abrir e desinstalar pela aba
+ * Onix GameHub, o app opcional de emuladores: instalar, atualizar, abrir e desinstalar pela aba
  * Jogos, e o "Continuar jogando" que ele mostra.
  *
- * As versões do Game Hub têm releases próprias no GitHub (tag gamehub-vX.Y.Z, arquivo
+ * As versões do GameHub têm releases próprias no GitHub (tag gamehub-vX.Y.Z, arquivo
  * onix-gamehub.apk), nunca marcadas como "latest" (que é a do Onix). A APK é conferida pelo
  * SHA-256 do GitHub e pelo pacote, e o Android pede confirmação antes de instalar.
- * O resumo vem do provedor do Game Hub, protegido por uma permissão de assinatura: só o Onix lê.
+ * O resumo vem do provedor do GameHub, protegido por uma permissão de assinatura: só o Onix lê.
  */
 final class GameHub {
 
@@ -96,8 +96,8 @@ final class GameHub {
 
     /**
      * Para a aba Jogos: {installed, version, latest, state, progress, error, recent, counts}.
-     * O resumo (recentes com capa) só vem com o Game Hub instalado e não vem no Modo Infantil
-     * para jogos que não foram liberados (o Game Hub filtra).
+     * O resumo (recentes com capa) só vem com o GameHub instalado e não vem no Modo Infantil
+     * para jogos que não foram liberados (o GameHub filtra).
      */
     synchronized String json(String profile, boolean kids) {
         JSONObject o = new JSONObject();
@@ -133,7 +133,7 @@ final class GameHub {
         }
     }
 
-    /** Abre o Game Hub no perfil do Onix (open = home, console:<id>, game:<id> ou resume:<id>). */
+    /** Abre o GameHub no perfil do Onix (open = home, console:<id>, game:<id> ou resume:<id>). */
     boolean open(Activity a, String profile, String name, boolean kids, String lang, String open) {
         if (installedVersion() == null) return false;
         if (profile == null || !PROFILE.matcher(profile).matches()) return false;
@@ -166,7 +166,7 @@ final class GameHub {
 
     /* ---------------- Instalar / atualizar ---------------- */
 
-    /** Procura a versão mais nova do Game Hub. Bloqueia (rede): chamar fora da UI thread. */
+    /** Procura a versão mais nova do GameHub. Bloqueia (rede): chamar fora da UI thread. */
     boolean check(boolean force) {
         long now = System.currentTimeMillis();
         synchronized (this) {
@@ -199,7 +199,7 @@ final class GameHub {
                 if (version == null || link == null || !DOWNLOAD.matcher(link).matches() || digest == null) {
                     latest = null;
                     state = "error";
-                    error = "missing";   // ainda não há Game Hub publicado
+                    error = "missing";   // ainda não há GameHub publicado
                 } else {
                     latest = version;
                     url = link;
@@ -292,9 +292,9 @@ final class GameHub {
                 c.disconnect();
             }
             PackageInfo info = ctx.getPackageManager().getPackageArchiveInfo(tmp.getPath(), 0);
-            if (info == null || !PKG.equals(info.packageName)) throw new Exception("a APK baixada não é o Onix Game Hub");
+            if (info == null || !PKG.equals(info.packageName)) throw new Exception("a APK baixada não é o Onix GameHub");
             if (apk.exists()) apk.delete();
-            if (!tmp.renameTo(apk)) throw new Exception("sem espaço para baixar o Game Hub");
+            if (!tmp.renameTo(apk)) throw new Exception("sem espaço para baixar o GameHub");
             synchronized (this) {
                 state = "ready";
                 progress = 100;

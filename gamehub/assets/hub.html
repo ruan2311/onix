@@ -3,22 +3,25 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Onix Game Hub</title>
+<title>Onix GameHub</title>
 <link rel="stylesheet" href="common.css">
 <style>
 .app{position:fixed;inset:0;display:flex;flex-direction:column;padding:3rem 4.4rem 0}
-header{display:flex;align-items:center;gap:1.4rem;flex:none;height:5rem}
-nav{display:flex;gap:.4rem;flex:1;margin-left:.6rem;min-width:0}
+header{display:flex;align-items:center;justify-content:space-between;gap:1.4rem;flex:none;height:4.6rem}
+nav{display:flex;gap:.5rem;flex:none;margin:1rem 0 0 -.4rem}
 nav .tab{height:3.4rem;padding:0 .9rem;border-radius:999rem;font-size:1.25rem;white-space:nowrap;font-weight:600;color:var(--dim);display:flex;align-items:center;gap:.6rem}
 nav .tab .dot{width:.7rem;height:.7rem}
 nav .tab svg{width:1.6rem;height:1.6rem}
-header .brand i{white-space:nowrap}
+
 nav .tab.cur{color:var(--ink);background:rgba(255,255,255,.08)}
 nav .tab.focus{background:rgba(255,255,255,.14);color:var(--ink)}
 .right{display:flex;align-items:center;gap:.6rem}
+.store-chip .mini{width:3.2rem;height:.45rem;border-radius:99rem;background:rgba(255,255,255,.12);overflow:hidden;display:block}
+.store-chip .mini i{display:block;height:100%;background:var(--grad)}
+.store-chip.low{color:#ffd27a;border-color:rgba(255,210,122,.35)}
 .clock{font-size:1.4rem;font-weight:600;color:var(--dim);text-align:right}
 .right{flex:none}
-main{flex:1;position:relative;overflow:hidden;margin-top:1.6rem}
+main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .page{position:absolute;inset:0;overflow:hidden;padding:1rem .8rem 4rem}
 .page[hidden]{display:none}
 .row-title{font-size:1.45rem;font-weight:700;margin:2.2rem 0 1.1rem .2rem;display:flex;align-items:baseline;gap:1rem}
@@ -103,7 +106,8 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1.6rem}
   box-shadow:0 0 2rem var(--pink);animation:bootline .45s ease forwards}
 .boot .brand{opacity:0;animation:bootlogo .5s ease .35s forwards}
 .boot .brand svg{width:6rem;height:6rem}
-.boot .brand i{font-size:3rem}
+.boot .brand b{font-size:2.4rem}
+.boot .brand small{font-size:1.3rem}
 @keyframes bootline{0%{width:0}60%{width:70%;height:.25rem}100%{width:70%;height:0;opacity:0}}
 @keyframes bootlogo{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
 @keyframes bootout{to{opacity:0;visibility:hidden}}
@@ -115,13 +119,14 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1.6rem}
 <div class="app">
   <header>
     <div class="brand" id="brand"></div>
-    <nav id="nav"></nav>
     <div class="right">
+      <div id="storeChip"></div>
       <div id="padChip"></div>
       <div class="chip" id="profileChip" hidden></div>
       <div class="clock" id="clock"></div>
     </div>
   </header>
+  <nav id="nav"></nav>
   <main id="main"></main>
 </div>
 <script src="common.js"></script>
@@ -136,7 +141,7 @@ function call(name, ...args) {
 function json(s, def) { try { return s ? JSON.parse(s) : def; } catch (_) { return def; } }
 
 function brand(el) {
-  el.replaceChildren(svg(MARK), h('div', null, h('b', { text: 'ONIX' }), h('i', { text: 'GAME HUB' })));
+  el.replaceChildren(svg(MARK), h('span', null, h('b', { text: 'ONIX GAMEHUB' }), h('small', { text: 'By Ruan' })));
 }
 
 function loadLibrary() { LIB = json(call('library'), []); }
@@ -158,6 +163,7 @@ function renderNav() {
   }));
 }
 function renderChips() {
+  renderStore();
   const pads = json(call('gamepads'), INFO.gamepads || []);
   const chip = pads.length
     ? h('div', { class: 'chip', title: pads.map(p => p.name).join(', ') }, icon('pad'), String(pads.length))
@@ -168,6 +174,19 @@ function renderChips() {
     p.hidden = false;
     p.replaceChildren(...[INFO.kids ? icon('kid') : null, INFO.profileName].filter(Boolean));
   } else p.hidden = true;
+}
+function renderStore() {
+  const el = $('#storeChip');
+  if (!el) return;
+  const s = json(call('storage'), null);
+  if (!s || !s.total) { el.replaceChildren(); return; }
+  const room = (s.used || 0) + (s.available || 0);
+  const pct = room > 0 ? Math.round((s.used || 0) / room * 100) : 100;
+  const low = (s.available || 0) < 200 * 1048576;
+  const chip = h('button', { class: 'f chip pill store-chip' + (low ? ' low' : ''), title: t('Armazenamento'), act: () => { setSection = 'storage'; show('settings'); } },
+    icon('disk'), t('{n} livres', { n: fmtBytes(s.available || 0) }), h('span', { class: 'mini' }, h('i', { style: { width: pct + '%' } })));
+  if (INFO.kids) chip.classList.remove('f');
+  el.replaceChildren(chip);
 }
 function tick() {
   const d = new Date();
@@ -207,10 +226,10 @@ function homePage() {
   const page = h('section', { class: 'page' });
   if (!LIB.length) {
     page.append(INFO.kids
-      ? h('div', { class: 'empty' }, h('h1', { text: t('Nenhum jogo liberado ainda') }), h('p', { text: t('Peça para um adulto liberar jogos no Game Hub (no jogo, Liberar no Modo Infantil).') }))
+      ? h('div', { class: 'empty' }, h('h1', { text: t('Nenhum jogo liberado ainda') }), h('p', { text: t('Peça para um adulto liberar jogos no GameHub (no jogo, Liberar no Modo Infantil).') }))
       : h('div', { class: 'empty' }, h('h1', { text: t('Sua biblioteca está vazia') }),
         h('p', { text: t('Mande seus jogos pelo celular: abra Adicionar jogos e leia o QR code com a câmera.') }),
-        h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o Game Hub.') }),
+        h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }),
         h('button', { class: 'f btn primary', act: () => show('add') }, icon('plus'), t('Adicionar jogos'))));
     page.append(h('div', { class: 'row-title', text: t('Consoles') }), consoleTiles());
     return page;
@@ -267,7 +286,7 @@ function consolePage(cid) {
     ...sorts.map(([k, label]) => h('button', { class: 'f btn' + (sortBy === k ? ' primary' : ''), text: label, act: () => { sortBy = k; show(PAGE, true); } }))));
   if (!games.length) {
     page.append(h('div', { class: 'empty' }, h('h1', { text: t('Nenhum jogo') }),
-      INFO.kids ? h('p', { text: t('Peça para um adulto liberar jogos no Game Hub (no jogo, Liberar no Modo Infantil).') })
+      INFO.kids ? h('p', { text: t('Peça para um adulto liberar jogos no GameHub (no jogo, Liberar no Modo Infantil).') })
         : h('p', { text: t('Mande seus jogos pelo celular: abra Adicionar jogos e leia o QR code com a câmera.') }),
       INFO.kids ? null : h('button', { class: 'f btn primary', act: () => show('add') }, icon('plus'), t('Adicionar jogos'))));
     return page;
@@ -399,7 +418,7 @@ function addPage() {
       h('p', { text: t('O celular precisa estar no mesmo Wi-Fi da TV.') }),
       uploadInfo.ip ? h('p', { class: 'url', text: t('Ou digite no navegador: {u}', { u: 'http://' + uploadInfo.ip }) }) : null,
       h('p', { text: t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip') }),
-      h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o Game Hub.') }),
+      h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }),
       store, xfers)));
   // Foco em algo da página (o QR não é focável): a aba fica selecionada.
   setTimeout(() => { drawStore(); drawXfers(); }, 0);
@@ -420,7 +439,7 @@ function drawStore() {
       h('span', null, h('i', { style: { background: 'var(--grad)' } }), t('Jogos') + ' ' + fmtBytes(s.used || 0)),
       h('span', null, h('i', { style: { background: 'rgba(255,255,255,.12)' } }), t('Livre para jogos') + ' ' + fmtBytes(s.available || 0)),
       h('span', null, h('i', { style: { background: '#7c6fb3' } }), t('Reservado para a TV') + ' ' + fmtBytes(s.reserve || 0))),
-    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t('O Game Hub sempre deixa livre para o sistema o maior valor entre 2 GB e 10% da memória da TV.') }));
+    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t('O GameHub sempre deixa livre para o sistema o maior valor entre 2 GB e 10% da memória da TV.') }));
 }
 function drawXfers() {
   const el = $('#xfers');
@@ -443,6 +462,7 @@ handlers.upload = e => {
     Object.assign(x, { done: true, ok: e.ok, dup: e.dup, error: e.error, title: e.ok ? e.name : x.name });
     if (e.ok && !e.dup) { loadLibrary(); toast(t('Pronto') + ': ' + e.name); }
     drawStore();
+    renderStore();
   }
   drawXfers();
 };
@@ -670,7 +690,7 @@ function aboutBody() {
   const wrap = h('div');
   const status = { none: t('Em dia'), checking: t('Procurando…'), downloading: t('Baixando…'), installing: t('Instalando…'), error: t('Sem conexão com o GitHub') }[up.state] || '';
   const list = h('div', { class: 'list' },
-    h('div', { class: 'item' }, h('span', { style: { width: '3.4rem' } }, svg(MARK)), h('span', { class: 'grow' }, 'Onix Game Hub', h('span', { class: 'sub', text: t('Versão {v}', { v: INFO.version || '' }) + (status ? ' · ' + status : '') }))),
+    h('div', { class: 'item' }, h('span', { style: { width: '3.4rem' } }, svg(MARK)), h('span', { class: 'grow' }, 'Onix GameHub', h('span', { class: 'sub', text: t('Versão {v}', { v: INFO.version || '' }) + (status ? ' · ' + status : '') }))),
     up.latest && (up.state === 'available' || up.state === 'ready' || up.state === 'error')
       ? h('button', { class: 'f item', act: () => { call('installUpdate'); toast(t('Baixando…')); } }, icon('load'), h('span', { class: 'grow', text: t('Instalar atualização {v}', { v: up.latest }) }))
       : h('button', { class: 'f item', act: () => { call('checkUpdate'); toast(t('Procurando…')); } }, icon('reset'), h('span', { class: 'grow', text: t('Procurar atualizações') })),
@@ -679,8 +699,8 @@ function aboutBody() {
     ...[['FCEUmm (NES)', 'fceumm', 'GPL-2.0'], ['Snes9x (SNES)', 'snes9x', 'Snes9x, não comercial'], ['mGBA (GBA)', 'mgba', 'MPL-2.0'], ['Genesis Plus GX (Mega Drive)', 'genesis_plus_gx', 'não comercial']]
       .map(([name, file, lic]) => h('button', { class: 'f item', act: () => licenseSheet(name, file) }, h('span', { class: 'grow' }, name, h('span', { class: 'sub', text: lic })), h('span', { class: 'val', text: t('Abrir licença') }))),
     h('button', { class: 'f item', act: () => licenseSheet('libretro-database', 'libretro_database') }, h('span', { class: 'grow' }, t('Nomes dos jogos: libretro-database (No-Intro), CC BY-SA 4.0. Capas: libretro-thumbnails.')), h('span', { class: 'val', text: t('Abrir licença') })),
-    h('p', { class: 'credits', text: t('O Game Hub é gratuito e de código aberto (GPL-3.0). Nunca terá anúncios nem será vendido.') }),
-    h('p', { class: 'credits', text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o Game Hub.') }));
+    h('p', { class: 'credits', text: t('O GameHub é gratuito e de código aberto (GPL-3.0). Nunca terá anúncios nem será vendido.') }),
+    h('p', { class: 'credits', text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }));
   wrap.append(h('h2', { text: t('Sobre') }), list);
   return wrap;
 }
@@ -720,7 +740,7 @@ handlers.update = up => { if (PAGE === 'settings' && setSection === 'about' && !
 
 function maybeUpdateBanner(up) {
   if (!up || !up.latest || up.state !== 'available' || INFO.fromOnix && INFO.onix) return;
-  toast(t('Nova versão do Game Hub: {v}', { v: up.latest }));
+  toast(t('Nova versão do GameHub: {v}', { v: up.latest }));
 }
 
 onBack = () => {

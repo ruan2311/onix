@@ -1,4 +1,4 @@
-# Teste do Onix Game Hub (antes da 16.0.0)
+# Teste do Onix GameHub (antes da 16.0.0)
 
 Roteiro para o Claude do celular (Termux) quando o usuário disser **"comece o teste do onix gamehub"**.
 Nada aqui publica release, muda versão ou mexe no `main`. Os resultados ficam em
@@ -7,10 +7,10 @@ Nada aqui publica release, muda versão ou mexe no `main`. Os resultados ficam e
 ## O que está no branch `gamehub`
 
 - `teste/onix-launcher.apk`: Onix **15.9.0 teste**, a variante Launcher que a TV usa, com a aba
-  Jogos nova (atalhos do Game Hub, instalar e desinstalar). A versão é 15.9.0 de propósito: a
+  Jogos nova (atalhos do GameHub, instalar e desinstalar). A versão é 15.9.0 de propósito: a
   release 16.0.0 de verdade ainda instala por cima pelo atualizador, e o atualizador não troca
   este teste pela 15.0.2.
-- `teste/onix-gamehub.apk`: Onix Game Hub **0.9.0**. Pacote `com.onix.gamehub`, a mesma chave do Onix.
+- `teste/onix-gamehub.apk`: Onix GameHub **0.9.0**. Pacote `com.onix.gamehub`, a mesma chave do Onix.
 - Os dois foram compilados e assinados no PC. **Não compile APK no celular:** sem a chave do PC, a
   APK sai com outra assinatura, e a TV teria que desinstalar o Onix para instalar, perdendo os dados.
 
@@ -44,9 +44,9 @@ adb -s 192.168.1.75:5555 install -r teste/onix-gamehub.apk
 Passe os itens um por um, em português simples, e anote o que ele disser.
 
 1. **Aba Jogos do Onix.**
-   - Aparece "Onix Game Hub" com os 4 consoles e o "Abrir o Game Hub"?
-   - O Game Hub **não** aparece na lista de apps do Onix?
-2. **Abrir.** O Game Hub abre com a animação de "ligar" e mostra o perfil no topo?
+   - Aparece "Onix GameHub" com os 4 consoles e o "Abrir o GameHub"?
+   - O GameHub **não** aparece na lista de apps do Onix?
+2. **Abrir.** O GameHub abre com a animação de "ligar" e mostra o perfil no topo?
 3. **Controle.** Sem controle conectado:
    - O topo mostra "Sem controle"?
    - OK nesse chip abre a tela de Bluetooth/acessórios da TV? Anote qual tela abriu.
@@ -66,7 +66,7 @@ Passe os itens um por um, em português simples, e anote o que ele disser.
 6. **Menu do jogo** (Voltar, ou Select + Start):
    - Salvar no espaço 1 e carregar.
    - "Sair do jogo".
-   - O "Continuar jogando" aparece com a imagem do ponto onde parou, no Game Hub e na aba Jogos do Onix?
+   - O "Continuar jogando" aparece com a imagem do ponto onde parou, no GameHub e na aba Jogos do Onix?
    - Ao entrar por ali, ele volta exatamente daquele ponto?
 7. **Atalhos:**
    - Segurar R2 acelera.
@@ -83,9 +83,9 @@ Passe os itens um por um, em português simples, e anote o que ele disser.
     - Reinstale `teste/onix-gamehub.apk` com `adb install -r`. Isso simula uma atualização.
     - Os jogos, as capas e os saves continuam lá?
 13. **Desinstalar pelo Onix:**
-    - "Desinstalar o Game Hub" mostra a confirmação do Android?
-    - Depois, a aba Jogos volta a mostrar "Instalar o Game Hub"?
-    - "Instalar" vai dizer que o Game Hub ainda não foi publicado. É o esperado até a release.
+    - "Desinstalar o GameHub" mostra a confirmação do Android?
+    - Depois, a aba Jogos volta a mostrar "Instalar o GameHub"?
+    - "Instalar" vai dizer que o GameHub ainda não foi publicado. É o esperado até a release.
     - Para voltar a testar, reinstale pelo adb.
 
 ## Se algo travar ou fechar sozinho

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Onix Game Hub: emulador de NES, SNES, GBA e Mega Drive para Google TV. Abre pela aba Jogos do
-  Onix ou pelo ícone (para quem instalou só o Game Hub); o Onix esconde o ícone nas listas dele.
+  Onix GameHub: emulador de NES, SNES, GBA e Mega Drive para Google TV. Abre pela aba Jogos do
+  Onix ou pelo ícone (para quem instalou só o GameHub); o Onix esconde o ícone nas listas dele.
   INTERNET: capas dos jogos (thumbnails.libretro.com), versões novas no GitHub e o envio de jogos
   pelo celular na rede de casa (servidor ligado só na tela "Adicionar jogos").
   versionCode = maior*10000 + menor*100 + correção (o build.sh confere).
@@ -15,7 +15,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <!-- Atualizações pelo próprio Game Hub (o Android sempre pede confirmação na tela). -->
+    <!-- Atualizações pelo próprio GameHub (o Android sempre pede confirmação na tela). -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <!-- Só apps com a mesma assinatura (o Onix) leem o "Continuar jogando". O Onix declara a
@@ -45,7 +45,7 @@
     </queries>
 
     <application
-        android:label="Onix Game Hub"
+        android:label="Onix GameHub"
         android:icon="@drawable/icon"
         android:banner="@drawable/banner"
         android:allowBackup="false"
@@ -69,7 +69,7 @@
             </intent-filter>
         </activity>
 
-        <!-- O jogo roda num processo só dele: um núcleo travado não derruba o Game Hub. -->
+        <!-- O jogo roda num processo só dele: um núcleo travado não derruba o GameHub. -->
         <activity
             android:name="com.onix.gamehub.GameActivity"
             android:exported="false"

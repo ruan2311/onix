@@ -47,7 +47,7 @@ final class Covers {
         });
     }
 
-    /** Ao abrir o Game Hub: tenta de novo as capas que faltaram (sem internet na hora, por ex.). */
+    /** Ao abrir o GameHub: tenta de novo as capas que faltaram (sem internet na hora, por ex.). */
     static void fetchMissing(Context ctx) {
         JSONArray g = Library.games(ctx);
         long now = System.currentTimeMillis();

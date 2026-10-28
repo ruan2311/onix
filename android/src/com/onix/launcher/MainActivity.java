@@ -147,7 +147,7 @@ public class MainActivity extends Activity {
                 if (webView != null) webView.evaluateJavascript("window.Launcher&&Launcher.onUpdate&&Launcher.onUpdate()", null);
             }
         });
-        // Onix Game Hub: progresso de baixar/instalar vai para a aba Jogos.
+        // Onix GameHub: progresso de baixar/instalar vai para a aba Jogos.
         GameHub.get(this).setListener(new GameHub.Listener() {
             @Override
             public void changed() {
