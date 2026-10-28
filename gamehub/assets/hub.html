@@ -115,6 +115,10 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 @keyframes bootline{0%{width:0}60%{width:70%;height:.25rem}100%{width:70%;height:0;opacity:0}}
 @keyframes bootlogo{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
 @keyframes bootout{to{opacity:0;visibility:hidden}}
+/* Só começa depois do primeiro quadro na tela (classe "go"): numa TV lenta, o começo não se perde. */
+.boot,.boot .line,.boot .brand{animation-play-state:paused}
+.boot.go,.boot.go .line,.boot.go .brand{animation-play-state:running}
+@media (prefers-reduced-motion:reduce){.boot{display:none}}
 </style>
 </head>
 <body>
@@ -744,7 +748,7 @@ handlers.cover = () => {
 handlers.library = () => { loadLibrary(); if (!layers.length) show(PAGE, true); };
 handlers.resume = () => { renderChips(); };
 handlers.back = () => back();
-handlers.open = info => { INFO = Object.assign(INFO, info); applyOpen(); };
+handlers.open = info => { INFO = Object.assign(INFO, info); if (!String(INFO.open || '').startsWith('resume:')) playBoot(); applyOpen(); };
 handlers.update = up => { if (PAGE === 'settings' && setSection === 'about' && !layers.length) show('settings', true); maybeUpdateBanner(up); };
 
 function maybeUpdateBanner(up) {
@@ -771,6 +775,17 @@ function applyOpen() {
 /* ---------------- Início ---------------- */
 INFO = json(call('init'), { profile: 'default', lang: 'pt', gamepads: [] });
 brand($('#brand')); brand($('#bootBrand'));
+// Abertura: toca ao abrir e de novo quando o Onix chama o GameHub que já estava aberto.
+function playBoot() {
+  const old = $('#boot');
+  const n = old.cloneNode(true);
+  n.classList.remove('go');
+  old.replaceWith(n);
+  const go = () => n.classList.add('go');
+  requestAnimationFrame(() => requestAnimationFrame(go));
+  setTimeout(go, 700);   // sem quadros (página escondida): nunca deixa a tela presa no preto
+}
+playBoot();
 tick(); setInterval(tick, 15000);
 applyOpen();
 if (!Hub) {   // aberto num navegador comum (pré-visualização): dados de exemplo

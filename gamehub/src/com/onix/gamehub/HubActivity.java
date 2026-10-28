@@ -45,7 +45,8 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         readIntent(getIntent());
 
         web = new WebView(this);
-        web.setBackgroundColor(Color.rgb(7, 4, 15));
+        // Preto, como a abertura: sem troca de cor entre abrir o app e a página aparecer.
+        web.setBackgroundColor(Color.BLACK);
         Web.setup(web, this);
         bridge = new HubBridge(this);
         web.addJavascriptInterface(bridge, "Hub");

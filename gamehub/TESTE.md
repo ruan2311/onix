@@ -46,7 +46,11 @@ Passe os itens um por um, em português simples, e anote o que ele disser.
 1. **Aba Jogos do Onix.**
    - Aparece "Onix GameHub" com os 4 consoles e o "Abrir o GameHub"?
    - O GameHub **não** aparece na lista de apps do Onix?
-2. **Abrir.** O GameHub abre com a animação de "ligar" e mostra o perfil no topo?
+2. **Abrir e a abertura.**
+   - Ao abrir pela aba Jogos, aparece a abertura inteira (linha colorida atravessando a tela, depois o logo "ONIX GAMEHUB By Ruan", e tudo some em cerca de 1,5 s)?
+   - Ou a TV pula para a tela pronta? Fica preta por muito tempo?
+   - Volte para o Onix com o botão Início e entre de novo pelo GameHub: a abertura toca de novo?
+   - O perfil aparece no topo?
 3. **Controle.** Sem controle conectado:
    - O topo mostra "Sem controle"?
    - OK nesse chip abre a tela de Bluetooth/acessórios da TV? Anote qual tela abriu.
