@@ -32,13 +32,16 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .tile.focus .name{color:var(--ink)}
 
 /* Destaque "Continuar jogando" */
-.hero{display:flex;gap:2.6rem;align-items:stretch;padding:2rem;border-radius:1.8rem;height:21rem;
+.hero{position:relative;overflow:hidden;display:flex;gap:2.8rem;align-items:center;padding:2rem 2.6rem;border-radius:1.8rem;height:21rem;
   background:linear-gradient(110deg,rgba(255,61,154,.14),rgba(61,225,255,.06) 60%,rgba(255,255,255,.03));border:1px solid var(--line)}
-.hero .shot{flex:none;width:30rem;border-radius:1.2rem;overflow:hidden;background:#000;position:relative}
-.hero .shot>img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
-.hero .shot .box{position:absolute;left:1rem;bottom:1rem;width:7.4rem;aspect-ratio:3/4;border-radius:.7rem;box-shadow:0 .6rem 1.6rem rgba(0,0,0,.6)}
-.hero .shot .cover{position:absolute;inset:0;aspect-ratio:auto;border-radius:0}
-.hero .info{display:flex;flex-direction:column;justify-content:center;gap:.9rem;min-width:0}
+/* Fundo com as cores da própria capa, bem desfocadas */
+.hero .ambient{position:absolute;inset:-25%;width:150%;height:150%;object-fit:cover;filter:blur(3.5rem) saturate(1.3);opacity:.42;z-index:0;pointer-events:none}
+.hero .poster{flex:none;height:100%;aspect-ratio:3/4;position:relative;z-index:1;box-shadow:0 1.2rem 3rem rgba(0,0,0,.55);border-radius:1.1rem}
+.hero .poster .cover{position:absolute;inset:0;aspect-ratio:auto;border-radius:1.1rem}
+.hero .where{flex:none;margin-left:auto;height:78%;aspect-ratio:4/3;position:relative;z-index:1;display:flex;flex-direction:column;gap:.6rem}
+.hero .where img{flex:1;min-height:0;width:100%;object-fit:cover;border-radius:1rem;image-rendering:pixelated;background:#000;box-shadow:0 1rem 2.4rem rgba(0,0,0,.5)}
+.hero .where small{font-size:1rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700}
+.hero .info{position:relative;z-index:1;display:flex;flex-direction:column;justify-content:center;gap:.9rem;min-width:0;flex:1}
 .hero .kicker{font-size:1.1rem;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);font-weight:700}
 .hero h1{font-size:3rem;font-weight:800;line-height:1.08;max-height:6.6rem;overflow:hidden}
 .hero .meta{font-size:1.25rem;color:var(--dim)}
@@ -238,21 +241,23 @@ function homePage() {
   const rec = recent();
   if (rec.length) {
     const g = rec[0], c = consoleOf(g.console);
-    const shot = h('div', { class: 'shot' });
-    // A tela de onde parou, com a capa pequena por cima; sem a tela, só a capa inteira.
+    // A capa original (identifica o jogo) na proporção dela, o fundo com as cores dela e, à direita,
+    // a tela de onde parou, deitada.
+    const poster = h('div', { class: 'poster' }, coverEl(g, { tag: false, title: true }));
+    const ambient = g.cover ? h('img', { class: 'ambient', src: 'cover/' + g.id + '.jpg?v=' + (g.coverTried || 0), alt: '' }) : null;
+    if (ambient) ambient.onerror = () => ambient.remove();
+    let where = null;
     if (g.resume) {
       const img = h('img', { src: 'shot/' + INFO.profile + '/' + g.id + '/auto.jpg?t=' + g.last, alt: '' });
-      const box = g.cover ? coverEl(g, { tag: false }) : null;
-      if (box) box.classList.add('box');
-      img.onerror = () => { img.remove(); if (box) box.remove(); shot.append(coverEl(g, { tag: false, title: true })); };
-      shot.append(img, box);
-    } else shot.append(coverEl(g, { tag: false, title: true }));
+      where = h('div', { class: 'where' }, h('small', { text: t('Onde parou') }), img);
+      img.onerror = () => where.remove();
+    }
     const play = h('button', { class: 'f btn primary', act: () => play_(g, g.resume ? 'resume' : 'new') }, icon('play'), g.resume ? t('Continuar') : t('Jogar'));
-    page.append(h('div', { class: 'hero' }, shot, h('div', { class: 'info' },
+    page.append(h('div', { class: 'hero' }, ambient, poster, h('div', { class: 'info' },
       h('div', { class: 'kicker', text: t('Continuar jogando') }),
       h('h1', { text: g.name }),
       h('div', { class: 'meta' }, h('span', { style: { color: c.color }, text: t(c.name) }), ' · ', ago(g.last), ' · ', t('Jogado por {t}', { t: fmtTime(g.time) })),
-      h('div', { class: 'acts' }, play, h('button', { class: 'f btn', act: () => openGame(g), text: t('Estados salvos') })))));
+      h('div', { class: 'acts' }, play, h('button', { class: 'f btn', act: () => openGame(g), text: t('Estados salvos') }))), where));
     if (rec.length > 1) page.append(h('div', { class: 'row-title', text: t('Jogados recentemente') }), h('div', { class: 'row' }, rec.slice(1, 9).map(x => tile(x))));
   }
   const favs = LIB.filter(g => g.fav);
