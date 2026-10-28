@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Onix Game Hub: emulador de NES, SNES, GBA e Mega Drive para Google TV. Abre pela aba Jogos do
+  Onix ou pelo ícone (para quem instalou só o Game Hub); o Onix esconde o ícone nas listas dele.
+  INTERNET: capas dos jogos (thumbnails.libretro.com), versões novas no GitHub e o envio de jogos
+  pelo celular na rede de casa (servidor ligado só na tela "Adicionar jogos").
+  versionCode = maior*10000 + menor*100 + correção (o build.sh confere).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.onix.gamehub"
+    android:versionCode="900"
+    android:versionName="0.9.0">
+
+    <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <!-- Atualizações pelo próprio Game Hub (o Android sempre pede confirmação na tela). -->
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!-- Só apps com a mesma assinatura (o Onix) leem o "Continuar jogando". O Onix declara a
+         mesma permissão, para funcionar em qualquer ordem de instalação. -->
+    <permission
+        android:name="com.onix.gamehub.permission.HUB"
+        android:protectionLevel="signature" />
+
+    <uses-feature android:name="android.software.leanback" android:required="false" />
+    <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
+    <uses-feature android:name="android.hardware.gamepad" android:required="false" />
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
+
+    <!-- Tela de parear controles (Bluetooth) da TV. -->
+    <queries>
+        <intent>
+            <action android:name="com.google.android.intent.action.CONNECT_INPUT" />
+        </intent>
+        <intent>
+            <action android:name="android.settings.BLUETOOTH_SETTINGS" />
+        </intent>
+        <intent>
+            <action android:name="android.settings.SETTINGS" />
+        </intent>
+        <package android:name="com.android.tv.settings" />
+        <package android:name="com.aurora.launcher" />
+    </queries>
+
+    <application
+        android:label="Onix Game Hub"
+        android:icon="@drawable/icon"
+        android:banner="@drawable/banner"
+        android:allowBackup="false"
+        android:hardwareAccelerated="true"
+        android:usesCleartextTraffic="false"
+        android:extractNativeLibs="true"
+        android:largeHeap="true"
+        android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+
+        <activity
+            android:name="com.onix.gamehub.HubActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
+            android:windowSoftInputMode="adjustPan">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LEANBACK_LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <!-- O jogo roda num processo só dele: um núcleo travado não derruba o Game Hub. -->
+        <activity
+            android:name="com.onix.gamehub.GameActivity"
+            android:exported="false"
+            android:process=":game"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
+            android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <provider
+            android:name="com.onix.gamehub.HubProvider"
+            android:authorities="com.onix.gamehub.hub"
+            android:exported="true"
+            android:permission="com.onix.gamehub.permission.HUB" />
+
+        <receiver
+            android:name="com.onix.gamehub.UpdateReceiver"
+            android:exported="false" />
+    </application>
+</manifest>

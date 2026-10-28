@@ -1,0 +1,13 @@
+Nomes dos jogos (assets/db/*.tsv)
+
+Os arquivos assets/db/nes.tsv, snes.tsv, gba.tsv e md.tsv têm só o CRC32 e o nome de cada jogo,
+tirados dos DATs No-Intro do projeto libretro-database:
+https://github.com/libretro/libretro-database (pasta metadat/no-intro)
+
+Licença: Creative Commons Attribution-ShareAlike 4.0 International (CC BY-SA 4.0)
+https://creativecommons.org/licenses/by-sa/4.0/
+
+Estes arquivos derivados seguem a mesma licença (CC BY-SA 4.0).
+
+As capas são baixadas na hora, uma por jogo, do repositório libretro-thumbnails
+(https://thumbnails.libretro.com); nenhuma capa vem dentro do app.

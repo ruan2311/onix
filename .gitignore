@@ -26,3 +26,7 @@ onix-webos.ipk
 # Saída do build do Onix Controle (controle/build.sh)
 controle/build/
 onix-controle.apk
+
+# Saída do build do Onix Game Hub (gamehub/build.sh e gamehub/cores.sh)
+gamehub/build/
+onix-gamehub.apk

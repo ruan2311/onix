@@ -1,0 +1,99 @@
+/* Onix Game Hub: índigo profundo, traços neon (magenta -> ciano) e uma cor por console.
+   1rem = 1/96 da largura da tela, então tudo escala igual em qualquer TV. */
+:root{
+  --bg1:#1b0f3d; --bg2:#07040f; --ink:#f1edff; --dim:#a99fd0; --mute:#6f6699;
+  --pink:#ff3d9a; --cyan:#3de1ff; --grad:linear-gradient(90deg,var(--pink),var(--cyan));
+  --glass:rgba(255,255,255,.055); --line:rgba(255,255,255,.09); --panel:rgba(14,9,32,.92);
+  --nes:#ff5a6e; --snes:#a78bfa; --gba:#38bdf8; --md:#fbbf24;
+  --r:1.2rem;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{font-size:calc(100vw / 96);background:var(--bg2);color:var(--ink);
+  font-family:Roboto,"Google Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;height:100%}
+body{height:100%;overflow:hidden;user-select:none;-webkit-user-select:none}
+button{font:inherit;color:inherit;background:none;border:0;outline:0;cursor:pointer;text-align:left}
+input{font:inherit;color:inherit;outline:0}
+svg{display:block}
+.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(120% 90% at 18% 0%,var(--bg1) 0%,#0d0722 45%,var(--bg2) 100%)}
+.bg::after{content:"";position:absolute;left:-20%;right:-20%;bottom:0;height:34%;
+  background:repeating-linear-gradient(90deg,rgba(61,225,255,.09) 0 1px,transparent 1px 5.5rem),
+             repeating-linear-gradient(0deg,rgba(61,225,255,.08) 0 1px,transparent 1px 2.6rem);
+  transform:perspective(30rem) rotateX(62deg);transform-origin:bottom;
+  -webkit-mask-image:linear-gradient(to top,#000 10%,transparent 95%);mask-image:linear-gradient(to top,#000 10%,transparent 95%)}
+
+/* Marca */
+.brand{display:flex;align-items:center;gap:.9rem}
+.brand svg{width:4.4rem;height:4.4rem;flex:none}
+.brand b{font-size:1.15rem;letter-spacing:.32em;color:var(--dim);font-weight:600;display:block}
+.brand i{font-style:normal;font-size:1.9rem;font-weight:800;letter-spacing:.06em;
+  background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:block;line-height:1}
+
+/* Foco: anel neon e um leve aumento */
+.f{position:relative;transition:transform .14s ease,box-shadow .14s ease,background .14s ease}
+.f.focus{transform:scale(1.045);z-index:2}
+.item.f.focus,.tab.f.focus{transform:none}
+.f.focus::before{content:"";position:absolute;inset:-.32rem;border-radius:calc(var(--r) + .32rem);padding:.22rem;
+  background:var(--grad);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
+  -webkit-mask-composite:xor;mask-composite:exclude;box-shadow:0 0 2.4rem rgba(255,61,154,.35);pointer-events:none}
+.f.pill.focus::before,.btn.focus::before{border-radius:999rem}
+
+.btn{display:inline-flex;align-items:center;gap:.7rem;height:3.6rem;padding:0 1.8rem;border-radius:999rem;
+  background:var(--glass);border:1px solid var(--line);font-size:1.35rem;font-weight:600;white-space:nowrap}
+.btn svg{width:1.6rem;height:1.6rem}
+.btn.primary{background:var(--grad);color:#14082c;border:0}
+.btn.danger{color:#ff8aa5}
+.btn.focus{background:rgba(255,255,255,.14)}
+.btn.primary.focus{background:var(--grad);filter:brightness(1.12)}
+
+.glass{background:var(--glass);border:1px solid var(--line);border-radius:var(--r)}
+.chip{display:inline-flex;align-items:center;gap:.5rem;height:2.6rem;padding:0 1.1rem;border-radius:999rem;
+  background:var(--glass);border:1px solid var(--line);font-size:1.1rem;color:var(--dim)}
+.chip svg{width:1.3rem;height:1.3rem}
+.chip.warn{color:#ffd27a;border-color:rgba(255,210,122,.35)}
+.dot{width:.8rem;height:.8rem;border-radius:50%;display:inline-block}
+
+/* Capas */
+.cover{position:relative;border-radius:var(--r);overflow:hidden;background:#140c2c;aspect-ratio:3/4}
+.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#0e0820}
+.cover .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:1.2rem;
+  font-weight:700;font-size:1.25rem;line-height:1.2;text-align:center}
+.cover .ph svg{width:55%;height:auto;opacity:.85}
+.cover .ph small{font-size:1rem;opacity:.75;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
+.cover .tag{position:absolute;left:.7rem;top:.7rem;height:1.9rem;padding:0 .7rem;border-radius:999rem;font-size:.9rem;font-weight:700;
+  display:flex;align-items:center;background:rgba(7,4,15,.75);letter-spacing:.06em}
+.cover .fav{position:absolute;right:.7rem;top:.7rem;width:2rem;height:2rem;color:#ffd27a}
+
+/* Painéis (camadas sobre a tela) */
+.layer{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+  background:rgba(4,2,10,.72);animation:fade .18s ease}
+.layer.side{justify-content:flex-end;align-items:stretch}
+.sheet{background:var(--panel);border:1px solid var(--line);border-radius:1.8rem;padding:3rem;
+  max-width:62rem;width:62rem;max-height:86vh;overflow:hidden;box-shadow:0 2rem 6rem rgba(0,0,0,.6);display:flex;flex-direction:column;gap:1.6rem}
+.layer.side .sheet{border-radius:0;max-height:none;height:100%;width:44rem;border-width:0 0 0 1px;padding:3.4rem 3rem}
+.sheet h2{font-size:2.2rem;font-weight:800}
+.sheet p{font-size:1.3rem;color:var(--dim);line-height:1.45}
+.list{display:flex;flex-direction:column;gap:.7rem;overflow:hidden}
+.item{display:flex;align-items:center;gap:1.1rem;min-height:4.2rem;padding:.8rem 1.4rem;border-radius:1rem;
+  background:var(--glass);border:1px solid transparent;font-size:1.35rem}
+.item svg{width:1.8rem;height:1.8rem;flex:none}
+.item .grow{flex:1;min-width:0}
+.item .val{color:var(--dim);font-size:1.2rem;display:flex;align-items:center;gap:.5rem}
+.item .sub{display:block;color:var(--mute);font-size:1.05rem;margin-top:.25rem;line-height:1.35}
+.item.focus{background:rgba(255,255,255,.12)}
+.item.on .val{color:var(--cyan)}
+.item .arrows{opacity:0;color:var(--mute)}
+.item.focus .arrows{opacity:1}
+.sep{font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin:1.2rem 0 .2rem .4rem}
+.scroll{overflow:hidden;position:relative}
+.scroll>.inner{transition:transform .2s ease}
+
+.toast{position:fixed;left:50%;bottom:3.4rem;transform:translateX(-50%);z-index:90;padding:1.1rem 2rem;border-radius:999rem;
+  background:var(--panel);border:1px solid var(--line);font-size:1.3rem;box-shadow:0 1rem 3rem rgba(0,0,0,.5);animation:rise .2s ease}
+.bar{height:.9rem;border-radius:999rem;background:rgba(255,255,255,.08);overflow:hidden;display:flex}
+.bar>span{display:block;height:100%}
+.bar .g{background:var(--grad)}
+.bar .r{background:rgba(255,255,255,.22)}
+.bar .u{background:#7c6fb3}
+
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes rise{from{opacity:0;transform:translate(-50%,1rem)}to{opacity:1;transform:translate(-50%,0)}}

@@ -597,6 +597,61 @@ public class AndroidBridge {
         return true;
     }
 
+    /* ---------------- Onix Game Hub ---------------- */
+
+    private static final Pattern PROFILE_ID = Pattern.compile("^p\\d{1,9}$");
+
+    /** Estado do Game Hub para a aba Jogos (instalado, versão, baixando…, "Continuar jogando"). */
+    @JavascriptInterface
+    public String gameHub(String profile, boolean kids) {
+        if (!trusted) return "{}";
+        return GameHub.get(activity).json(profile != null && PROFILE_ID.matcher(profile).matches() ? profile : "default", kids);
+    }
+
+    /** Procura a versão publicada do Game Hub (para "Instalar" e "Atualizar"). */
+    @JavascriptInterface
+    public boolean gameHubCheck() {
+        if (!trusted) return false;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                GameHub.get(activity).check(false);
+            }
+        }, "onix-gamehub").start();
+        return true;
+    }
+
+    @JavascriptInterface
+    public boolean openGameHub(final String profile, final String name, final boolean kids, final String lang, final String open) {
+        if (!trusted || profile == null || !PROFILE_ID.matcher(profile).matches()) return false;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                GameHub.get(activity).open(activity, profile, name, kids, lang, open);
+            }
+        });
+        return GameHub.get(activity).installedVersion() != null;
+    }
+
+    @JavascriptInterface
+    public boolean installGameHub() {
+        if (!trusted) return false;
+        GameHub.get(activity).install(activity);
+        return true;
+    }
+
+    @JavascriptInterface
+    public boolean uninstallGameHub() {
+        if (!trusted) return false;
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                GameHub.get(activity).uninstall(activity);
+            }
+        });
+        return true;
+    }
+
     /* ---------------- Atualizações (Updater) ---------------- */
 
     @JavascriptInterface
@@ -740,7 +795,8 @@ public class AndroidBridge {
         for (ResolveInfo ri : list) {
             if (ri.activityInfo == null) continue;
             String pkg = ri.activityInfo.packageName;
-            if (pkg == null || pkg.equals(self) || user.containsKey(pkg) || system.containsKey(pkg) || !PKG.matcher(pkg).matches()) continue;
+            // O Game Hub abre pela aba Jogos, não pela lista de apps.
+            if (pkg == null || pkg.equals(self) || pkg.equals(GameHub.PKG) || user.containsKey(pkg) || system.containsKey(pkg) || !PKG.matcher(pkg).matches()) continue;
             (isUserApp(ri.activityInfo.applicationInfo) ? user : system).put(pkg, ri);
         }
     }

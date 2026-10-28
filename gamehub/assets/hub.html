@@ -1,0 +1,753 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Onix Game Hub</title>
+<link rel="stylesheet" href="common.css">
+<style>
+.app{position:fixed;inset:0;display:flex;flex-direction:column;padding:3rem 4.4rem 0}
+header{display:flex;align-items:center;gap:2.4rem;flex:none;height:5rem}
+nav{display:flex;gap:.4rem;flex:1;margin-left:.6rem;min-width:0}
+nav .tab{height:3.4rem;padding:0 1.2rem;border-radius:999rem;font-size:1.25rem;white-space:nowrap;font-weight:600;color:var(--dim);display:flex;align-items:center;gap:.6rem}
+nav .tab .dot{width:.7rem;height:.7rem}
+nav .tab svg{width:1.6rem;height:1.6rem}
+header .brand i{white-space:nowrap}
+nav .tab.cur{color:var(--ink);background:rgba(255,255,255,.08)}
+nav .tab.focus{background:rgba(255,255,255,.14);color:var(--ink)}
+.right{display:flex;align-items:center;gap:.8rem}
+.clock{font-size:1.4rem;font-weight:600;color:var(--dim);text-align:right}
+.right{flex:none}
+main{flex:1;position:relative;overflow:hidden;margin-top:1.6rem}
+.page{position:absolute;inset:0;overflow:hidden;padding:1rem .8rem 4rem}
+.page[hidden]{display:none}
+.row-title{font-size:1.45rem;font-weight:700;margin:2.2rem 0 1.1rem .2rem;display:flex;align-items:baseline;gap:1rem}
+.row-title small{font-size:1.05rem;color:var(--mute);font-weight:500}
+.row{display:flex;gap:1.6rem;overflow:visible;padding:.4rem .2rem}
+.tile{flex:none;width:11.6rem;display:flex;flex-direction:column;gap:.7rem;border-radius:var(--r)}
+.tile .name{font-size:1.15rem;font-weight:600;line-height:1.25;max-height:2.9rem;overflow:hidden;color:var(--dim)}
+.tile.focus .name{color:var(--ink)}
+
+/* Destaque "Continuar jogando" */
+.hero{display:flex;gap:2.6rem;align-items:stretch;padding:2rem;border-radius:1.8rem;height:21rem;
+  background:linear-gradient(110deg,rgba(255,61,154,.14),rgba(61,225,255,.06) 60%,rgba(255,255,255,.03));border:1px solid var(--line)}
+.hero .shot{flex:none;width:30rem;border-radius:1.2rem;overflow:hidden;background:#000;position:relative}
+.hero .shot img{width:100%;height:100%;object-fit:cover;image-rendering:pixelated}
+.hero .shot .cover{position:absolute;inset:0;aspect-ratio:auto;border-radius:0}
+.hero .info{display:flex;flex-direction:column;justify-content:center;gap:.9rem;min-width:0}
+.hero .kicker{font-size:1.1rem;letter-spacing:.24em;text-transform:uppercase;color:var(--cyan);font-weight:700}
+.hero h1{font-size:3rem;font-weight:800;line-height:1.08;max-height:6.6rem;overflow:hidden}
+.hero .meta{font-size:1.25rem;color:var(--dim)}
+.hero .acts{display:flex;gap:1rem;margin-top:.8rem}
+
+.consoles{display:grid;grid-template-columns:repeat(4,1fr);gap:1.6rem}
+.ctile{height:12rem;border-radius:1.6rem;padding:1.6rem 1.8rem;display:flex;flex-direction:column;justify-content:space-between;
+  background:var(--glass);border:1px solid var(--line);overflow:hidden}
+.ctile svg{width:7rem;height:4.4rem;opacity:.95}
+.ctile b{font-size:1.5rem;display:block}
+.ctile small{font-size:1.1rem;color:var(--dim)}
+
+.empty{display:flex;flex-direction:column;align-items:flex-start;gap:1.2rem;padding:3rem;border-radius:1.8rem;max-width:62rem;
+  background:var(--glass);border:1px solid var(--line);margin-top:1rem}
+.empty h1{font-size:2.6rem;font-weight:800}
+.empty p{font-size:1.35rem;color:var(--dim);line-height:1.45}
+
+/* Página do console */
+.ghead{display:flex;align-items:center;gap:1.4rem;margin:.4rem 0 1.4rem}
+.ghead h1{font-size:2.4rem;font-weight:800}
+.ghead .count{color:var(--dim);font-size:1.3rem}
+.ghead .sp{flex:1}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2rem 1.6rem;padding:.4rem .2rem}
+.grid .tile{width:auto}
+
+/* Jogo (painel) */
+.sheet.gsheet{flex-direction:row;gap:2.6rem;width:78rem;max-width:78rem}
+.gsheet .cv{flex:none;width:20rem}
+.gsheet .col{flex:1;display:flex;flex-direction:column;gap:1.2rem;min-width:0}
+.gsheet h2{font-size:2.4rem;line-height:1.1}
+.gsheet .acts{display:flex;flex-wrap:wrap;gap:.8rem}
+.gsheet .list{max-height:30rem}
+
+/* Adicionar jogos */
+.add{display:flex;gap:3.2rem;align-items:flex-start}
+.qrbox{flex:none;width:28rem;padding:1.8rem;border-radius:1.8rem;background:#fff}
+.qrbox svg{width:100%;height:auto}
+.add .col{flex:1;display:flex;flex-direction:column;gap:1.2rem;min-width:0}
+.add h1{font-size:2.6rem;font-weight:800}
+.add p{font-size:1.3rem;color:var(--dim);line-height:1.45}
+.add .url{font-size:1.35rem;color:var(--cyan);font-weight:600}
+.xfers{display:flex;flex-direction:column;gap:.7rem;margin-top:.6rem}
+.xfer{padding:1rem 1.4rem;border-radius:1rem;background:var(--glass);display:flex;flex-direction:column;gap:.6rem;font-size:1.2rem}
+.xfer .top{display:flex;gap:1rem;align-items:center}
+.xfer .top b{flex:1;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.xfer .ok{color:#7ef0b0}.xfer .err{color:#ff8aa5}
+.store{padding:1.4rem 1.6rem;border-radius:1.2rem;background:var(--glass);display:flex;flex-direction:column;gap:.8rem}
+.store .legend{display:flex;gap:1.8rem;font-size:1.1rem;color:var(--dim);flex-wrap:wrap}
+.store .legend i{display:inline-block;width:.9rem;height:.9rem;border-radius:.3rem;margin-right:.5rem;vertical-align:-.05rem}
+
+/* Configurações */
+.settings{display:flex;gap:2.4rem;height:100%}
+.settings .menu{flex:none;width:21rem;display:flex;flex-direction:column;gap:.5rem}
+.settings .menu .item{font-weight:600}
+.settings .menu .item.cur{background:rgba(255,255,255,.08)}
+.settings .body{flex:1;min-width:0;overflow:hidden;padding:.3rem .5rem 2rem}
+.settings .body h2{font-size:2rem;font-weight:800;margin-bottom:.4rem}
+.settings .body .hint{font-size:1.15rem;color:var(--mute);margin-bottom:1rem}
+.scopes{display:flex;gap:.6rem;margin:.4rem 0 1rem}
+.credits{font-size:1.2rem;color:var(--dim);line-height:1.6}
+
+/* Abertura: a tela "liga" como um console */
+.boot{position:fixed;inset:0;z-index:100;background:#000;display:flex;align-items:center;justify-content:center;pointer-events:none;
+  animation:bootout .5s ease .9s forwards}
+.boot .line{position:absolute;left:50%;top:50%;height:.25rem;width:0;background:var(--grad);transform:translate(-50%,-50%);
+  box-shadow:0 0 2rem var(--pink);animation:bootline .45s ease forwards}
+.boot .brand{opacity:0;animation:bootlogo .5s ease .35s forwards}
+.boot .brand svg{width:6rem;height:6rem}
+.boot .brand i{font-size:3rem}
+@keyframes bootline{0%{width:0}60%{width:70%;height:.25rem}100%{width:70%;height:0;opacity:0}}
+@keyframes bootlogo{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
+@keyframes bootout{to{opacity:0;visibility:hidden}}
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="boot" id="boot"><div class="line"></div><div class="brand" id="bootBrand"></div></div>
+<div class="app">
+  <header>
+    <div class="brand" id="brand"></div>
+    <nav id="nav"></nav>
+    <div class="right">
+      <div id="padChip"></div>
+      <div class="chip" id="profileChip" hidden></div>
+      <div class="clock" id="clock"></div>
+    </div>
+  </header>
+  <main id="main"></main>
+</div>
+<script src="common.js"></script>
+<script>
+'use strict';
+const Hub = window.Hub || null;
+let INFO = {}, LIB = [], PAGE = 'home', sortBy = 'az', uploading = {}, uploadInfo = null;
+
+function call(name, ...args) {
+  try { return Hub ? Hub[name](...args) : null; } catch (e) { return null; }
+}
+function json(s, def) { try { return s ? JSON.parse(s) : def; } catch (_) { return def; } }
+
+function brand(el) {
+  el.replaceChildren(svg(MARK), h('div', null, h('b', { text: 'ONIX' }), h('i', { text: 'GAME HUB' })));
+}
+
+function loadLibrary() { LIB = json(call('library'), []); }
+
+/* ---------------- Topo ---------------- */
+const TABS = () => [
+  { id: 'home', label: t('Início') },
+  ...CONSOLES.map(c => ({ id: 'console:' + c.id, label: c.id === 'md' ? 'Mega Drive' : c.short, color: c.color })),
+  ...(INFO.kids ? [] : [{ id: 'add', label: t('Adicionar jogos'), icon: 'plus' }, { id: 'settings', label: t('Configurações'), icon: 'gear' }]),
+];
+function renderNav() {
+  $('#nav').replaceChildren(...TABS().map(tb => {
+    const b = h('button', { class: 'f tab pill' + (PAGE === tb.id ? ' cur' : '') },
+      tb.color ? h('span', { class: 'dot', style: { background: tb.color } }) : null, tb.icon ? icon(tb.icon) : tb.label);
+    if (tb.icon) b.setAttribute('aria-label', tb.label);
+    b._act = () => show(tb.id);
+    b.dataset.tab = tb.id;
+    return b;
+  }));
+}
+function renderChips() {
+  const pads = json(call('gamepads'), INFO.gamepads || []);
+  const chip = pads.length
+    ? h('div', { class: 'chip', title: pads.map(p => p.name).join(', ') }, icon('pad'), String(pads.length))
+    : h('button', { class: 'f chip warn pill', act: () => call('openBluetooth') }, icon('pad'), t('Sem controle'));
+  $('#padChip').replaceChildren(chip);
+  const p = $('#profileChip');
+  if (INFO.profileName) {
+    p.hidden = false;
+    p.replaceChildren(...[INFO.kids ? icon('kid') : null, INFO.profileName].filter(Boolean));
+  } else p.hidden = true;
+}
+function tick() {
+  const d = new Date();
+  $('#clock').textContent = String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
+}
+
+/* ---------------- Páginas ---------------- */
+function show(id, keepFocus) {
+  if (PAGE === 'add' && id !== 'add') call('uploadStop');
+  PAGE = id;
+  renderNav();
+  const main = $('#main');
+  let page;
+  if (id === 'home') page = homePage();
+  else if (id.startsWith('console:')) page = consolePage(id.slice(8));
+  else if (id === 'add') page = addPage();
+  else if (id === 'settings') page = settingsPage();
+  main.replaceChildren(page);
+  if (!keepFocus) {
+    const tab = $$('#nav .tab').find(b => b.dataset.tab === id);
+    const first = $('.f', page);
+    focus(first || tab);
+  } else ensureFocus();
+}
+
+function tile(g, onAct) {
+  const b = h('button', { class: 'f tile' }, coverEl(g), h('span', { class: 'name', text: g.name }));
+  b._act = onAct || (() => openGame(g));
+  return b;
+}
+
+function recent() {
+  return LIB.filter(g => g.last).sort((a, b) => b.last - a.last);
+}
+
+function homePage() {
+  const page = h('section', { class: 'page' });
+  if (!LIB.length) {
+    page.append(INFO.kids
+      ? h('div', { class: 'empty' }, h('h1', { text: t('Nenhum jogo liberado ainda') }), h('p', { text: t('Peça para um adulto liberar jogos no Game Hub (no jogo, Liberar no Modo Infantil).') }))
+      : h('div', { class: 'empty' }, h('h1', { text: t('Sua biblioteca está vazia') }),
+        h('p', { text: t('Mande seus jogos pelo celular: abra Adicionar jogos e leia o QR code com a câmera.') }),
+        h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o Game Hub.') }),
+        h('button', { class: 'f btn primary', act: () => show('add') }, icon('plus'), t('Adicionar jogos'))));
+    page.append(h('div', { class: 'row-title', text: t('Consoles') }), consoleTiles());
+    return page;
+  }
+  const rec = recent();
+  if (rec.length) {
+    const g = rec[0], c = consoleOf(g.console);
+    const shot = h('div', { class: 'shot' });
+    if (g.resume) {
+      const img = h('img', { src: 'shot/' + INFO.profile + '/' + g.id + '/auto.jpg?t=' + g.last, alt: '' });
+      img.onerror = () => { img.remove(); shot.append(coverEl(g, { tag: false, title: true })); };
+      shot.append(img);
+    } else shot.append(coverEl(g, { tag: false, title: true }));
+    const play = h('button', { class: 'f btn primary', act: () => play_(g, g.resume ? 'resume' : 'new') }, icon('play'), g.resume ? t('Continuar') : t('Jogar'));
+    page.append(h('div', { class: 'hero' }, shot, h('div', { class: 'info' },
+      h('div', { class: 'kicker', text: t('Continuar jogando') }),
+      h('h1', { text: g.name }),
+      h('div', { class: 'meta' }, h('span', { style: { color: c.color }, text: t(c.name) }), ' · ', ago(g.last), ' · ', t('Jogado por {t}', { t: fmtTime(g.time) })),
+      h('div', { class: 'acts' }, play, h('button', { class: 'f btn', act: () => openGame(g), text: t('Estados salvos') })))));
+    if (rec.length > 1) page.append(h('div', { class: 'row-title', text: t('Jogados recentemente') }), h('div', { class: 'row' }, rec.slice(1, 9).map(x => tile(x))));
+  }
+  const favs = LIB.filter(g => g.fav);
+  if (favs.length) page.append(h('div', { class: 'row-title', text: t('Favoritos') }), h('div', { class: 'row' }, favs.slice(0, 12).map(x => tile(x))));
+  page.append(h('div', { class: 'row-title', text: t('Consoles') }), consoleTiles());
+  const added = LIB.slice().sort((a, b) => b.added - a.added).slice(0, 12);
+  page.append(h('div', { class: 'row-title', text: t('Adicionados recentemente') }), h('div', { class: 'row' }, added.map(x => tile(x))));
+  return page;
+}
+
+function consoleTiles() {
+  return h('div', { class: 'consoles' }, CONSOLES.map(c => {
+    const n = LIB.filter(g => g.console === c.id).length;
+    const b = h('button', { class: 'f ctile', style: { background: 'linear-gradient(150deg,' + c.color + '2e,rgba(255,255,255,.03) 70%)' } },
+      h('span', { style: { color: c.color } }, svg(CONSOLE_ART[c.id])),
+      h('span', null, h('b', { text: t(c.name) }), h('small', { text: n ? n + ' ' + t(n === 1 ? 'jogo' : 'jogos') : t('Nenhum jogo') })));
+    b._act = () => show('console:' + c.id);
+    return b;
+  }));
+}
+
+function consolePage(cid) {
+  const c = consoleOf(cid);
+  const page = h('section', { class: 'page' });
+  let games = LIB.filter(g => g.console === cid);
+  if (sortBy === 'az') games.sort((a, b) => a.name.localeCompare(b.name));
+  else if (sortBy === 'recent') games.sort((a, b) => (b.last || 0) - (a.last || 0) || b.added - a.added);
+  else games.sort((a, b) => (b.time || 0) - (a.time || 0));
+  const sorts = [['az', t('A–Z')], ['recent', t('Recentes')], ['time', t('Mais jogados')]];
+  page.append(h('div', { class: 'ghead' },
+    h('span', { style: { color: c.color, width: '6rem' } }, svg(CONSOLE_ART[cid])),
+    h('h1', { text: t(c.name) }),
+    h('span', { class: 'count', text: games.length ? games.length + ' ' + t(games.length === 1 ? 'jogo' : 'jogos') : '' }),
+    h('span', { class: 'sp' }),
+    ...sorts.map(([k, label]) => h('button', { class: 'f btn' + (sortBy === k ? ' primary' : ''), text: label, act: () => { sortBy = k; show(PAGE, true); } }))));
+  if (!games.length) {
+    page.append(h('div', { class: 'empty' }, h('h1', { text: t('Nenhum jogo') }),
+      INFO.kids ? h('p', { text: t('Peça para um adulto liberar jogos no Game Hub (no jogo, Liberar no Modo Infantil).') })
+        : h('p', { text: t('Mande seus jogos pelo celular: abra Adicionar jogos e leia o QR code com a câmera.') }),
+      INFO.kids ? null : h('button', { class: 'f btn primary', act: () => show('add') }, icon('plus'), t('Adicionar jogos'))));
+    return page;
+  }
+  page.append(h('div', { class: 'grid' }, games.map(g => tile(g))));
+  return page;
+}
+
+/* ---------------- Jogo ---------------- */
+function openGame(g) {
+  g = LIB.find(x => x.id === g.id) || g;
+  const c = consoleOf(g.console);
+  const states = json(call('states', g.id), []);
+  const auto = states.find(s => s.slot === 'auto');
+  const acts = h('div', { class: 'acts' });
+  if (auto) acts.append(h('button', { class: 'f btn primary', act: () => { closeLayer(); play_(g, 'resume'); } }, icon('play'), t('Continuar')));
+  acts.append(h('button', { class: 'f btn' + (auto ? '' : ' primary'), act: () => { closeLayer(); play_(g, 'new'); } }, auto ? icon('reset') : icon('play'), auto ? t('Jogar do começo') : t('Jogar')));
+
+  const list = h('div', { class: 'list' });
+  const slots = states.filter(s => s.slot !== 'auto');
+  if (slots.length) list.append(h('div', { class: 'sep', text: t('Estados salvos') }));
+  for (const s of slots) {
+    list.append(h('button', { class: 'f item', act: () => { closeLayer(); play_(g, s.slot); } },
+      icon('load'), h('span', { class: 'grow' }, t('Espaço {n}', { n: s.slot }), h('span', { class: 'sub', text: ago(s.time) })),
+      h('span', { class: 'val', text: t('Carregar') })));
+  }
+  list.append(h('div', { class: 'sep', text: t('Jogo') }));
+  const fav = h('button', { class: 'f item' }, icon(g.fav ? 'star' : 'starOff'), h('span', { class: 'grow', text: g.fav ? t('Tirar dos favoritos') : t('Favorito') }));
+  fav._act = () => { call('setFavorite', g.id, !g.fav); loadLibrary(); closeLayer(); show(PAGE, true); openGame(g); };
+  list.append(fav);
+  if (!INFO.kids) {
+    list.append(h('button', { class: 'f item', act: () => cheatsSheet(g) }, icon('code'), h('span', { class: 'grow', text: t('Trapaças') }), icon('chev')));
+    list.append(h('button', { class: 'f item', act: () => scopeSheet('game:' + g.id, g.name, g.console) }, icon('sliders'), h('span', { class: 'grow', text: t('Configurações do jogo') }), icon('chev')));
+    const kid = h('button', { class: 'f item' + (g.kids ? ' on' : '') }, icon('kid'), h('span', { class: 'grow', text: t('Liberar no Modo Infantil') }), h('span', { class: 'val', text: g.kids ? t('Liberado') : t('Bloqueado') }));
+    kid._act = () => { call('setKids', g.id, !g.kids); g.kids = !g.kids; kid.classList.toggle('on', g.kids); kid.lastChild.textContent = g.kids ? t('Liberado') : t('Bloqueado'); loadLibrary(); };
+    list.append(kid);
+    list.append(h('button', { class: 'f item', act: () => renameSheet(g) }, icon('edit'), h('span', { class: 'grow', text: t('Renomear') })));
+    list.append(h('button', { class: 'f item', act: () => ask(t('Apagar {n}?', { n: g.name }), t('O jogo, os saves e os estados salvos dele saem da TV. Não dá para desfazer.'),
+      [[t('Apagar'), () => { call('remove', g.id); loadLibrary(); closeAllLayers(); show(PAGE, true); toast(t('Jogo apagado')); }, 'danger'], [t('Cancelar')]]) },
+      icon('trash'), h('span', { class: 'grow', text: t('Apagar jogo') })));
+  }
+  const meta = g.time ? t('Jogado por {t}', { t: fmtTime(g.time) }) + (g.last ? ' · ' + ago(g.last) : '') : t('Ainda não jogado');
+  const sheet = h('div', { class: 'sheet gsheet' },
+    h('div', { class: 'cv' }, coverEl(g, { title: true })),
+    h('div', { class: 'col' },
+      h('div', null, h('span', { class: 'chip', style: { color: c.color } }, t(c.name))),
+      h('h2', { text: g.name }), h('p', { text: meta }), acts,
+      h('div', { class: 'scroll', style: { overflowY: 'auto', maxHeight: '30rem' } }, list)));
+  openLayer(h('div', { class: 'layer' }, sheet));
+}
+
+function renameSheet(g) {
+  const input = h('input', { value: g.name, maxlength: 80, style: { fontSize: '1.6rem', padding: '1rem 1.4rem', borderRadius: '1rem', border: '1px solid var(--line)', background: 'rgba(255,255,255,.06)', width: '100%' } });
+  const field = h('button', { class: 'f item', act: () => input.focus() }, input);
+  const save = h('button', { class: 'f btn primary', text: t('Salvar'), act: () => {
+    if (call('rename', g.id, input.value)) { loadLibrary(); closeAllLayers(); show(PAGE, true); }
+  } });
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' }, h('h2', { text: t('Nome do jogo') }), field,
+    h('div', { style: { display: 'flex', gap: '1rem' } }, save, h('button', { class: 'f btn', text: t('Cancelar'), act: closeLayer })))));
+  setTimeout(() => input.focus(), 50);
+}
+
+function cheatsSheet(g) {
+  let list = json(call('cheats', g.id), []);
+  const box = h('div', { class: 'list' });
+  const draw = () => {
+    box.replaceChildren();
+    if (!list.length) box.append(h('p', { text: t('Nenhum código ainda.') }));
+    list.forEach((c, i) => {
+      const it = h('button', { class: 'f item' + (c.on ? ' on' : '') }, icon('code'),
+        h('span', { class: 'grow' }, c.desc || c.code, c.desc ? h('span', { class: 'sub', text: c.code }) : null),
+        h('span', { class: 'val', text: c.on ? t('Ligado') : t('Desligado') }));
+      it._act = () => { c.on = !c.on; call('setCheats', g.id, JSON.stringify(list)); draw(); ensureFocus(box.children[i]); };
+      it._right = () => ask(t('Apagar código'), c.code, [[t('Apagar'), () => { list.splice(i, 1); call('setCheats', g.id, JSON.stringify(list)); draw(); ensureFocus(); }, 'danger'], [t('Cancelar')]]);
+      box.append(it);
+    });
+  };
+  draw();
+  const add = h('button', { class: 'f btn primary', act: () => {
+    const desc = h('input', { placeholder: t('Descrição (opcional)'), maxlength: 80, class: 'inp' });
+    const code = h('input', { placeholder: t('Código'), maxlength: 200, class: 'inp' });
+    for (const i of [desc, code]) Object.assign(i.style, { fontSize: '1.5rem', padding: '1rem 1.4rem', borderRadius: '1rem', border: '1px solid var(--line)', background: 'rgba(255,255,255,.06)', width: '100%' });
+    openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' }, h('h2', { text: t('Novo código') }),
+      h('button', { class: 'f item', act: () => code.focus() }, code),
+      h('button', { class: 'f item', act: () => desc.focus() }, desc),
+      h('div', { style: { display: 'flex', gap: '1rem' } },
+        h('button', { class: 'f btn primary', text: t('Salvar'), act: () => {
+          if (!code.value.trim()) return;
+          list.push({ code: code.value.trim(), desc: desc.value.trim(), on: true });
+          call('setCheats', g.id, JSON.stringify(list)); closeLayer(); draw(); ensureFocus();
+        } }),
+        h('button', { class: 'f btn', text: t('Cancelar'), act: closeLayer })))));
+  } }, icon('plus'), t('Adicionar código'));
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' }, h('h2', { text: t('Trapaças') + ' · ' + g.name }),
+    h('p', { text: t('Os códigos (Game Genie, Action Replay, GameShark…) ligam e desligam na hora, pelo menu do jogo.') }),
+    h('div', { class: 'scroll', style: { overflowY: 'auto', maxHeight: '40vh' } }, box), h('div', null, add))));
+}
+
+/* Jogar: sem controle conectado, oferece o Bluetooth antes. */
+let pendingPlay = null;
+function play_(g, mode) {
+  const pads = json(call('gamepads'), []);
+  if (pads.length || sessionStorage.getItem('remoteOk')) return call('play', g.id, mode);
+  pendingPlay = [g, mode];
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' },
+    h('span', { style: { color: 'var(--cyan)', width: '5rem' } }, icon('pad')),
+    h('h2', { text: t('Conecte um controle') }),
+    h('p', { text: t('Para jogar de verdade, use um controle Bluetooth (Xbox, PlayStation, 8BitDo…). O controle remoto da TV também joga, mas só com poucos botões.') }),
+    h('div', { style: { display: 'flex', gap: '1rem' } },
+      h('button', { class: 'f btn primary', act: () => call('openBluetooth') }, icon('bt'), t('Conectar controle')),
+      h('button', { class: 'f btn', text: t('Jogar com o controle remoto'), act: () => {
+        try { sessionStorage.setItem('remoteOk', '1'); } catch (_) { }
+        closeLayer(); const p = pendingPlay; pendingPlay = null; if (p) call('play', p[0].id, p[1]);
+      } })))), { onClose: () => { } });
+}
+
+/* ---------------- Adicionar jogos ---------------- */
+function addPage() {
+  const page = h('section', { class: 'page' });
+  uploadInfo = json(call('uploadStart'), { url: '' });
+  const qr = uploadInfo.url ? qrSvg(uploadInfo.url) : null;
+  const xfers = h('div', { class: 'xfers', id: 'xfers' });
+  const store = h('div', { class: 'store', id: 'store' });
+  page.append(h('div', { class: 'add' },
+    qr ? h('div', { class: 'qrbox' }, qr) : h('div', { class: 'qrbox', style: { background: 'var(--glass)', color: 'var(--dim)', fontSize: '1.3rem', lineHeight: 1.5 } }, t('Sem rede: conecte a TV ao Wi-Fi para mandar jogos.')),
+    h('div', { class: 'col' },
+      h('h1', { text: t('Mande jogos pelo celular') }),
+      h('p', { text: t('Aponte a câmera do celular para o QR code. A página abre no navegador, sem instalar nada; escolha os arquivos e eles vêm para a TV.') }),
+      h('p', { text: t('O celular precisa estar no mesmo Wi-Fi da TV.') }),
+      uploadInfo.ip ? h('p', { class: 'url', text: t('Ou digite no navegador: {u}', { u: 'http://' + uploadInfo.ip }) }) : null,
+      h('p', { text: t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip') }),
+      h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o Game Hub.') }),
+      store, xfers)));
+  // Foco em algo da página (o QR não é focável): a aba fica selecionada.
+  setTimeout(() => { drawStore(); drawXfers(); }, 0);
+  return page;
+}
+function drawStore() {
+  const el = $('#store');
+  if (!el) return;
+  const s = json(call('storage'), {});
+  const total = s.total || 1;
+  const pct = v => Math.max(0, Math.min(100, v / total * 100)) + '%';
+  const other = Math.max(0, total - s.free - s.used);
+  el.replaceChildren(
+    h('div', { style: { fontSize: '1.3rem', fontWeight: 700 }, text: t('Armazenamento') }),
+    h('div', { class: 'bar' }, h('span', { class: 'r', style: { width: pct(other) } }), h('span', { class: 'g', style: { width: pct(s.used || 0) } }),
+      h('span', { class: 'u', style: { width: pct(s.reserve || 0) } })),
+    h('div', { class: 'legend' },
+      h('span', null, h('i', { style: { background: 'var(--grad)' } }), t('Jogos') + ' ' + fmtBytes(s.used || 0)),
+      h('span', null, h('i', { style: { background: 'rgba(255,255,255,.12)' } }), t('Livre para jogos') + ' ' + fmtBytes(s.available || 0)),
+      h('span', null, h('i', { style: { background: '#7c6fb3' } }), t('Reservado para a TV') + ' ' + fmtBytes(s.reserve || 0))),
+    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t('O Game Hub sempre deixa livre para o sistema o maior valor entre 2 GB e 10% da memória da TV.') }));
+}
+function drawXfers() {
+  const el = $('#xfers');
+  if (!el) return;
+  const items = Object.values(uploading).slice(-6).reverse();
+  if (!items.length) { el.replaceChildren(h('div', { class: 'xfer', style: { color: 'var(--mute)' }, text: t('Aguardando arquivos…') })); return; }
+  el.replaceChildren(...items.map(x => {
+    const st = x.done ? (x.ok ? h('span', { class: 'ok', text: x.dup ? t('Já estava na biblioteca') : t('Pronto') }) : h('span', { class: 'err', text: t(x.error || '') }))
+      : h('span', { text: t('Recebendo') + ' ' + Math.round((x.sent || 0) / (x.size || 1) * 100) + '%' });
+    return h('div', { class: 'xfer' }, h('div', { class: 'top' }, h('b', { text: x.title || x.name }), st),
+      x.done ? null : h('div', { class: 'bar' }, h('span', { class: 'g', style: { width: Math.round((x.sent || 0) / (x.size || 1) * 100) + '%' } })));
+  }));
+}
+handlers.upload = e => {
+  const k = e.file || e.name;
+  const x = uploading[k] || (uploading[k] = { name: k });
+  if (e.type === 'start') Object.assign(x, { size: e.size, sent: 0, done: false });
+  if (e.type === 'progress') x.sent = e.sent;
+  if (e.type === 'done') {
+    Object.assign(x, { done: true, ok: e.ok, dup: e.dup, error: e.error, title: e.ok ? e.name : x.name });
+    if (e.ok && !e.dup) { loadLibrary(); toast(t('Pronto') + ': ' + e.name); }
+    drawStore();
+  }
+  drawXfers();
+};
+
+/* ---------------- Configurações ----------------
+   Uma linha por configuração: ◀ ▶ trocam o valor, OK abre a lista. Em console/jogo, a primeira
+   escolha é "Igual ao global/console" (null), que segue o nível de cima. */
+const SETS = {
+  filter: { label: 'Filtro', choices: [['sharp', 'Nítido'], ['pixel', 'Pixel puro'], ['smooth', 'Suave'], ['crt', 'CRT (TV antiga)'], ['lcd', 'LCD (portátil)']] },
+  scale: { label: 'Tamanho', choices: [['fit', 'Ajustar à tela'], ['integer', 'Pixel perfeito'], ['stretch', 'Esticar']] },
+  aspect: { label: 'Proporção', choices: [['core', 'Original'], ['4:3', '4:3'], ['pixel', 'Pixel quadrado'], ['16:9', '16:9']] },
+  showFps: { label: 'Mostrar FPS', bool: true },
+  volume: { label: 'Volume', choices: [0, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100].map(v => [v, v + '%']) },
+  latency: { label: 'Atraso do som', sub: 'Menos atraso pode estalar em TVs mais lentas.', choices: [32, 48, 64, 96, 128].map(v => [v, v + ' ms']) },
+  autosave: { label: 'Salvar onde parou ao sair', sub: 'Ao sair do jogo, ele guarda o ponto exato. Continuar jogando volta dali.', bool: true },
+  rewind: { label: 'Rebobinar (segure L2)', sub: 'Usa mais memória e processador.', bool: true },
+  ffspeed: { label: 'Velocidade do avançar (segure R2)', choices: [2, 3, 4, 6, 8].map(v => [v, v + 'x']) },
+  runahead: { label: 'Run-ahead (menos atraso)', sub: 'Adianta o jogo por baixo dos panos para os botões responderem mais rápido. Pesa o dobro no processador.', choices: [[0, 'Desligado'], [1, '1 quadro'], [2, '2 quadros']] },
+  turboRate: { label: 'Velocidade do turbo', choices: [[2, '15/s'], [3, '10/s'], [4, '7/s'], [6, '5/s']] },
+  stickDpad: { label: 'Analógico como direcional', bool: true },
+  deadzone: { label: 'Zona morta do analógico', choices: [10, 15, 20, 25, 30, 40, 50].map(v => [v, v + '%']) },
+};
+const GROUPS = {
+  image: ['filter', 'scale', 'aspect', 'showFps'],
+  sound: ['volume', 'latency'],
+  game: ['autosave', 'rewind', 'ffspeed', 'runahead', 'turboRate'],
+  pads: ['stickDpad', 'deadzone'],
+};
+let CFG = {};
+function levelOf(scope) {
+  if (scope === 'global') return CFG.global || {};
+  const [kind, id] = scope.split(':');
+  return ((CFG[kind] || {})[id]) || {};
+}
+function settingRow(scope, key, effective, done) {
+  const s = SETS[key];
+  const lv = levelOf(scope);
+  const own = Object.prototype.hasOwnProperty.call(lv, key);
+  const inherit = scope !== 'global';
+  const choices = s.bool ? [[true, 'Ligado'], [false, 'Desligado']] : s.choices;
+  const opts = (inherit ? [[null, scope.startsWith('game:') ? 'Igual ao console' : 'Igual ao global']] : []).concat(choices);
+  const cur = own ? lv[key] : (inherit ? null : effective[key]);
+  const labelOf = v => {
+    if (v === null) { const e = choices.find(c => c[0] === effective[key]); return t(opts[0][1]) + ' (' + (e ? t(String(e[1])) : '') + ')'; }
+    const c = choices.find(c => c[0] === v); return c ? t(String(c[1])) : String(v);
+  };
+  const val = h('span', { class: 'val' }, h('span', { text: labelOf(cur) }), h('span', { class: 'arrows' }, icon('lr')));
+  const row = h('button', { class: 'f item' + (own ? ' on' : '') }, h('span', { class: 'grow' }, t(s.label), s.sub ? h('span', { class: 'sub', text: t(s.sub) }) : null), val);
+  const set = v => {
+    call('setConfig', scope, key, v === null ? null : JSON.stringify(v));
+    CFG = json(call('config'), {});
+    (done || redrawSettings)(row);
+  };
+  const idx = () => Math.max(0, opts.findIndex(o => o[0] === cur));
+  row._left = () => set(opts[(idx() + opts.length - 1) % opts.length][0]);
+  row._right = () => set(opts[(idx() + 1) % opts.length][0]);
+  row._act = s.bool && !inherit ? () => set(!cur) : () => picker(t(s.label), opts.map(o => ({ value: o[0], label: o[0] === null ? labelOf(null) : t(String(o[1])) })), cur, set);
+  return row;
+}
+
+let setSection = 'image', setScope = 'global', redrawSettings = () => { };
+function settingsPage() {
+  CFG = json(call('config'), {});
+  const page = h('section', { class: 'page' });
+  const sections = [
+    ['image', t('Imagem'), 'img'], ['sound', t('Som'), 'sound'], ['game', t('Jogo'), 'play'], ['pads', t('Controles'), 'pad'],
+    ...CONSOLES.map(c => ['console:' + c.id, t(c.name), null, c.color]),
+    ['storage', t('Armazenamento'), 'disk'], ['about', t('Sobre'), 'info'],
+  ];
+  const menu = h('div', { class: 'menu' });
+  const body = h('div', { class: 'body scroll' });
+  const drawMenu = () => menu.replaceChildren(...sections.map(([id, label, ic, color]) => {
+    const it = h('button', { class: 'f item' + (setSection === id ? ' cur' : '') },
+      ic ? icon(ic) : h('span', { class: 'dot', style: { background: color, width: '1.1rem', height: '1.1rem', margin: '0 .35rem' } }), h('span', { class: 'grow', text: label }));
+    it._act = () => { setSection = id; drawMenu(); drawBody(); ensureFocus($('.f', body)); };
+    it._focus = () => { if (setSection !== id) { setSection = id; drawBody(); $$('.item', menu).forEach(x => x.classList.toggle('cur', x === it)); } };
+    return it;
+  }));
+  const drawBody = keep => {
+    const sec = setSection;
+    const inner = h('div');
+    if (GROUPS[sec]) {
+      const eff = json(call('effective', 'snes', null), {});
+      inner.append(h('h2', { text: sections.find(s => s[0] === sec)[1] }), h('div', { class: 'hint', text: t('Vale para todos os consoles e jogos.') }));
+      const list = h('div', { class: 'list' }, GROUPS[sec].map(k => settingRow('global', k, eff)));
+      if (sec === 'pads') {
+        const pads = json(call('gamepads'), []);
+        inner.append(h('div', { class: 'list', style: { marginBottom: '1rem' } },
+          pads.length ? pads.map(p => h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: p.name }), h('span', { class: 'val', style: { color: '#7ef0b0' }, text: t('Controle conectado') })))
+            : [h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: t('Nenhum controle conectado') }))],
+          h('button', { class: 'f item', act: () => call('openBluetooth') }, icon('bt'), h('span', { class: 'grow', text: t('Conectar controle') }), icon('chev'))));
+        list.append(h('div', { class: 'sep', text: t('Trocar botões') }));
+        for (const c of CONSOLES) list.append(h('button', { class: 'f item', act: () => remapSheet(c.id) }, h('span', { class: 'dot', style: { background: c.color } }), h('span', { class: 'grow', text: t(c.name) }), icon('chev')));
+      }
+      if (sec === 'game') list.append(h('div', { class: 'item' }, h('span', { class: 'grow' }, t('Atalhos'), h('span', { class: 'sub', text: t('Segure R2: acelera · Segure L2: rebobina · Select + Start: este menu') }))));
+      inner.append(list);
+    } else if (sec.startsWith('console:')) {
+      inner.append(scopeBody('console:' + sec.slice(8), sec.slice(8)));
+    } else if (sec === 'storage') {
+      inner.append(h('h2', { text: t('Armazenamento') }), h('div', { class: 'store', id: 'store' }));
+      setTimeout(drawStore, 0);
+    } else if (sec === 'about') {
+      inner.append(aboutBody());
+    }
+    body.replaceChildren(inner);
+  };
+  redrawSettings = row => {
+    const i = $$('.f', body).indexOf(row);
+    drawBody();
+    const list = $$('.f', body);
+    ensureFocus(list[Math.max(0, i)]);
+  };
+  drawMenu(); drawBody();
+  page.append(h('div', { class: 'settings' }, menu, body));
+  return page;
+}
+
+/* Configurações de um console (ou de um jogo): imagem, turbo e as opções do próprio emulador. */
+function scopeBody(scope, cid) {
+  const wrap = h('div');
+  const isGame = scope.startsWith('game:');
+  const eff = json(call('effective', cid, isGame ? scope.slice(5) : null), {});
+  wrap.append(h('h2', { text: isGame ? t('Configurações do jogo') : t(consoleOf(cid).name) }),
+    h('div', { class: 'hint', text: isGame ? t('Vale só para este jogo.') : t('Vale para todos os jogos deste console.') }));
+  const list = h('div', { class: 'list' });
+  const refresh = row => {
+    const i = $$('.f', wrap).indexOf(row);
+    const fresh = scopeBody(scope, cid);
+    wrap.replaceWith(fresh);
+    ensureFocus($$('.f', fresh)[Math.max(0, i)]);
+  };
+  for (const k of ['filter', 'scale', 'aspect', 'runahead', 'volume']) list.append(settingRow(scope, k, eff, refresh));
+  // turbo: quais botões fazem turbo
+  const lv = levelOf(scope);
+  const mask = lv.turbo != null ? lv.turbo : (eff.turbo || 0);
+  const names = BUTTONS[cid].filter(b => b[1] !== 'Start' && b[1] !== 'Select' && b[1] !== 'Mode');
+  const label = names.filter(b => mask & (1 << b[0])).map(b => b[1]).join(', ') || t('Nenhum');
+  list.append(h('button', { class: 'f item', act: () => turboSheet(scope, cid, mask, refresh) }, h('span', { class: 'grow', text: t('Botões com turbo') }), h('span', { class: 'val', text: label })));
+  list.append(h('div', { class: 'sep', text: t('Opções do emulador') }));
+  const core = json(call('coreOptions', cid), { options: [] });
+  const opts = (core.options || []).filter(o => o.visible !== false && o.values && o.values.length > 1);
+  if (!opts.length) list.append(h('p', { text: core.later ? t('As opções deste emulador aparecem depois que você abre um jogo deste console.') : t('Este emulador não tem opções extras.') }));
+  const cats = {};
+  for (const [k, d] of core.categories || []) cats[k] = d;
+  let lastCat = null;
+  const ownCore = (lv.core || {});
+  const effCore = eff.core || {};
+  for (const o of opts) {
+    if (o.category && o.category !== lastCat && cats[o.category]) { list.append(h('div', { class: 'sep', text: cats[o.category] })); lastCat = o.category; }
+    const own = Object.prototype.hasOwnProperty.call(ownCore, o.key);
+    const curVal = own ? ownCore[o.key] : null;
+    const labelOf = v => { const x = o.values.find(p => p[0] === v); return optLabel(v, x ? x[1] : v); };
+    const choices = [{ value: null, label: (isGame ? t('Igual ao console') : t('Padrão')) + ' (' + labelOf(isGame && effCore[o.key] != null && !own ? effCore[o.key] : o.default) + ')' }]
+      .concat(o.values.map(p => ({ value: p[0], label: optLabel(p[0], p[1]) })));
+    const val = h('span', { class: 'val' }, h('span', { text: own ? labelOf(curVal) : choices[0].label }), h('span', { class: 'arrows' }, icon('lr')));
+    const row = h('button', { class: 'f item' + (own ? ' on' : '') }, h('span', { class: 'grow' }, o.desc, o.info ? h('span', { class: 'sub', text: o.info.slice(0, 180) }) : null), val);
+    const set = v => { call('setConfig', scope, 'core.' + o.key, v === null ? null : JSON.stringify(v)); CFG = json(call('config'), {}); refresh(row); };
+    const idx = () => Math.max(0, choices.findIndex(c => c.value === curVal));
+    row._left = () => set(choices[(idx() + choices.length - 1) % choices.length].value);
+    row._right = () => set(choices[(idx() + 1) % choices.length].value);
+    row._act = () => picker(o.desc, choices, curVal, set);
+    list.append(row);
+  }
+  wrap.append(list);
+  return wrap;
+}
+
+function scopeSheet(scope, title, cid) {
+  CFG = json(call('config'), {});
+  const sheet = h('div', { class: 'sheet', style: { width: '70rem', maxWidth: '70rem' } });
+  const box = h('div', { class: 'scroll', style: { overflowY: 'auto', maxHeight: '74vh' } }, scopeBody(scope, cid));
+  sheet.append(h('p', { text: title }), box);
+  openLayer(h('div', { class: 'layer' }, sheet));
+}
+
+function turboSheet(scope, cid, mask, done) {
+  const names = BUTTONS[cid].filter(b => b[1] !== 'Start' && b[1] !== 'Select' && b[1] !== 'Mode');
+  const list = h('div', { class: 'list' });
+  const draw = () => list.replaceChildren(...names.map(([id, name]) => {
+    const on = !!(mask & (1 << id));
+    const it = h('button', { class: 'f item' + (on ? ' on' : '') }, h('span', { class: 'grow', text: name }), h('span', { class: 'val', text: on ? t('Ligado') : t('Desligado') }));
+    it._act = () => { mask ^= 1 << id; call('setConfig', scope, 'turbo', String(mask)); CFG = json(call('config'), {}); const i = $$('.f', list).indexOf(it); draw(); ensureFocus($$('.f', list)[i]); };
+    return it;
+  }));
+  draw();
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' }, h('h2', { text: t('Botões com turbo') }), list)), { onClose: () => done(null) });
+}
+
+/* Trocar botões: escolhe o botão do console e aperta o botão do controle que vai fazer aquilo. */
+function remapSheet(cid) {
+  const scope = 'console:' + cid;
+  const list = h('div', { class: 'list' });
+  const draw = () => {
+    CFG = json(call('config'), {});
+    const remap = (levelOf(scope).remap) || {};
+    list.replaceChildren(...BUTTONS[cid].map(([rid, name]) => {
+      const keys = Object.keys(remap).filter(k => remap[k] === rid);
+      const it = h('button', { class: 'f item' + (keys.length ? ' on' : '') }, h('span', { class: 'grow', text: name }),
+        h('span', { class: 'val', text: keys.length ? keys.map(k => KEYNAMES[k] || ('#' + k)).join(', ') : t('Padrão') }));
+      it._act = () => capture(rid, name);
+      return it;
+    }), h('button', { class: 'f item', act: () => { call('setConfig', scope, 'remap', null); draw(); ensureFocus(); } }, icon('reset'), h('span', { class: 'grow', text: t('Restaurar padrão') })));
+  };
+  const capture = (rid, name) => {
+    const msg = h('div', { class: 'sheet' }, h('h2', { text: name }), h('p', { text: t('Aperte o botão no controle…') }),
+      h('button', { class: 'f btn', text: t('Cancelar'), act: () => { call('captureKey', false); closeLayer(); } }));
+    openLayer(h('div', { class: 'layer' }, msg), { onClose: () => call('captureKey', false) });
+    handlers.key = k => {
+      handlers.key = null;
+      KEYNAMES[k.code] = k.name;
+      try { localStorage.setItem('keynames', JSON.stringify(KEYNAMES)); } catch (_) { }
+      call('setConfig', scope, 'remap.' + k.code, String(rid));
+      closeLayer(); draw(); ensureFocus();
+    };
+    call('captureKey', true);
+  };
+  draw();
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' }, h('h2', { text: t('Trocar botões') + ' · ' + t(consoleOf(cid).name) }), h('div', { class: 'scroll', style: { overflowY: 'auto', maxHeight: '64vh' } }, list))));
+}
+let KEYNAMES = {};
+try { KEYNAMES = JSON.parse(localStorage.getItem('keynames') || '{}'); } catch (_) { }
+
+function aboutBody() {
+  const up = json(call('update'), {});
+  const wrap = h('div');
+  const status = { none: t('Em dia'), checking: t('Procurando…'), downloading: t('Baixando…'), installing: t('Instalando…'), error: t('Sem conexão com o GitHub') }[up.state] || '';
+  const list = h('div', { class: 'list' },
+    h('div', { class: 'item' }, h('span', { style: { width: '3.4rem' } }, svg(MARK)), h('span', { class: 'grow' }, 'Onix Game Hub', h('span', { class: 'sub', text: t('Versão {v}', { v: INFO.version || '' }) + (status ? ' · ' + status : '') }))),
+    up.latest && (up.state === 'available' || up.state === 'ready' || up.state === 'error')
+      ? h('button', { class: 'f item', act: () => { call('installUpdate'); toast(t('Baixando…')); } }, icon('load'), h('span', { class: 'grow', text: t('Instalar atualização {v}', { v: up.latest }) }))
+      : h('button', { class: 'f item', act: () => { call('checkUpdate'); toast(t('Procurando…')); } }, icon('reset'), h('span', { class: 'grow', text: t('Procurar atualizações') })),
+    h('div', { class: 'sep', text: t('Créditos e licenças') }),
+    h('p', { class: 'credits', text: t('Emuladores de código aberto do projeto libretro:') }),
+    ...[['FCEUmm (NES)', 'fceumm', 'GPL-2.0'], ['Snes9x (SNES)', 'snes9x', 'Snes9x, não comercial'], ['mGBA (GBA)', 'mgba', 'MPL-2.0'], ['Genesis Plus GX (Mega Drive)', 'genesis_plus_gx', 'não comercial']]
+      .map(([name, file, lic]) => h('button', { class: 'f item', act: () => licenseSheet(name, file) }, h('span', { class: 'grow' }, name, h('span', { class: 'sub', text: lic })), h('span', { class: 'val', text: t('Abrir licença') }))),
+    h('button', { class: 'f item', act: () => licenseSheet('libretro-database', 'libretro_database') }, h('span', { class: 'grow' }, t('Nomes dos jogos: libretro-database (No-Intro), CC BY-SA 4.0. Capas: libretro-thumbnails.')), h('span', { class: 'val', text: t('Abrir licença') })),
+    h('p', { class: 'credits', text: t('O Game Hub é gratuito e de código aberto (GPL-3.0). Nunca terá anúncios nem será vendido.') }),
+    h('p', { class: 'credits', text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o Game Hub.') }));
+  wrap.append(h('h2', { text: t('Sobre') }), list);
+  return wrap;
+}
+function licenseSheet(name, file) {
+  const pre = h('pre', { style: { whiteSpace: 'pre-wrap', fontSize: '1.05rem', color: 'var(--dim)', lineHeight: 1.45, fontFamily: 'inherit' } }, t('Carregando…'));
+  fetch('licenses/' + file + '.txt').then(r => r.text()).then(s => { pre.textContent = s; }).catch(() => { });
+  const box = h('div', { class: 'f', style: { overflowY: 'auto', maxHeight: '66vh', borderRadius: '1rem', padding: '1rem' } }, pre);
+  box._left = () => { box.scrollTop -= 300; };
+  box._right = () => { box.scrollTop += 300; };
+  // ▲ ▼ rolam o texto
+  const key = e => { if (e.key === 'ArrowDown') { box.scrollTop += 120; e.stopPropagation(); e.preventDefault(); } if (e.key === 'ArrowUp') { box.scrollTop -= 120; e.stopPropagation(); e.preventDefault(); } };
+  document.addEventListener('keydown', key, true);
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '80rem', maxWidth: '80rem' } }, h('h2', { text: name }), box)), { onClose: () => document.removeEventListener('keydown', key, true) });
+}
+
+/* ---------------- Eventos ---------------- */
+handlers.gamepads = list => {
+  INFO.gamepads = list;
+  renderChips();
+  if (list.length && pendingPlay && layers.length) {
+    closeLayer();
+    toast(t('Controle conectado') + ': ' + list[list.length - 1].name);
+    const p = pendingPlay; pendingPlay = null;
+    call('play', p[0].id, p[1]);
+  } else if (list.length) toast(t('Controle conectado') + ': ' + list[list.length - 1].name);
+  if (PAGE === 'settings' && setSection === 'pads' && !layers.length) show('settings', true);
+};
+handlers.cover = () => {
+  loadLibrary();
+  if (!layers.length && PAGE !== 'add' && PAGE !== 'settings') show(PAGE, true);
+};
+handlers.library = () => { loadLibrary(); if (!layers.length) show(PAGE, true); };
+handlers.resume = () => { renderChips(); };
+handlers.back = () => back();
+handlers.open = info => { INFO = Object.assign(INFO, info); applyOpen(); };
+handlers.update = up => { if (PAGE === 'settings' && setSection === 'about' && !layers.length) show('settings', true); maybeUpdateBanner(up); };
+
+function maybeUpdateBanner(up) {
+  if (!up || !up.latest || up.state !== 'available' || INFO.fromOnix && INFO.onix) return;
+  toast(t('Nova versão do Game Hub: {v}', { v: up.latest }));
+}
+
+onBack = () => {
+  if (PAGE !== 'home') { show('home'); return; }
+  call('exit');
+};
+
+function applyOpen() {
+  LANG = INFO.lang === 'es' ? 'es' : 'pt';
+  document.documentElement.lang = LANG === 'es' ? 'es' : 'pt-BR';
+  loadLibrary();
+  renderChips();
+  const o = INFO.open || 'home';
+  if (o.startsWith('console:')) show(o);
+  else if (o.startsWith('game:')) { show('home'); const g = LIB.find(x => x.id === o.slice(5)); if (g) openGame(g); }
+  else show('home');
+}
+
+/* ---------------- Início ---------------- */
+INFO = json(call('init'), { profile: 'default', lang: 'pt', gamepads: [] });
+brand($('#brand')); brand($('#bootBrand'));
+tick(); setInterval(tick, 15000);
+applyOpen();
+if (!Hub) {   // aberto num navegador comum (pré-visualização): dados de exemplo
+  LIB = [];
+  show('home');
+}
+</script>
+</body>
+</html>

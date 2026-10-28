@@ -11,7 +11,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aurora.launcher"
     android:versionCode="15"
-    android:versionName="15.0.2 beta">
+    android:versionName="15.9.0 teste">
 
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
 
@@ -23,6 +23,14 @@
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
     <!-- Botão "Limpar memória": fecha os apps parados em segundo plano (nunca o próprio Onix). -->
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+    <!-- Onix Game Hub: botão Desinstalar da aba Jogos (o Android sempre pede confirmação). -->
+    <uses-permission android:name="android.permission.REQUEST_DELETE_PACKAGES" />
+    <!-- "Continuar jogando" do Game Hub: só apps com a mesma assinatura leem. Declarada aqui também
+         para funcionar mesmo se o Game Hub for instalado depois do Onix. -->
+    <permission
+        android:name="com.onix.gamehub.permission.HUB"
+        android:protectionLevel="signature" />
+    <uses-permission android:name="com.onix.gamehub.permission.HUB" />
 
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />
@@ -44,6 +52,8 @@
         <package android:name="com.wbd.stream" />
         <package android:name="com.hbo.hbonow" />
         <package android:name="com.globo.globotv" />
+        <!-- Onix Game Hub (emuladores, app opcional que abre pela aba Jogos). -->
+        <package android:name="com.onix.gamehub" />
         <!-- Busca da Google TV para "onde assistir" das indicações. -->
         <intent>
             <action android:name="android.search.action.GLOBAL_SEARCH" />
@@ -106,6 +116,11 @@
         <!-- Resultado da instalação de uma atualização (Updater). -->
         <receiver
             android:name="com.onix.launcher.UpdateReceiver"
+            android:exported="false" />
+
+        <!-- Resultado da instalação do Onix Game Hub (GameHub). -->
+        <receiver
+            android:name="com.onix.launcher.GameHubReceiver"
             android:exported="false" />
 
         <service
