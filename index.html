@@ -483,10 +483,11 @@ html.kids .grid.games .tile-art{border-radius:1.6rem}
 .layer .btn.f.is-focused:not(.primary){background:rgba(255,255,255,.24)}
 .layer-actions{display:flex;gap:.8rem;flex-wrap:wrap;justify-content:center}
 
-/* Avatares: quadrado arredondado com um desenho espacial, ou a foto mandada pelo celular. */
+/* Avatares: quadrado arredondado com um rosto desenhado, ou a foto mandada pelo celular. */
 .av{position:relative;flex:none;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:28%;
   box-shadow:inset 0 1px 0 rgba(255,255,255,.35),inset 0 0 0 1px rgba(255,255,255,.12)}
 .av svg{width:62%;height:62%}
+.av svg.face{position:absolute;top:0;left:0;width:100%;height:100%}
 .av img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
 
 .pf-list{display:flex;gap:2.2rem;margin:3rem 0 2.6rem}
@@ -523,12 +524,12 @@ html.kids .grid.games .tile-art{border-radius:1.6rem}
 .pe-right h2{text-align:left;font-size:2.1rem}
 .pe-right .row-opt{max-width:40.8rem}
 .lbl{font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
-.av-grid{display:flex;gap:.8rem;flex-wrap:wrap;align-items:center}
-.av-opt{width:4.4rem;height:4.4rem;border-radius:28%}
+.av-grid{display:flex;gap:.5rem;flex-wrap:wrap;align-items:center}
+.av-opt{width:3.63rem;height:3.63rem;border-radius:28%}
 .av-opt .av{width:100%;height:100%}
 .av-opt.f::after{display:none}
 .av-opt.sel::before{content:"";position:absolute;top:-.35rem;right:-.35rem;bottom:-.35rem;left:-.35rem;border-radius:32%;border:.14rem solid #4ade80}
-.av-photo{display:flex;align-items:center;gap:.6rem;height:4.4rem;padding:0 1.1rem;border-radius:1.1rem;border:.12rem dashed rgba(255,255,255,.35);color:var(--muted);font-weight:500;white-space:nowrap}
+.av-photo{display:flex;align-items:center;gap:.6rem;height:3.63rem;padding:0 1.1rem;border-radius:1.1rem;border:.12rem dashed rgba(255,255,255,.35);color:var(--muted);font-weight:500;white-space:nowrap}
 .av-photo svg{width:1.4rem;height:1.4rem}
 .av-photo.sel{border-style:solid;border-color:#4ade80;color:var(--text)}
 .av-photo.is-focused{background:#fff;color:#0a0b0e;transform:scale(1.05)}
@@ -1151,7 +1152,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '15.0.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '15.0.1 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1987,7 +1988,7 @@ function findApp(brand) { return apps.find(a => a.brand === brand) || null; }
    Cada pessoa da casa tem os seus apps ("Seus apps"), recentes, recordes, idioma, indicações e cidade
    do clima. O primeiro perfil usa as chaves de sempre do localStorage (quem atualiza vira ele sem
    migrar nada); os outros usam as mesmas chaves com ".<id>" no fim. A lista fica em onix.profiles. */
-const PROFILES_KEY = 'onix.profiles', MAX_PROFILES = 5, FIRST_PROFILE = 'p1', AVATARS_N = 8;
+const PROFILES_KEY = 'onix.profiles', MAX_PROFILES = 5, FIRST_PROFILE = 'p1', AVATARS_N = 10;
 const PROFILE_PREFS = ['lang', 'pickAuto', 'pickNetflix', 'pickDisney', 'pickMax', 'pickGloboplay'];
 const KIDS_LIMITS = [0, 30, 60, 90, 120, 180];   // minutos por dia (0 = sem limite)
 const PHOTO_RE = /^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/, MAX_PHOTO = 160 * 1024;
@@ -2148,7 +2149,19 @@ const PICK_PROVIDERS = Object.freeze({
   "O gatinho do cartão *Sobre* se mexe de novo com o *Modo desempenho máximo* ou as *Transições suaves* desligadas.": "El gatito de la tarjeta *Acerca de* se mueve de nuevo con el *Modo de máximo rendimiento* o las *Transiciones suaves* desactivadas.",
   "Oi, {0}!": "¡Hola, {0}!",
   "O que vamos assistir hoje?": "¿Qué vamos a ver hoy?",
-  "*Modo Infantil* com visual próprio: boas-vindas com o nome da criança e o gatinho do Onix num arco-íris, o gatinho no menu, desenhinhos no canto da tela e foco amarelo, mais redondo e colorido.": "*Modo Infantil* con estilo propio: bienvenida con el nombre del niño y el gatito de Onix sobre un arcoíris, el gatito en el menú, dibujitos en la esquina de la pantalla y foco amarillo, más redondo y colorido."
+  "*Modo Infantil* com visual próprio: boas-vindas com o nome da criança e o gatinho do Onix num arco-íris, o gatinho no menu, desenhinhos no canto da tela e foco amarelo, mais redondo e colorido.": "*Modo Infantil* con estilo propio: bienvenida con el nombre del niño y el gatito de Onix sobre un arcoíris, el gatito en el menú, dibujitos en la esquina de la pantalla y foco amarillo, más redondo y colorido.",
+  "Cachorro": "Perro",
+  "Bebê": "Bebé",
+  "Homem": "Hombre",
+  "Mulher": "Mujer",
+  "Menino": "Niño",
+  "Menina": "Niña",
+  "Vovô": "Abuelo",
+  "Vovó": "Abuela",
+  "Astronauta": "Astronauta",
+  "*Avatares novos:* dez rostos desenhados no traço do gatinho do Onix para os perfis: o próprio gatinho, cachorro, bebê, homem, mulher, menino, menina, vovô, vovó e astronauta. Quem usava um desenho antigo ganha o novo do mesmo lugar da lista; dá para trocar em *Editar perfil*.": "*Avatares nuevos:* diez caras dibujadas con el trazo del gatito de Onix para los perfiles: el propio gatito, perro, bebé, hombre, mujer, niño, niña, abuelo, abuela y astronauta. Quien usaba un dibujo antiguo recibe el nuevo del mismo lugar de la lista; se puede cambiar en *Editar perfil*.",
+  "A chave *Clima na tela inicial* das Configurações aparecia desligada mesmo com o clima ligado.": "El interruptor *Clima en la pantalla de inicio* de Ajustes aparecía apagado aunque el clima estuviera encendido.",
+  "O botão *Organizar* da tela inicial abria *Novo perfil* em vez de organizar os apps.": "El botón *Organizar* de la pantalla de inicio abría *Nuevo perfil* en lugar de organizar las apps."
 });
 let picks = [];
 let netOnline = null;   // null = o Android ainda não disse
@@ -3761,6 +3774,11 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '15.0.1 beta', date: 'outubro de 2026', items: [
+    ['new', '*Avatares novos:* dez rostos desenhados no traço do gatinho do Onix para os perfis: o próprio gatinho, cachorro, bebê, homem, mulher, menino, menina, vovô, vovó e astronauta. Quem usava um desenho antigo ganha o novo do mesmo lugar da lista; dá para trocar em *Editar perfil*.'],
+    ['bug', 'O botão *Organizar* da tela inicial abria *Novo perfil* em vez de organizar os apps.'],
+    ['bug', 'A chave *Clima na tela inicial* das Configurações aparecia desligada mesmo com o clima ligado.'],
+  ] },
   { version: '15.0.0 beta', date: 'outubro de 2026', items: [
     ['new', '*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), dois estilos novos. *Clean Glass* é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. *Onix Cosmos* é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em *Configurações → Início*.'],
     ['new', '*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.'],
@@ -3906,7 +3924,7 @@ function syncPicksChoice() {
     : { auto: false, services: PICK_KEYS.filter(o => settings[o.key]).map(o => o.service) });
 }
 function syncSwitches() {
-  $$('#optsList .switch').forEach(sw => sw.classList.toggle('on', settings[sw.dataset.key]));
+  $$('#optsList .switch[data-key]').forEach(sw => sw.classList.toggle('on', settings[sw.dataset.key]));
   $$('#optsList .opt-val[data-key]').forEach(v => { const c = CHOICES[v.dataset.key].find(c => c[0] === settings[v.dataset.key]); v.textContent = c ? t(c[1]) : ''; });
 }
 function renderSettings() {
@@ -4143,23 +4161,26 @@ function paneKey(e) {
 function btnAct(id, fn) { $('#' + id)._act = fn; }
 
 /* ---------------- Avatares ----------------
-   Oito desenhos espaciais (o tema do Onix) ou a foto que veio do celular (JPEG validado). */
+   Dez rostos de frente no traço do gatinho do Onix (miolo escuro, contorno branco, bochechas rosa)
+   ou a foto que veio do celular (JPEG validado). A ordem é a gravada nos perfis: só acrescente no fim. */
 const AVATARS = [
-  { bg: 'linear-gradient(145deg,#4c5bd4,#1d2370)', g: '<circle cx="24" cy="24" r="10" fill="#f1e6ff"/><ellipse cx="24" cy="24" rx="19" ry="5.5" transform="rotate(-20 24 24)" fill="none" stroke="#ffd6a0" stroke-width="2.4"/><path d="M15 21a10 10 0 0 1 18 0" fill="none" stroke="#c8b4ff" stroke-width="2"/>' },
-  { bg: 'linear-gradient(145deg,#e0559a,#6a1645)', g: '<path d="M30 8a16 16 0 1 0 10 27A13 13 0 1 1 30 8z" fill="#fff1d6"/><circle cx="22" cy="28" r="2" fill="#f2d8a8"/><circle cx="27" cy="34" r="1.4" fill="#f2d8a8"/>' },
-  { bg: 'linear-gradient(145deg,#ff8a3d,#8a2d06)', g: '<path d="M24 5c6 5 8.5 13 6.5 23h-13C15.5 18 18 10 24 5z" fill="#f5f6f8"/><circle cx="24" cy="17" r="3.2" fill="#3aa0ff"/><path d="M17.5 24l-5 7 5.5-1zM30.5 24l5 7-5.5-1z" fill="#ff5a3d"/><path d="M20 30h8l-4 11z" fill="#ffd23f"/>' },
-  { bg: 'linear-gradient(145deg,#19b39b,#0a4a45)', g: '<ellipse cx="24" cy="25" rx="13" ry="15" fill="#b7f5a8"/><ellipse cx="19" cy="23" rx="3.6" ry="5" transform="rotate(-15 19 23)" fill="#10221d"/><ellipse cx="29" cy="23" rx="3.6" ry="5" transform="rotate(15 29 23)" fill="#10221d"/><path d="M21 33q3 2 6 0" stroke="#10221d" stroke-width="1.8" fill="none" stroke-linecap="round"/>' },
-  { bg: 'linear-gradient(145deg,#f2b705,#8a5a00)', g: '<g stroke="#fff6cf" stroke-width="2.6" stroke-linecap="round"><path d="M24 4v6M24 38v6M4 24h6M38 24h6M10 10l4 4M34 34l4 4M10 38l4-4M34 14l4-4"/></g><circle cx="24" cy="24" r="9" fill="#fff6cf"/>' },
-  { bg: 'linear-gradient(145deg,#3a8dff,#0c2f6b)', g: '<circle cx="24" cy="24" r="14" fill="#eef1f6"/><rect x="14" y="17" width="20" height="12" rx="6" fill="#1b2b4a"/><path d="M18 20.5q3-2 6-1" stroke="#7cc4ff" stroke-width="1.8" fill="none" stroke-linecap="round"/>' },
-  { bg: 'linear-gradient(145deg,#8d5cff,#2d1270)', g: '<path d="M24 6l5.3 11.2 12.2 1.5-9 8.4 2.3 12.1L24 33.3l-10.8 5.9 2.3-12.1-9-8.4 12.2-1.5z" fill="#ffe27a"/>' },
-  { bg: 'linear-gradient(145deg,#e84545,#5c0f14)', g: '<circle cx="32" cy="16" r="6.5" fill="#fff1e0"/><g stroke="#ffc9a8" stroke-width="2.4" stroke-linecap="round"><path d="M27 20L10 37M30 22.5L17 38M24.5 18L9 30"/></g>' },
+  { name: 'Gatinho do Onix', bg: 'linear-gradient(145deg,#5b62e0,#1b1f63)', g: '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 104C24 88 37 82 50 82S76 88 76 104z" fill="#0e1015"/><path d="M30 46l-1-27 19 13z" fill="#0e1015"/><path d="M33.5 38l-.5-11 8 6z" fill="#ff9ec4" stroke="none" opacity=".75"/><path d="M70 46l1-27-19 13z" fill="#0e1015"/><path d="M66.5 38l.5-11-8 6z" fill="#ff9ec4" stroke="none" opacity=".75"/><circle cx="50" cy="54" r="24" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="40.5" cy="52" rx="2.7" ry="3.8"/><ellipse cx="59.5" cy="52" rx="2.7" ry="3.8"/><circle cx="41.5" cy="50.5" r="1" fill="#0e1015"/><circle cx="60.5" cy="50.5" r="1" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".45"><circle cx="34.5" cy="61" r="3.2"/><circle cx="65.5" cy="61" r="3.2"/></g><path d="M47.5 59h5l-2.5 2.6z" fill="#ff9ec4" stroke="#ff9ec4" stroke-width="1.6"/><path d="M45 64q2.5 3 5 0q2.5 3 5 0" stroke-width="2.2"/><g stroke-width="1.5" opacity=".6"><path d="M33 59l-13-2.5M33 63l-13 1.5M67 59l13-2.5M67 63l13 1.5"/></g></g>' },
+  { name: 'Cachorro', bg: 'linear-gradient(145deg,#ff9a3d,#8a3306)', g: '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 104C24 88 37 82 50 82S76 88 76 104z" fill="#0e1015"/><circle cx="50" cy="52" r="23" fill="#0e1015"/><path d="M30 36c-9 2-13 14-11 26 1 5 6 6 8 2l5-16" fill="#0e1015"/><path d="M70 36c9 2 13 14 11 26-1 5-6 6-8 2l-5-16" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="41" cy="47" rx="2.7" ry="3.8"/><ellipse cx="59" cy="47" rx="2.7" ry="3.8"/><circle cx="42" cy="45.5" r="1" fill="#0e1015"/><circle cx="60" cy="45.5" r="1" fill="#0e1015"/></g><ellipse cx="50" cy="60" rx="10.5" ry="8" stroke-width="1.8" opacity=".5"/><path d="M45.5 55.5q4.5-2.5 9 0q-1 4-4.5 4.5q-3.5-.5-4.5-4.5z" fill="#fff" stroke="none"/><path d="M50 60v2.5M50 62.5q-3 3-6 1M50 62.5q3 3 6 1" stroke-width="2"/><path d="M47 64.5h6v3a3 3 0 0 1-6 0z" fill="#ff9ec4" stroke="none"/><g fill="#ff9ec4" stroke="none" opacity=".45"><circle cx="35" cy="60" r="3.2"/><circle cx="65" cy="60" r="3.2"/></g></g>' },
+  { name: 'Bebê', bg: 'linear-gradient(145deg,#5ab8ff,#163f86)', g: '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M26 104C26 90 38 84 50 84S74 90 74 104z" fill="#0e1015"/><circle cx="27" cy="54" r="4.5" fill="#0e1015"/><circle cx="73" cy="54" r="4.5" fill="#0e1015"/><circle cx="50" cy="52" r="24" fill="#0e1015"/><path d="M50 28c-1-6 4-9 7-6 2 2 0 5-2.5 4" stroke-width="2.4"/><g fill="#fff" stroke="none"><ellipse cx="40.5" cy="51" rx="3.024" ry="4.256"/><ellipse cx="59.5" cy="51" rx="3.024" ry="4.256"/><circle cx="41.5" cy="49.5" r="1.12" fill="#0e1015"/><circle cx="60.5" cy="49.5" r="1.12" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".45"><circle cx="35" cy="60" r="3.6"/><circle cx="65" cy="60" r="3.6"/></g><circle cx="50" cy="65" r="4.6" fill="#ff9ec4" stroke="none"/><path d="M43.5 63.5h13" stroke="#fff" stroke-width="2.6"/><circle cx="50" cy="65" r="1.6" fill="#fff" stroke="none"/></g>' },
+  { name: 'Homem', bg: 'linear-gradient(145deg,#1fbf9f,#0a4a45)', g: '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M18 104C18 86 34 80 50 80S82 86 82 104z" fill="#0e1015"/><path d="M42 81l8 9 8-9" stroke-width="2.2"/><rect x="44" y="66" width="12" height="14" fill="#0e1015"/><circle cx="29" cy="52" r="4" fill="#0e1015"/><circle cx="71" cy="52" r="4" fill="#0e1015"/><ellipse cx="50" cy="50" rx="20" ry="23" fill="#0e1015"/><path d="M29.5 49c-2-17 7-25 20.5-25s23 7 20.5 25c-2-5-3-9-7-11-6 3-17 4-27 2-4 2-6 5-7 9z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="51" rx="2.484" ry="3.496"/><ellipse cx="58" cy="51" rx="2.484" ry="3.496"/><circle cx="43" cy="49.5" r="0.92" fill="#0e1015"/><circle cx="59" cy="49.5" r="0.92" fill="#0e1015"/></g><path d="M38 43.5q4-2 7 0M55 43.5q3-2 7 0" stroke-width="2"/><path d="M45 61q5 4 10 0" stroke-width="2.4"/></g>' },
+  { name: 'Mulher', bg: 'linear-gradient(145deg,#ec5ca3,#661541)', g: '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M27 48c-2-18 9-28 23-28s25 10 23 28c-1 12 3 22 9 30-12 6-52 6-64 0 6-8 10-18 9-30z" fill="#0e1015"/><path d="M20 104C20 88 35 82 50 82S80 88 80 104z" fill="#0e1015"/><rect x="44.5" y="66" width="11" height="16" fill="#0e1015"/><ellipse cx="50" cy="51" rx="19" ry="22" fill="#0e1015"/><path d="M31 50c0-14 8-22 19-22 8 0 15 4 18 12-9 1-19-3-24-9-3 7-8 12-13 19z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="52" rx="2.484" ry="3.496"/><ellipse cx="58" cy="52" rx="2.484" ry="3.496"/><circle cx="43" cy="50.5" r="0.92" fill="#0e1015"/><circle cx="59" cy="50.5" r="0.92" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".45"><circle cx="37" cy="60" r="2.8"/><circle cx="63" cy="60" r="2.8"/></g><path d="M45.5 61.5q4.5 3.6 9 0" stroke="#ff9ec4" stroke-width="2.4"/></g>' },
+  { name: 'Menino', bg: 'linear-gradient(145deg,#3a8dff,#0c2f6b)', g: '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M24 104C24 90 37 84 50 84S76 90 76 104z" fill="#0e1015"/><circle cx="29" cy="55" r="4" fill="#0e1015"/><circle cx="71" cy="55" r="4" fill="#0e1015"/><circle cx="50" cy="54" r="21" fill="#0e1015"/><path d="M29.5 53c-3-10 1-19 8-22l-1-6 7 3 4-7 4 6 7-4-1 7c9 3 13 13 9 23-3-6-8-10-14-12-5 4-12 5-18 4-2 2-4 5-5 8z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="55" rx="2.565" ry="3.61"/><ellipse cx="58" cy="55" rx="2.565" ry="3.61"/><circle cx="43" cy="53.5" r="0.95" fill="#0e1015"/><circle cx="59" cy="53.5" r="0.95" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".45"><circle cx="36.5" cy="63" r="2.8"/><circle cx="63.5" cy="63" r="2.8"/></g><path d="M44.5 63.5q5.5 5 11 0z" fill="#fff" stroke-width="1.6"/></g>' },
+  { name: 'Menina', bg: 'linear-gradient(145deg,#f7b500,#8a5200)', g: '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="23" cy="40" r="9.5" fill="#0e1015"/><circle cx="77" cy="40" r="9.5" fill="#0e1015"/><path d="M25 104C25 90 37.5 84 50 84S75 90 75 104z" fill="#0e1015"/><circle cx="50" cy="54" r="21" fill="#0e1015"/><path d="M29.2 52c-1-14 8-21 20.8-21s21.8 7 20.8 21c-5-3-9-8-11-13-8 6-21 8-30.6 13z" fill="#0e1015"/><path d="M30 33.5l-6-4.5v9zM30 33.5l6-4.5v9z" fill="#ff9ec4" stroke="#ff9ec4" stroke-width="1.6"/><circle cx="30" cy="33.5" r="2" fill="#fff" stroke="none"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="56" rx="2.565" ry="3.61"/><ellipse cx="58" cy="56" rx="2.565" ry="3.61"/><circle cx="43" cy="54.5" r="0.95" fill="#0e1015"/><circle cx="59" cy="54.5" r="0.95" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".45"><circle cx="36.5" cy="64" r="2.8"/><circle cx="63.5" cy="64" r="2.8"/></g><path d="M45.5 64q4.5 3.6 9.0 0" stroke-width="2.4"/></g>' },
+  { name: 'Vovô', bg: 'linear-gradient(145deg,#64bf43,#1e5110)', g: '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 104C19 86 34.5 80 50 80S81 86 81 104z" fill="#0e1015"/><path d="M43 81l7 8 7-8" stroke-width="2.2"/><rect x="44" y="66" width="12" height="14" fill="#0e1015"/><circle cx="29" cy="52" r="4" fill="#0e1015"/><circle cx="71" cy="52" r="4" fill="#0e1015"/><ellipse cx="50" cy="50" rx="20" ry="23" fill="#0e1015"/><path d="M31 46c-2-5 0-10 4-12M69 46c2-5 0-10-4-12" stroke-width="2.4"/><path d="M37 41q4-2.5 8 0M55 41q4-2.5 8 0" stroke-width="2.2"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="50" rx="2.16" ry="3.04"/><ellipse cx="58" cy="50" rx="2.16" ry="3.04"/><circle cx="43" cy="48.5" r="0.8" fill="#0e1015"/><circle cx="59" cy="48.5" r="0.8" fill="#0e1015"/></g><g stroke-width="1.8"><circle cx="42" cy="50" r="6"/><circle cx="58" cy="50" r="6"/><path d="M48 49.5q2-1.6 4 0M36 49l-5-2M64 49l5-2"/></g><path d="M50 59.5c-4-1-9 0-10 4 3 0 6-1 10-2.5 4 1.5 7 2.5 10 2.5-1-4-6-5-10-4z" fill="#fff" stroke="none"/><path d="M46 66q4 2.5 8 0" stroke-width="2"/></g>' },
+  { name: 'Vovó', bg: 'linear-gradient(145deg,#9b6bff,#2c1270)', g: '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="24" r="8.5" fill="#0e1015"/><path d="M21 104C21 88 35.5 82 50 82S79 88 79 104z" fill="#0e1015"/><path d="M37 86q13 8 26 0" stroke="#ff9ec4" stroke-width="2" stroke-dasharray=".1 4.2" opacity=".9"/><rect x="44.5" y="66" width="11" height="16" fill="#0e1015"/><circle cx="31" cy="44" r="7" fill="#0e1015"/><circle cx="69" cy="44" r="7" fill="#0e1015"/><ellipse cx="50" cy="51" rx="19.5" ry="22" fill="#0e1015"/><path d="M30.6 49c-1-13 8-20 19.4-20s20.4 7 19.4 20c-3-7-8-10-11-10-3 3-12 3-16 0-3 0-9 3-11.8 10z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="53" rx="2.16" ry="3.04"/><ellipse cx="58" cy="53" rx="2.16" ry="3.04"/><circle cx="43" cy="51.5" r="0.8" fill="#0e1015"/><circle cx="59" cy="51.5" r="0.8" fill="#0e1015"/></g><g stroke-width="1.8"><circle cx="42" cy="53" r="6"/><circle cx="58" cy="53" r="6"/><path d="M48 52.5q2-1.6 4 0"/></g><g fill="#ff9ec4" stroke="none" opacity=".45"><circle cx="36.5" cy="61" r="2.6"/><circle cx="63.5" cy="61" r="2.6"/></g><path d="M45.5 63q4.5 3.6 9 0" stroke="#ff9ec4" stroke-width="2.4"/></g>' },
+  { name: 'Astronauta', bg: 'linear-gradient(145deg,#ff5c5c,#5c0f18)', g: '<g fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M17 104C17 86 33.5 80 50 80S83 86 83 104z" fill="#0e1015"/><path d="M38 88h24" stroke-width="2" opacity=".5"/><circle cx="62" cy="94" r="2.2" fill="#fff" stroke="none" opacity=".6"/><path d="M50 20v-6" stroke-width="2.4"/><circle cx="50" cy="12" r="3" fill="#ff9ec4" stroke="none"/><circle cx="50" cy="50" r="30" fill="#0e1015"/><rect x="28" y="33" width="44" height="36" rx="18" fill="#0e1015" stroke-width="2.2"/><path d="M33.5 46c1-5 4-8 9-9.5" stroke-width="2" opacity=".6"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="51" rx="2.565" ry="3.61"/><ellipse cx="58" cy="51" rx="2.565" ry="3.61"/><circle cx="43" cy="49.5" r="0.95" fill="#0e1015"/><circle cx="59" cy="49.5" r="0.95" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".45"><circle cx="37" cy="59" r="2.6"/><circle cx="63" cy="59" r="2.6"/></g><path d="M46 59.5q4 3.2 8 0" stroke-width="2.4"/><g fill="#fff" stroke="none"><path d="M78 23l1.3 3 3 1.3-3 1.3-1.3 3-1.3-3-3-1.3 3-1.3z"/><circle cx="19" cy="22" r="1.4"/><circle cx="85" cy="44" r="1.1"/></g></g>' }
 ];
 const PLUS_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
 const PHONE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>';
 const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 function avatarFill(el, pr) {
   el.style.background = pr.photo ? '#222' : AVATARS[pr.av].bg;
-  el.replaceChildren(pr.photo ? h('img', { src: pr.photo, alt: '', draggable: 'false' }) : svgFrom('<svg viewBox="0 0 48 48" aria-hidden="true">' + AVATARS[pr.av].g + '</svg>'));
+  el.replaceChildren(pr.photo ? h('img', { src: pr.photo, alt: '', draggable: 'false' }) : svgFrom('<svg class="face" viewBox="0 0 100 100" aria-hidden="true">' + AVATARS[pr.av].g + '</svg>'));
   return el;
 }
 const avatar = pr => avatarFill(h('span', { class: 'av' }), pr);
@@ -4329,13 +4350,13 @@ function openProfiles(manage, focusId) {
     if (manageProfiles) av.append(h('span', { class: 'pf-pen' }, svgFrom(PEN_SVG)));
     const b = h('button', { class: 'f pf', tabindex: '-1', 'aria-label': pr.name, 'data-id': pr.id }, av, h('span', { class: 'pf-name', text: pr.name }),
       pr.kids ? h('span', { class: 'kids-badge', text: 'Infantil' }) : null);
-    b._act = () => manageProfiles ? openEditor(pr) : enterProfile(pr);
+    b._act = () => manageProfiles ? openProfileEditor(pr) : enterProfile(pr);
     return b;
   });
   if (profiles.length < MAX_PROFILES) {
     const add = h('button', { class: 'f pf pf-add', tabindex: '-1', 'aria-label': 'Adicionar perfil' },
       h('span', { class: 'av' }, svgFrom(PLUS_SVG)), h('span', { class: 'pf-name', text: 'Adicionar perfil' }));
-    add._act = () => openEditor(null);
+    add._act = () => openProfileEditor(null);
     items.push(add);
   }
   $('#pfList').replaceChildren(...items);
@@ -4354,7 +4375,7 @@ let draft = null;
 function defaultKidsApps() {
   return apps.filter(a => a.brand === 'youtube' || a.brand === 'disney' || /kids|kid|infantil|gloob|cartoon|discovery|nick/i.test(a.name + ' ' + a.pkg)).map(a => a.pkg).slice(0, 12);
 }
-function openEditor(pr) {
+function openProfileEditor(pr) {
   const used = new Set(profiles.map(x => x.av));
   let free = 0; while (free < AVATARS_N - 1 && used.has(free)) free++;
   draft = pr ? { id: pr.id, name: pr.name, av: pr.av, photo: pr.photo, kids: pr.kids, allow: pr.allow.slice(), limit: pr.limit, isNew: false }
@@ -4371,7 +4392,7 @@ function renderDraft() {
   $('#peTitle').textContent = t(draft.isNew ? 'Novo perfil' : 'Editar perfil');
   $('#peNameVal').textContent = draft.name || t('Digite o nome');
   const opts = AVATARS.map((_, i) => {
-    const b = h('button', { class: 'f av-opt' + (!draft.photo && draft.av === i ? ' sel' : ''), tabindex: '-1', 'aria-label': t('Avatar {0}', i + 1), 'data-av': i },
+    const b = h('button', { class: 'f av-opt' + (!draft.photo && draft.av === i ? ' sel' : ''), tabindex: '-1', 'aria-label': t(AVATARS[i].name), 'data-av': i },
       avatarFill(h('span', { class: 'av' }), { av: i, photo: null }));
     b._act = () => { draft.av = i; draft.photo = null; renderDraft(); setFocus($('#peAvs [data-av="' + i + '"]')); };
     return b;
@@ -4534,7 +4555,7 @@ btnAct('klSwitch', switchProfile);
 const WL_SERVICES = [['netflix', 'Netflix', 'pickNetflix'], ['disney', 'Disney+', 'pickDisney'], ['max', 'HBO Max', 'pickMax'], ['globoplay', 'Globoplay', 'pickGloboplay']];
 let wl = null;
 function openWelcome() {
-  wl = { step: 0, name: '', av: 3, photo: null, services: ['netflix'], weather: false, city: null, h24: settings.h24 };
+  wl = { step: 0, name: '', av: 0, photo: null, services: ['netflix'], weather: false, city: null, h24: settings.h24 };
   openPane('welcome', { back: () => { if (wl.step > 0) wlGo(wl.step - 1); } });
   wlRender();
 }
@@ -4565,7 +4586,7 @@ function wlRender(focusSel) {
   } else if (wl.step === 1) {
     const me = { av: wl.av, photo: wl.photo };
     const opts = AVATARS.map((_, i) => {
-      const b = h('button', { class: 'f av-opt' + (!wl.photo && wl.av === i ? ' sel' : ''), tabindex: '-1', 'aria-label': t('Avatar {0}', i + 1), 'data-av': i },
+      const b = h('button', { class: 'f av-opt' + (!wl.photo && wl.av === i ? ' sel' : ''), tabindex: '-1', 'aria-label': t(AVATARS[i].name), 'data-av': i },
         avatarFill(h('span', { class: 'av' }), { av: i, photo: null }));
       b._act = () => { wl.av = i; wl.photo = null; wlRender('[data-av="' + i + '"]'); };
       return b;

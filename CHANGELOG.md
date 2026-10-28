@@ -2,6 +2,12 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 15.0.1 beta (outubro de 2026)
+
+- **Avatares novos:** dez rostos desenhados no traço do gatinho do Onix para os perfis: o próprio gatinho, cachorro, bebê, homem, mulher, menino, menina, vovô, vovó e astronauta. Quem usava um desenho antigo ganha o novo do mesmo lugar da lista; dá para trocar em **Editar perfil**.
+- O botão **Organizar** da tela inicial abria **Novo perfil** em vez de organizar os apps.
+- A chave **Clima na tela inicial** das Configurações aparecia desligada mesmo com o clima ligado.
+
 ## 15.0.0 beta (outubro de 2026)
 
 - **Estilo da tela inicial:** além do **Onix Glass** (o de sempre), dois estilos novos. **Clean Glass** é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. **Onix Cosmos** é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em **Configurações → Início**.
