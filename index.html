@@ -2213,16 +2213,16 @@ const PICK_PROVIDERS = Object.freeze({
   "Baixando o Onix GameHub…": "Descargando Onix GameHub…",
   "O GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "GameHub todavía no fue publicado. Llega en una próxima actualización.",
   "Não deu para baixar o GameHub. Confira a internet e tente de novo.": "No se pudo descargar GameHub. Revisa internet e inténtalo de nuevo.",
-  "Emulador de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive, com capas, saves e estados salvos por perfil. É um app à parte e opcional: dá para desinstalar quando quiser.": "Emulador de Nintendo (NES), Super Nintendo, Game Boy Advance y Mega Drive, con portadas, partidas y estados guardados por perfil. Es una app aparte y opcional: puedes desinstalarla cuando quieras.",
+  "Uma seção de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.": "Una sección de juegos para Onix: tus juegos de Nintendo (NES), Super Nintendo, Game Boy Advance y Mega Drive en un solo lugar, con portadas y tu progreso guardado por perfil. Es opcional y puedes desinstalarla cuando quieras.",
   "Continuar jogando": "Seguir jugando",
   "Jogar": "Jugar",
   "jogo": "juego",
   "jogos": "juegos",
-  "Emulador": "Emulador",
+  "Nenhum jogo ainda": "Ningún juego todavía",
   "Abrir o GameHub": "Abrir GameHub",
   "Versão {v}": "Versión {v}",
   "Nintendinho": "Nintendo (NES)",
-  "· Emuladores": "· Emuladores", "· Onix GameHub · OK volta de onde parou": "· Onix GameHub · OK vuelve donde lo dejaste", "Continuar": "Continuar",
+  "· Seus jogos por console": "· Tus juegos por consola", "· Onix GameHub · OK volta de onde parou": "· Onix GameHub · OK vuelve donde lo dejaste", "Continuar": "Continuar",
   "Atualizar o GameHub ({v})": "Actualizar GameHub ({v})",
   "Desinstalar o GameHub": "Desinstalar GameHub",
   "Não deu para abrir o GameHub": "No se pudo abrir GameHub",
@@ -3325,7 +3325,7 @@ function renderHub() {
       : st.state === 'error' && st.error ? 'Não deu para baixar o GameHub. Confira a internet e tente de novo.' : null;
     kids.push(h('div', { class: 'hub-promo' }, h('div', { class: 'hub-mark' }, svgFrom(HUB_MARK)),
       h('div', { class: 'hub-text' }, h('b', { text: 'Onix GameHub' }),
-        h('span', { text: 'Emulador de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive, com capas, saves e estados salvos por perfil. É um app à parte e opcional: dá para desinstalar quando quiser.' }),
+        h('span', { text: 'Uma seção de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.' }),
         note ? h('span', { class: 'hub-note', text: note }) : null), btn));
   } else {
     // "Continuar jogando": a capa do jogo em pé, como os pôsteres das indicações. Sem capa, a tela de
@@ -3350,7 +3350,7 @@ function renderHub() {
       const n = st.counts[id] || 0;
       const b = h('button', { class: 'f tile hub', tabindex: '-1', 'aria-label': name },
         h('span', { class: 'tile-art glass', style: 'background:linear-gradient(150deg,' + color + '33,#111 75%)' }, h('span', { class: 'hub-console', style: 'color:' + color }, svgFrom(art))),
-        h('span', { class: 'tile-label', text: name }), h('span', { class: 'tile-sub', text: n ? n + ' ' + t(n === 1 ? 'jogo' : 'jogos') : 'Emulador' }));
+        h('span', { class: 'tile-label', text: name }), h('span', { class: 'tile-sub', text: n ? n + ' ' + t(n === 1 ? 'jogo' : 'jogos') : 'Nenhum jogo ainda' }));
       b.dataset.key = 'c' + id;
       b._act = () => openHub('console:' + id);
       row.append(b);
@@ -3361,7 +3361,7 @@ function renderHub() {
     all.dataset.key = 'open';
     all._act = () => openHub('home');
     row.append(all);
-    kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Onix GameHub' }), h('span', { class: 'row-sub', text: '· Emuladores' })), row);
+    kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Onix GameHub' }), h('span', { class: 'row-sub', text: '· Seus jogos por console' })), row);
     if (!isKids()) {
       const bar = h('div', { class: 'hub-bar' });
       if (st.latest) {
