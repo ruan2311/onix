@@ -2213,7 +2213,7 @@ const PICK_PROVIDERS = Object.freeze({
   "Baixando o Onix GameHub…": "Descargando Onix GameHub…",
   "O GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "GameHub todavía no fue publicado. Llega en una próxima actualización.",
   "Não deu para baixar o GameHub. Confira a internet e tente de novo.": "No se pudo descargar GameHub. Revisa internet e inténtalo de nuevo.",
-  "Uma seção de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.": "Una sección de juegos para Onix: tus juegos de Nintendo (NES), Super Nintendo, Game Boy Advance y Mega Drive en un solo lugar, con portadas y tu progreso guardado por perfil. Es opcional y puedes desinstalarla cuando quieras.",
+  "Um hub de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.": "Un hub de juegos para Onix: tus juegos de Nintendo (NES), Super Nintendo, Game Boy Advance y Mega Drive en un solo lugar, con portadas y tu progreso guardado por perfil. Es opcional y puedes desinstalarla cuando quieras.",
   "Continuar jogando": "Seguir jugando",
   "Jogar": "Jugar",
   "jogo": "juego",
@@ -3325,7 +3325,7 @@ function renderHub() {
       : st.state === 'error' && st.error ? 'Não deu para baixar o GameHub. Confira a internet e tente de novo.' : null;
     kids.push(h('div', { class: 'hub-promo' }, h('div', { class: 'hub-mark' }, svgFrom(HUB_MARK)),
       h('div', { class: 'hub-text' }, h('b', { text: 'Onix GameHub' }),
-        h('span', { text: 'Uma seção de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.' }),
+        h('span', { text: 'Um hub de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.' }),
         note ? h('span', { class: 'hub-note', text: note }) : null), btn));
   } else {
     // "Continuar jogando": a capa do jogo em pé, como os pôsteres das indicações. Sem capa, a tela de
