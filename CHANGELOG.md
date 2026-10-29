@@ -2,6 +2,12 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 16.3.2 (outubro de 2026)
+
+- **Fim da fase beta:** o Onix para Google TV e Android TV deixa de ser beta, a partir desta versão. Obrigado a todo mundo que testou! As versões para Samsung e LG continuam em beta.
+- **Project Gems no Sobre:** o cartão **Sobre**, em **Configurações**, mostra o endereço do site com todos os projetos do Ruan: **[projectgems.github.io](https://projectgems.github.io)**.
+- O desenho do topo da aba **Jogos** troca o controle antigo pela logomarca nova do Onix GameHub, o Saturno de pixel, e os enfeites em volta ganham as cores dela.
+
 ## 16.3.0 beta (outubro de 2026)
 
 - **Posição do menu:** em **Configurações → Menu**, escolha onde o menu fica. **Lateral** é o de sempre; **Em cima** vira uma barra de abas de ponta a ponta, alinhada com as bordas do conteúdo, com o seu perfil e os atalhos do sistema nas pontas; **Embaixo** vira um dock flutuante, com todos os itens do mesmo tamanho e um ponto de luz no item aberto, e o conteúdo termina acima dele. Sem o menu do lado, as Configurações ficam no centro da tela, e com o menu em cima o clima fica só à mostra, como o relógio, sem atrapalhar o caminho até o menu, e **Atualizar**, **Limpar memória** e **Configurações da TV** viram botões só de ícone, como no Clean Glass. O Modo Infantil continua com o menu lateral.

@@ -110,7 +110,7 @@ html:not(.on-home) .topbar{align-items:center}
 #topArt{display:none}
 html.on-games #topArt{display:block;flex:1;min-width:0;max-width:26rem;height:7.4rem;margin:0 1rem}
 html.on-games .top-right .chips{flex-direction:column;align-items:flex-end;gap:.45rem}
-#topArt svg{width:100%;height:100%;overflow:visible}
+#topArt>svg{width:100%;height:100%;overflow:visible}
 .ta-pad{animation:taFloat 4s ease-in-out infinite alternate}
 .ta-coin{transform-box:fill-box;transform-origin:50% 50%;animation:taSpin 3s ease-in-out infinite}
 .ta-twinkle{animation:taTwinkle 2.4s ease-in-out infinite alternate}
@@ -1030,20 +1030,18 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
       <div id="date"></div>
     </div>
     <button class="f" id="wxBtn" tabindex="-1" hidden><span class="wx-ico" id="wxIco"></span><span class="wx-txt"><span class="wx-temp" id="wxTemp"></span><span class="wx-sub" id="wxSub"></span></span></button>
-    <!-- Aba Jogos: desenho no vão do topo, no traço do planeta do Onix (controle em órbita,
+    <!-- Aba Jogos: desenho no vão do topo, no traço do planeta do Onix (a logomarca do GameHub em órbita,
          moeda, coração de pixel, invasor e estrelinhas). Só aparece em Jogos. -->
     <div id="topArt" aria-hidden="true"><svg viewBox="0 0 320 130" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
-      <ellipse cx="160" cy="74" rx="146" ry="30" stroke-width="2" stroke-dasharray="1.5 9" opacity=".5"/>
-      <path d="M6 14l52 24" stroke-width="2" opacity=".55"/><circle cx="60" cy="39" r="3.2" fill="#fff" stroke="none"/>
-      <g class="ta-pad"><g transform="translate(108 14) rotate(-8 52 48) scale(2.2)" stroke-width="1.6">
-        <path d="M16 14.5h16a9.5 9.5 0 0 1 9.2 7.1l2.3 8.9a5 5 0 0 1-8.9 4.2L31 30H17l-3.6 4.7a5 5 0 0 1-8.9-4.2l2.3-8.9A9.5 9.5 0 0 1 16 14.5z"/>
-        <path d="M15 19.5v6M12 22.5h6"/><circle cx="32.5" cy="20.6" r="1.25" fill="#fff" stroke="none"/><circle cx="35.9" cy="24" r="1.25" fill="#fff" stroke="none"/></g></g>
-      <g class="ta-coin" stroke-width="2.4"><circle cx="86" cy="28" r="12"/><path d="M86 21v14"/></g>
-      <g fill="#fff" stroke="none" opacity=".9"><rect x="34" y="84" width="6" height="6"/><rect x="46" y="84" width="6" height="6"/><rect x="28" y="90" width="30" height="6"/><rect x="34" y="96" width="18" height="6"/><rect x="40" y="102" width="6" height="6"/></g>
-      <g fill="#fff" stroke="none" opacity=".9"><rect x="252" y="20" width="5" height="5"/><rect x="282" y="20" width="5" height="5"/><rect x="257" y="25" width="25" height="5"/><rect x="252" y="30" width="35" height="5"/><rect x="247" y="35" width="10" height="5"/><rect x="262" y="35" width="15" height="5"/><rect x="282" y="35" width="10" height="5"/><rect x="247" y="40" width="45" height="5"/><rect x="252" y="45" width="5" height="5"/><rect x="282" y="45" width="5" height="5"/></g>
-      <g stroke-width="2" opacity=".75"><path d="M290 92v12M284 98h12"/><path d="M110 112v9M105.5 116.5h9"/></g>
-      <g fill="#fff" stroke="none" class="ta-twinkle"><circle cx="222" cy="14" r="2.4"/><circle cx="312" cy="66" r="2"/><circle cx="14" cy="64" r="2"/><circle cx="214" cy="120" r="2.2"/></g>
-      <path d="M306 4l3 7.5 7.5 3-7.5 3-3 7.5-3-7.5-7.5-3 7.5-3z" fill="#fff" stroke="none"/>
+      <ellipse cx="160" cy="74" rx="146" ry="30" stroke="#b9a6ff" stroke-width="2" stroke-dasharray="1.5 9" opacity=".6"/>
+      <path d="M6 14l52 24" stroke="#d85eae" stroke-width="2" opacity=".7"/><circle cx="60" cy="39" r="3.2" fill="#ff8fc8" stroke="none"/>
+      <g class="ta-pad"></g><!-- a logomarca do GameHub (HUB_MARK) entra aqui pelo script -->
+      <g class="ta-coin" stroke="#ffd36b" stroke-width="2.4"><circle cx="86" cy="28" r="12"/><path d="M86 21v14"/></g>
+      <g fill="#ff3d9a" stroke="none" opacity=".95"><rect x="34" y="84" width="6" height="6"/><rect x="46" y="84" width="6" height="6"/><rect x="28" y="90" width="30" height="6"/><rect x="34" y="96" width="18" height="6"/><rect x="40" y="102" width="6" height="6"/></g>
+      <g fill="#3de1ff" stroke="none" opacity=".95"><rect x="252" y="20" width="5" height="5"/><rect x="282" y="20" width="5" height="5"/><rect x="257" y="25" width="25" height="5"/><rect x="252" y="30" width="35" height="5"/><rect x="247" y="35" width="10" height="5"/><rect x="262" y="35" width="15" height="5"/><rect x="282" y="35" width="10" height="5"/><rect x="247" y="40" width="45" height="5"/><rect x="252" y="45" width="5" height="5"/><rect x="282" y="45" width="5" height="5"/></g>
+      <g stroke="#8b6cf0" stroke-width="2.2" opacity=".9"><path d="M290 92v12M284 98h12"/><path d="M110 112v9M105.5 116.5h9"/></g>
+      <g fill="#d6c8ff" stroke="none" class="ta-twinkle"><circle cx="222" cy="14" r="2.4"/><circle cx="312" cy="66" r="2"/><circle cx="14" cy="64" r="2"/><circle cx="214" cy="120" r="2.2"/></g>
+      <path d="M306 4l3 7.5 7.5 3-7.5 3-3 7.5-3-7.5-7.5-3 7.5-3z" fill="#64c0eb" stroke="none"/>
     </svg></div>
     <div class="top-right">
     <div class="top-actions">
@@ -1392,7 +1390,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '16.3.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '16.3.2'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1949,6 +1947,9 @@ const ES = Object.freeze({
   "Posição do menu": "Posición del menú",
   "Onde o menu fica: na lateral (o de sempre), em cima, numa barra de abas, ou embaixo, num dock flutuante. OK troca.": "Dónde queda el menú: en el lateral (el de siempre), arriba, en una barra de pestañas, o abajo, en un dock flotante. OK cambia.",
   "Lateral": "Lateral",
+  "*Fim da fase beta:* o Onix para Google TV e Android TV deixa de ser beta, a partir desta versão. Obrigado a todo mundo que testou! As versões para Samsung e LG continuam em beta.": "*Fin de la fase beta:* Onix para Google TV y Android TV deja de ser beta a partir de esta versión. ¡Gracias a todos los que lo probaron! Las versiones para Samsung y LG siguen en beta.",
+  "*Project Gems no Sobre:* o cartão *Sobre*, em *Configurações*, mostra o endereço do site com todos os projetos do Ruan: *projectgems.github.io*.": "*Project Gems en Acerca de:* la tarjeta *Acerca de*, en *Configuración*, muestra la dirección del sitio con todos los proyectos de Ruan: *projectgems.github.io*.",
+  "O desenho do topo da aba *Jogos* troca o controle antigo pela logomarca nova do Onix GameHub, o Saturno de pixel, e os enfeites em volta ganham as cores dela.": "El dibujo de la parte superior de la pestaña *Juegos* cambia el control antiguo por el logotipo nuevo de Onix GameHub, el Saturno de píxeles, y los adornos alrededor toman sus colores.",
   "Em cima": "Arriba",
   "Embaixo": "Abajo",
   "*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas de ponta a ponta, alinhada com as bordas do conteúdo, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com todos os itens do mesmo tamanho e um ponto de luz no item aberto, e o conteúdo termina acima dele. Sem o menu do lado, as Configurações ficam no centro da tela, e com o menu em cima o clima fica só à mostra, como o relógio, sem atrapalhar o caminho até o menu, e Atualizar, Limpar memória e Configurações da TV viram botões só de ícone, como no Clean Glass. O Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.": "*Posición del menú:* elige dónde queda el menú. *Lateral* es el de siempre; *Arriba* se vuelve una barra de pestañas de punta a punta, alineada con los bordes del contenido, con tu perfil y los atajos del sistema en los extremos; *Abajo* se vuelve un dock flotante, con todos los elementos del mismo tamaño y un punto de luz en el elemento abierto, y el contenido termina encima de él. Sin el menú al costado, la Configuración queda en el centro de la pantalla, y con el menú arriba el clima solo se muestra, como el reloj, sin estorbar el camino hacia el menú, y Actualizar, Liberar memoria y Configuración de la TV se vuelven botones solo de ícono, como en Clean Glass. El Modo Infantil sigue con el menú lateral. En *Configuración → Menú*.",
@@ -3596,6 +3597,8 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) pause
    jogando" e os 4 consoles, que abrem o GameHub direto naquele ponto, além de atualizar e
    desinstalar. No Modo Infantil só aparece se já estiver instalado, sem instalar/desinstalar. */
 const HUB_MARK = '<svg viewBox="0 0 32 32" shape-rendering="crispEdges"><path fill="#0a051a" d="M12 7h7v1h-7zM11 8h1v1h-1zM19 8h1v1h-1zM9 9h2v1h-2zM20 9h9v1h-9zM8 10h1v1h-1zM29 10h1v1h-1zM8 11h1v1h-1zM30 11h1v1h-1zM7 12h1v1h-1zM23 12h2v1h-2zM30 12h1v1h-1zM6 13h1v1h-1zM24 13h2v1h-2zM30 13h1v1h-1zM4 14h2v1h-2zM24 14h2v1h-2zM30 14h1v1h-1zM3 15h1v1h-1zM24 15h1v1h-1zM29 15h1v1h-1zM2 16h1v1h-1zM28 16h1v1h-1zM1 17h1v1h-1zM6 17h1v1h-1zM27 17h1v1h-1zM0 18h1v1h-1zM5 18h2v1h-2zM25 18h2v1h-2zM0 19h1v1h-1zM5 19h2v1h-2zM24 19h1v1h-1zM0 20h1v1h-1zM6 20h2v1h-2zM23 20h1v1h-1zM0 21h1v1h-1zM22 21h1v1h-1zM1 22h1v1h-1zM22 22h1v1h-1zM2 23h9v1h-9zM20 23h2v1h-2zM11 24h1v1h-1zM19 24h1v1h-1zM12 25h7v1h-7z"/><path fill="#d6c8ff" d="M12 8h1v1h-1zM14 8h1v1h-1zM11 9h3v1h-3zM10 10h5v1h-5zM16 10h1v1h-1zM9 11h3v1h-3zM13 11h3v1h-3zM8 12h7v1h-7zM16 12h1v1h-1zM7 13h7v1h-7zM15 13h1v1h-1zM7 14h6v1h-6zM7 15h1v1h-1zM9 15h1v1h-1zM8 16h1v1h-1z"/><path fill="#8b6cf0" d="M13 8h1v1h-1zM15 8h2v1h-2zM14 9h4v1h-4zM9 10h1v1h-1zM15 10h1v1h-1zM17 10h2v1h-2zM12 11h1v1h-1zM16 11h2v1h-2zM15 12h1v1h-1zM17 12h2v1h-2zM14 13h1v1h-1zM16 13h2v1h-2zM13 14h4v1h-4zM8 15h1v1h-1zM10 15h3v1h-3zM7 16h1v1h-1zM9 16h2v1h-2zM16 16h1v1h-1zM13 17h1v1h-1zM15 17h1v1h-1zM10 18h3v1h-3zM14 18h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1z"/><path fill="#5438c4" d="M17 8h2v1h-2zM18 9h2v1h-2zM19 10h2v1h-2zM18 11h2v1h-2zM19 12h2v1h-2zM18 13h2v1h-2zM13 15h1v1h-1zM15 15h1v1h-1zM11 16h5v1h-5zM17 16h2v1h-2zM7 17h3v1h-3zM11 17h2v1h-2zM14 17h1v1h-1zM16 17h2v1h-2zM8 18h2v1h-2zM13 18h1v1h-1zM15 18h2v1h-2zM18 18h1v1h-1zM7 19h2v1h-2zM10 19h1v1h-1zM12 19h4v1h-4zM8 20h7v1h-7z"/><path fill="#2d1a78" d="M21 10h1v1h-1zM20 11h2v1h-2zM21 12h1v1h-1zM17 14h2v1h-2zM14 15h1v1h-1zM16 15h2v1h-2zM19 15h3v1h-3zM23 15h1v1h-1zM19 16h2v1h-2zM22 16h1v1h-1zM10 17h1v1h-1zM18 17h2v1h-2zM21 17h1v1h-1zM7 18h1v1h-1zM17 18h1v1h-1zM19 18h2v1h-2zM16 19h2v1h-2zM15 20h1v1h-1zM21 21h1v1h-1zM18 22h1v1h-1zM20 22h1v1h-1zM15 23h1v1h-1zM19 23h1v1h-1zM12 24h1v1h-1zM14 24h1v1h-1zM16 24h1v1h-1zM18 24h1v1h-1z"/><path fill="#3f6e96" d="M22 10h5v1h-5zM22 11h5v1h-5zM25 12h2v1h-2z"/><path fill="#2a80a1" d="M27 10h2v1h-2zM27 11h3v1h-3zM27 12h2v1h-2z"/><path fill="#160c38" d="M22 12h1v1h-1zM20 13h4v1h-4zM19 14h5v1h-5zM18 15h1v1h-1zM22 15h1v1h-1zM21 16h1v1h-1zM23 16h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM18 19h1v1h-1zM23 19h1v1h-1zM21 20h2v1h-2zM18 21h3v1h-3zM15 22h3v1h-3zM19 22h1v1h-1zM21 22h1v1h-1zM11 23h4v1h-4zM16 23h3v1h-3zM13 24h1v1h-1zM15 24h1v1h-1zM17 24h1v1h-1z"/><path fill="#3de1ff" d="M29 12h1v1h-1zM27 13h3v1h-3zM28 14h2v1h-2zM28 15h1v1h-1z"/><path fill="#64c0eb" d="M26 13h1v1h-1zM26 14h2v1h-2zM25 15h3v1h-3zM24 16h4v1h-4zM23 17h4v1h-4zM22 18h3v1h-3z"/><path fill="#7f3874" d="M6 14h1v1h-1zM4 15h3v1h-3zM3 16h4v1h-4zM3 17h3v1h-3zM3 18h2v1h-2zM4 19h1v1h-1z"/><path fill="#942669" d="M2 17h1v1h-1zM1 18h2v1h-2zM1 19h3v1h-3zM1 20h1v1h-1z"/><path fill="#8b9fd7" d="M21 18h1v1h-1zM19 19h4v1h-4zM17 20h4v1h-4zM17 21h1v1h-1z"/><path fill="#3da0c8" d="M27 19h1v1h-1zM26 20h1v1h-1zM29 21h1v1h-1zM28 22h1v1h-1z"/><path fill="#ff3d9a" d="M2 20h2v1h-2zM1 21h3v1h-3zM2 22h2v1h-2z"/><path fill="#d85eae" d="M4 20h2v1h-2zM4 21h7v1h-7zM4 22h7v1h-7z"/><path fill="#b17fc2" d="M16 20h1v1h-1zM11 21h6v1h-6zM11 22h4v1h-4z"/><path fill="#ffffff" d="M27 20h2v1h-2zM27 21h1v1h-1z"/><path fill="#d2f5ff" d="M28 21h1v1h-1z"/></svg>';
+// No desenho do topo da aba Jogos, a logomarca do GameHub flutua no centro da órbita.
+$('#topArt .ta-pad').append(svgFrom(HUB_MARK.replace('<svg ', '<svg x="112" y="26" width="96" height="96" stroke="none" ')));
 const HUB_CONSOLES = [
   ['nes', 'Nintendinho', '#ff5a6e', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="8" width="56" height="26" rx="3"/><path d="M4 18h56M10 26h12M40 24h6M50 24h4"/><rect x="12" y="11" width="22" height="4" rx="1"/></svg>', 'NES'],
   ['snes', 'Super Nintendo', '#a78bfa', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 12h48a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6v-6a6 6 0 0 1 6-6z"/><rect x="18" y="5" width="28" height="9" rx="2"/><circle cx="48" cy="21" r="2.2"/><circle cx="54" cy="21" r="2.2"/><path d="M10 21h8M14 17v8"/></svg>', 'SNES'],
@@ -4292,6 +4295,11 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '16.3.2', date: 'outubro de 2026', items: [
+    ['new', '*Fim da fase beta:* o Onix para Google TV e Android TV deixa de ser beta, a partir desta versão. Obrigado a todo mundo que testou! As versões para Samsung e LG continuam em beta.'],
+    ['new', '*Project Gems no Sobre:* o cartão *Sobre*, em *Configurações*, mostra o endereço do site com todos os projetos do Ruan: *projectgems.github.io*.'],
+    ['fix', 'O desenho do topo da aba *Jogos* troca o controle antigo pela logomarca nova do Onix GameHub, o Saturno de pixel, e os enfeites em volta ganham as cores dela.'],
+  ] },
   { version: '16.3.0 beta', date: 'outubro de 2026', items: [
     ['new', '*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas de ponta a ponta, alinhada com as bordas do conteúdo, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com todos os itens do mesmo tamanho e um ponto de luz no item aberto, e o conteúdo termina acima dele. Sem o menu do lado, as Configurações ficam no centro da tela, e com o menu em cima o clima fica só à mostra, como o relógio, sem atrapalhar o caminho até o menu, e Atualizar, Limpar memória e Configurações da TV viram botões só de ícone, como no Clean Glass. O Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.'],
     ['new', '*Site novo, Project Gems:* todos os projetos do Ruan num lugar só, em *projectgems.github.io*: o Onix, o Onix GameHub, o Amethyst e o Opala.'],
@@ -4433,7 +4441,7 @@ function openChangelog(from) {
 }
 // Versão do navegador interno (WebView no Android): ajuda a achar problemas de TV box com WebView antigo.
 const ENGINE = (m => m ? 'Chrome ' + m[1] : 'desconhecido')(/Chrome\/(\d+)/.exec(navigator.userAgent));
-const ABOUT = [['Criado por', 'Ruan Amaral'], ['Instagram', '@ruan_amarl'], ['GitHub', 'github.com/ruan2311'], ['Versão', APP_VERSION], ['Navegador da TV', ENGINE]];
+const ABOUT = [['Criado por', 'Ruan Amaral'], ['Instagram', '@ruan_amarl'], ['GitHub', 'github.com/ruan2311'], ['Project Gems', 'projectgems.github.io'], ['Versão', APP_VERSION], ['Navegador da TV', ENGINE]];
 const GO_ICON = '<svg class="opt-go" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 5l7 7-7 7"/></svg>';
 const PICK_KEYS = OPTIONS.filter(o => o.service);
 function setOption(key, on) {

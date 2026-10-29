@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, o **Onix GameHub** de jogos clássicos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-16.0.0%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-16.3.2-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -74,6 +74,8 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 ## Novidades da 16.1.0
 
+- **16.3.2 · Fim da fase beta:** o Onix para Google TV e Android TV deixa de ser beta. As versões para Samsung e LG continuam em beta.
+- **16.3.2 · Project Gems no Sobre:** o cartão **Sobre** mostra o endereço do site com todos os projetos: **[projectgems.github.io](https://projectgems.github.io)**. A aba **Jogos** ganhou a logomarca nova do GameHub no desenho do topo.
 - **16.3.0 · Posição do menu:** em **Configurações → Menu**, o menu pode ficar na **lateral** (o de sempre), **em cima** (barra de abas) ou **embaixo** (dock flutuante), cada um com o visual próprio e alinhado com as bordas do conteúdo. A **Trajetória do Onix** também ganhou o Onix GameHub e o ícone novo do Opala.
 - **16.1.1 · Apoie o criador:** em **Configurações → Sobre**, um QR code Pix para quem quiser ajudar o projeto com qualquer valor. O Onix continua **gratuito e sem anúncios**: nada aparece sozinho, e o botão não aparece no Modo Infantil.
 
