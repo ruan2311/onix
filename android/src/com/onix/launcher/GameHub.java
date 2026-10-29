@@ -32,8 +32,8 @@ import javax.net.ssl.HttpsURLConnection;
  * Onix GameHub, o app opcional de emuladores: instalar, atualizar, abrir e desinstalar pela aba
  * Jogos, e o "Continuar jogando" que ele mostra.
  *
- * As versões do GameHub têm releases próprias no GitHub (tag gamehub-vX.Y.Z, arquivo
- * onix-gamehub.apk), nunca marcadas como "latest" (que é a do Onix). A APK é conferida pelo
+ * As versões do GameHub saem no repositório próprio dele, ruan2311/onix-gamehub (tag
+ * gamehub-vX.Y.Z, arquivo onix-gamehub.apk; até a 16.0.0 o Onix procurava no ruan2311/onix). A APK é conferida pelo
  * SHA-256 do GitHub e pelo pacote, e o Android pede confirmação antes de instalar.
  * O resumo vem do provedor do GameHub, protegido por uma permissão de assinatura: só o Onix lê.
  */
@@ -41,12 +41,12 @@ final class GameHub {
 
     static final String PKG = "com.onix.gamehub";
     private static final Uri PROVIDER = Uri.parse("content://com.onix.gamehub.hub");
-    private static final String API = "https://api.github.com/repos/ruan2311/onix/releases?per_page=40";
+    private static final String API = "https://api.github.com/repos/ruan2311/onix-gamehub/releases?per_page=40";
     private static final Pattern TAG = Pattern.compile("^gamehub-v(\\d{1,4})\\.(\\d{1,4})\\.(\\d{1,4})$");
     private static final Pattern VERSION = Pattern.compile("^(\\d{1,4})\\.(\\d{1,4})\\.(\\d{1,4})");
     private static final Pattern DIGEST = Pattern.compile("^sha256:([0-9a-f]{64})$");
     private static final Pattern DOWNLOAD = Pattern.compile(
-            "^https://github\\.com/ruan2311/onix/releases/download/gamehub-v[0-9.]{5,14}/onix-gamehub\\.apk$");
+            "^https://github\\.com/ruan2311/onix-gamehub/releases/download/gamehub-v[0-9.]{5,14}/onix-gamehub\\.apk$");
     private static final Pattern DOWNLOAD_HOST = Pattern.compile("^(github\\.com|(release-assets|objects)\\.githubusercontent\\.com)$");
     private static final Pattern OPEN = Pattern.compile("^(home|console:(nes|snes|gba|md)|(game|resume):[0-9a-f]{16})$");
     private static final Pattern PROFILE = Pattern.compile("^[A-Za-z0-9_-]{1,40}$");

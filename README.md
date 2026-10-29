@@ -23,6 +23,7 @@ notícias de games, jogos embutidos, o **Onix GameHub** de jogos clássicos, tro
 ## Sumário
 
 - [🇪🇸 En español](#-en-español)
+- [Novidades da 16.1.0](#novidades-da-1610)
 - [Novidades da 16.0.0](#novidades-da-1600)
 - [Recursos](#recursos)
 - [Capturas de tela](#capturas-de-tela)
@@ -61,6 +62,8 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 > Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
 
+**Novedades de la 16.1.0:** nueva **Trayectoria de Onix** en **Configuración → Acerca de**: la historia de Onix y de su creador en siete diapositivas animadas (OK pasa a la siguiente). Onix GameHub ahora tiene página propia: [ruan2311/onix-gamehub](https://github.com/ruan2311/onix-gamehub).
+
 **Novedades de la 16.0.0:** llega **Onix GameHub**, una app opcional de juegos clásicos (NES, Super Nintendo, Game Boy Advance y Mega Drive) para Google TV y Android TV. Se instala desde la pestaña **Juegos** de Onix, los juegos llegan desde el celular por código QR y el progreso se guarda por perfil. La pestaña **Juegos** quedó más organizada y, en **Samsung y LG**, se volvió un hub de juegos en la nube con los destacados de **Game Pass** y las apps de cloud gaming. Detalles (en portugués) en [Onix GameHub](#onix-gamehub-jogos-clássicos).
 
 **Novedades de la 15.0.0:** dos estilos nuevos de pantalla de inicio en **Configuración → Inicio** (*Clean Glass*, minimalista, y *Onix Cosmos*, artístico), cuatro sonidos de navegación nuevos (*Crystal*, *Sharpness*, *Velvet* y *Pulse*), un **Modo Infantil** con estilo propio y el gatito de Onix, y sonidos del menú con menos retraso.
@@ -68,6 +71,11 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 **Onix Controle (app para el celular Android):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. **Solo para Google TV y celular Android** (no funciona en iPhone, ni en TVs Samsung y LG). Descárgalo en el celular: **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk)**. Al abrirlo, elige tu TV, escribe el código de 6 caracteres que aparece en la TV y listo. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
 
 ---
+
+## Novidades da 16.1.0
+
+- **Trajetória do Onix:** a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em **Configurações → Sobre**; OK passa para o próximo.
+- **Onix GameHub** com página própria no GitHub: **[ruan2311/onix-gamehub](https://github.com/ruan2311/onix-gamehub)**. O Onix instala e atualiza o GameHub por lá.
 
 ## Novidades da 16.0.0
 
@@ -511,7 +519,7 @@ Um app **opcional**, no visual do Onix, para jogar os seus jogos de **Nintendinh
 2. Na primeira vez, o Android pede para o **Onix** poder instalar apps: ative e volte. Depois, confirme em **Instalar**.
 3. Pronto: o cartão **Onix GameHub** aparece na aba **Jogos**, com **Abrir o GameHub** e os quatro consoles.
 
-Sem o Onix (ou se preferir): no app **Downloader**, use o link **`github.com/ruan2311/onix/releases/download/gamehub-v1.1.1/onix-gamehub.apk`**, do mesmo jeito do [tutorial do Onix](#instalar-pela-própria-tv-com-o-app-downloader).
+Sem o Onix (ou se preferir): no app **Downloader**, use o link **`github.com/ruan2311/onix-gamehub/releases/latest/download/onix-gamehub.apk`**, do mesmo jeito do [tutorial do Onix](#instalar-pela-própria-tv-com-o-app-downloader).
 
 O GameHub não aparece na lista de apps do Onix: ele abre pela aba **Jogos**.
 

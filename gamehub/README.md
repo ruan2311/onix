@@ -39,7 +39,7 @@ O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde
 2. Na primeira vez, o Android pede para o **Onix** poder instalar apps: ative e volte. Depois, confirme em **Instalar**.
 3. Pronto: o cartão **Onix GameHub** aparece na aba **Jogos**, com **Abrir o GameHub** e os quatro consoles.
 
-Sem o Onix: no app **Downloader**, use o link **`github.com/ruan2311/onix/releases/download/gamehub-v1.1.1/onix-gamehub.apk`**.
+Sem o Onix: no app **Downloader**, use o link **`github.com/ruan2311/onix-gamehub/releases/latest/download/onix-gamehub.apk`**.
 
 Com o Onix, o GameHub usa o perfil, o idioma, o Modo Infantil, os sons e as animações dele, e o "Continuar jogando" aparece também na aba **Jogos** do Onix. Nas TVs Samsung e LG não há GameHub: lá a aba Jogos do Onix vira um hub de jogos na nuvem.
 
@@ -68,7 +68,7 @@ Use um **controle Bluetooth** (Xbox, PlayStation, 8BitDo…). Para parear, cliqu
 > 🧪 **Experimental.** Funciona no Android 5.0 ou mais novo.
 
 ### Instalar
-1. No celular, baixe o [`onix-gamehub.apk`](https://github.com/ruan2311/onix/releases/download/gamehub-v1.1.1/onix-gamehub.apk) (o mesmo da TV).
+1. No celular, baixe o [`onix-gamehub.apk`](https://github.com/ruan2311/onix-gamehub/releases/latest/download/onix-gamehub.apk) (o mesmo da TV).
 2. Abra o arquivo e confirme em **Instalar**. Se o Android pedir, deixe o navegador ou o gerenciador de arquivos instalar apps.
 
 ### Adicionar jogos
@@ -133,7 +133,7 @@ Na engrenagem do topo:
 ---
 
 ## Atualizar
-As versões saem nas [Releases do Onix](https://github.com/ruan2311/onix/releases), com a tag `gamehub-vX.Y.Z`.
+As versões saem nas [Releases deste repositório](https://github.com/ruan2311/onix-gamehub/releases), com a tag `gamehub-vX.Y.Z`.
 
 - **TV:** o cartão do GameHub na aba **Jogos** do Onix mostra **Atualizar**. Dentro do GameHub, também em **Configurações → Sobre → Procurar atualizações**.
 - **Celular:** a versão nova baixa sozinha, e o GameHub pergunta se pode instalar.

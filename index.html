@@ -395,6 +395,61 @@ html.on-games .top-right .chips{flex-direction:column;align-items:flex-end;gap:.
 .about.is-focused .about-row span:first-child{color:rgba(10,11,14,.65)}
 .about.is-focused .about-thanks{border-top-color:rgba(10,11,14,.15)}
 
+/* Trajetória do Onix (Configurações → Sobre): slides com OK. Como o gatinho, anima mesmo com
+   "Transições suaves" desligado (#story + !important); cada slide é recriado para a animação recomeçar. */
+#story{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;overflow:hidden;background:#050608}
+#story[hidden]{display:none}
+#story .st-glow{position:absolute;top:0;right:0;bottom:0;left:0;opacity:.55;background:radial-gradient(45% 55% at 30% 45%,var(--c1),transparent 70%),radial-gradient(40% 50% at 75% 60%,var(--c2),transparent 70%);
+  animation:stGlow 6s ease-in-out infinite alternate!important}
+#story .st-bars{position:absolute;top:2.2rem;left:6vw;right:6vw;display:flex;gap:.5rem}
+#story .st-bars i{flex:1;height:.28rem;border-radius:.2rem;background:rgba(255,255,255,.18);overflow:hidden}
+#story .st-bars i.done::after,#story .st-bars i.now::after{content:"";display:block;height:100%;background:#fff}
+#story .st-bars i.now::after{animation:stBar .9s var(--ease) both!important}
+#story .st-slide{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;gap:5vw;padding:0 8vw}
+#story .st-art{flex:none;width:34vw;max-width:34rem;animation:stArt .8s cubic-bezier(.34,1.4,.64,1) both!important}
+#story .st-art>svg{display:block;width:100%;height:auto;overflow:visible}
+#story .st-text{flex:1;min-width:0}
+#story .st-kicker,#story .st-title,#story .st-body,#story .st-sign{opacity:0;animation:stUp .7s var(--ease) both!important}
+#story .st-kicker{font-size:1rem;font-weight:700;letter-spacing:.3em;text-transform:uppercase;color:var(--muted);animation-delay:.25s!important}
+#story .st-title{font-size:3.2rem;font-weight:800;line-height:1.05;margin:.7rem 0 1.1rem;animation-delay:.4s!important}
+#story .st-body{font-size:1.55rem;line-height:1.5;color:rgba(245,246,248,.86);max-width:34rem;animation-delay:.6s!important}
+#story .st-sign{margin-top:1.6rem;font-size:1.3rem;font-style:italic;color:var(--muted);animation-delay:1.2s!important}
+#story .st-hint{position:absolute;right:6vw;bottom:2.4rem;display:flex;align-items:center;gap:.6rem;font-size:1rem;color:var(--muted)}
+#story .st-hint b{padding:.2rem .7rem;border:1px solid var(--glass-border);border-radius:.5rem;color:#fff;animation:stPulse 1.6s ease-in-out infinite!important}
+#story.end .st-slide{flex-direction:column;justify-content:center;text-align:center;gap:1.5rem}
+#story.end .st-art{width:15rem}
+#story.end .st-text{flex:none}
+#story.end .st-body{margin:0 auto}
+/* Desenhos: cada peça entra com atraso (--d) e algumas ficam se mexendo. */
+#story .pop{opacity:0;transform-box:fill-box;transform-origin:50% 100%;animation:stPop .5s cubic-bezier(.34,1.56,.64,1) var(--d,0s) both!important}
+#story .fade{opacity:0;animation:stFade .6s ease var(--d,0s) both!important}
+#story .dot{animation:stDot 1.2s ease-in-out var(--d,0s) infinite!important}
+#story .blink{transform-box:fill-box;transform-origin:50% 50%;animation:kittyBlink 3s ease-in-out 1s infinite!important}
+#story .shake{transform-box:fill-box;transform-origin:50% 50%;animation:stShake .5s ease-in-out .5s 3 both!important}
+#story .bulb{opacity:0;transform-box:fill-box;transform-origin:50% 100%;animation:stPop .6s cubic-bezier(.34,1.56,.64,1) 2.1s both,stShine 1.6s ease-in-out 2.7s infinite alternate!important}
+#story .wave{animation:stWave 4s ease-in-out var(--d,0s) infinite alternate!important}
+#story .old{animation:stOld 3.2s ease .3s both!important}
+#story .new{opacity:0;animation:stFade .9s ease 2.2s both!important}
+#story .spin{transform-box:view-box;transform-origin:200px 130px;animation:stSpin 14s linear infinite!important}
+#story .twinkle{animation:kittyTwinkle 1.4s ease-in-out var(--d,0s) infinite alternate!important}
+#story .draw{stroke-dasharray:240;stroke-dashoffset:240;animation:stDraw .7s ease var(--d,0s) forwards!important}
+#story .beat{transform-box:fill-box;transform-origin:50% 50%;animation:stBeat 1.4s ease-in-out .8s infinite!important}
+@keyframes stGlow{from{transform:scale(1)}to{transform:scale(1.12) translateX(2%)}}
+@keyframes stBar{from{transform:translateX(-100%)}to{transform:none}}
+@keyframes stArt{from{opacity:0;transform:scale(.8) translateY(2rem)}to{opacity:1;transform:none}}
+@keyframes stUp{from{opacity:0;transform:translateY(1.4rem)}to{opacity:1;transform:none}}
+@keyframes stPulse{0%,100%{opacity:1}50%{opacity:.45}}
+@keyframes stPop{from{opacity:0;transform:scale(.3)}to{opacity:1;transform:none}}
+@keyframes stFade{from{opacity:0}to{opacity:1}}
+@keyframes stDot{0%,100%{opacity:.25}50%{opacity:1}}
+@keyframes stShake{0%,100%{transform:none}25%{transform:translateX(-4px) rotate(-1deg)}75%{transform:translateX(4px) rotate(1deg)}}
+@keyframes stShine{from{filter:drop-shadow(0 0 2px #ffd36b)}to{filter:drop-shadow(0 0 14px #ffd36b)}}
+@keyframes stWave{from{transform:translateY(0) scaleY(1)}to{transform:translateY(-8px) scaleY(1.15)}}
+@keyframes stOld{0%,55%{opacity:1;transform:none}75%,100%{opacity:0;transform:translateY(-14px)}}
+@keyframes stSpin{to{transform:rotate(360deg)}}
+@keyframes stDraw{to{stroke-dashoffset:0}}
+@keyframes stBeat{0%,100%{transform:scale(1)}15%{transform:scale(1.12)}30%{transform:scale(1)}45%{transform:scale(1.08)}}
+
 /* ---------- Tela de descanso ----------
    Some na hora (sem transição) para o controle responder logo; só a entrada é suave. */
 #saver{position:fixed;top:0;right:0;bottom:0;left:0;z-index:40;background:#000;opacity:0;visibility:hidden;cursor:none}
@@ -1000,6 +1055,7 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
 <div id="game" hidden><canvas id="gameCanvas" width="0" height="0"></canvas></div>
 
 <!-- Easter egg: OK 5 vezes no cartão "Sobre" das Configurações. -->
+<div id="story" hidden role="dialog" aria-label="Trajetória do Onix"></div>
 <div id="kitty" hidden role="dialog" aria-label="Gatinho do Onix">
   <div class="kitty-card glass">
   <svg class="kitty-cat" viewBox="0 0 240 240" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1242,7 +1298,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '16.0.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '16.1.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1497,6 +1553,36 @@ const ES = Object.freeze({
   "Escolha os serviços das indicações logo abaixo": "Elige los servicios de las recomendaciones justo abajo",
   "Indicações: {0}": "Recomendaciones: {0}",
   "Sobre o Onix": "Acerca de Onix",
+  "Trajetória do Onix": "Trayectoria de Onix",
+  "A história do Onix e do criador, contada em slides animados. OK passa para o próximo.": "La historia de Onix y de su creador, contada en diapositivas animadas. OK pasa a la siguiente.",
+  "*Trajetória do Onix:* a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em *Configurações → Sobre*; OK passa para o próximo.": "*Trayectoria de Onix:* la historia de Onix y de su creador, contada en siete diapositivas animadas: de los primeros bots al nombre en clave Aurora, al estilo de vidrio oscuro y a los proyectos con nombre de piedra preciosa. En *Configuración → Acerca de*; OK pasa a la siguiente.",
+  "*Onix GameHub* com página própria no GitHub (ruan2311/onix-gamehub): o Onix passa a instalar e atualizar o GameHub por lá.": "*Onix GameHub* con página propia en GitHub (ruan2311/onix-gamehub): Onix ahora instala y actualiza GameHub desde allí.",
+  "Capítulo 1": "Capítulo 1",
+  "Capítulo 2": "Capítulo 2",
+  "Capítulo 3": "Capítulo 3",
+  "Capítulo 4": "Capítulo 4",
+  "Capítulo 5": "Capítulo 5",
+  "Capítulo 6": "Capítulo 6",
+  "Pedras preciosas": "Piedras preciosas",
+  "Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Além dele, já existem o Amethyst e o Opala.": "Los proyectos de Ruan tienen nombres en clave de piedras preciosas, como Onix. Además de él, ya existen Amethyst y Opala.",
+  "sistema para TVs": "sistema para TV",
+  "karaokê para Windows": "karaoke para Windows",
+  "bot para WhatsApp": "bot para WhatsApp",
+  "Vidro escuro e espacial": "Vidrio oscuro y espacial",
+  "Ruan imaginou o Onix como um vidro escuro e espacial, que passasse profissionalismo e conforto ao mesmo tempo. E queria que ele chegasse a todas as TVs: Google TV, Android TV, Samsung e LG.": "Ruan imaginó Onix como un vidrio oscuro y espacial, que transmitiera profesionalismo y comodidad al mismo tiempo. Y quería que llegara a todas las TV: Google TV, Android TV, Samsung y LG.",
+  "O começo": "El comienzo",
+  "Ruan começou na programação criando bots para o Discord e o WhatsApp.": "Ruan empezó en la programación creando bots para Discord y WhatsApp.",
+  "A indignação": "La indignación",
+  "Indignado com o sistema da sua TV, ele começou a estudar como criar um sistema novo e melhor.": "Indignado con el sistema de su TV, empezó a estudiar cómo crear un sistema nuevo y mejor.",
+  "De Aurora a Onix": "De Aurora a Onix",
+  "O projeto nasceu com o codinome “Aurora”, até se tornar o Onix que você conhece.": "El proyecto nació con el nombre en clave “Aurora”, hasta convertirse en el Onix que conoces.",
+  "O Onix fica pronto": "Onix está listo",
+  "O Onix ficou pronto, ainda em estágio inicial, e o sucesso dele abriu caminho para os próximos projetos do Ruan.": "Onix quedó listo, todavía en una etapa inicial, y su éxito abrió camino a los próximos proyectos de Ruan.",
+  "Obrigado por fazer parte disso!": "¡Gracias por ser parte de esto!",
+  "Cada vez que você liga a TV, essa trajetória continua. O próximo capítulo a gente escreve junto.": "Cada vez que enciendes la TV, esta trayectoria continúa. El próximo capítulo lo escribimos juntos.",
+  "— Ruan Amaral, criador do Onix": "— Ruan Amaral, creador de Onix",
+  "para continuar": "para continuar",
+  "para fechar": "para cerrar",
   "Obrigado por usar meu app :)": "¡Gracias por usar mi app! :)",
   "Dica: aperte OK 5 vezes aqui para uma surpresa": "Pista: pulsa OK 5 veces aquí para una sorpresa",
   " (ligue \"Transições suaves\" para ver)": " (activa \"Transiciones suaves\" para verlo)",
@@ -4079,12 +4165,17 @@ const OPTIONS = [
   { act: 'reset',  name: 'Restaurar padrão',      desc: 'Volta todas as opções do Onix ao original.' },
   { group: 'Sobre' },
   { act: 'changelog', name: 'Novidades',         desc: 'O que mudou em cada versão do Onix, da mais nova para a mais antiga.' },
+  { act: 'story', name: 'Trajetória do Onix', desc: 'A história do Onix e do criador, contada em slides animados. OK passa para o próximo.' },
   { act: 'about' },
 ];
 /* Novidades (Configurações → Novidades). A versão mais nova primeiro; *texto* vira negrito.
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '16.1.0 beta', date: 'outubro de 2026', items: [
+    ['new', '*Trajetória do Onix:* a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em *Configurações → Sobre*; OK passa para o próximo.'],
+    ['fix', '*Onix GameHub* com página própria no GitHub (ruan2311/onix-gamehub): o Onix passa a instalar e atualizar o GameHub por lá.'],
+  ] },
   { version: '16.0.0 beta', date: 'outubro de 2026', items: [
     ['new', '*Onix GameHub:* um app opcional de jogos clássicos para Google TV e Android TV, com Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só. Instale pela aba *Jogos*. Os jogos chegam pelo celular (QR code), com capa e nome certos, e o progresso fica guardado por perfil do Onix.'],
     ['new', '*No GameHub:* "Continuar jogando" com a imagem de onde parou, estados salvos, avançar rápido, rebobinar, filtros de imagem (Nítido, CRT, LCD), trapaças, *Atribuir botões* por jogo, *Controle 1 e Controle 2* definidos por você e os jogos liberados no *Modo Infantil*.'],
@@ -4315,6 +4406,7 @@ function renderSettings() {
     }
     else if (o.act === 'city') b._act = chooseCity;
     else if (o.act === 'changelog') b._act = () => openChangelog(b);
+    else if (o.act === 'story') b._act = () => openStory(b);
     else if (o.act === 'update') { b.id = 'updateOpt'; b._act = updateAction; }
     return b;
   }));
@@ -4343,6 +4435,164 @@ function hideKitty() {
   kittyOpen = false;
   kittyClosed = Date.now();
   $('#kitty').hidden = true;
+}
+
+/* ---------------- Trajetória do Onix ----------------
+   Configurações → Sobre. OK (ou ▶) passa o slide, ◀ volta e Voltar fecha. Desenhos em SVG fixo. */
+const STORY_SATURN = (x, y, k) => `<g transform="translate(${x} ${y}) scale(${k})" stroke="#fff" stroke-width="2.2" stroke-linecap="round" fill="none">
+  <g transform="rotate(-20)"><path d="M-21 0A21 6 0 0 1 21 0"/></g><circle r="10" fill="#050608"/><g transform="rotate(-20)"><path d="M21 0A21 6 0 0 1 -21 0"/></g></g>`;
+// Gema lapidada centrada em (x, y): o desenho dos projetos com nome de pedra preciosa.
+const STORY_GEM = (x, y, fill, stroke) => `<g transform="translate(${x} ${y})" stroke="${stroke}" stroke-width="2.5" stroke-linejoin="round">
+  <path d="M-20-8l10-13h20l10 13L0 22z" fill="${fill}"/><path d="M-20-8h40M-10-21l4 13L0 22M10-21l-4 13L0 22" opacity=".7"/></g>`;
+// Logos do Onix e do Amethyst (o mesmo traço: pedra e anel inclinado), 60×60 centradas em (x, y).
+const STORY_LOGO = (x, y, color, id, body) => `<svg x="${x - 30}" y="${y - 30}" width="60" height="60" viewBox="0 0 48 48" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+  <defs><mask id="${id}B" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/>${body.back}</mask>
+  <mask id="${id}G" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><path d="M45 24A21 6 0 0 1 3 24" stroke="#000" stroke-width="6" transform="rotate(-20 24 24)"/></mask></defs>
+  <g mask="url(#${id}G)">${body.stone}</g><g transform="rotate(-20 24 24)"><path d="M3 24A21 6 0 0 1 45 24" mask="url(#${id}B)"/><path d="M45 24A21 6 0 0 1 3 24"/></g></svg>`;
+const LOGO_ONIX = { back: '<circle cx="24" cy="24" r="11.6" fill="#000"/>', stone: '<circle cx="24" cy="24" r="10"/>' };
+const LOGO_AMETHYST = { back: '<path d="M17 13H31L37 21L24 37L11 21Z" fill="#000" stroke="#000" stroke-width="3"/>',
+  stone: '<path d="M17 13H31L37 21L24 37L11 21Z"/><path d="M11 21H37M17 13L21 21L24 37M31 13L27 21L24 37M21 21L24 13L27 21" stroke-width="1.4" opacity=".75"/>' };
+const STORY = [
+  { c1: 'rgba(124,108,255,.35)', c2: 'rgba(80,220,140,.25)', kicker: 'Capítulo 1', title: 'O começo',
+    body: 'Ruan começou na programação criando bots para o Discord e o WhatsApp.',
+    art: `<svg viewBox="0 0 400 260" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <g class="pop" style="--d:.2s"><path d="M150 70V48" stroke="#fff" stroke-width="4"/><circle cx="150" cy="42" r="7" fill="#fff"/>
+    <rect x="95" y="70" width="110" height="96" rx="26" stroke="#fff" stroke-width="5" fill="#0e1015"/>
+    <g class="blink"><circle cx="128" cy="112" r="9" fill="#fff"/><circle cx="172" cy="112" r="9" fill="#fff"/></g>
+    <path d="M130 142c12 8 28 8 40 0" stroke="#fff" stroke-width="4"/><path d="M95 118H82M205 118h13" stroke="#fff" stroke-width="5"/>
+    <path d="M118 166v22h64v-22" stroke="#fff" stroke-width="5"/></g>
+  <g class="pop" style="--d:.8s"><path d="M236 34h132a16 16 0 0 1 16 16v38a16 16 0 0 1-16 16h-96l-22 18v-18h-14a16 16 0 0 1-16-16V50a16 16 0 0 1 16-16z" fill="rgba(124,108,255,.25)" stroke="#a99bff" stroke-width="3.5"/>
+    <circle class="dot" cx="276" cy="69" r="6" fill="#fff" style="--d:0s"/><circle class="dot" cx="302" cy="69" r="6" fill="#fff" style="--d:.2s"/><circle class="dot" cx="328" cy="69" r="6" fill="#fff" style="--d:.4s"/></g>
+  <g class="pop" style="--d:1.4s"><path d="M248 142h120a16 16 0 0 1 16 16v34a16 16 0 0 1-16 16h-14v18l-22-18h-84a16 16 0 0 1-16-16v-34a16 16 0 0 1 16-16z" fill="rgba(80,220,140,.2)" stroke="#6be3a0" stroke-width="3.5"/>
+    <path d="M286 163l-14 12 14 12M330 163l14 12-14 12M316 158l-16 34" stroke="#fff" stroke-width="4"/></g>
+  <g class="fade" style="--d:2s" stroke="#fff" stroke-width="3" opacity=".5"><path d="M40 200l10-10 10 10-10 10z"/><path d="M30 70h16M38 62v16"/></g>
+</svg>` },
+  { c1: 'rgba(255,90,90,.28)', c2: 'rgba(255,211,107,.25)', kicker: 'Capítulo 2', title: 'A indignação',
+    body: 'Indignado com o sistema da sua TV, ele começou a estudar como criar um sistema novo e melhor.',
+    art: `<svg viewBox="0 0 400 260" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <g class="shake"><rect x="40" y="60" width="260" height="160" rx="16" stroke="#fff" stroke-width="5" fill="#0e1015"/>
+    <rect x="60" y="80" width="70" height="44" rx="6" fill="rgba(255,90,90,.35)"/><rect x="140" y="80" width="140" height="20" rx="5" fill="rgba(255,255,255,.12)"/>
+    <rect x="140" y="106" width="100" height="18" rx="5" fill="rgba(255,255,255,.12)"/><rect x="60" y="134" width="220" height="16" rx="5" fill="rgba(255,255,255,.08)"/>
+    <rect x="60" y="158" width="100" height="44" rx="6" fill="rgba(255,211,107,.25)"/><rect x="170" y="158" width="110" height="44" rx="6" fill="rgba(255,90,90,.2)"/>
+    <circle cx="225" cy="180" r="13" stroke="#fff" stroke-width="4" stroke-dasharray="50 40" opacity=".8"/>
+    <path d="M140 220l-16 22M200 220l16 22M110 242h120" stroke="#fff" stroke-width="5"/></g>
+  <g class="pop" style="--d:1.2s"><circle cx="42" cy="62" r="20" fill="#ff5a5a"/><path d="M42 50v14M42 72v1" stroke="#fff" stroke-width="5"/></g>
+  <g class="bulb"><path d="M352 92a26 26 0 1 0-32 0c6 5 8 10 8 18h16c0-8 2-13 8-18z" fill="rgba(255,211,107,.3)" stroke="#ffd36b" stroke-width="4"/>
+    <path d="M328 120h16M330 130h12" stroke="#ffd36b" stroke-width="4"/><path d="M336 22v-10M366 34l8-7M306 34l-8-7" stroke="#ffd36b" stroke-width="3.5"/></g>
+</svg>` },
+  { c1: 'rgba(107,227,160,.3)', c2: 'rgba(178,139,255,.32)', kicker: 'Capítulo 3', title: 'De Aurora a Onix',
+    body: 'O projeto nasceu com o codinome “Aurora”, até se tornar o Onix que você conhece.',
+    art: `<svg viewBox="0 0 400 260" fill="none" stroke-linecap="round">
+  <defs><linearGradient id="stAur" x1="0" x2="1"><stop offset="0" stop-color="#6be3a0"/><stop offset=".5" stop-color="#5cc8ff"/><stop offset="1" stop-color="#b28bff"/></linearGradient></defs>
+  <path class="wave" style="--d:0s" d="M10 90C80 40 140 120 210 70S330 40 390 80" stroke="url(#stAur)" stroke-width="10" opacity=".7"/>
+  <path class="wave" style="--d:.6s" d="M10 120C90 80 150 150 220 100S330 80 390 110" stroke="url(#stAur)" stroke-width="6" opacity=".45"/>
+  <path class="wave" style="--d:1.2s" d="M10 60C70 30 150 90 220 50S320 20 390 50" stroke="url(#stAur)" stroke-width="4" opacity=".35"/>
+  <text class="old" x="200" y="200" text-anchor="middle" fill="#fff" font-size="54" font-style="italic" font-weight="300" letter-spacing="4" font-family="system-ui,sans-serif">aurora</text>
+  <g class="new">${STORY_SATURN(118, 184, 1.7)}<text x="160" y="202" fill="#fff" font-size="52" font-weight="600" letter-spacing="10" font-family="system-ui,sans-serif">ONIX</text></g>
+</svg>` },
+  { c1: 'rgba(160,170,200,.22)', c2: 'rgba(92,120,255,.26)', kicker: 'Capítulo 4', title: 'Vidro escuro e espacial',
+    body: 'Ruan imaginou o Onix como um vidro escuro e espacial, que passasse profissionalismo e conforto ao mesmo tempo. E queria que ele chegasse a todas as TVs: Google TV, Android TV, Samsung e LG.',
+    art: `<svg viewBox="0 0 400 260" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <defs><linearGradient id="stGlass" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="rgba(255,255,255,.2)"/><stop offset=".6" stop-color="rgba(255,255,255,.05)"/><stop offset="1" stop-color="rgba(255,255,255,.09)"/></linearGradient></defs>
+  <g fill="#fff"><circle class="twinkle" cx="20" cy="24" r="2" style="--d:0s"/><circle class="twinkle" cx="384" cy="18" r="2.5" style="--d:.6s"/>
+    <circle class="twinkle" cx="370" cy="120" r="1.8" style="--d:.3s"/><circle class="twinkle" cx="16" cy="140" r="2.2" style="--d:.9s"/></g>
+  <g class="pop" style="--d:.2s"><rect x="60" y="10" width="280" height="150" rx="22" fill="url(#stGlass)" stroke="rgba(255,255,255,.35)" stroke-width="2"/>
+    <path d="M82 12h236" stroke="rgba(255,255,255,.6)" stroke-width="2"/>
+    ${STORY_SATURN(98, 44, 1)}<rect x="124" y="38" width="60" height="12" rx="6" fill="rgba(255,255,255,.75)"/><rect x="270" y="36" width="50" height="16" rx="8" fill="rgba(255,255,255,.18)"/></g>
+  <g class="fade" style="--d:.6s"><rect x="82" y="72" width="70" height="66" rx="12" fill="rgba(255,255,255,.12)" stroke="#fff" stroke-width="3"/>
+    <rect x="164" y="72" width="70" height="66" rx="12" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.25)" stroke-width="2"/>
+    <rect x="246" y="72" width="70" height="66" rx="12" fill="rgba(255,255,255,.08)" stroke="rgba(255,255,255,.25)" stroke-width="2"/></g>
+  <g stroke="#fff" stroke-width="3.5">
+    <g class="pop" style="--d:1.1s"><rect x="58" y="186" width="74" height="46" rx="7" fill="#0e1015"/><path d="M84 244h22"/><path d="M83 209l8 8 16-16" stroke="#6be3a0"/></g>
+    <g class="pop" style="--d:1.4s"><rect x="163" y="186" width="74" height="46" rx="7" fill="#0e1015"/><path d="M189 244h22"/><path d="M188 209l8 8 16-16" stroke="#6be3a0"/></g>
+    <g class="pop" style="--d:1.7s"><rect x="268" y="186" width="74" height="46" rx="7" fill="#0e1015"/><path d="M294 244h22"/><path d="M293 209l8 8 16-16" stroke="#6be3a0"/></g></g>
+</svg>` },
+  { c1: 'rgba(92,200,255,.28)', c2: 'rgba(255,158,196,.28)', kicker: 'Capítulo 5', title: 'O Onix fica pronto',
+    body: 'O Onix ficou pronto, ainda em estágio inicial, e o sucesso dele abriu caminho para os próximos projetos do Ruan.',
+    art: `<svg viewBox="0 0 400 260" fill="none" stroke-linecap="round">
+  <circle cx="200" cy="130" r="112" stroke="rgba(255,255,255,.18)" stroke-width="2" stroke-dasharray="4 10"/>
+  <g class="pop" style="--d:.2s">${STORY_SATURN(200, 130, 3)}</g>
+  <g class="spin"><g class="fade" style="--d:.9s"><path d="M200 8l12 12-12 14-12-14z" fill="#b28bff"/></g>
+    <g class="fade" style="--d:1.3s"><path d="M297 186l12 12-12 14-12-14z" fill="#5cc8ff"/></g>
+    <g class="fade" style="--d:1.7s"><path d="M103 186l12 12-12 14-12-14z" fill="#ff9ec4"/></g></g>
+  <g fill="#fff"><circle class="twinkle" cx="40" cy="40" r="2.5" style="--d:0s"/><circle class="twinkle" cx="360" cy="50" r="2" style="--d:.5s"/>
+    <circle class="twinkle" cx="370" cy="230" r="2.5" style="--d:.9s"/><circle class="twinkle" cx="30" cy="220" r="2" style="--d:.3s"/></g>
+</svg>` },
+  { c1: 'rgba(178,139,255,.3)', c2: 'rgba(160,230,255,.22)', kicker: 'Capítulo 6', title: 'Pedras preciosas',
+    body: 'Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Além dele, já existem o Amethyst e o Opala.',
+    art: () => `<svg viewBox="0 0 400 260" fill="none" stroke-linecap="round">
+  <defs><linearGradient id="stOpal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8f6ff"/><stop offset=".45" stop-color="#9fe3ff"/><stop offset=".75" stop-color="#ffc7e6"/><stop offset="1" stop-color="#c9ffd9"/></linearGradient></defs>
+  <g class="pop" style="--d:.2s">${STORY_LOGO(50, 44, '#fff', 'stOn', LOGO_ONIX)}</g>
+  <path class="draw" style="--d:.5s" d="M80 44h70" stroke="rgba(255,255,255,.5)" stroke-width="2.5"/>
+  <g class="fade" style="--d:.9s" font-family="system-ui,sans-serif"><text x="162" y="40" fill="#fff" font-size="24" font-weight="700">Onix</text>
+    <text x="162" y="64" fill="rgba(245,246,248,.65)" font-size="17">${t('sistema para TVs')}</text></g>
+  <g class="pop" style="--d:1.1s">${STORY_LOGO(50, 130, '#d9c6ff', 'stAm', LOGO_AMETHYST)}</g>
+  <path class="draw" style="--d:1.4s" d="M80 130h70" stroke="#b28bff" stroke-width="2.5"/>
+  <g class="fade" style="--d:1.8s" font-family="system-ui,sans-serif"><text x="162" y="126" fill="#d9c6ff" font-size="24" font-weight="700">Amethyst</text>
+    <text x="162" y="150" fill="rgba(245,246,248,.65)" font-size="17">${t('karaokê para Windows')}</text></g>
+  <g class="pop" style="--d:2s">${STORY_GEM(50, 216, 'url(#stOpal)', '#fff')}</g>
+  <path class="draw" style="--d:2.3s" d="M80 216h70" stroke="#9fe3ff" stroke-width="2.5"/>
+  <g class="fade" style="--d:2.7s" font-family="system-ui,sans-serif"><text x="162" y="212" fill="#bfeeff" font-size="24" font-weight="700">Opala</text>
+    <text x="162" y="236" fill="rgba(245,246,248,.65)" font-size="17">${t('bot para WhatsApp')}</text></g>
+</svg>` },
+  { end: true, c1: 'rgba(255,158,196,.3)', c2: 'rgba(178,139,255,.3)', title: 'Obrigado por fazer parte disso!',
+    body: 'Cada vez que você liga a TV, essa trajetória continua. O próximo capítulo a gente escreve junto.',
+    sign: '— Ruan Amaral, criador do Onix',
+    art: `<svg viewBox="0 0 200 180" fill="none">
+  <defs><linearGradient id="stHeart" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#ff9ec4"/><stop offset="1" stop-color="#b28bff"/></linearGradient></defs>
+  <path class="beat" d="M100 160C40 118 14 88 14 58a38 38 0 0 1 86-22 38 38 0 0 1 86 22c0 30-26 60-86 102z" fill="url(#stHeart)"/>
+  <g fill="#fff"><circle class="twinkle" cx="10" cy="20" r="3" style="--d:0s"/><circle class="twinkle" cx="190" cy="14" r="2.5" style="--d:.4s"/>
+    <circle class="twinkle" cx="196" cy="150" r="3" style="--d:.8s"/><circle class="twinkle" cx="4" cy="140" r="2.5" style="--d:.2s"/></g>
+</svg>` },
+];
+let story = null;
+function openStory(from) {
+  story = { i: 0, from };
+  $('#story').hidden = false;
+  renderStory();
+}
+function renderStory() {
+  const s = STORY[story.i], last = story.i === STORY.length - 1;
+  const box = $('#story');
+  box.classList.toggle('end', !!s.end);
+  box.style.setProperty('--c1', s.c1);
+  box.style.setProperty('--c2', s.c2);
+  box.replaceChildren(
+    h('div', { class: 'st-glow' }),
+    h('div', { class: 'st-bars' }, ...STORY.map((_, i) => h('i', { class: i < story.i ? 'done' : i === story.i ? 'now' : '' }))),
+    h('div', { class: 'st-slide' },
+      h('div', { class: 'st-art' }, svgFrom(typeof s.art === 'function' ? s.art() : s.art)),
+      h('div', { class: 'st-text' },
+        s.kicker ? h('div', { class: 'st-kicker', text: s.kicker }) : null,
+        h('div', { class: 'st-title', text: s.title }),
+        h('div', { class: 'st-body', text: s.body }),
+        s.sign ? h('div', { class: 'st-sign', text: s.sign }) : null)),
+    h('div', { class: 'st-hint' }, h('b', { text: 'OK' }), h('span', { text: last ? 'para fechar' : 'para continuar' })));
+}
+function storyStep(d) {
+  const i = story.i + d;
+  if (i < 0) return false;
+  if (i >= STORY.length) { closeStory(); sfx('back'); return true; }
+  story.i = i;
+  renderStory();
+  sfx(d > 0 ? 'select' : 'move');
+  return true;
+}
+function closeStory() {
+  if (!story) return;
+  const from = story.from;
+  story = null;
+  $('#story').hidden = true;
+  $('#story').replaceChildren();
+  if (from && document.contains(from)) setFocus(from);
+}
+function storyKey(e) {
+  e.preventDefault();
+  if (e.repeat) return;
+  const dir = KEYMAP[e.key] || CODEMAP[e.keyCode];
+  if (dir === 'left') { if (!storyStep(-1)) sfx('edge'); return; }
+  if (dir === 'right' || e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 23) { storyStep(1); return; }
+  if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4) back();
 }
 
 /* ---------------- Atualizações ----------------
@@ -5489,6 +5739,7 @@ function back() {
 }
 function backStep() {
   if (game) { closeGame(); return true; }
+  if (story) { closeStory(); return true; }
   if (kittyOpen) { hideKitty(); return true; }
   // O mesmo Voltar pode chegar duas vezes (tecla na página e Voltar do Android): o que fechou o
   // gatinho não tira o foco do cartão Sobre.
@@ -5511,6 +5762,7 @@ document.addEventListener('keydown', e => {
   if (game) { gameKey(e, true); return; }
   if (panes.length) { paneKey(e); return; }
   if (reader) { readerKey(e); return; }
+  if (story) { storyKey(e); return; }
   // Gatinho aberto: qualquer tecla fecha (Voltar passa pelo back() normal).
   if (kittyOpen && !(e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4)) {
     e.preventDefault(); if (!e.repeat) { hideKitty(); sfx('back'); } return;
@@ -5538,6 +5790,7 @@ document.addEventListener('keydown', e => {
 /* ---------------- Toque / mouse ---------------- */
 document.addEventListener('click', e => {
   if (kittyOpen) { hideKitty(); return; }
+  if (story) { storyStep(1); return; }
   if (panes.length) {
     const el = e.target.closest('.f');
     if (el && topPane().el.contains(el)) { e.preventDefault(); setFocus(el); sfx('select'); activate(el); }

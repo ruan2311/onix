@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 16.1.0 beta (outubro de 2026)
+
+- **Trajetória do Onix:** a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em **Configurações → Sobre**; OK passa para o próximo.
+- **Onix GameHub** com página própria no GitHub ([ruan2311/onix-gamehub](https://github.com/ruan2311/onix-gamehub)): o Onix passa a instalar e atualizar o GameHub por lá.
+
 ## 16.0.0 beta (outubro de 2026)
 
 - **Onix GameHub:** um app opcional de jogos clássicos para Google TV e Android TV, com Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só. Instale pela aba **Jogos**. Os jogos chegam pelo celular (QR code), com capa e nome certos, e o progresso fica guardado por perfil do Onix.
