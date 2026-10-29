@@ -26,6 +26,8 @@
   --focus-glow:0 0 0 .14rem #fff,0 .5rem 1.2rem rgba(0,0,0,.55);
   --radius:1.1rem;
   --nav-w:13.5rem;
+  --nav-h:4.8rem;     /* altura da barra do menu em cima */
+  --dock-h:6.9rem;    /* espaço do dock embaixo (inclui a folga da borda) */
   --ease:cubic-bezier(.2,.8,.2,1);
 }
 html{font-size:1.04vw;font-size:clamp(12px,1.04vw,22px);background:var(--bg);height:100%}
@@ -832,6 +834,91 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
 .wx-foot{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin-top:.9rem;font-size:.78rem;color:rgba(255,255,255,.6)}
 .wx-foot .btn{padding:.5rem 1.1rem;font-size:.85rem}
 
+/* ---------- Posição do menu (Configurações → Menu) ----------
+   Lateral é o de sempre. "Em cima" é uma barra de abas e "Embaixo", um dock flutuante, cada um com o
+   visual próprio. No celular em pé o menu continua sendo a barra de baixo (bloco mais adiante).
+   "Esconder o menu" (html.nav-auto + nav-hidden) recolhe o menu para a borda: só transform e
+   opacity animam o menu; o conteúdo ocupa o espaço livre com uma transição curta. */
+html.nav-auto #sidebar{transition:transform .36s var(--ease),visibility 0s}
+html.nav-auto.nav-hidden #sidebar{visibility:hidden;transition:transform .36s var(--ease),visibility 0s linear .36s}
+html.nav-auto #main{transition:left .36s var(--ease),top .36s var(--ease),padding .36s var(--ease)}
+html.nav-auto.nav-hidden #sidebar{transform:translateX(-104%)}
+html.nav-auto.nav-hidden #main{left:0}
+/* Aba na borda: aparece com o menu escondido; toque ou mouse trazem o menu de volta. */
+.navhandle{position:fixed;z-index:11;left:0;top:50%;width:1.2rem;height:5.4rem;margin-top:-2.7rem;border-radius:0 1rem 1rem 0;
+  background:linear-gradient(90deg,rgba(255,255,255,.22),rgba(255,255,255,.1));border:1px solid rgba(255,255,255,.2);border-left:0;
+  opacity:0;visibility:hidden;transition:opacity .3s var(--ease) .12s,visibility 0s linear .42s}
+.navhandle::before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;margin:auto;width:.46rem;height:.46rem;
+  border:solid rgba(255,255,255,.9);border-width:0 .14rem .14rem 0;transform:translateX(-.1rem) rotate(-45deg)}
+html.nav-auto.nav-hidden .navhandle{opacity:1;visibility:visible;transition:opacity .3s var(--ease) .25s,visibility 0s;animation:navHint 2.6s ease-in-out 1s 2}
+@keyframes navHint{50%{transform:translateX(.35rem)}}
+@media (min-width:761px),(orientation:landscape){
+  /* === Em cima: barra de abas, de ponta a ponta === */
+  html.nav-top #sidebar{top:0;right:0;bottom:auto;left:0;width:auto;height:var(--nav-h);flex-direction:row;align-items:center;gap:.3rem;
+    padding:0 2.4rem;border-right:0;border-bottom:1px solid rgba(255,255,255,.1);
+    background:linear-gradient(180deg,rgba(20,21,26,.98),rgba(9,10,12,.97))}
+  html.nav-top #sidebar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;pointer-events:none;
+    background:linear-gradient(90deg,transparent,rgba(255,255,255,.38) 30%,rgba(255,255,255,.38) 70%,transparent)}
+  html.nav-top .brand{padding:0 1.3rem 0 .1rem;margin-right:.7rem;border-right:1px solid rgba(255,255,255,.12)}
+  html.nav-top .nav-spacer{flex:1;min-width:1rem;overflow:hidden}
+  html.nav-top .nav-art,html.nav-top .nav-mode{display:none}
+  html.nav-top .nav-item{padding:.6rem 1.15rem;gap:.6rem;border-radius:999rem}
+  html.nav-top .nav-item svg{width:1.3rem;height:1.3rem}
+  html.nav-top .nav-item.me{margin:0 .5rem 0 0;padding:.3rem 1rem .3rem .35rem;gap:.6rem}
+  html.nav-top .nav-item.me .av{width:2.1rem;height:2.1rem}
+  html.nav-top .me-sw{display:none}
+  html.nav-top .nav-item.is-focused{transform:translateY(.14rem)}
+  html.nav-top .nav-item.has-update::after{left:2.35rem;top:.55rem}
+  /* A aba aberta: pílula clara e um traço de luz embaixo, como numa barra de abas. */
+  html.nav-top .nav-item.active{background:rgba(255,255,255,.12)}
+  html.nav-top .nav-item.active::before{content:"";position:absolute;left:50%;bottom:.28rem;width:1.5rem;height:.16rem;margin-left:-.75rem;border-radius:.2rem;
+    background:#fff;box-shadow:0 0 .6rem rgba(255,255,255,.7)}
+  html.nav-top #sidebar.nav-focus .nav-item.active::before{opacity:0}
+  html.nav-top #main{top:var(--nav-h);left:0;padding-top:1.3rem}
+  html.nav-top.nav-auto.nav-hidden #sidebar{transform:translateY(-104%)}
+  html.nav-top.nav-auto.nav-hidden #main{top:0;padding-top:1.8rem}
+  html.nav-top .navhandle{top:0;left:50%;width:5.4rem;height:1.2rem;margin:0 0 0 -2.7rem;border-radius:0 0 1rem 1rem;border:1px solid rgba(255,255,255,.2);border-top:0;
+    background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.1))}
+  html.nav-top .navhandle::before{transform:translateY(-.1rem) rotate(45deg)}
+  html.nav-top.nav-auto.nav-hidden .navhandle{animation-name:navHintTop}
+  @keyframes navHintTop{50%{transform:translateY(.35rem)}}
+
+  /* === Embaixo: dock flutuante, com ícones grandes === */
+  html.nav-bottom #sidebar{top:auto;right:0;bottom:1rem;left:0;width:max-content;max-width:calc(100% - 3rem);height:auto;margin:0 auto;
+    flex-direction:row;align-items:stretch;gap:.3rem;padding:.55rem .75rem;border:1px solid rgba(255,255,255,.17);border-radius:1.9rem;
+    background:linear-gradient(180deg,rgba(36,38,46,.94),rgba(12,13,17,.95));
+    box-shadow:0 1.1rem 2.8rem rgba(0,0,0,.65),0 0 0 1px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.24)}
+  html.nav-bottom .brand,html.nav-bottom .nav-art,html.nav-bottom .nav-mode{display:none}
+  /* O espaço do meio vira um separador fino entre os itens do Onix e os do sistema. */
+  html.nav-bottom .nav-spacer{flex:none;width:1px;margin:.5rem .5rem;padding:0;overflow:visible;
+    background:linear-gradient(180deg,transparent,rgba(255,255,255,.26),transparent)}
+  html.nav-bottom .nav-item{flex-direction:column;justify-content:center;gap:.32rem;min-width:5.8rem;padding:.7rem 1rem .9rem;font-size:.8rem;border-radius:1.35rem}
+  html.nav-bottom .nav-item svg{width:1.75rem;height:1.75rem}
+  html.nav-bottom .nav-item.me{margin:0;min-width:5.2rem;padding:.55rem .9rem .7rem;gap:.3rem;background:transparent;border-color:transparent}
+  html.nav-bottom .nav-item.me .av{width:2.1rem;height:2.1rem}
+  html.nav-bottom .me-txt{align-items:center;font-size:.8rem}
+  html.nav-bottom .me-name{max-width:5rem}
+  html.nav-bottom .me-sw{display:none}
+  html.nav-bottom .nav-item.has-update::after{left:calc(50% + .7rem);top:.6rem}
+  /* O item aberto fica com um ponto de luz embaixo; o focado sobe, como num dock. */
+  html.nav-bottom .nav-item.active{background:rgba(255,255,255,.07);border-color:transparent;color:var(--text)}
+  html.nav-bottom .nav-item.active::before{content:"";position:absolute;left:50%;bottom:.4rem;width:.36rem;height:.36rem;margin-left:-.18rem;border-radius:50%;
+    background:#fff;box-shadow:0 0 .7rem .1rem rgba(255,255,255,.75)}
+  html.nav-bottom #sidebar.nav-focus .nav-item.active:not(.is-focused)::before{opacity:.5}
+  html.nav-bottom .nav-item.is-focused{transform:translateY(-.5rem) scale(1.07)}
+  html.nav-bottom .nav-item.is-focused::before{opacity:0}
+  html.nav-bottom #main{left:0;padding-bottom:var(--dock-h)}
+  html.nav-bottom #toast{bottom:calc(var(--dock-h) + .4rem)}   /* os avisos ficam acima do dock */
+  html.nav-bottom.nav-auto.nav-hidden #toast{bottom:2.2rem}
+  html.nav-bottom.nav-auto.nav-hidden #sidebar{transform:translateY(calc(100% + 2rem))}
+  html.nav-bottom.nav-auto.nav-hidden #main{padding-bottom:3rem}
+  html.nav-bottom .navhandle{top:auto;bottom:0;left:50%;width:5.4rem;height:1.2rem;margin:0 0 0 -2.7rem;border-radius:1rem 1rem 0 0;border:1px solid rgba(255,255,255,.2);border-bottom:0;
+    background:linear-gradient(0deg,rgba(255,255,255,.22),rgba(255,255,255,.1))}
+  html.nav-bottom .navhandle::before{transform:translateY(.1rem) rotate(-135deg)}
+  html.nav-bottom.nav-auto.nav-hidden .navhandle{animation-name:navHintBottom}
+  @keyframes navHintBottom{50%{transform:translateY(-.35rem)}}
+}
+
 /* ---------- Celular em retrato: menu vira barra inferior ---------- */
 @media (max-width:760px) and (orientation:portrait){
   html{font-size:13px}
@@ -841,6 +928,11 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
   .nav-item{flex-direction:column;gap:.25rem;padding:.5rem .4rem;font-size:.7rem;flex:1;align-items:center}
   .nav-item.is-focused{transform:translateY(-.2rem)}
   #main{left:0;bottom:4.8rem;padding:1.2rem 1.2rem 2rem}
+  html.nav-auto.nav-hidden #sidebar{transform:translateY(105%)}
+  html.nav-auto.nav-hidden #main{bottom:0}
+  .navhandle{top:auto;bottom:0;left:50%;width:5rem;height:1.1rem;margin:0 0 0 -2.5rem;border-radius:1rem 1rem 0 0;border:1px solid rgba(255,255,255,.2);border-bottom:0}
+  .navhandle::before{transform:translateY(.1rem) rotate(-135deg)}
+  html.nav-auto.nav-hidden .navhandle{animation:none}
   #clock{font-size:3.6rem}
   .hero{min-height:18rem;padding:1.4rem}
   .hero-content{max-width:100%}
@@ -910,6 +1002,7 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg><span>Desligar TV</span></button>
   <div class="nav-mode" id="navMode"></div>
 </nav>
+<button class="navhandle" id="navHandle" tabindex="-1" aria-label="Mostrar o menu"></button>
 
 <main id="main">
   <!-- Desenhinhos do Modo Infantil, no canto de baixo (só enfeite). -->
@@ -1315,11 +1408,11 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '16.1.1 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '16.1.2 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
-  anim: 'suave', heroFx: 'fade', tabFx: false, lang: 'auto', remote: true, remoteQr: true, soundFx: 'chime', homeStyle: 'glass' });
+  anim: 'suave', heroFx: 'fade', tabFx: false, lang: 'auto', remote: true, remoteQr: true, soundFx: 'chime', homeStyle: 'glass', navPos: 'left', navAuto: false });
 // Opções de escolha (OK passa para a próxima): valor salvo -> nome na tela.
 const CHOICES = Object.freeze({
   anim: [['suave', 'Suave'], ['elastica', 'Elástica'], ['rapida', 'Rápida'], ['flutuar', 'Flutuar'], ['pulsar', 'Pulsar']],
@@ -1327,6 +1420,7 @@ const CHOICES = Object.freeze({
   lang: [['auto', 'Automático'], ['pt', 'Português'], ['es', 'Español']],
   soundFx: [['chime', 'Onix Chime'], ['crystal', 'Crystal'], ['sharp', 'Sharpness'], ['velvet', 'Velvet'], ['pulse', 'Pulse']],
   homeStyle: [['glass', 'Onix Glass'], ['clean', 'Clean Glass'], ['cosmos', 'Onix Cosmos']],
+  navPos: [['left', 'Lateral'], ['top', 'Em cima'], ['bottom', 'Embaixo']],
 });
 const settings = Object.assign({}, DEFAULTS);
 try {
@@ -1348,6 +1442,11 @@ function applySettings() {
   const kid = cl.contains('kids');   // o Modo Infantil tem o visual próprio
   cl.toggle('home-clean', !kid && settings.homeStyle === 'clean');
   cl.toggle('home-cosmos', !kid && settings.homeStyle === 'cosmos');
+  // Posição do menu e esconder ao abrir uma seção (o Modo Infantil tem o menu lateral dele).
+  cl.toggle('nav-top', !kid && settings.navPos === 'top');
+  cl.toggle('nav-bottom', !kid && settings.navPos === 'bottom');
+  cl.toggle('nav-auto', !kid && settings.navAuto);
+  if (kid || !settings.navAuto) cl.remove('nav-hidden');
 }
 applySettings();
 
@@ -1857,7 +1956,72 @@ const ES = Object.freeze({
   "*Controle pelo celular:* aponte a câmera do celular para o QR code (botão *Celular*, no menu, ou na tela de descanso) e ele vira controle e teclado, sem instalar nada. Também organiza \"Seus apps\" e manda a foto do perfil.": "*Control desde el celular:* apunta la cámara del celular al código QR (botón *Celular*, en el menú, o en el salvapantallas) y se vuelve control y teclado, sin instalar nada. También ordena \"Tus apps\" y envía la foto del perfil.",
   "*Clima na tela inicial (opcional):* a temperatura ao lado do relógio e, com OK, a previsão das próximas horas e dos próximos dias. O Onix não detecta onde você está: ligue e escolha a cidade em Configurações → Clima.": "*Clima en la pantalla de inicio (opcional):* la temperatura junto al reloj y, con OK, el pronóstico de las próximas horas y los próximos días. Onix no detecta dónde estás: actívalo y elige la ciudad en Configuración → Clima.",
   "*Boas-vindas:* quem instala o Onix pela primeira vez escolhe o idioma, cria o perfil e acerta as preferências.": "*Bienvenida:* quien instala Onix por primera vez elige el idioma, crea su perfil y ajusta las preferencias.",
-  "No gatinho do cartão *Sobre*, os corações passam por trás dele e as orelhas e o rabo não se soltam mais ao mexer.": "En el gatito de la tarjeta *Acerca de*, los corazones pasan por detrás y las orejas y la cola ya no se sueltan al moverse."
+  "No gatinho do cartão *Sobre*, os corações passam por trás dele e as orelhas e o rabo não se soltam mais ao mexer.": "En el gatito de la tarjeta *Acerca de*, los corazones pasan por detrás y las orejas y la cola ya no se sueltan al moverse.",
+  "Som da navegação": "Sonido de navegación",
+  "Onix Chime (vidro), Crystal (cristal brilhante), Sharpness (clique seco), Velvet (grave e macio) ou Pulse (digital). OK troca e toca uma amostra.": "Onix Chime (vidrio), Crystal (cristal brillante), Sharpness (clic seco), Velvet (grave y suave) o Pulse (digital). OK cambia y reproduce una muestra.",
+  " (ligue \"Sons do menu\" para ouvir)": " (activa \"Sonidos del menú\" para oírlo)",
+  "Menu": "Menú",
+  "Posição do menu": "Posición del menú",
+  "Onde o menu fica: na lateral (o de sempre), em cima, numa barra de abas, ou embaixo, num dock flutuante. OK troca.": "Dónde queda el menú: en el lateral (el de siempre), arriba, en una barra de pestañas, o abajo, en un dock flotante. OK cambia.",
+  "Lateral": "Lateral",
+  "Em cima": "Arriba",
+  "Embaixo": "Abajo",
+  "Esconder o menu ao abrir uma seção": "Ocultar el menú al abrir una sección",
+  "Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Aperte na direção do menu, ou Voltar, para ele reaparecer.": "Al abrir Inicio, Juegos u otra sección, el menú se oculta con una animación y el contenido ocupa toda la pantalla. Pulsa hacia el menú, o Volver, para que reaparezca.",
+  "Mostrar o menu": "Mostrar el menú",
+  "*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com ícones grandes e um ponto de luz no item aberto. Cada posição tem o visual próprio, e o Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.": "*Posición del menú:* elige dónde queda el menú. *Lateral* es el de siempre; *Arriba* se vuelve una barra de pestañas, con tu perfil y los atajos del sistema en los extremos; *Abajo* se vuelve un dock flotante, con íconos grandes y un punto de luz en el elemento abierto. Cada posición tiene su propio diseño, y el Modo Infantil sigue con el menú lateral. En *Configuración → Menú*.",
+  "*Esconder o menu ao abrir uma seção:* opcional. Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Apertar na direção do menu, Voltar ou tocar na aba da borda traz o menu de volta. Em *Configurações → Menu*.": "*Ocultar el menú al abrir una sección:* opcional. Al abrir Inicio, Juegos u otra sección, el menú se oculta con una animación y el contenido ocupa toda la pantalla. Pulsar hacia el menú, Volver o tocar la pestaña del borde trae el menú de vuelta. En *Configuración → Menú*.",
+  "Estilo da tela inicial": "Estilo de la pantalla de inicio",
+  "Onix Glass é o de sempre. Clean Glass é minimalista: relógio no centro e só os apps e as indicações. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.": "Onix Glass es el de siempre. Clean Glass es minimalista: reloj en el centro y solo las apps y las recomendaciones. Onix Cosmos es artístico, con el planeta de Onix, órbitas y estrellas dibujados. OK cambia.",
+  "*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), dois estilos novos. *Clean Glass* é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. *Onix Cosmos* é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em *Configurações → Início*.": "*Estilo de la pantalla de inicio:* además de *Onix Glass* (el de siempre), dos estilos nuevos. *Clean Glass* es minimalista: reloj grande en el centro, las apps en una fila centrada y las recomendaciones en portadas pequeñas. *Onix Cosmos* es artístico: el planeta de Onix, órbitas, lunas y estrellas dibujados detrás del destacado. En *Configuración → Inicio*.",
+  "*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.": "*Sonido de navegación:* cuatro sonidos nuevos además de *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* y *Pulse*. En *Configuración → Inicio*, OK cambia y reproduce una muestra.",
+  "Os sons do menu tocam com menos atraso: a saída de áudio da TV não \"dorme\" mais entre um toque e outro.": "Los sonidos del menú suenan con menos retraso: la salida de audio de la TV ya no se \"duerme\" entre un toque y otro.",
+  "O perfil no topo do menu, quando selecionado, fica branco com o nome legível (antes o texto ficava preto sobre o fundo escuro).": "El perfil arriba del menú, al seleccionarlo, se pone blanco con el nombre legible (antes el texto quedaba negro sobre el fondo oscuro).",
+  "O gatinho do cartão *Sobre* se mexe de novo com o *Modo desempenho máximo* ou as *Transições suaves* desligadas.": "El gatito de la tarjeta *Acerca de* se mueve de nuevo con el *Modo de máximo rendimiento* o las *Transiciones suaves* desactivadas.",
+  "Oi, {0}!": "¡Hola, {0}!",
+  "O que vamos assistir hoje?": "¿Qué vamos a ver hoy?",
+  "*Modo Infantil* com visual próprio: boas-vindas com o nome da criança e o gatinho do Onix num arco-íris, o gatinho no menu, desenhinhos no canto da tela e foco amarelo, mais redondo e colorido.": "*Modo Infantil* con estilo propio: bienvenida con el nombre del niño y el gatito de Onix sobre un arcoíris, el gatito en el menú, dibujitos en la esquina de la pantalla y foco amarillo, más redondo y colorido.",
+  "Cachorro": "Perro",
+  "Bebê": "Bebé",
+  "Homem": "Hombre",
+  "Mulher": "Mujer",
+  "Menino": "Niño",
+  "Menina": "Niña",
+  "Vovô": "Abuelo",
+  "Vovó": "Abuela",
+  "Astronauta": "Astronauta",
+  "*Avatares novos:* dez rostos desenhados no traço do gatinho do Onix para os perfis: o próprio gatinho, cachorro, bebê, homem, mulher, menino, menina, vovô, vovó e astronauta. Quem usava um desenho antigo ganha o novo do mesmo lugar da lista; dá para trocar em *Editar perfil*.": "*Avatares nuevos:* diez caras dibujadas con el trazo del gatito de Onix para los perfiles: el propio gatito, perro, bebé, hombre, mujer, niño, niña, abuelo, abuela y astronauta. Quien usaba un dibujo antiguo recibe el nuevo del mismo lugar de la lista; se puede cambiar en *Editar perfil*.",
+  "A chave *Clima na tela inicial* das Configurações aparecia desligada mesmo com o clima ligado.": "El interruptor *Clima en la pantalla de inicio* de Ajustes aparecía apagado aunque el clima estuviera encendido.",
+  "O botão *Organizar* da tela inicial abria *Novo perfil* em vez de organizar os apps.": "El botón *Organizar* de la pantalla de inicio abría *Nuevo perfil* en lugar de organizar las apps.",
+  "Os avatares dos perfis ganharam o fundo de vidro escuro do Onix, com um brilho suave de cor atrás de cada rosto, no lugar das cores fortes.": "Los avatares de los perfiles ahora tienen el fondo de vidrio oscuro de Onix, con un brillo suave de color detrás de cada cara, en lugar de los colores fuertes.",
+  // Onix GameHub
+  "Baixando…": "Descargando…",
+  "Instalando…": "Instalando…",
+  "Instalar o GameHub": "Instalar GameHub",
+  "Baixando o Onix GameHub…": "Descargando Onix GameHub…",
+  "O GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "GameHub todavía no fue publicado. Llega en una próxima actualización.",
+  "Não deu para baixar o GameHub. Confira a internet e tente de novo.": "No se pudo descargar GameHub. Revisa internet e inténtalo de nuevo.",
+  "Um hub de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.": "Un hub de juegos para Onix: tus juegos de Nintendo (NES), Super Nintendo, Game Boy Advance y Mega Drive en un solo lugar, con portadas y tu progreso guardado por perfil. Es opcional y puedes desinstalarla cuando quieras.",
+  "Continuar jogando": "Seguir jugando",
+  "Jogar": "Jugar",
+  "jogo": "juego",
+  "jogos": "juegos",
+  "Nenhum jogo ainda": "Ningún juego todavía",
+  "Abrir o GameHub": "Abrir GameHub",
+  "Versão {v}": "Versión {v}",
+  "Nintendinho": "Nintendo (NES)",
+  "· Seus jogos por console": "· Tus juegos por consola", "· Onix GameHub · OK volta de onde parou": "· Onix GameHub · OK vuelve donde lo dejaste", "Continuar": "Continuar",
+  "Atualizar ({v})": "Actualizar ({v})", "Desinstalar": "Desinstalar",
+  "Em destaque no Game Pass": "Destacados en Game Pass", "· os mais populares · OK abre o app do Xbox": "· los más populares · OK abre la app de Xbox",
+  "· os mais populares · jogue pelo app do Xbox": "· los más populares · juega con la app de Xbox", "Jogue na nuvem": "Juega en la nube",
+  "· sem console: os jogos rodam na internet · use um controle Bluetooth": "· sin consola: los juegos corren por internet · usa un control Bluetooth",
+  "Abrir": "Abrir", "Na loja de apps": "En la tienda de apps",
+  "Instale o app do Xbox pela loja de apps da TV para jogar na nuvem.": "Instala la app de Xbox desde la tienda de apps de la TV para jugar en la nube.",
+  "Instale o {n} pela loja de apps da TV (procure por \"{n}\").": "Instala {n} desde la tienda de apps de la TV (busca \"{n}\").",
+  "Minijogos do Onix": "Minijuegos de Onix", "· jogue com o controle remoto": "· juega con el control remoto",
+  "· as mais recentes da Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code": "· las más recientes de Adrenaline y Eurogamer.pt, en portugués · OK abre el resumen y el código QR",
+  "Desinstalar o GameHub": "Desinstalar GameHub",
+  "Não deu para abrir o GameHub": "No se pudo abrir GameHub",
   });
 let LANG = 'pt';
 function resolveLang() {
@@ -2382,60 +2546,6 @@ const PICK_PROVIDERS = Object.freeze({
   disney: { name: 'Disney+', em: 'no Disney+', color: '#1a46d6', badge: DISNEY_ICON },
   max: { name: 'HBO Max', em: 'na HBO Max', color: '#5b2fd6', badge: HBOMAX_ICON },
   globoplay: { name: 'Globoplay', em: 'no Globoplay', color: '#ff2a54', badge: GLOBOPLAY_ICON },
-  "Som da navegação": "Sonido de navegación",
-  "Onix Chime (vidro), Crystal (cristal brilhante), Sharpness (clique seco), Velvet (grave e macio) ou Pulse (digital). OK troca e toca uma amostra.": "Onix Chime (vidrio), Crystal (cristal brillante), Sharpness (clic seco), Velvet (grave y suave) o Pulse (digital). OK cambia y reproduce una muestra.",
-  " (ligue \"Sons do menu\" para ouvir)": " (activa \"Sonidos del menú\" para oírlo)",
-  "Estilo da tela inicial": "Estilo de la pantalla de inicio",
-  "Onix Glass é o de sempre. Clean Glass é minimalista: relógio no centro e só os apps e as indicações. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.": "Onix Glass es el de siempre. Clean Glass es minimalista: reloj en el centro y solo las apps y las recomendaciones. Onix Cosmos es artístico, con el planeta de Onix, órbitas y estrellas dibujados. OK cambia.",
-  "*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), dois estilos novos. *Clean Glass* é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. *Onix Cosmos* é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em *Configurações → Início*.": "*Estilo de la pantalla de inicio:* además de *Onix Glass* (el de siempre), dos estilos nuevos. *Clean Glass* es minimalista: reloj grande en el centro, las apps en una fila centrada y las recomendaciones en portadas pequeñas. *Onix Cosmos* es artístico: el planeta de Onix, órbitas, lunas y estrellas dibujados detrás del destacado. En *Configuración → Inicio*.",
-  "*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.": "*Sonido de navegación:* cuatro sonidos nuevos además de *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* y *Pulse*. En *Configuración → Inicio*, OK cambia y reproduce una muestra.",
-  "Os sons do menu tocam com menos atraso: a saída de áudio da TV não \"dorme\" mais entre um toque e outro.": "Los sonidos del menú suenan con menos retraso: la salida de audio de la TV ya no se \"duerme\" entre un toque y otro.",
-  "O perfil no topo do menu, quando selecionado, fica branco com o nome legível (antes o texto ficava preto sobre o fundo escuro).": "El perfil arriba del menú, al seleccionarlo, se pone blanco con el nombre legible (antes el texto quedaba negro sobre el fondo oscuro).",
-  "O gatinho do cartão *Sobre* se mexe de novo com o *Modo desempenho máximo* ou as *Transições suaves* desligadas.": "El gatito de la tarjeta *Acerca de* se mueve de nuevo con el *Modo de máximo rendimiento* o las *Transiciones suaves* desactivadas.",
-  "Oi, {0}!": "¡Hola, {0}!",
-  "O que vamos assistir hoje?": "¿Qué vamos a ver hoy?",
-  "*Modo Infantil* com visual próprio: boas-vindas com o nome da criança e o gatinho do Onix num arco-íris, o gatinho no menu, desenhinhos no canto da tela e foco amarelo, mais redondo e colorido.": "*Modo Infantil* con estilo propio: bienvenida con el nombre del niño y el gatito de Onix sobre un arcoíris, el gatito en el menú, dibujitos en la esquina de la pantalla y foco amarillo, más redondo y colorido.",
-  "Cachorro": "Perro",
-  "Bebê": "Bebé",
-  "Homem": "Hombre",
-  "Mulher": "Mujer",
-  "Menino": "Niño",
-  "Menina": "Niña",
-  "Vovô": "Abuelo",
-  "Vovó": "Abuela",
-  "Astronauta": "Astronauta",
-  "*Avatares novos:* dez rostos desenhados no traço do gatinho do Onix para os perfis: o próprio gatinho, cachorro, bebê, homem, mulher, menino, menina, vovô, vovó e astronauta. Quem usava um desenho antigo ganha o novo do mesmo lugar da lista; dá para trocar em *Editar perfil*.": "*Avatares nuevos:* diez caras dibujadas con el trazo del gatito de Onix para los perfiles: el propio gatito, perro, bebé, hombre, mujer, niño, niña, abuelo, abuela y astronauta. Quien usaba un dibujo antiguo recibe el nuevo del mismo lugar de la lista; se puede cambiar en *Editar perfil*.",
-  "A chave *Clima na tela inicial* das Configurações aparecia desligada mesmo com o clima ligado.": "El interruptor *Clima en la pantalla de inicio* de Ajustes aparecía apagado aunque el clima estuviera encendido.",
-  "O botão *Organizar* da tela inicial abria *Novo perfil* em vez de organizar os apps.": "El botón *Organizar* de la pantalla de inicio abría *Nuevo perfil* en lugar de organizar las apps.",
-  "Os avatares dos perfis ganharam o fundo de vidro escuro do Onix, com um brilho suave de cor atrás de cada rosto, no lugar das cores fortes.": "Los avatares de los perfiles ahora tienen el fondo de vidrio oscuro de Onix, con un brillo suave de color detrás de cada cara, en lugar de los colores fuertes.",
-  // Onix GameHub
-  "Baixando…": "Descargando…",
-  "Instalando…": "Instalando…",
-  "Instalar o GameHub": "Instalar GameHub",
-  "Baixando o Onix GameHub…": "Descargando Onix GameHub…",
-  "O GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "GameHub todavía no fue publicado. Llega en una próxima actualización.",
-  "Não deu para baixar o GameHub. Confira a internet e tente de novo.": "No se pudo descargar GameHub. Revisa internet e inténtalo de nuevo.",
-  "Um hub de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.": "Un hub de juegos para Onix: tus juegos de Nintendo (NES), Super Nintendo, Game Boy Advance y Mega Drive en un solo lugar, con portadas y tu progreso guardado por perfil. Es opcional y puedes desinstalarla cuando quieras.",
-  "Continuar jogando": "Seguir jugando",
-  "Jogar": "Jugar",
-  "jogo": "juego",
-  "jogos": "juegos",
-  "Nenhum jogo ainda": "Ningún juego todavía",
-  "Abrir o GameHub": "Abrir GameHub",
-  "Versão {v}": "Versión {v}",
-  "Nintendinho": "Nintendo (NES)",
-  "· Seus jogos por console": "· Tus juegos por consola", "· Onix GameHub · OK volta de onde parou": "· Onix GameHub · OK vuelve donde lo dejaste", "Continuar": "Continuar",
-  "Atualizar ({v})": "Actualizar ({v})", "Desinstalar": "Desinstalar",
-  "Em destaque no Game Pass": "Destacados en Game Pass", "· os mais populares · OK abre o app do Xbox": "· los más populares · OK abre la app de Xbox",
-  "· os mais populares · jogue pelo app do Xbox": "· los más populares · juega con la app de Xbox", "Jogue na nuvem": "Juega en la nube",
-  "· sem console: os jogos rodam na internet · use um controle Bluetooth": "· sin consola: los juegos corren por internet · usa un control Bluetooth",
-  "Abrir": "Abrir", "Na loja de apps": "En la tienda de apps",
-  "Instale o app do Xbox pela loja de apps da TV para jogar na nuvem.": "Instala la app de Xbox desde la tienda de apps de la TV para jugar en la nube.",
-  "Instale o {n} pela loja de apps da TV (procure por \"{n}\").": "Instala {n} desde la tienda de apps de la TV (busca \"{n}\").",
-  "Minijogos do Onix": "Minijuegos de Onix", "· jogue com o controle remoto": "· juega con el control remoto",
-  "· as mais recentes da Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code": "· las más recientes de Adrenaline y Eurogamer.pt, en portugués · OK abre el resumen y el código QR",
-  "Desinstalar o GameHub": "Desinstalar GameHub",
-  "Não deu para abrir o GameHub": "No se pudo abrir GameHub",
 });
 let picks = [];
 let netOnline = null;   // null = o Android ainda não disse
@@ -4165,6 +4275,9 @@ const OPTIONS = [
   { key: 'anim',   name: 'Estilo do foco',        desc: 'Como o item selecionado se mexe: suave, elástica (com um leve quique), rápida, flutuar ou pulsar. OK troca.' },
   { key: 'heroFx', name: 'Troca do destaque',     desc: 'Como uma indicação dá lugar à próxima: esmaecer, deslizar ou zoom. OK troca.' },
   { key: 'tabFx',  name: 'Transição entre abas',  desc: 'A aba nova aparece subindo de leve ao trocar pelo menu.' },
+  { group: 'Menu' },
+  { key: 'navPos', name: 'Posição do menu', desc: 'Onde o menu fica: na lateral (o de sempre), em cima, numa barra de abas, ou embaixo, num dock flutuante. OK troca.' },
+  { key: 'navAuto', name: 'Esconder o menu ao abrir uma seção', desc: 'Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Aperte na direção do menu, ou Voltar, para ele reaparecer.' },
   { group: 'Início' },
   { key: 'homeStyle', name: 'Estilo da tela inicial', desc: 'Onix Glass é o de sempre. Clean Glass é minimalista: relógio no centro e só os apps e as indicações. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.' },
   { key: 'rotate', name: 'Trocar destaque sozinho', desc: 'Passa para a próxima indicação a cada 9 segundos.' },
@@ -4197,6 +4310,10 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '16.1.2 beta', date: 'outubro de 2026', items: [
+    ['new', '*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com ícones grandes e um ponto de luz no item aberto. Cada posição tem o visual próprio, e o Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.'],
+    ['new', '*Esconder o menu ao abrir uma seção:* opcional. Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Apertar na direção do menu, Voltar ou tocar na aba da borda traz o menu de volta. Em *Configurações → Menu*.'],
+  ] },
   { version: '16.1.1 beta', date: 'outubro de 2026', items: [
     ['new', '*Apoie o criador:* em *Configurações → Sobre*, um QR code Pix para quem quiser ajudar o projeto com qualquer valor. O Onix continua gratuito e sem anúncios; nada aparece sozinho, e o botão não aparece no Modo Infantil.'],
   ] },
@@ -4346,6 +4463,8 @@ function setOption(key, on) {
   saveSettings();
   applySettings();
   if (key === 'h24') updateClock(true);
+  if (key === 'navAuto' && on) hideNavSoon();   // mostra o efeito na hora
+  if (key === 'navPos') showNav();
   if (key === 'sound') { if (on) sfx('select'); else sfxSleep(); }
   if (key === 'pickAuto' || PICK_KEYS.some(o => o.key === key)) {
     syncPicksChoice();
@@ -4404,7 +4523,7 @@ function renderSettings() {
         toast(t(o.name) + ': ' + t(next[1]) + (settings.sound ? '' : t(' (ligue "Sons do menu" para ouvir)')));
         setTimeout(() => sfx('select'), 260);   // amostra do som novo, depois do toque do OK
       }
-      else if (o.key === 'homeStyle') toast(t(o.name) + ': ' + t(next[1]));
+      else if (o.key === 'homeStyle' || o.key === 'navPos') toast(t(o.name) + ': ' + t(next[1]));
       else if (!settings.motion) toast(t(o.name) + ': ' + t(next[1]) + t(' (ligue "Transições suaves" para ver)'));
       else if (o.key === 'heroFx') { toast(t(o.name) + ': ' + t(next[1])); nextHero(); }
       else toast(t(o.name) + ': ' + t(next[1]));
@@ -5715,6 +5834,7 @@ function setFocus(el) {
   if (el.closest('.layer')) { el.scrollIntoView({ block: 'nearest', inline: 'nearest' }); return; }
   $('#sidebar').classList.toggle('nav-focus', inNav(el));
   if (inNav(el)) {
+    showNav();
     if (el.dataset.section) queueSection(el.dataset.section);
   } else {
     flushSection();
@@ -5724,6 +5844,18 @@ function setFocus(el) {
     else el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 }
+// Esconder o menu ao abrir uma seção (opcional): o estado é a classe nav-hidden na <html>.
+// O menu volta quando o foco vai para ele (direcional, Voltar, toque na aba da borda).
+let navHideTimer = 0;
+function showNav() { clearTimeout(navHideTimer); document.documentElement.classList.remove('nav-hidden'); }
+function hideNavSoon() {
+  clearTimeout(navHideTimer);
+  if (!document.documentElement.classList.contains('nav-auto')) return;
+  navHideTimer = setTimeout(() => {
+    if (current && !inNav(current) && !current.closest('.layer')) document.documentElement.classList.add('nav-hidden');
+  }, 380);
+}
+$('#navHandle').addEventListener('click', e => { e.stopPropagation(); sfx('select'); setFocus(activeNavItem()); });
 // O destaque do menu muda na hora; a seção (layout pesado da grade de apps) só troca
 // quando o foco para por um instante, então passar pelo menu não engasga.
 let sectionTimer = 0, pendingSection = null;
@@ -5783,6 +5915,7 @@ function move(dir) {
   }
   if (!target) return false;
   setFocus(target);
+  if (fromNav && !inNav(target)) hideNavSoon();
   return true;
 }
 function focusFirstContent() {
@@ -5794,7 +5927,7 @@ function activate(el) {
   if (!el) return;
   if (inNav(el)) {
     if (typeof el._act === 'function') { el._act(); return; }   // item de menu com ação própria
-    showSection(el.dataset.section); focusFirstContent(); return;
+    showSection(el.dataset.section); focusFirstContent(); hideNavSoon(); return;
   }
   if (typeof el._act === 'function') el._act();
 }

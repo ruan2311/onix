@@ -74,6 +74,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 ## Novidades da 16.1.0
 
+- **16.1.2 · Posição do menu:** em **Configurações → Menu**, o menu pode ficar na **lateral** (o de sempre), **em cima** (barra de abas) ou **embaixo** (dock flutuante), cada um com o visual próprio. Também dá para ligar **Esconder o menu ao abrir uma seção**: o menu se recolhe com uma animação e volta ao apertar na direção dele, em Voltar ou ao tocar na aba da borda.
 - **16.1.1 · Apoie o criador:** em **Configurações → Sobre**, um QR code Pix para quem quiser ajudar o projeto com qualquer valor. O Onix continua **gratuito e sem anúncios**: nada aparece sozinho, e o botão não aparece no Modo Infantil.
 
 - **Trajetória do Onix:** a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em **Configurações → Sobre**; OK passa para o próximo.
