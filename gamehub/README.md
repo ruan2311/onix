@@ -89,7 +89,7 @@ Em **Adicionar jogos**, toque em **Escolher pasta** e escolha a pasta onde estã
 As mesmas telas da TV, com **mais animações** (páginas que deslizam, cartões que sobem com o mouse, brilho nas capas e uma aurora lenta no fundo) e os mesmos 4 emuladores, rodando dentro do app.
 
 ### Instalar
-1. Baixe o `Onix-GameHub-win64.zip` nas [Releases](https://github.com/ruan2311/onix-gamehub/releases) (versões `gamehub-pc-vX.Y.Z`).
+1. Baixe o `Onix-GameHub-win64.zip` nas [Releases](https://github.com/ruan2311/onix-gamehub/releases) (o arquivo "Onix GameHub para PC").
 2. Extraia a pasta e abra o **Onix GameHub.exe**.
 3. Se o Windows mostrar *"O Windows protegeu o computador"*, clique em **Mais informações → Executar assim mesmo** (o app ainda não tem assinatura digital).
 

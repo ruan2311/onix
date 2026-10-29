@@ -1,11 +1,13 @@
 // Atualizações do GameHub para PC (Updater.java): procura nas releases do ruan2311/onix-gamehub
-// a mais nova com tag gamehub-pc-vX.Y.Z. Não instala sozinho: "Instalar atualização" abre a
-// página da versão no navegador, com o .zip para baixar.
+// a mais nova com tag gamehub-vX.Y.Z que traga o Onix-GameHub-win64.zip (a mesma release tem os
+// APKs da TV e do celular; uma versão só de Android não conta). Não instala sozinho: "Instalar
+// atualização" abre a página da versão no navegador, com o .zip para baixar.
 'use strict';
 const { net, shell } = require('electron');
 
 const API = 'https://api.github.com/repos/ruan2311/onix-gamehub/releases?per_page=40';
-const TAG = /^gamehub-pc-v(\d{1,4})\.(\d{1,4})\.(\d{1,4})$/;
+const TAG = /^gamehub-v(\d{1,4})\.(\d{1,4})\.(\d{1,4})$/;
+const ZIP = 'Onix-GameHub-win64.zip';
 const CHECK_MS = 6 * 60 * 60 * 1000;
 
 let current = '0.0.0', state = 'none', latest = '', page = '', error = '', checked = 0, store = null, listener = () => { };
@@ -40,7 +42,7 @@ async function check(force) {
     for (const rel of await r.json()) {
       if (rel.draft || rel.prerelease) continue;
       const m = TAG.exec(rel.tag_name || '');
-      if (!m) continue;
+      if (!m || !(rel.assets || []).some(a => a.name === ZIP)) continue;
       const v = m.slice(1).join('.');
       if (!best || newer(v, best.v)) best = { v, url: rel.html_url };
     }
