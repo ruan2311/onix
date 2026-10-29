@@ -55,7 +55,7 @@ svg{display:block}
 .dot{width:.8rem;height:.8rem;border-radius:50%;display:inline-block}
 
 /* Capas */
-.cover{position:relative;border-radius:var(--r);overflow:hidden;background:#140c2c;aspect-ratio:3/4}
+.cover{position:relative;border-radius:var(--r);overflow:hidden;background:#140c2c;aspect-ratio:3/4;width:100%;flex:none}
 .cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#0e0820}
 .cover .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:1.2rem;
   font-weight:700;font-size:1.25rem;line-height:1.2;text-align:center}
@@ -100,6 +100,27 @@ svg{display:block}
 /* Animações desligadas (Configurações → Interface, ou seguindo o Onix). A abertura do GameHub
    toca mesmo assim: é a transição de entrada, leve (uma linha e o logo). */
 html.no-motion :not(.boot):not(.boot *),html.no-motion :not(.boot *)::before,html.no-motion :not(.boot *)::after{transition:none!important;animation:none!important}
+
+/* Celular (html.mobile): tamanho pela menor medida da tela, toque e rolagem com o dedo. */
+html.mobile{font-size:calc(min(100vw, 100vh) / 26)}
+html.mobile .f.focus{transform:none}
+html.mobile:not(.keys) .f.focus::before{display:none}
+html.mobile .scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
+html.mobile .layer .sheet{width:auto;max-width:34rem;margin:0 .8rem;padding:1.4rem 1.2rem;gap:1rem;max-height:90vh;overflow-y:auto;border-radius:1.4rem}
+html.mobile .layer.side .sheet{width:100%;margin:0}
+html.mobile .sheet h2{font-size:1.4rem}
+html.mobile .sheet p{font-size:1rem}
+html.mobile .btn{height:2.9rem;font-size:1rem;padding:0 1.2rem;gap:.5rem}
+html.mobile .btn svg{width:1.2rem;height:1.2rem}
+html.mobile .item{min-height:3.3rem;font-size:1rem;padding:.6rem 1rem;gap:.8rem}
+html.mobile .item svg{width:1.4rem;height:1.4rem}
+html.mobile .item .val{font-size:.9rem}
+html.mobile .item .sub{font-size:.8rem}
+html.mobile .sep{font-size:.75rem;margin:.9rem 0 .1rem .3rem}
+html.mobile .chip{height:2.1rem;font-size:.85rem;padding:0 .8rem}
+html.mobile .chip svg{width:1.1rem;height:1.1rem}
+html.mobile .toast{font-size:1rem;bottom:1.6rem;max-width:92vw;padding:.8rem 1.4rem;text-align:center}
+html.mobile .bar{height:.6rem}
 
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes rise{from{opacity:0;transform:translate(-50%,1rem)}to{opacity:1;transform:translate(-50%,0)}}

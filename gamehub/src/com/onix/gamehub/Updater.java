@@ -104,6 +104,10 @@ final class Updater {
         }
     }
 
+    synchronized String state() {
+        return state;
+    }
+
     synchronized String json() {
         try {
             JSONObject o = new JSONObject();

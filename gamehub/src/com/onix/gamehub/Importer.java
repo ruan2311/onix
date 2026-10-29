@@ -75,7 +75,7 @@ final class Importer {
                 r.put("ok", true).put("dup", true).put("name", existing.optString("name")).put("id", id);
                 return r;
             }
-            if (!Storage.fits(c, size)) return fail(r, "Sem espaço seguro na TV para esse jogo.");
+            if (!Storage.fits(c, size)) return fail(r, "Sem espaço seguro no aparelho para esse jogo.");
 
             String title = lookup(c, console.id, sums[1]);
             if (title == null && skip > 0) title = lookup(c, console.id, sums[2]);
@@ -87,7 +87,7 @@ final class Importer {
             }
             String ext = Consoles.extension(name);
             File dest = new File(Files.roms(c), id + "." + ext);
-            if (!move(rom, dest)) return fail(r, "Não deu para guardar o jogo na TV.");
+            if (!move(rom, dest)) return fail(r, "Não deu para guardar o jogo.");
             rom = null;
 
             JSONObject game = new JSONObject();

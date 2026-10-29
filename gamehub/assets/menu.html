@@ -26,6 +26,15 @@ html,body{background:transparent}
 .slot .lb small{color:var(--mute)}
 .hint{font-size:1.05rem;color:var(--mute);line-height:1.5}
 .hide{display:none}
+/* Celular: o menu ocupa a tela (em pé) ou a metade esquerda (deitado). */
+html.mobile .shade{background:rgba(4,2,10,.9)}
+html.mobile .panel{width:min(100%, 30rem);padding:1.2rem 1rem;gap:1rem}
+html.mobile .head svg{width:2.2rem;height:2.2rem}
+html.mobile .head .t b{font-size:1.15rem;max-height:2.8rem}
+html.mobile .head .t small{font-size:.72rem}
+html.mobile .msg b{font-size:1.05rem}
+html.mobile .msg span,html.mobile .hint{font-size:.85rem}
+html.mobile .slot .lb{font-size:.85rem}
 </style>
 </head>
 <body>
@@ -43,6 +52,7 @@ function refreshInfo() {
   INFO = json(call('info'), INFO);
   LANG = INFO.lang === 'es' ? 'es' : 'pt';
   applyUi(INFO.sounds !== false, INFO.motion !== false);
+  setMobile(INFO.mobile);
 }
 
 function header() {
@@ -95,6 +105,7 @@ function mainList() {
     list.append(item('sliders', t('Opções do emulador'), () => { go('core'); call('coreOptions'); }));
     list.append(item('code', t('Trapaças'), () => go('cheats')));
     list.append(item('pad', t('Atribuir botões'), () => go('buttons'), null, { sub: t('Vale só para este jogo.') }));
+    if (INFO.mobile) list.append(item('sliders', t('Controles na tela'), () => call('editTouch'), null, { sub: t('Arraste os botões e mude o tamanho.') }));
   }
   list.append(item('pad', t('Controles'), () => go('pads'), String((INFO.gamepads || []).length || t('Sem controle'))));
   list.append(item('reset', t('Reiniciar o jogo'), () => ask(t('Reiniciar o jogo') + '?', t('O que não foi salvo no jogo desde o último save se perde.'),

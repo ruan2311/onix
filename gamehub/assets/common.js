@@ -53,6 +53,11 @@ const ES = {
   'Adianta o jogo por baixo dos panos para os botões responderem mais rápido. Pesa o dobro no processador.': 'Adelanta el juego por debajo para que los botones respondan más rápido. Pesa el doble en el procesador.',
   'Velocidade do turbo': 'Velocidad del turbo', 'Botões com turbo': 'Botones con turbo', 'Nenhum': 'Ninguno',
   'Analógico como direcional': 'Analógico como direccional', 'Zona morta do analógico': 'Zona muerta del analógico',
+  'Escolha a pasta onde estão os seus jogos. O GameHub procura também nas subpastas e copia os de NES, Super Nintendo, Game Boy Advance e Mega Drive.': 'Elige la carpeta donde están tus juegos. GameHub también busca en las subcarpetas y copia los de NES, Super Nintendo, Game Boy Advance y Mega Drive.',
+  'Reservado para o sistema': 'Reservado para el sistema', 'O GameHub sempre deixa livre para o sistema 10% da memória do aparelho (no mínimo 768 MB e no máximo 2 GB).': 'GameHub siempre deja libre para el sistema el 10% de la memoria del dispositivo (mínimo 768 MB y máximo 2 GB).',
+  'Controles na tela': 'Controles en pantalla', 'Posição, tamanho e transparência dos botões de toque.': 'Posición, tamaño y transparencia de los botones táctiles.', 'Arraste os botões e mude o tamanho.': 'Arrastra los botones y cambia el tamaño.',
+  'Escolher pasta': 'Elegir carpeta', 'Escolher arquivos': 'Elegir archivos', '{n} arquivos de jogo encontrados': '{n} archivos de juego encontrados',
+  'Nenhum jogo de NES, SNES, GBA ou Mega Drive nessa pasta.': 'No hay juegos de NES, SNES, GBA o Mega Drive en esa carpeta.', '{n} jogos novos na biblioteca': '{n} juegos nuevos en la biblioteca',
   'Atribuir botões': 'Asignar botones', 'OK num botão do console e aperte, no controle, o botão que vai fazer aquilo. Vale só para este jogo.': 'OK en un botón de la consola y presiona, en el control, el botón que hará eso. Vale solo para este juego.',
   'Trocar botões': 'Cambiar botones', 'Aperte o botão no controle…': 'Presiona el botón en el control…',
   'Padrão': 'Predeterminado', 'Restaurar padrão': 'Restaurar predeterminado', 'Desligar o botão': 'Desactivar el botón',
@@ -69,13 +74,15 @@ const ES = {
   'Abrir licença': 'Abrir licencia', 'Fechar': 'Cerrar', 'Novo código': 'Nuevo código', 'Descrição (opcional)': 'Descripción (opcional)', 'Código': 'Código',
   'Os códigos (Game Genie, Action Replay, GameShark…) ligam e desligam na hora, pelo menu do jogo.': 'Los códigos (Game Genie, Action Replay, GameShark…) se activan y desactivan al instante, desde el menú del juego.',
   'Nenhum código ainda.': 'Todavía no hay códigos.', 'Adicionar código': 'Agregar código', 'Apagar código': 'Borrar código',
-  'Nova versão do GameHub: {v}': 'Nueva versión de GameHub: {v}', 'Atualizar': 'Actualizar',
+  'Nova versão do GameHub: {v}': 'Nueva versión de GameHub: {v}', 'Atualização pronta': 'Actualización lista',
+  'A versão {v} do GameHub já foi baixada. Instalar agora? Seus jogos continuam.': 'La versión {v} de GameHub ya se descargó. ¿Instalar ahora? Tus juegos se mantienen.',
+  'Instalar': 'Instalar', 'Depois': 'Después', 'Atualizar': 'Actualizar',
   'Perfil': 'Perfil', 'Modo Infantil': 'Modo Infantil', 'Sair do GameHub': 'Salir de GameHub',
   'Esse tipo de arquivo não é de NES, SNES, GBA ou Mega Drive.': 'Ese tipo de archivo no es de NES, SNES, GBA o Mega Drive.',
   'O .zip não tem nenhum jogo de NES, SNES, GBA ou Mega Drive.': 'El .zip no tiene ningún juego de NES, SNES, GBA o Mega Drive.',
   'O arquivo não parece um jogo desse console.': 'El archivo no parece un juego de esa consola.',
-  'Sem espaço seguro na TV para esse jogo.': 'No hay espacio seguro en la TV para ese juego.',
-  'Não deu para guardar o jogo na TV.': 'No se pudo guardar el juego en la TV.', 'Não deu para ler esse arquivo.': 'No se pudo leer ese archivo.',
+  'Sem espaço seguro no aparelho para esse jogo.': 'No hay espacio seguro en el dispositivo para ese juego.',
+  'Não deu para guardar o jogo.': 'No se pudo guardar el juego.', 'Não deu para ler esse arquivo.': 'No se pudo leer ese archivo.',
   'Arquivo grande demais.': 'Archivo demasiado grande.', 'O envio parou no meio.': 'El envío se detuvo a la mitad.', 'Arquivo sem nome.': 'Archivo sin nombre.',
   // menu do jogo
   'Pausado': 'En pausa', 'Salvar estado': 'Guardar estado', 'Carregar estado': 'Cargar estado', 'Avançar rápido': 'Avance rápido',
@@ -153,7 +160,7 @@ const ICON = {
 };
 const icon = name => svg(ICON[name]);
 // A marca do GameHub, no traço do Onix: o controle em linha branca fina (grade 48x48, como o Saturno).
-const MARK = '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14.5h16a9.5 9.5 0 0 1 9.2 7.1l2.3 8.9a5 5 0 0 1-8.9 4.2L31 30H17l-3.6 4.7a5 5 0 0 1-8.9-4.2l2.3-8.9A9.5 9.5 0 0 1 16 14.5z"/><path d="M15 19.5v6M12 22.5h6"/><circle cx="32.5" cy="20.6" r="1.25" fill="#fff" stroke="none"/><circle cx="35.9" cy="24" r="1.25" fill="#fff" stroke="none"/></svg>';
+const MARK = '<svg viewBox="0 0 32 32" shape-rendering="crispEdges"><path fill="#0a051a" d="M12 7h7v1h-7zM11 8h1v1h-1zM19 8h1v1h-1zM9 9h2v1h-2zM20 9h9v1h-9zM8 10h1v1h-1zM29 10h1v1h-1zM8 11h1v1h-1zM30 11h1v1h-1zM7 12h1v1h-1zM23 12h2v1h-2zM30 12h1v1h-1zM6 13h1v1h-1zM24 13h2v1h-2zM30 13h1v1h-1zM4 14h2v1h-2zM24 14h2v1h-2zM30 14h1v1h-1zM3 15h1v1h-1zM24 15h1v1h-1zM29 15h1v1h-1zM2 16h1v1h-1zM28 16h1v1h-1zM1 17h1v1h-1zM6 17h1v1h-1zM27 17h1v1h-1zM0 18h1v1h-1zM5 18h2v1h-2zM25 18h2v1h-2zM0 19h1v1h-1zM5 19h2v1h-2zM24 19h1v1h-1zM0 20h1v1h-1zM6 20h2v1h-2zM23 20h1v1h-1zM0 21h1v1h-1zM22 21h1v1h-1zM1 22h1v1h-1zM22 22h1v1h-1zM2 23h9v1h-9zM20 23h2v1h-2zM11 24h1v1h-1zM19 24h1v1h-1zM12 25h7v1h-7z"/><path fill="#d6c8ff" d="M12 8h1v1h-1zM14 8h1v1h-1zM11 9h3v1h-3zM10 10h5v1h-5zM16 10h1v1h-1zM9 11h3v1h-3zM13 11h3v1h-3zM8 12h7v1h-7zM16 12h1v1h-1zM7 13h7v1h-7zM15 13h1v1h-1zM7 14h6v1h-6zM7 15h1v1h-1zM9 15h1v1h-1zM8 16h1v1h-1z"/><path fill="#8b6cf0" d="M13 8h1v1h-1zM15 8h2v1h-2zM14 9h4v1h-4zM9 10h1v1h-1zM15 10h1v1h-1zM17 10h2v1h-2zM12 11h1v1h-1zM16 11h2v1h-2zM15 12h1v1h-1zM17 12h2v1h-2zM14 13h1v1h-1zM16 13h2v1h-2zM13 14h4v1h-4zM8 15h1v1h-1zM10 15h3v1h-3zM7 16h1v1h-1zM9 16h2v1h-2zM16 16h1v1h-1zM13 17h1v1h-1zM15 17h1v1h-1zM10 18h3v1h-3zM14 18h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1z"/><path fill="#5438c4" d="M17 8h2v1h-2zM18 9h2v1h-2zM19 10h2v1h-2zM18 11h2v1h-2zM19 12h2v1h-2zM18 13h2v1h-2zM13 15h1v1h-1zM15 15h1v1h-1zM11 16h5v1h-5zM17 16h2v1h-2zM7 17h3v1h-3zM11 17h2v1h-2zM14 17h1v1h-1zM16 17h2v1h-2zM8 18h2v1h-2zM13 18h1v1h-1zM15 18h2v1h-2zM18 18h1v1h-1zM7 19h2v1h-2zM10 19h1v1h-1zM12 19h4v1h-4zM8 20h7v1h-7z"/><path fill="#2d1a78" d="M21 10h1v1h-1zM20 11h2v1h-2zM21 12h1v1h-1zM17 14h2v1h-2zM14 15h1v1h-1zM16 15h2v1h-2zM19 15h3v1h-3zM23 15h1v1h-1zM19 16h2v1h-2zM22 16h1v1h-1zM10 17h1v1h-1zM18 17h2v1h-2zM21 17h1v1h-1zM7 18h1v1h-1zM17 18h1v1h-1zM19 18h2v1h-2zM16 19h2v1h-2zM15 20h1v1h-1zM21 21h1v1h-1zM18 22h1v1h-1zM20 22h1v1h-1zM15 23h1v1h-1zM19 23h1v1h-1zM12 24h1v1h-1zM14 24h1v1h-1zM16 24h1v1h-1zM18 24h1v1h-1z"/><path fill="#3f6e96" d="M22 10h5v1h-5zM22 11h5v1h-5zM25 12h2v1h-2z"/><path fill="#2a80a1" d="M27 10h2v1h-2zM27 11h3v1h-3zM27 12h2v1h-2z"/><path fill="#160c38" d="M22 12h1v1h-1zM20 13h4v1h-4zM19 14h5v1h-5zM18 15h1v1h-1zM22 15h1v1h-1zM21 16h1v1h-1zM23 16h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM18 19h1v1h-1zM23 19h1v1h-1zM21 20h2v1h-2zM18 21h3v1h-3zM15 22h3v1h-3zM19 22h1v1h-1zM21 22h1v1h-1zM11 23h4v1h-4zM16 23h3v1h-3zM13 24h1v1h-1zM15 24h1v1h-1zM17 24h1v1h-1z"/><path fill="#3de1ff" d="M29 12h1v1h-1zM27 13h3v1h-3zM28 14h2v1h-2zM28 15h1v1h-1z"/><path fill="#64c0eb" d="M26 13h1v1h-1zM26 14h2v1h-2zM25 15h3v1h-3zM24 16h4v1h-4zM23 17h4v1h-4zM22 18h3v1h-3z"/><path fill="#7f3874" d="M6 14h1v1h-1zM4 15h3v1h-3zM3 16h4v1h-4zM3 17h3v1h-3zM3 18h2v1h-2zM4 19h1v1h-1z"/><path fill="#942669" d="M2 17h1v1h-1zM1 18h2v1h-2zM1 19h3v1h-3zM1 20h1v1h-1z"/><path fill="#8b9fd7" d="M21 18h1v1h-1zM19 19h4v1h-4zM17 20h4v1h-4zM17 21h1v1h-1z"/><path fill="#3da0c8" d="M27 19h1v1h-1zM26 20h1v1h-1zM29 21h1v1h-1zM28 22h1v1h-1z"/><path fill="#ff3d9a" d="M2 20h2v1h-2zM1 21h3v1h-3zM2 22h2v1h-2z"/><path fill="#d85eae" d="M4 20h2v1h-2zM4 21h7v1h-7zM4 22h7v1h-7z"/><path fill="#b17fc2" d="M16 20h1v1h-1zM11 21h6v1h-6zM11 22h4v1h-4z"/><path fill="#ffffff" d="M27 20h2v1h-2zM27 21h1v1h-1z"/><path fill="#d2f5ff" d="M28 21h1v1h-1z"/></svg>';
 
 /* ---------------- Consoles ---------------- */
 const CONSOLES = [
@@ -224,8 +231,9 @@ function focus(el, quiet) {
   if (focused) focused.classList.remove('focus');
   focused = el;
   el.classList.add('focus');
-  // O destaque "Continuar jogando" aparece inteiro, não só o botão.
-  (el.closest('.hero') || el).scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  // O destaque "Continuar jogando" aparece inteiro, não só o botão. No celular, com o dedo, a
+  // própria pessoa rola: a tela só acompanha o foco quando ela usa setas (controle ou teclado).
+  if (!isMobile() || usingKeys) (el.closest('.hero') || el).scrollIntoView({ block: 'nearest', inline: 'nearest' });
   if (!quiet && el._focus) el._focus();
 }
 function ensureFocus(preferred) {
@@ -267,6 +275,24 @@ function move(dir) {
   return true;
   }
 }
+/* ---------------- Celular ----------------
+   Tocar num item é o mesmo que focar e apertar OK. O contorno do foco só aparece depois de usar
+   setas (controle Bluetooth ou teclado). */
+let usingKeys = false;
+const isMobile = () => document.documentElement.classList.contains('mobile');
+function setMobile(on) { document.documentElement.classList.toggle('mobile', !!on); }
+document.addEventListener('click', e => {
+  const el = e.target.closest ? e.target.closest('.f') : null;
+  if (!el || e.target.tagName === 'INPUT' || !scope().contains(el)) return;
+  e.preventDefault();
+  if (usingKeys) { usingKeys = false; document.documentElement.classList.remove('keys'); }
+  focus(el, true);
+  if (el._act) { sfx('ok'); el._act(); }
+});
+document.addEventListener('keydown', e => {
+  if (!usingKeys && /^Arrow/.test(e.key)) { usingKeys = true; document.documentElement.classList.add('keys'); }
+}, true);
+
 let onBack = null;   // cada página define o que Voltar faz quando não há camada aberta
 document.addEventListener('keydown', e => {
   const k = e.key;

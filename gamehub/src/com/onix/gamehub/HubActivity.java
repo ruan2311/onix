@@ -3,12 +3,15 @@ package com.onix.gamehub;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.WindowInsets;
 import android.webkit.WebView;
+import android.widget.FrameLayout;
 
 import org.json.JSONObject;
 
@@ -26,7 +29,7 @@ import java.util.regex.Pattern;
 public class HubActivity extends Activity implements Gamepads.Listener, UploadServer.Host, Covers.Listener {
 
     private static final Pattern OPEN = Pattern.compile("^(home|console:(nes|snes|gba|md)|(game|resume):[0-9a-f]{16})$");
-    static final int REQ_GAME = 1;
+    static final int REQ_GAME = 1, REQ_FOLDER = 2, REQ_FILES = 3;
 
     WebView web;
     HubBridge bridge;
@@ -34,7 +37,7 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
     UploadServer upload;
     SharedPreferences prefs;
     String profile = "default", profileName = "", lang = "pt", open = "home";
-    boolean kids, fromOnix, direct;
+    boolean kids, fromOnix, direct, autoDownload;
     volatile boolean capture;
     volatile int capturePlayer;
     /** Som de navegação e animações do Onix (null: aberto sem o Onix, ou um Onix antigo). */
@@ -45,6 +48,8 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         super.onCreate(state);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         prefs = getSharedPreferences("hub", MODE_PRIVATE);
+        // Na TV, deitado; no celular, a lista em pé (o jogo gira como a pessoa segurar).
+        setRequestedOrientation(Device.mobile(this) ? ActivityInfo.SCREEN_ORIENTATION_PORTRAIT : ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
         readIntent(getIntent());
 
         web = new WebView(this);
@@ -54,7 +59,29 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         bridge = new HubBridge(this);
         web.addJavascriptInterface(bridge, "Hub");
         web.setFocusable(true);
-        setContentView(web);
+        if (Device.mobile(this)) {
+            // Celular: as telas do GameHub com a barra de status e a de navegação (tela cheia só no
+            // jogo). Desde o Android 15 o app desenha por baixo delas, então a página ganha
+            // margem do tamanho de cada barra.
+            getWindow().clearFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            if (android.os.Build.VERSION.SDK_INT >= 21) {
+                getWindow().setStatusBarColor(Color.rgb(13, 7, 34));
+                getWindow().setNavigationBarColor(Color.rgb(7, 4, 15));
+            }
+            FrameLayout box = new FrameLayout(this);
+            box.setBackgroundColor(Color.rgb(13, 7, 34));
+            box.addView(web, new FrameLayout.LayoutParams(-1, -1));
+            box.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
+                @Override
+                public WindowInsets onApplyWindowInsets(View v, WindowInsets in) {
+                    v.setPadding(in.getSystemWindowInsetLeft(), in.getSystemWindowInsetTop(), in.getSystemWindowInsetRight(), in.getSystemWindowInsetBottom());
+                    return in;
+                }
+            });
+            setContentView(box);
+        } else {
+            setContentView(web);
+        }
         web.requestFocus();
         web.loadUrl(Web.BASE + "hub.html");
 
@@ -71,7 +98,18 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         Updater.get(this).setListener(new Updater.Listener() {
             @Override
             public void changed() {
-                Web.emit(web, "update", Updater.get(HubActivity.this).json());
+                final Updater up = Updater.get(HubActivity.this);
+                // Celular: a versão nova já desce sozinha; o hub só pergunta se pode instalar.
+                if (Device.mobile(HubActivity.this) && !autoDownload && "available".equals(up.state())) {
+                    autoDownload = true;
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            up.download();
+                        }
+                    }, "gamehub-update").start();
+                }
+                Web.emit(web, "update", up.json());
             }
         });
     }
@@ -113,6 +151,23 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         if (direct) startGame(open.substring(7), "resume");
     }
 
+    /** Celular: escolher a pasta dos jogos (ou arquivos soltos) no seletor do Android. */
+    boolean pick(boolean folder) {
+        Intent i;
+        if (folder) {
+            i = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        } else {
+            i = new Intent(Intent.ACTION_OPEN_DOCUMENT).addCategory(Intent.CATEGORY_OPENABLE).setType("*/*")
+                    .putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true);
+        }
+        try {
+            startActivityForResult(i, folder ? REQ_FOLDER : REQ_FILES);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /** Abre o jogo no processo dele (um núcleo travado não derruba o GameHub). */
     boolean startGame(String id, String mode) {
         JSONObject g = Library.game(this, id);
@@ -141,6 +196,21 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
     @Override
     protected void onActivityResult(int req, int result, Intent data) {
         super.onActivityResult(req, result, data);
+        if (req == REQ_FOLDER || req == REQ_FILES) {
+            if (result != RESULT_OK || data == null) return;
+            if (req == REQ_FOLDER && data.getData() != null) {
+                FolderImport.tree(this, data.getData(), this);
+            } else {
+                java.util.List<android.net.Uri> uris = new java.util.ArrayList<android.net.Uri>();
+                if (data.getClipData() != null) {
+                    for (int i = 0; i < data.getClipData().getItemCount(); i++) uris.add(data.getClipData().getItemAt(i).getUri());
+                } else if (data.getData() != null) {
+                    uris.add(data.getData());
+                }
+                if (!uris.isEmpty()) FolderImport.files(this, uris, this);
+            }
+            return;
+        }
         if (req != REQ_GAME) return;
         if (direct) {
             // Entrou direto pelo "Continuar jogando" do Onix: ao sair do jogo, volta para o Onix.
@@ -252,6 +322,7 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
     }
 
     void hideSystemUi() {
+        if (Device.mobile(this)) return;   // no celular, as barras do sistema ficam
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
     }

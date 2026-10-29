@@ -37,6 +37,7 @@ final class MenuBridge {
             o.put("settings", g.settings);
             o.put("gamepads", Gamepads.list(g));
             o.put("sounds", g.sounds);
+            o.put("mobile", g.mobile);
             o.put("motion", g.motion);
             o.put("states", states());
             o.put("cover", new File(Files.covers(g), g.id + ".jpg").isFile());
@@ -164,6 +165,12 @@ final class MenuBridge {
         } catch (Exception ignored) {
         }
         return null;
+    }
+
+    /** Celular: editar o controle na tela (fecha o menu e abre o editor por cima do jogo). */
+    @JavascriptInterface
+    public void editTouch() {
+        g.editPad();
     }
 
     /** Atribuir botões: a próxima tecla apertada vai para o menu (evento "key"). */

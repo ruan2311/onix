@@ -8,8 +8,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.onix.gamehub"
-    android:versionCode="10000"
-    android:versionName="1.0.0">
+    android:versionCode="10100"
+    android:versionName="1.1.0">
 
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
 
@@ -59,7 +59,6 @@
             android:name="com.onix.gamehub.HubActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
             android:windowSoftInputMode="adjustPan">
             <intent-filter>
@@ -69,14 +68,21 @@
             </intent-filter>
         </activity>
 
+        <!-- A orientação vem do código (Device): deitado na TV; no celular, a lista em pé e o jogo
+             do jeito que a pessoa segurar. -->
         <!-- O jogo roda num processo só dele: um núcleo travado não derruba o GameHub. -->
         <activity
             android:name="com.onix.gamehub.GameActivity"
             android:exported="false"
             android:process=":game"
-            android:screenOrientation="landscape"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
             android:windowSoftInputMode="stateAlwaysHidden" />
+
+        <!-- Celular: editar o controle na tela pelas Configurações (sem jogo aberto). -->
+        <activity
+            android:name="com.onix.gamehub.TouchEditActivity"
+            android:exported="false"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode" />
 
         <provider
             android:name="com.onix.gamehub.HubProvider"

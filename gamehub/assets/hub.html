@@ -125,6 +125,76 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .boot,.boot .line,.boot .brand{animation-play-state:paused}
 .boot.go,.boot.go .line,.boot.go .brand{animation-play-state:running}
 @media (prefers-reduced-motion:reduce){.boot{display:none}}
+
+/* ---------------- Celular, em pé ----------------
+   Uma coluna: topo compacto, abas que rolam de lado, páginas que rolam com o dedo. */
+html.mobile .app{padding:.9rem .9rem 0}
+html.mobile header{height:auto;gap:.6rem}
+html.mobile .brand{gap:.6rem}
+html.mobile .brand svg{width:2.2rem;height:2.2rem}
+html.mobile .brand>span{gap:.5rem}
+html.mobile .brand b{font-size:.95rem;letter-spacing:.24em}
+html.mobile .brand small{display:none}
+html.mobile header{flex-wrap:nowrap}
+html.mobile .brand{min-width:0;flex:1}
+html.mobile .brand b{overflow:hidden;text-overflow:ellipsis}
+html.mobile .clock,html.mobile #profileChip,html.mobile .store-chip .mini{display:none}
+html.mobile .right{gap:.4rem}
+html.mobile nav{overflow-x:auto;margin:.7rem -.9rem 0;padding:0 .9rem;scrollbar-width:none}
+html.mobile nav::-webkit-scrollbar{display:none}
+html.mobile nav .tab{height:2.6rem;font-size:1rem;flex:none;padding:0 .8rem}
+html.mobile nav .tab svg{width:1.3rem;height:1.3rem}
+html.mobile main{overflow-y:auto;margin-top:.5rem;-webkit-overflow-scrolling:touch}
+html.mobile .page{position:relative;inset:auto;overflow:visible;padding:.3rem 0 3rem}
+html.mobile .row-title{font-size:1.1rem;margin:1.4rem 0 .6rem}
+html.mobile .row{overflow-x:auto;margin:0 -.9rem;padding:.3rem .9rem;gap:.8rem;scrollbar-width:none}
+html.mobile .row::-webkit-scrollbar{display:none}
+html.mobile .tile{width:7.6rem;gap:.45rem}
+html.mobile .tile .name{font-size:.85rem;max-height:2.2rem}
+html.mobile .hero{flex-wrap:wrap;height:auto;padding:1.1rem;gap:1rem;border-radius:1.3rem}
+html.mobile .hero .poster{height:9.5rem}
+html.mobile .hero .where{display:none}
+html.mobile .hero .info{min-width:12rem;gap:.5rem}
+html.mobile .hero .kicker{font-size:.72rem}
+html.mobile .hero h1{font-size:1.45rem;max-height:none}
+html.mobile .hero .meta{font-size:.85rem}
+html.mobile .hero .acts{flex-wrap:wrap;gap:.6rem;margin-top:.4rem}
+html.mobile .consoles{grid-template-columns:1fr 1fr;gap:.8rem}
+html.mobile .ctile{height:7.4rem;padding:1rem;border-radius:1.2rem}
+html.mobile .ctile svg{width:4.4rem;height:2.8rem}
+html.mobile .ctile b{font-size:1rem}
+html.mobile .ctile small{font-size:.8rem}
+html.mobile .empty{padding:1.4rem;gap:.9rem;border-radius:1.3rem}
+html.mobile .empty h1{font-size:1.4rem}
+html.mobile .empty p{font-size:1rem}
+html.mobile .ghead{flex-wrap:wrap;gap:.6rem;margin:.2rem 0 1rem}
+html.mobile .ghead>span:first-child{width:3.4rem!important}
+html.mobile .ghead h1{font-size:1.4rem}
+html.mobile .ghead .count{font-size:.9rem}
+html.mobile .ghead .sp{flex-basis:100%;height:0}
+html.mobile .grid{grid-template-columns:repeat(3,1fr);gap:1rem .7rem;padding:.2rem 0}
+html.mobile .sheet.gsheet{flex-direction:column;width:auto;max-width:34rem;gap:1rem}
+html.mobile .gsheet .cv{width:7.5rem}
+html.mobile .gsheet h2{font-size:1.4rem}
+html.mobile .gsheet .list{max-height:none}
+html.mobile .settings{flex-direction:column;height:auto;gap:.8rem}
+html.mobile .settings .menu{width:auto;flex-direction:row;overflow-x:auto;margin:0 -.9rem;padding:.2rem .9rem;scrollbar-width:none}
+html.mobile .settings .menu::-webkit-scrollbar{display:none}
+html.mobile .settings .menu .item{min-height:2.6rem;flex:none;white-space:nowrap;padding:.4rem .9rem}
+html.mobile .settings .body{overflow:visible;padding:0}
+html.mobile .settings .body h2{font-size:1.4rem}
+html.mobile .settings .body .hint{font-size:.85rem}
+html.mobile .store .legend{font-size:.85rem;gap:.8rem}
+html.mobile .addm{display:flex;flex-direction:column;gap:1rem}
+html.mobile .addm h1{font-size:1.5rem;font-weight:800}
+html.mobile .addm p{font-size:1rem;color:var(--dim);line-height:1.45}
+html.mobile .addm .acts{display:flex;flex-direction:column;gap:.7rem}
+html.mobile .addm .acts .btn{justify-content:center;height:3.3rem}
+html.mobile .xfer{font-size:.9rem}
+html.mobile .boot .brand svg{width:3.6rem;height:3.6rem}
+html.mobile .boot .brand b{font-size:1.25rem}
+html.mobile .boot .brand small{font-size:.8rem}
+html.mobile .pnum{width:2rem;height:2rem;font-size:1rem}
 </style>
 </head>
 <body>
@@ -181,8 +251,9 @@ function renderChips() {
   const pads = json(call('gamepads'), INFO.gamepads || []);
   const chip = pads.length
     ? h('div', { class: 'chip', title: pads.map(p => p.name).join(', ') }, icon('pad'), String(pads.length))
-    : h('button', { class: 'f chip warn pill', act: () => call('openBluetooth') }, icon('pad'), t('Sem controle'));
-  $('#padChip').replaceChildren(chip);
+    : INFO.mobile ? null   // no celular, o controle na tela já joga
+      : h('button', { class: 'f chip warn pill', act: () => call('openBluetooth') }, icon('pad'), t('Sem controle'));
+  $('#padChip').replaceChildren(...(chip ? [chip] : []));
   const p = $('#profileChip');
   if (INFO.profileName) {
     p.hidden = false;
@@ -408,7 +479,7 @@ function cheatsSheet(g) {
 let pendingPlay = null;
 function play_(g, mode) {
   const pads = json(call('gamepads'), []);
-  if (pads.length || sessionStorage.getItem('remoteOk')) return call('play', g.id, mode);
+  if (INFO.mobile || pads.length || sessionStorage.getItem('remoteOk')) return call('play', g.id, mode);
   pendingPlay = [g, mode];
   openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' },
     h('span', { style: { color: 'var(--cyan)', width: '5rem' } }, icon('pad')),
@@ -425,6 +496,20 @@ function play_(g, mode) {
 /* ---------------- Adicionar jogos ---------------- */
 function addPage() {
   const page = h('section', { class: 'page' });
+  if (INFO.mobile) {
+    // Celular: os jogos vêm de uma pasta do próprio aparelho (o GameHub procura nas subpastas).
+    page.append(h('div', { class: 'addm' },
+      h('h1', { text: t('Adicionar jogos') }),
+      h('p', { text: t('Escolha a pasta onde estão os seus jogos. O GameHub procura também nas subpastas e copia os de NES, Super Nintendo, Game Boy Advance e Mega Drive.') }),
+      h('div', { class: 'acts' },
+        h('button', { class: 'f btn primary', act: () => call('pickGames', true) }, icon('plus'), t('Escolher pasta')),
+        h('button', { class: 'f btn', text: t('Escolher arquivos'), act: () => call('pickGames', false) })),
+      h('p', { text: t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip') }),
+      h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }),
+      h('div', { class: 'xfers', id: 'xfers' }), h('div', { class: 'store', id: 'store' })));
+    setTimeout(() => { drawStore(); drawXfers(); }, 0);
+    return page;
+  }
   uploadInfo = json(call('uploadStart'), { url: '' });
   const qr = uploadInfo.url ? qrSvg(uploadInfo.url) : null;
   const xfers = h('div', { class: 'xfers', id: 'xfers' });
@@ -458,14 +543,14 @@ function drawStore() {
     h('div', { class: 'legend' },
       h('span', null, h('i', { style: { background: 'var(--grad)' } }), t('Jogos') + ' ' + fmtBytes(s.used || 0)),
       h('span', null, h('i', { style: { background: 'rgba(255,255,255,.12)' } }), t('Livre para jogos') + ' ' + fmtBytes(s.available || 0)),
-      h('span', null, h('i', { style: { background: '#7c6fb3' } }), t('Reservado para a TV') + ' ' + fmtBytes(s.reserve || 0))),
-    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t('O GameHub sempre deixa livre para o sistema 10% da memória desta TV (no mínimo 768 MB e no máximo 2 GB).') }));
+      h('span', null, h('i', { style: { background: '#7c6fb3' } }), t(INFO.mobile ? 'Reservado para o sistema' : 'Reservado para a TV') + ' ' + fmtBytes(s.reserve || 0))),
+    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t(INFO.mobile ? 'O GameHub sempre deixa livre para o sistema 10% da memória do aparelho (no mínimo 768 MB e no máximo 2 GB).' : 'O GameHub sempre deixa livre para o sistema 10% da memória desta TV (no mínimo 768 MB e no máximo 2 GB).') }));
 }
 function drawXfers() {
   const el = $('#xfers');
   if (!el) return;
   const items = Object.values(uploading).slice(-6).reverse();
-  if (!items.length) { el.replaceChildren(h('div', { class: 'xfer', style: { color: 'var(--mute)' }, text: t('Aguardando arquivos…') })); return; }
+  if (!items.length) { el.replaceChildren(INFO.mobile ? '' : h('div', { class: 'xfer', style: { color: 'var(--mute)' }, text: t('Aguardando arquivos…') })); return; }
   el.replaceChildren(...items.map(x => {
     const st = x.done ? (x.ok ? h('span', { class: 'ok', text: x.dup ? t('Já estava na biblioteca') : t('Pronto') }) : h('span', { class: 'err', text: t(x.error || '') }))
       : h('span', { text: t('Recebendo') + ' ' + Math.round((x.sent || 0) / (x.size || 1) * 100) + '%' });
@@ -473,9 +558,14 @@ function drawXfers() {
       x.done ? null : h('div', { class: 'bar' }, h('span', { class: 'g', style: { width: Math.round((x.sent || 0) / (x.size || 1) * 100) + '%' } })));
   }));
 }
+let importCount = 0;
 handlers.upload = e => {
   // Errou o código 5 vezes no celular: a TV mostra o código novo.
   if (e.type === 'code') { const el = $('#upCode'); if (el) el.textContent = e.code; return; }
+  // Celular, pasta escolhida: quantos achou e, no fim, quantos entraram.
+  if (e.type === 'scan') { importCount = 0; toast(e.count ? t('{n} arquivos de jogo encontrados', { n: e.count }) : t('Nenhum jogo de NES, SNES, GBA ou Mega Drive nessa pasta.')); return; }
+  if (e.type === 'finished') { if (e.count) toast(t('{n} jogos novos na biblioteca', { n: importCount })); drawStore(); renderStore(); return; }
+  if (e.type === 'done' && e.ok && !e.dup) importCount++;
   const k = e.file || e.name;
   const x = uploading[k] || (uploading[k] = { name: k });
   if (e.type === 'start') Object.assign(x, { size: e.size, sent: 0, done: false });
@@ -590,6 +680,9 @@ function settingsPage() {
       inner.append(h('h2', { text: sections.find(s => s[0] === sec)[1] }), h('div', { class: 'hint', text: sec === 'ui' ? t('Vale para as telas do GameHub e o menu do jogo.') : t('Vale para todos os consoles e jogos.') }));
       const list = h('div', { class: 'list' }, GROUPS[sec].map(k => settingRow('global', k, eff)));
       if (sec === 'pads') {
+        if (INFO.mobile && !INFO.kids) inner.append(h('div', { class: 'list', style: { marginBottom: '1rem' } },
+          h('button', { class: 'f item', act: () => call('editTouch') }, icon('pad'),
+            h('span', { class: 'grow' }, t('Controles na tela'), h('span', { class: 'sub', text: t('Posição, tamanho e transparência dos botões de toque.') })), icon('chev'))));
         inner.append(playersList());
         list.append(h('div', { class: 'sep', text: t('Trocar botões') }));
         for (const c of CONSOLES) list.append(h('button', { class: 'f item', act: () => remapSheet(c.id) }, h('span', { class: 'dot', style: { background: c.color } }), h('span', { class: 'grow', text: t(c.name) }), icon('chev')));
@@ -815,8 +908,18 @@ handlers.back = () => back();
 handlers.open = info => { INFO = Object.assign(INFO, info); if (!String(INFO.open || '').startsWith('resume:')) playBoot(); applyOpen(); };
 handlers.update = up => { if (PAGE === 'settings' && setSection === 'about' && !layers.length) show('settings', true); maybeUpdateBanner(up); };
 
+let askedUpdate = '';
 function maybeUpdateBanner(up) {
-  if (!up || !up.latest || up.state !== 'available' || INFO.fromOnix && INFO.onix) return;
+  if (!up || !up.latest) return;
+  // Celular: a APK baixa sozinha; quando fica pronta, pergunta uma vez por versão nesta sessão.
+  if (INFO.mobile) {
+    if (up.state !== 'ready' || askedUpdate === up.latest || INFO.kids) return;
+    askedUpdate = up.latest;
+    ask(t('Atualização pronta'), t('A versão {v} do GameHub já foi baixada. Instalar agora? Seus jogos continuam.', { v: up.latest }),
+      [[t('Instalar'), () => call('installUpdate')], [t('Depois')]]);
+    return;
+  }
+  if (up.state !== 'available' || INFO.fromOnix && INFO.onix) return;
   toast(t('Nova versão do GameHub: {v}', { v: up.latest }));
 }
 
@@ -827,6 +930,7 @@ onBack = () => {
 
 function applyOpen() {
   LANG = INFO.lang === 'es' ? 'es' : 'pt';
+  setMobile(INFO.mobile);
   applyUiPrefs();
   document.documentElement.lang = LANG === 'es' ? 'es' : 'pt-BR';
   loadLibrary();

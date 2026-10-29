@@ -64,6 +64,11 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     private JSONObject players;   // controle 1 e 2 definidos nas Configurações
     boolean sounds = true, motion = true;
     private final int[] keyBits = new int[4], hatBits = new int[4], stickBits = new int[4];
+    /* Celular: controle na tela (jogador 1). Some com um controle de verdade conectado. */
+    private TouchPad pad;
+    private int touchBits;
+    private boolean touchFast;
+    boolean mobile;
     private boolean ffHold, rwHold, selectDown, startDown;
     private final SparseIntArray remap = new SparseIntArray();
 
@@ -116,6 +121,45 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         gl.setRenderer(new Renderer());
         gl.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         root.addView(gl, new FrameLayout.LayoutParams(-1, -1));
+        mobile = Device.mobile(this);
+        if (mobile) {
+            // Em pé ou deitado, como a pessoa segurar o celular.
+            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
+            pad = new TouchPad(this, console.id, new TouchPad.Listener() {
+                @Override
+                public void padButtons(int bits) {
+                    touchBits = bits;
+                    push(0);
+                }
+
+                @Override
+                public void padFastForward(boolean on) {
+                    touchFast = on;
+                    Native.setHotkeys(ffHold || touchFast, rwHold);
+                }
+
+                @Override
+                public void padMenu() {
+                    openMenu("");
+                }
+
+                @Override
+                public void padEditDone() {
+                    // Saiu do editor (aberto pelo menu): volta ao jogo.
+                    if (!menuOpen) Native.setPaused(false);
+                }
+            });
+            pad.setSpanish("es".equals(lang));
+            root.addView(pad, new FrameLayout.LayoutParams(-1, -1));
+            root.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View v, int l, int t, int r, int b, int ol, int ot, int or, int ob) {
+                    if (r - l != or - ol || b - t != ob - ot) layoutPad();
+                }
+            });
+        } else {
+            setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+        }
 
         separateWebData();
         menu = new WebView(this);
@@ -137,6 +181,37 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     }
 
     private Gamepads gamepads;
+
+    /**
+     * Celular em pé: o jogo em cima (largura toda, na proporção 4:3) e o controle embaixo.
+     * Deitado, ou com um controle de verdade: o jogo na tela toda (o controle fica por cima).
+     */
+    private void layoutPad() {
+        if (pad == null) return;
+        View root = (View) gl.getParent();
+        int w = root.getWidth(), h = root.getHeight();
+        boolean show = Gamepads.count() == 0 || Device.padAlways();
+        pad.setVisibility(show ? View.VISIBLE : View.GONE);
+        if (!show) pad.release();
+        FrameLayout.LayoutParams g = (FrameLayout.LayoutParams) gl.getLayoutParams();
+        FrameLayout.LayoutParams p = (FrameLayout.LayoutParams) pad.getLayoutParams();
+        if (show && h > w) {
+            int gh = Math.min(w * 3 / 4, h / 2);
+            int top = Math.max(0, (h / 2 - gh) / 3);
+            g.height = gh;
+            g.topMargin = top;
+            g.gravity = android.view.Gravity.TOP;
+            p.height = h - gh - top;
+            p.topMargin = gh + top;
+        } else {
+            g.height = -1;
+            g.topMargin = 0;
+            p.height = -1;
+            p.topMargin = 0;
+        }
+        gl.setLayoutParams(g);
+        pad.setLayoutParams(p);
+    }
 
     private TextView label(int gravity) {
         TextView t = new TextView(this);
@@ -375,6 +450,21 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         Web.emit(menu, "open", Web.quote(reason == null ? "" : reason));
     }
 
+    /** Menu → Controles na tela: fecha o menu e abre o editor, com o jogo pausado. */
+    void editPad() {
+        if (pad == null) return;
+        ui.post(new Runnable() {
+            @Override
+            public void run() {
+                menuOpen = false;
+                menu.setVisibility(View.GONE);
+                pad.setVisibility(View.VISIBLE);
+                Native.setPaused(true);
+                pad.setEditing(true);
+            }
+        });
+    }
+
     void closeMenu() {
         if (failed) {
             quit();
@@ -500,6 +590,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
 
     @Override
     public void gamepadsChanged(int added, int removed) {
+        if (pad != null) layoutPad();
         if (added >= 0) {
             InputDevice d = InputDevice.getDevice(added);
             toast(tr("Controle conectado: ", "Control conectado: ") + (d != null ? Gamepads.name(d) : ""));
@@ -606,6 +697,15 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         boolean down = e.getAction() == KeyEvent.ACTION_DOWN;
         if (e.getAction() == KeyEvent.ACTION_MULTIPLE) return true;
         if (code == KeyEvent.KEYCODE_BACK || code == KeyEvent.KEYCODE_BUTTON_MODE || code == KeyEvent.KEYCODE_MENU || code == KeyEvent.KEYCODE_ESCAPE) {
+            if (pad != null && pad.isEditing()) {
+                // Voltar no editor: guarda e volta ao jogo (como Concluir).
+                if (!down) {
+                    pad.setEditing(false);
+                    Native.setPaused(false);
+                    layoutPad();
+                }
+                return true;
+            }
             if (!down && e.getRepeatCount() == 0) openMenu("");
             return true;
         }
@@ -695,7 +795,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     }
 
     private void push(int port) {
-        Native.setButtons(port, keyBits[port] | hatBits[port] | stickBits[port]);
+        Native.setButtons(port, keyBits[port] | hatBits[port] | stickBits[port] | (port == 0 ? touchBits : 0));
     }
 
     private void releaseAll() {
@@ -706,6 +806,9 @@ public class GameActivity extends Activity implements Gamepads.Listener {
             Native.setAnalog(p, 1, 0, 0);
         }
         ffHold = rwHold = selectDown = startDown = false;
+        touchBits = 0;
+        touchFast = false;
+        if (pad != null) pad.release();
         Native.setHotkeys(false, false);
     }
 

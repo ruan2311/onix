@@ -40,6 +40,7 @@ final class HubBridge {
             o.put("onixSound", a.onixSound);
             o.put("onixMotion", a.onixMotion);
             o.put("abi", android.os.Build.SUPPORTED_ABIS.length > 0 ? android.os.Build.SUPPORTED_ABIS[0] : "");
+            o.put("mobile", Device.mobile(a));
             return o.toString();
         } catch (Exception e) {
             return "{}";
@@ -217,6 +218,32 @@ final class HubBridge {
     @JavascriptInterface
     public String gamepads() {
         return Gamepads.list(a).toString();
+    }
+
+    /** Celular: editar o controle na tela (posição, tamanho e transparência). */
+    @JavascriptInterface
+    public boolean editTouch() {
+        if (a.kids) return false;
+        a.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                a.startActivity(new android.content.Intent(a, TouchEditActivity.class).putExtra("lang", a.lang));
+            }
+        });
+        return true;
+    }
+
+    /** Celular: adicionar jogos de uma pasta (folder) ou de arquivos soltos. */
+    @JavascriptInterface
+    public boolean pickGames(final boolean folder) {
+        if (a.kids) return false;
+        a.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                a.pick(folder);
+            }
+        });
+        return true;
     }
 
     /** Controle 1 e 2 definidos: {"1": {"name", "connected"}, "2": ...}. */
