@@ -175,6 +175,7 @@ flag('vignette', false);
 flag('frameBlend', false);
 choice('backdrop', 'ambient', 'ambient', 'black', 'glass');
 flag('fullscreen', false);
+flag('gameFullscreen', false);   // tela cheia só enquanto o jogo está aberto
 const CORE_KEY = /^[A-Za-z0-9_.-]{1,80}$/;
 
 const config = () => readJson(p('config.json'), {});

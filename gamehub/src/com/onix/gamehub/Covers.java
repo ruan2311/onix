@@ -14,9 +14,19 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
+import java.net.URLDecoder;
 import java.net.URLEncoder;
+import java.text.Normalizer;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -32,6 +42,9 @@ final class Covers {
 
     interface Listener {
         void coverReady(String id);
+
+        /** Fim do "Atualizar capas": quantas capas vieram, de quantos jogos. */
+        void coversRefreshed(int updated, int total);
     }
 
     private static final String HOST = "https://thumbnails.libretro.com/";
@@ -41,6 +54,7 @@ final class Covers {
     private static final long RETRY_MS = 12 * 60 * 60 * 1000L;
     private static final ExecutorService POOL = Executors.newSingleThreadExecutor();
     static volatile Listener listener;
+    private static volatile boolean refreshing;
 
     private Covers() {
     }
@@ -82,7 +96,7 @@ final class Covers {
                 if (console == null) return;
                 boolean ok = false;
                 try {
-                    byte[] png = download(HOST + enc(console.thumbs) + "/Named_Boxarts/" + enc(safe(game.optString("title"))) + ".png");
+                    byte[] png = boxart(console, game);
                     ok = png != null && save(png, new File(Files.covers(c), id + ".jpg"));
                     if (ok) Library.update(c, id, new JSONObject().put("coverFit", FIT).put("coverTried", System.currentTimeMillis()));
                 } catch (Exception ignored) {
@@ -93,6 +107,47 @@ final class Covers {
         });
     }
 
+    /**
+     * Botão "Atualizar capas": baixa de novo a capa de todos os jogos, inclusive as que já tinham
+     * desistido (3 tentativas). Quem não achar capa fica com a que tinha. Devolve quantos jogos
+     * entram (-1 se já estiver atualizando); no fim avisa coversRefreshed.
+     */
+    static int refreshAll(Context ctx) {
+        if (refreshing) return -1;
+        final Context c = ctx.getApplicationContext();
+        final JSONArray g = Library.games(c);
+        if (g.length() == 0) return 0;
+        refreshing = true;
+        POOL.execute(new Runnable() {
+            @Override
+            public void run() {
+                int updated = 0;
+                try {
+                    for (int i = 0; i < g.length(); i++) {
+                        JSONObject game = g.optJSONObject(i);
+                        Consoles.Console console = game == null ? null : Consoles.byId(game.optString("console"));
+                        if (console == null) continue;
+                        String id = game.optString("id");
+                        try {
+                            byte[] png = boxart(console, game);
+                            if (png != null && save(png, new File(Files.covers(c), id + ".jpg"))) {
+                                updated++;
+                                Library.update(c, id, new JSONObject().put("cover", true).put("coverFit", FIT)
+                                        .put("coverTries", 0).put("coverTried", System.currentTimeMillis()));
+                            }
+                        } catch (Exception ignored) {
+                        }
+                    }
+                } finally {
+                    refreshing = false;
+                }
+                Listener l = listener;
+                if (l != null) l.coversRefreshed(updated, g.length());
+            }
+        });
+        return g.length();
+    }
+
     private static void fetch(Context c, String id) {
         JSONObject game = Library.game(c, id);
         if (game == null || game.optBoolean("cover")) return;
@@ -100,7 +155,7 @@ final class Covers {
         if (console == null) return;
         boolean ok = false;
         try {
-            byte[] png = download(HOST + enc(console.thumbs) + "/Named_Boxarts/" + enc(safe(game.optString("title"))) + ".png");
+            byte[] png = boxart(console, game);
             if (png != null) ok = save(png, new File(Files.covers(c), id + ".jpg"));
         } catch (Exception ignored) {
         }
@@ -117,6 +172,77 @@ final class Covers {
         if (ok && l != null) l.coverReady(id);
     }
 
+    /** A caixa do jogo pelo nome exato ou, sem ela, pelo nome parecido (findByName). */
+    private static byte[] boxart(Consoles.Console console, JSONObject game) throws Exception {
+        String dir = HOST + enc(console.thumbs) + "/Named_Boxarts/";
+        byte[] png = download(dir + enc(safe(game.optString("title"))) + ".png");
+        if (png != null) return png;
+        String other = findByName(console, game);
+        return other == null ? null : download(dir + enc(other) + ".png");
+    }
+
+    /*
+     * Sem capa com o nome exato (outra região, nome fora do No-Intro, jogo renomeado): procura na
+     * lista de capas do console pelo nome sem região e versão. A lista vem uma vez por abertura;
+     * tudo roda na fila única (POOL), então o mapa não precisa de trava.
+     */
+    private static final int LIST_BYTES = 8 * 1024 * 1024;
+    private static final Map<String, List<String>> LISTS = new HashMap<String, List<String>>();
+    private static final Pattern HREF = Pattern.compile("href=\"([^\"?/]+)\\.png\"");
+    private static final Pattern TAGS = Pattern.compile("\\s*[(\\[][^)\\]]*[)\\]]");
+    private static final Pattern BAD = Pattern.compile("(?i)\\((?:[^)]*\\b)?(beta|proto|demo|sample|hack|pirate|unl|kiosk|program|aftermarket)\\b");
+    private static final Pattern REGION = Pattern.compile("\\(([^)]*)\\)");
+    private static final String[] REGIONS = {"usa", "world", "europe", "brazil", "japan"};
+
+    private static List<String> listOf(Consoles.Console console) throws Exception {
+        List<String> names = LISTS.get(console.id);
+        if (names != null) return names;
+        byte[] html = download(HOST + enc(console.thumbs) + "/Named_Boxarts/", LIST_BYTES);
+        if (html == null) return null;
+        names = new ArrayList<String>();
+        Matcher m = HREF.matcher(new String(html, "UTF-8"));
+        while (m.find()) {
+            try {
+                // O "+" vem sem codificar na lista; o URLDecoder o trocaria por espaço.
+                names.add(URLDecoder.decode(m.group(1).replace("&amp;", "&").replace("+", "%2B"), "UTF-8"));
+            } catch (Exception ignored) {
+            }
+        }
+        LISTS.put(console.id, names);
+        return names;
+    }
+
+    /** O nome para comparar: sem (região), [versão], acentos, "The" e pontuação. */
+    static String base(String s) {
+        s = Normalizer.normalize(TAGS.matcher(s).replaceAll(""), Normalizer.Form.NFD).replaceAll("[\\u0300-\\u036f]", "").toLowerCase(java.util.Locale.ROOT);
+        return s.replaceAll("^the\\s+|,\\s*the\\b", "").replaceAll("[^a-z0-9]", "");
+    }
+
+    private static String region(String n) {
+        Matcher m = REGION.matcher(n);
+        return m.find() ? m.group(1).toLowerCase(java.util.Locale.ROOT) : "";
+    }
+
+    /** A melhor capa com o mesmo nome: a mesma região do jogo, depois EUA, Mundo, Europa, Brasil, Japão. */
+    private static String findByName(Consoles.Console console, JSONObject game) throws Exception {
+        List<String> names = listOf(console);
+        if (names == null) return null;
+        String title = game.optString("title");
+        Set<String> keys = new HashSet<String>();
+        for (String k : new String[]{base(title), base(game.optString("name"))}) if (k.length() > 0) keys.add(k);
+        String want = region(title), best = null;
+        double bestScore = Double.MAX_VALUE;
+        for (String n : names) {
+            if (!keys.contains(base(n))) continue;
+            String r = region(n);
+            int i = REGIONS.length;
+            for (int k = 0; k < REGIONS.length; k++) if (r.contains(REGIONS[k])) { i = k; break; }
+            double score = (BAD.matcher(n).find() ? 100 : 0) + (want.length() > 0 && r.equals(want) ? 0 : 2 + i * 2) + n.length() / 1000.0;
+            if (score < bestScore) { bestScore = score; best = n; }
+        }
+        return best;
+    }
+
     /** O repositório troca &*\/:`<>?\| por _ nos nomes dos arquivos. */
     static String safe(String title) {
         return title.replaceAll("[&*/:`<>?\\\\|\"]", "_");
@@ -127,6 +253,10 @@ final class Covers {
     }
 
     private static byte[] download(String link) throws Exception {
+        return download(link, MAX_BYTES);
+    }
+
+    private static byte[] download(String link, int max) throws Exception {
         HttpsURLConnection c = (HttpsURLConnection) new URL(link).openConnection();
         c.setConnectTimeout(10000);
         c.setReadTimeout(20000);
@@ -139,7 +269,7 @@ final class Covers {
             byte[] buf = new byte[32 * 1024];
             int n;
             while ((n = in.read(buf)) > 0) {
-                if (o.size() + n > MAX_BYTES) return null;
+                if (o.size() + n > max) return null;
                 o.write(buf, 0, n);
             }
             in.close();

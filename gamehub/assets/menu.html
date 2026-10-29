@@ -101,6 +101,12 @@ function mainList() {
   const ff = item('ff', t('Avançar rápido'), null, INFO.ff ? t('Ligado') : t('Desligado'), { on: INFO.ff });
   ff._act = () => { INFO.ff = !INFO.ff; call('setFastForward', INFO.ff); call('resume'); };
   list.append(ff);
+  if (INFO.pc) {
+    const on = !!(INFO.settings || {}).gameFullscreen;
+    const full = item('full', t('Tela cheia ao jogar'), null, on ? t('Ligado') : t('Desligado'), { on });
+    full._act = () => { call('setGameFullscreen', !on); refreshInfo(); draw(focusedIndex()); };
+    list.append(full);
+  }
   if (!INFO.kids) {
     list.append(item('img', t('Imagem'), () => go('image'), null, { sub: t('Vale só para este jogo.') }));
     list.append(item('sliders', t('Opções do emulador'), () => { go('core'); call('coreOptions'); }));
@@ -288,6 +294,8 @@ handlers.gamepads = list => {
   if (!layers.length) draw(focusedIndex());
 };
 handlers.back = () => back();
+// Mouse: clicar fora do painel (em cima do jogo) volta, como Voltar.
+$('.shade').addEventListener('click', () => { if (!layers.length) back(); });
 refreshInfo();
 </script>
 </body>

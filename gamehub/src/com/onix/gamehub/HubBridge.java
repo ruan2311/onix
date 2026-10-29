@@ -328,6 +328,11 @@ final class HubBridge {
     }
 
     @JavascriptInterface
+    public int refreshCovers() {
+        return a.kids ? 0 : Covers.refreshAll(a);
+    }
+
+    @JavascriptInterface
     public void exit() {
         a.runOnUiThread(new Runnable() {
             @Override

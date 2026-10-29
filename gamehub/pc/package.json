@@ -1,7 +1,7 @@
 {
   "name": "onix-gamehub",
   "productName": "Onix GameHub",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Onix GameHub para PC: jogos clássicos (NES, SNES, GBA e Mega Drive) no visual do Onix",
   "main": "src/main.js",
   "private": true,

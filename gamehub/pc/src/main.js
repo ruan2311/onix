@@ -32,6 +32,8 @@ const CORES = pick(path.join(HERE, 'cores'), path.join(HERE, 'build', 'cores'));
 const VERSION = require(path.join(HERE, 'package.json')).version;
 
 let win = null, game = null, logFile = null;
+// Tela cheia ao jogar: true quando foi o jogo que pôs a janela em tela cheia (sai dela ao fechar).
+let gameMadeFull = false;
 function log(...parts) {
   const line = new Date().toISOString() + ' ' + parts.map(x => (x instanceof Error ? x.stack : String(x))).join(' ') + '\n';
   try { fs.appendFileSync(logFile, line); } catch { /* sem disco */ }
@@ -124,6 +126,7 @@ const HUB = {
   checkUpdate: () => { updater.check(true); return true; },
   installUpdate: () => { updater.open(); return true; },
   fullscreen: () => { if (win) win.setFullScreen(!win.isFullScreen()); return true; },
+  refreshCovers: () => covers.refreshAll(),
   exit: () => false,   // no PC, sair é fechar a janela
 };
 
@@ -192,7 +195,17 @@ function openGame(id, mode) {
   game.webContents.on('render-process-gone', (_, d) => { log('[jogo]', d.reason); closeGame(); });
   game.webContents.on('console-message', (e) => { if (e.level === 'error') log('[jogo]', e.message); });
   game.webContents.focus();
+  if (store.effective('snes').gameFullscreen) enterGameFullscreen();
   return true;
+}
+function enterGameFullscreen() {
+  if (!win || win.isFullScreen()) return;
+  gameMadeFull = true;
+  win.setFullScreen(true);
+}
+function leaveGameFullscreen() {
+  if (gameMadeFull && win && !store.effective('snes').fullscreen) win.setFullScreen(false);
+  gameMadeFull = false;
 }
 function closeGame() {
   if (!game) return;
@@ -200,6 +213,7 @@ function closeGame() {
   game = null;
   win.contentView.removeChildView(g);
   g.webContents.close();
+  leaveGameFullscreen();
   win.webContents.focus();
   emit('library');
 }
@@ -232,6 +246,12 @@ const GAME = {
   saveOptions: (c, json) => !!store.consoleById(c) && typeof json === 'string' && json.length < 512 * 1024 && store.write(store.p('options-' + c + '-' + lang() + '.json'), json),
   playersSaved: () => JSON.stringify(store.players()),
   fullscreen: () => { if (win) win.setFullScreen(!win.isFullScreen()); return true; },
+  setGameFullscreen: on => {
+    const done = store.setConfig('global', 'gameFullscreen', JSON.stringify(!!on));
+    if (done && on) enterGameFullscreen();
+    else if (done) leaveGameFullscreen();
+    return done;
+  },
   quit: (id, seconds) => { if (ok(id) && seconds > 5) store.recordPlay(id, seconds); setImmediate(closeGame); return true; },
 };
 // Bytes (ROM, estados, memória do cartucho): pedidos assíncronos.
@@ -294,7 +314,7 @@ app.whenReady().then(() => {
   ipcMain.handle('onix:gameAsync', (_, name, args) => (Object.prototype.hasOwnProperty.call(GAME_ASYNC, name) ? GAME_ASYNC[name](...(Array.isArray(args) ? args : [])) : null));
   ipcMain.on('onix:log', (_, msg) => log('[página]', String(msg).slice(0, 2000)));
 
-  covers.setListener(id => emit('cover', id));
+  covers.setListener(id => emit('cover', id), r => emit('covers', r));
   updater.init(VERSION, store, state => emit('update', state));
   createWindow();
   win.webContents.once('did-finish-load', () => {

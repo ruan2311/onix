@@ -19,6 +19,8 @@ nav .tab.focus{background:rgba(255,255,255,.14);color:var(--ink)}
 .store-chip .mini{width:3.2rem;height:.45rem;border-radius:99rem;background:rgba(255,255,255,.12);overflow:hidden;display:block}
 .store-chip .mini i{display:block;height:100%;background:var(--grad)}
 .store-chip.low{color:#ffd27a;border-color:rgba(255,210,122,.35)}
+.covers-chip.busy svg{animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(-360deg)}}
 .clock{font-size:1.4rem;font-weight:600;color:var(--dim);text-align:right}
 .right{flex:none}
 main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
@@ -109,21 +111,48 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .pnum{flex:none;width:2.4rem;height:2.4rem;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.2rem;background:var(--grad);color:#14082c}
 .pnum.big{width:4.4rem;height:4.4rem;font-size:2.2rem}
 
-/* Abertura: a tela "liga" como um console */
+/* Abertura (2,4 s): uma linha de luz cruza a tela e "liga" a imagem como numa TV antiga, a marca
+   surge girando com um anel de energia, as letras sobem uma a uma, um traço neon passa embaixo e
+   tudo se abre para o hub. Só transform e opacity: leve até em TV lenta. */
 .boot{position:fixed;inset:0;z-index:100;background:#000;display:flex;align-items:center;justify-content:center;pointer-events:none;
-  animation:bootout .5s ease .9s forwards}
-.boot .line{position:absolute;left:50%;top:50%;height:.25rem;width:0;background:var(--grad);transform:translate(-50%,-50%);
-  box-shadow:0 0 2rem var(--pink);animation:bootline .45s ease forwards}
-.boot .brand{opacity:0;animation:bootlogo .5s ease .35s forwards}
-.boot .brand svg{width:6rem;height:6rem}
+  overflow:hidden;animation:bootout .5s cubic-bezier(.4,0,.2,1) 1.9s forwards}
+.boot .glow{position:absolute;inset:0;opacity:0;background:radial-gradient(48% 42% at 50% 50%,rgba(139,108,240,.34),rgba(255,61,154,.08) 50%,transparent 76%);
+  animation:bootglow 1.3s ease .45s forwards}
+.boot .line{position:absolute;left:12%;right:12%;top:50%;height:.25rem;margin-top:-.125rem;background:var(--grad);transform:scaleX(0);
+  box-shadow:0 0 1.6rem rgba(255,61,154,.7),0 0 3rem rgba(61,225,255,.45);
+  animation:bootline .6s cubic-bezier(.65,0,.25,1) forwards,bootfade .2s ease .55s forwards}
+.boot .flash{position:absolute;left:0;right:0;top:50%;height:70vh;margin-top:-35vh;opacity:0;transform:scaleY(.004);
+  background:radial-gradient(50% 50% at 50% 50%,rgba(255,236,250,.42),rgba(255,61,154,.22) 22%,rgba(139,108,240,.18) 45%,rgba(61,225,255,.06) 62%,transparent 74%);
+  animation:bootflash .55s cubic-bezier(.2,.8,.2,1) .48s forwards}
+.boot .brand{position:relative;gap:1.6rem;animation:bootbrandout .3s cubic-bezier(.4,0,1,1) 1.72s forwards}
+@keyframes bootbrandout{to{opacity:0;transform:scale(1.12)}}
+.boot .mk{position:relative;flex:none;display:block}
+.boot .mk svg{width:6rem;height:6rem;opacity:0;transform:scale(.4) rotate(-20deg);animation:bootmark .75s cubic-bezier(.2,1.5,.4,1) .55s forwards}
+.boot .mk .ring{position:absolute;inset:-45%;border-radius:50%;border:.2rem solid rgba(61,225,255,.85);opacity:0;transform:scale(.3);
+  box-shadow:0 0 1.4rem rgba(61,225,255,.5),inset 0 0 1.4rem rgba(255,61,154,.35);animation:bootring .9s cubic-bezier(.1,.6,.3,1) .62s forwards}
+.boot .brand>span{position:relative}
 .boot .brand b{font-size:2.4rem}
-.boot .brand small{font-size:1.3rem}
-@keyframes bootline{0%{width:0}60%{width:70%;height:.25rem}100%{width:70%;height:0;opacity:0}}
-@keyframes bootlogo{from{opacity:0;transform:scale(.92)}to{opacity:1;transform:none}}
-@keyframes bootout{to{opacity:0;visibility:hidden}}
+.boot .brand b i{display:inline-block;font-style:normal;opacity:0;transform:translateY(.8em);
+  animation:bootletter .55s cubic-bezier(.2,.9,.3,1.25) forwards;animation-delay:calc(.8s + var(--i) * .045s)}
+.boot .brand small{font-size:1.3rem;opacity:0;transform:translateX(-.8rem);animation:bootsub .5s ease 1.35s forwards}
+.boot .brand .bar{position:absolute;left:0;right:0;bottom:-1rem;height:.2rem;border-radius:9rem;background:var(--grad);transform:scaleX(0);transform-origin:left;
+  box-shadow:0 0 1rem rgba(255,61,154,.6);animation:bootbar .8s cubic-bezier(.65,0,.25,1) 1.2s forwards}
+@keyframes bootline{0%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@keyframes bootflash{0%{opacity:0;transform:scaleY(.004)}25%{opacity:1}100%{opacity:0;transform:scaleY(1)}}
+@keyframes bootglow{0%{opacity:0}100%{opacity:1}}
+@keyframes bootmark{0%{opacity:0;transform:scale(.4) rotate(-20deg)}60%{opacity:1}100%{opacity:1;transform:none}}
+@keyframes bootring{0%{opacity:0;transform:scale(.3)}25%{opacity:1}100%{opacity:0;transform:scale(1.7)}}
+@keyframes bootletter{to{opacity:1;transform:none}}
+@keyframes bootsub{to{opacity:1;transform:none}}
+@keyframes bootbar{0%{transform:scaleX(0);opacity:1}70%{transform:scaleX(1);opacity:1}100%{transform:scaleX(1);opacity:.55}}
+@keyframes bootout{0%{opacity:1;transform:none}100%{opacity:0;transform:scale(1.08);visibility:hidden}}
+@keyframes bootfade{to{opacity:0}}   /* a linha some quando a imagem "liga" */
 /* Só começa depois do primeiro quadro na tela (classe "go"): numa TV lenta, o começo não se perde. */
-.boot,.boot .line,.boot .brand{animation-play-state:paused}
-.boot.go,.boot.go .line,.boot.go .brand{animation-play-state:running}
+.boot,.boot *{animation-play-state:paused!important}
+.boot.go,.boot.go *{animation-play-state:running!important}
+/* Enquanto a abertura toca, as animações do hub esperam (disputavam a placa de vídeo e a
+   abertura engasgava); elas começam quando a abertura se desfaz. */
+html.booting.pc body::before,html.booting .page,html.booting .row .tile{animation-play-state:paused}
 @media (prefers-reduced-motion:reduce){.boot{display:none}}
 
 /* ---------------- PC ----------------
@@ -136,6 +165,8 @@ html.pc body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-eve
 @keyframes pcAurora{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(4%,-3%) rotate(3deg)}100%{transform:translate(-3%,4%) rotate(-2deg)}}
 html.pc .page{overflow-y:auto;scrollbar-width:none;animation:pcPage .5s cubic-bezier(.2,.8,.2,1)}
 html.pc .page::-webkit-scrollbar{display:none}
+/* Configurações: o menu e o conteúdo rolam com a roda do mouse (na TV, só o foco rola). */
+html.pc .settings .menu,html.pc .settings .body{overflow-y:auto}
 @keyframes pcPage{from{opacity:0;transform:translateY(1.4rem) scale(.985)}}
 html.pc .tile,html.pc .ctile,html.pc .btn,html.pc .tab{transition:transform .3s cubic-bezier(.2,.9,.3,1.25),box-shadow .3s,background-color .2s,color .2s}
 html.pc .tile:hover{transform:translateY(-.4rem) scale(1.03);z-index:2}
@@ -227,9 +258,12 @@ html.mobile .addm p{font-size:1rem;color:var(--dim);line-height:1.45}
 html.mobile .addm .acts{display:flex;flex-direction:column;gap:.7rem}
 html.mobile .addm .acts .btn{justify-content:center;height:3.3rem}
 html.mobile .xfer{font-size:.9rem}
-html.mobile .boot .brand{flex:none;max-width:92vw}   /* a marca do topo estica (flex:1); a da abertura fica no centro */
+html.mobile .boot .brand{flex:none;max-width:92vw;flex-direction:column;gap:1.6rem}   /* a marca do topo estica (flex:1); a da abertura fica no centro */
+html.mobile .boot .brand>span{flex-direction:column;align-items:center;gap:.5rem}   /* em pé: a marca em cima, o nome embaixo (o anel cabia mal ao lado) */
+html.mobile .boot .brand b{overflow:visible}
+html.mobile .boot .brand .bar{bottom:-.8rem}
 html.mobile .boot .brand small{display:inline}
-html.mobile .boot .brand svg{width:3.6rem;height:3.6rem}
+html.mobile .boot .brand svg{width:4.6rem;height:4.6rem}
 html.mobile .boot .brand b{font-size:1.25rem}
 html.mobile .boot .brand small{font-size:.8rem}
 html.mobile .pnum{width:2rem;height:2rem;font-size:1rem}
@@ -237,11 +271,12 @@ html.mobile .pnum{width:2rem;height:2rem;font-size:1rem}
 </head>
 <body>
 <div class="bg"></div>
-<div class="boot" id="boot"><div class="line"></div><div class="brand" id="bootBrand"></div></div>
+<div class="boot" id="boot"><div class="glow"></div><div class="flash"></div><div class="line"></div><div class="brand" id="bootBrand"></div></div>
 <div class="app">
   <header>
     <div class="brand" id="brand"></div>
     <div class="right">
+      <div id="coversChip"></div>
       <div id="storeChip"></div>
       <div id="padChip"></div>
       <div class="chip" id="profileChip" hidden></div>
@@ -286,6 +321,9 @@ function renderNav() {
 }
 function renderChips() {
   renderStore();
+  // Atualizar capas, ao lado do armazenamento (o ícone gira enquanto baixa).
+  $('#coversChip').replaceChildren(...(INFO.kids ? [] : [h('button', { class: 'f chip pill covers-chip' + (coversBusy ? ' busy' : ''),
+    title: t('Atualizar capas'), 'aria-label': t('Atualizar capas'), act: refreshCovers }, icon('reset'))]));
   const pads = json(call('gamepads'), INFO.gamepads || []);
   const chip = pads.length
     ? h('div', { class: 'chip', title: pads.map(p => p.name).join(', ') }, icon('pad'), String(pads.length))
@@ -756,6 +794,8 @@ function settingsPage() {
         list.append(h('div', { class: 'sep', text: t('Trocar botões') }));
         for (const c of CONSOLES) list.append(h('button', { class: 'f item', act: () => remapSheet(c.id) }, h('span', { class: 'dot', style: { background: c.color } }), h('span', { class: 'grow', text: t(c.name) }), icon('chev')));
       }
+      if (sec === 'game') list.append(h('button', { class: 'f item', act: refreshCovers }, icon('img'),
+        h('span', { class: 'grow' }, t('Atualizar capas'), h('span', { class: 'sub', text: t('Baixa de novo a capa de todos os jogos da biblioteca, inclusive as que faltam.') })), icon('reset')));
       if (sec === 'game') list.append(h('div', { class: 'item' }, h('span', { class: 'grow' }, t('Atalhos'), h('span', { class: 'sub', text: t('Segure R2: acelera · Segure L2: rebobina · Select + Start: este menu') }))));
       if (sec === 'game' && INFO.pc) list.append(h('div', { class: 'item' }, h('span', { class: 'grow' }, t('Teclado'), h('span', { class: 'sub', text: t('Setas: direcional · X: A · Z: B · S: X · A: Y · Q/W: L/R · Enter: Start · Shift direito: Select · Tab: acelera · Backspace: rebobina · Esc: menu · F11: tela cheia') }))));
       inner.append(list);
@@ -972,6 +1012,21 @@ handlers.cover = () => {
   loadLibrary();
   if (!layers.length && PAGE !== 'add' && PAGE !== 'settings') show(PAGE, true);
 };
+/* Atualizar capas: baixa de novo todas, uma por vez; no fim chega o evento "covers". */
+let coversBusy = false;
+function refreshCovers() {
+  const n = call('refreshCovers');
+  if (n === -1) toast(t('As capas já estão sendo atualizadas.'));
+  else if (n === 0) toast(t('Nenhum jogo'));
+  else { toast(t('Atualizando capas…')); coversBusy = true; renderChips(); }
+}
+handlers.covers = r => {
+  coversBusy = false;
+  renderChips();
+  loadLibrary();
+  if (!layers.length && PAGE !== 'add' && PAGE !== 'settings') show(PAGE, true);
+  toast(r && r.updated ? t('{n} de {t} capas atualizadas', { n: r.updated, t: r.total }) : t('Nenhuma capa baixada. Confira a internet.'));
+};
 handlers.library = () => { loadLibrary(); if (!layers.length) show(PAGE, true); };
 handlers.resume = () => { renderChips(); };
 handlers.back = () => back();
@@ -1027,20 +1082,34 @@ if (INFO.pc) {
     frameBlend: { label: 'Mistura de quadros', sub: 'Junta cada quadro com o anterior: some a piscada de sombras e transparências (bom no Game Boy Advance).', bool: true },
     backdrop: { label: 'Fundo ao redor do jogo', choices: [['ambient', 'Ambiente (a imagem do jogo, borrada)'], ['glass', 'Vidro do GameHub'], ['black', 'Preto']] },
     fullscreen: { label: 'Tela cheia', sub: 'Também com F11 ou Alt + Enter.', bool: true },
+    gameFullscreen: { label: 'Tela cheia ao jogar', sub: 'A janela ocupa a tela toda enquanto o jogo está aberto e volta ao normal quando você sai dele.', bool: true },
   });
-  GROUPS.image = ['filter', 'scale', 'aspect', 'brightness', 'saturation', 'scanStrength', 'curvature', 'vignette', 'frameBlend', 'backdrop', 'fullscreen', 'showFps'];
+  GROUPS.image = ['filter', 'scale', 'aspect', 'brightness', 'saturation', 'scanStrength', 'curvature', 'vignette', 'frameBlend', 'backdrop', 'fullscreen', 'gameFullscreen', 'showFps'];
   for (const k of ['sounds', 'motion']) { SETS[k].choices = [['on', 'Ligado'], ['off', 'Desligado']]; delete SETS[k].onix; }
   SETS.motion.sub = 'Transições e efeitos do foco.';
   SETS.latency.sub = 'Menos atraso pode estalar em computadores mais lentos.';
 }
-brand($('#brand')); brand($('#bootBrand'));
+brand($('#brand'));
+// A marca da abertura: o controle com o anel e cada letra num <i> (sobem uma a uma).
+$('#bootBrand').replaceChildren(h('span', { class: 'mk' }, svg(MARK), h('i', { class: 'ring' })),
+  h('span', null, h('b', null, ...Array.from('ONIX GAMEHUB', (ch, i) => h('i', { style: '--i:' + i }, ch === ' ' ? '\u00a0' : ch))),
+    h('small', { text: 'By Ruan' }), h('i', { class: 'bar' })));
 // Abertura: toca ao abrir e de novo quando o Onix chama o GameHub que já estava aberto.
 function playBoot() {
   const old = $('#boot');
   const n = old.cloneNode(true);
   n.classList.remove('go');
   old.replaceWith(n);
-  const go = () => n.classList.add('go');
+  const root = document.documentElement;
+  root.classList.add('booting');
+  let started = false;
+  const go = () => {
+    if (started) return;
+    started = true;
+    n.classList.add('go');
+    // As animações do hub começam junto com o fim da abertura (1,9 s depois do "go").
+    setTimeout(() => root.classList.remove('booting'), 1900);
+  };
   requestAnimationFrame(() => requestAnimationFrame(go));
   setTimeout(go, 700);   // sem quadros (página escondida): nunca deixa a tela presa no preto
 }

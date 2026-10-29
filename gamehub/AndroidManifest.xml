@@ -8,8 +8,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.onix.gamehub"
-    android:versionCode="10101"
-    android:versionName="1.1.1">
+    android:versionCode="10102"
+    android:versionName="1.1.2">
 
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
 

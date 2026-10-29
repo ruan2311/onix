@@ -11,17 +11,58 @@ const MAX_BYTES = 3 * 1024 * 1024, HEIGHT = 420, WIDTH = HEIGHT * 3 / 4, TRIES =
 const RETRY_MS = 12 * 60 * 60 * 1000;
 
 let queue = Promise.resolve();
-let onReady = () => { };
-const setListener = fn => { onReady = fn; };
+let onReady = () => { }, onRefreshed = () => { }, refreshing = false;
+const setListener = (fn, done) => { onReady = fn; if (done) onRefreshed = done; };
 
 /** O repositório troca &*\/:`<>?\| por _ nos nomes dos arquivos. */
 const safe = title => title.replace(/[&*/:`<>?\\|"]/g, '_');
 
-async function download(url) {
-  const r = await net.fetch(url, { headers: { 'User-Agent': 'Onix-GameHub' } });
-  if (r.status !== 200 || new URL(r.url).hostname !== 'thumbnails.libretro.com') return null;
+// redirect "error": a resposta vem sempre do próprio thumbnails.libretro.com. (Conferir r.url não
+// serve: no net.fetch do Electron ele vem vazio, e isso fazia toda capa falhar.)
+async function download(url, max) {
+  const r = await net.fetch(url, { headers: { 'User-Agent': 'Onix-GameHub' }, redirect: 'error' });
+  if (r.status !== 200) return null;
   const b = Buffer.from(await r.arrayBuffer());
-  return b.length <= MAX_BYTES ? b : null;
+  return b.length <= (max || MAX_BYTES) ? b : null;
+}
+
+/* Sem capa com o nome exato (outra região, nome fora do No-Intro, jogo renomeado): procura na lista
+   de capas do console pelo nome sem região e versão. A lista vem uma vez por abertura. */
+const LIST_BYTES = 8 * 1024 * 1024;
+const lists = {};
+function listOf(c) {
+  if (!lists[c.id]) {
+    lists[c.id] = download(HOST + encodeURIComponent(c.thumbs) + '/Named_Boxarts/', LIST_BYTES).then(html => {
+      if (!html) throw new Error('sem lista');
+      const names = [];
+      for (const m of html.toString('utf8').matchAll(/href="([^"?/]+)\.png"/g)) {
+        try { names.push(decodeURIComponent(m[1].replace(/&amp;/g, '&'))); } catch { }
+      }
+      return names;
+    }).catch(() => { delete lists[c.id]; return null; });
+  }
+  return lists[c.id];
+}
+/** O nome para comparar: sem (região), [versão], acentos, "The" e pontuação. */
+const base = s => s.replace(/\s*[([][^)\]]*[)\]]/g, '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase()
+  .replace(/^the\s+|,\s*the\b/g, '').replace(/[^a-z0-9]/g, '');
+const BAD = /\((?:[^)]*\b)?(beta|proto|demo|sample|hack|pirate|unl|kiosk|program|aftermarket)\b/i;
+const REGIONS = ['usa', 'world', 'europe', 'brazil', 'japan'];
+const region = n => ((n.match(/\(([^)]*)\)/) || [])[1] || '').toLowerCase();
+/** A melhor capa com o mesmo nome: a mesma região do jogo, depois EUA, Mundo, Europa, Brasil, Japão. */
+async function findByName(c, g) {
+  const names = await listOf(c);
+  if (!names) return null;
+  const keys = new Set([base(g.title || ''), base(g.name || '')].filter(Boolean));
+  const want = region(g.title || '');
+  let best = null, bestScore = Infinity;
+  for (const n of names) {
+    if (!keys.has(base(n))) continue;
+    const r = region(n), i = REGIONS.findIndex(x => r.includes(x));
+    const score = (BAD.test(n) ? 100 : 0) + (want && r === want ? 0 : 2 + (i < 0 ? REGIONS.length : i) * 2) + n.length / 1000;
+    if (score < bestScore) { bestScore = score; best = n; }
+  }
+  return best;
 }
 
 /* Pixels BGRA (toBitmap): escurece com a cor do fundo do GameHub e cola a capa por cima. */
@@ -79,16 +120,25 @@ function fit34(png) {
   return nativeImage.createFromBitmap(px, { width: WIDTH, height: HEIGHT });
 }
 
+/** Baixa a caixa do jogo (pelo nome exato ou, sem ela, pelo nome parecido), monta na moldura e grava. */
+async function grab(g, c) {
+  try {
+    const dir = HOST + encodeURIComponent(c.thumbs) + '/Named_Boxarts/';
+    let png = await download(dir + encodeURIComponent(safe(g.title)) + '.png');
+    if (!png) {
+      const other = await findByName(c, g);
+      if (other) png = await download(dir + encodeURIComponent(other) + '.png');
+    }
+    const img = png && fit34(png);
+    return !!img && store.write(store.coverFile(g.id), img.toJPEG(86));
+  } catch { return false; }
+}
+
 async function fetchCover(id, refit) {
   const g = store.game(id);
   const c = g && store.consoleById(g.console);
   if (!c || (g.cover && !refit)) return;
-  let ok = false;
-  try {
-    const png = await download(HOST + encodeURIComponent(c.thumbs) + '/Named_Boxarts/' + encodeURIComponent(safe(g.title)) + '.png');
-    const img = png && fit34(png);
-    ok = !!img && store.write(store.coverFile(id), img.toJPEG(86));
-  } catch { /* sem internet: tenta depois */ }
+  const ok = await grab(g, c);
   if (refit) {
     if (ok) store.update(id, { coverFit: FIT, coverTried: Date.now() });
   } else {
@@ -110,4 +160,29 @@ function fetchMissing() {
   }
 }
 
-module.exports = { later: id => later(id, false), fetchMissing, setListener };
+/**
+ * Botão "Atualizar capas": baixa de novo a capa de todos os jogos, inclusive as que já tinham
+ * desistido (3 tentativas). Quem não achar capa fica com a que tinha. Devolve quantos jogos entram
+ * (-1 se já estiver atualizando); no fim avisa { updated, total }.
+ */
+function refreshAll() {
+  if (refreshing) return -1;
+  const ids = store.games().map(g => g.id);
+  if (!ids.length) return 0;
+  refreshing = true;
+  let updated = 0;
+  for (const id of ids) {
+    queue = queue.then(async () => {
+      const g = store.game(id);
+      const c = g && store.consoleById(g.console);
+      if (c && await grab(g, c)) {
+        updated++;
+        store.update(id, { cover: true, coverFit: FIT, coverTries: 0, coverTried: Date.now() });
+      }
+    }).catch(() => { });
+  }
+  queue = queue.then(() => { refreshing = false; onRefreshed({ updated, total: ids.length }); });
+  return ids.length;
+}
+
+module.exports = { later: id => later(id, false), fetchMissing, refreshAll, setListener };

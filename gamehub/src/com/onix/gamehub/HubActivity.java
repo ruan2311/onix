@@ -321,6 +321,14 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         Web.emit(web, "cover", Web.quote(id));
     }
 
+    @Override
+    public void coversRefreshed(int updated, int total) {
+        try {
+            Web.emit(web, "covers", new JSONObject().put("updated", updated).put("total", total).toString());
+        } catch (Exception ignored) {
+        }
+    }
+
     void hideSystemUi() {
         if (Device.mobile(this)) return;   // no celular, as barras do sistema ficam
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION

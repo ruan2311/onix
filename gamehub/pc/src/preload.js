@@ -52,7 +52,7 @@ if (!isGame) {
   const Hub = {};
   for (const name of ['library', 'states', 'play', 'setFavorite', 'rename', 'setKids', 'remove', 'deleteState', 'config', 'effective', 'setConfig',
     'coreOptions', 'cheats', 'setCheats', 'storage', 'uploadStart', 'uploadStop', 'editTouch', 'pickGames', 'folders', 'removeFolder', 'rescan',
-    'clearPad', 'openBluetooth', 'update', 'checkUpdate', 'installUpdate', 'fullscreen', 'exit']) {
+    'clearPad', 'openBluetooth', 'refreshCovers', 'update', 'checkUpdate', 'installUpdate', 'fullscreen', 'exit']) {
     Hub[name] = (...args) => hub(name, ...args);
   }
   Hub.init = () => JSON.stringify(Object.assign(JSON.parse(hub('init')), { gamepads: padList() }));

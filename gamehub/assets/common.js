@@ -140,6 +140,13 @@ const ES = {
   'Também com F11 ou Alt + Enter.': 'También con F11 o Alt + Enter.',
   'Transições e efeitos do foco.': 'Transiciones y efectos del foco.',
   'Menos atraso pode estalar em computadores mais lentos.': 'Menos retraso puede chasquear en computadoras más lentas.',
+  'Tela cheia ao jogar': 'Pantalla completa al jugar',
+  'A janela ocupa a tela toda enquanto o jogo está aberto e volta ao normal quando você sai dele.': 'La ventana ocupa toda la pantalla mientras el juego está abierto y vuelve a la normalidad cuando sales.',
+  'Atualizar capas': 'Actualizar portadas',
+  'Baixa de novo a capa de todos os jogos da biblioteca, inclusive as que faltam.': 'Descarga de nuevo la portada de todos los juegos de la biblioteca, incluso las que faltan.',
+  'Atualizando capas…': 'Actualizando portadas…', 'As capas já estão sendo atualizadas.': 'Las portadas ya se están actualizando.',
+  '{n} de {t} capas atualizadas': '{n} de {t} portadas actualizadas',
+  'Nenhuma capa baixada. Confira a internet.': 'No se descargó ninguna portada. Revisa la conexión a internet.',
 };
 function t(s, vars) {
   let r = LANG === 'es' && ES[s] ? ES[s] : s;
@@ -194,6 +201,7 @@ const ICON = {
   disk: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 15h.01M11 15h6"/></svg>',
   sound: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/></svg>',
   chev: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>',
+  full: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>',
   lr: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 7l-5 5 5 5M15 7l5 5-5 5"/></svg>',
 };
 const icon = name => svg(ICON[name]);
@@ -319,7 +327,18 @@ function move(dir) {
 let usingKeys = false;
 const isMobile = () => document.documentElement.classList.contains('mobile');
 function setMobile(on) { document.documentElement.classList.toggle('mobile', !!on); }
+/* Mouse: clicar fora da janela aberta (no fundo escuro) fecha ela, como Voltar. Só vale se o clique
+   começou e terminou no fundo: arrastar de dentro para fora não fecha. O botão "voltar" do mouse
+   (o lateral) também volta. */
+let downOnBackdrop = null;
+document.addEventListener('pointerdown', e => {
+  downOnBackdrop = layers.length && e.target === scope() ? e.target : null;
+}, true);
+document.addEventListener('mouseup', e => {
+  if (e.button === 3) { e.preventDefault(); back(); }
+});
 document.addEventListener('click', e => {
+  if (downOnBackdrop && e.target === downOnBackdrop && e.target === scope()) { downOnBackdrop = null; back(); return; }
   const el = e.target.closest ? e.target.closest('.f') : null;
   if (!el || e.target.tagName === 'INPUT' || !scope().contains(el)) return;
   e.preventDefault();

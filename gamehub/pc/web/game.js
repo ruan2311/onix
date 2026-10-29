@@ -131,6 +131,29 @@ function glSetup() {
   });
   gl.bindFramebuffer(gl.FRAMEBUFFER, null);
 }
+/* Aquece o programa: o Windows só compila o shader (para DirectX) no primeiro desenho, e isso
+   chegava a congelar a imagem por quase 3 s logo depois de o jogo abrir. Desenha uma vez, com
+   uma textura de 1 pixel, ainda na tela "carregando" (que gira sozinha), e espera terminar. */
+function glWarmup() {
+  const t = gl.createTexture();
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA8, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, t);
+  gl.useProgram(prog);
+  gl.uniform1i(U.uTex, 0); gl.uniform1i(U.uPrev, 1);
+  gl.uniform2f(U.uTexSize, 1, 1); gl.uniform2f(U.uScale, 1, 1); gl.uniform2f(U.uOut, 1, 1);
+  gl.uniform1i(U.uAmbient, 0); gl.uniform1i(U.uMode, 0); gl.uniform1i(U.uBlend, 0);
+  for (const fb of [amb[amb.length - 1].fb, null]) {   // na textura do fundo ambiente e na tela
+    gl.bindFramebuffer(gl.FRAMEBUFFER, fb);
+    gl.viewport(0, 0, 1, 1);
+    quad(1, 1);
+  }
+  gl.readPixels(0, 0, 1, 1, gl.RGBA, gl.UNSIGNED_BYTE, new Uint8Array(4));   // espera a placa
+  gl.clearColor(0, 0, 0, 1); gl.clear(gl.COLOR_BUFFER_BIT);
+  gl.activeTexture(gl.TEXTURE1); gl.bindTexture(gl.TEXTURE_2D, null);
+  gl.activeTexture(gl.TEXTURE0); gl.bindTexture(gl.TEXTURE_2D, null);
+  gl.deleteTexture(t);
+}
 /* Fundo ambiente: o quadro reduzido em etapas (cada uma com filtro bilinear) até 16 x 16. */
 function ambient() {
   let src = tex[cur];
@@ -500,6 +523,7 @@ async function start() {
   try {
     if (!gl) throw new Error('sem WebGL 2');
     glSetup();
+    try { glWarmup(); } catch (e) { PC.log('aquecer: ' + e); }
     await new Promise((ok, fail) => { const s = document.createElement('script'); s.src = 'cores/' + INFO.core + '.js'; s.onload = ok; s.onerror = fail; document.head.append(s); });
     M = await window.OnixCore({ locateFile: f => 'cores/' + f, print: () => { }, printErr: m => PC.log(INFO.core + ': ' + m) });
     const rom = await PC.async('rom', ID);
@@ -588,6 +612,7 @@ window.OnixMenu = {
   gamepads: () => JSON.stringify(padList()),
   openBluetooth: () => PC.hub('openBluetooth'),
   fullscreen: () => PC.call('fullscreen'),
+  setGameFullscreen: on => { const done = PC.call('setGameFullscreen', !!on); S = json(PC.call('effective', ID), S); return done; },
 };
 function openMenu(reason) {
   if (quitting || menuOpen) return;
