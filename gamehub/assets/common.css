@@ -29,7 +29,9 @@ svg{display:block}
 .brand small{font-size:.95rem;font-weight:400;letter-spacing:.06em;color:var(--dim);white-space:nowrap;margin-left:-.3rem}
 
 /* Foco: anel neon e um leve aumento */
-.f{position:relative;transition:transform .14s ease,box-shadow .14s ease,background .14s ease}
+/* Só o zoom anima, e rápido: animar sombra e fundo redesenhava o item a cada passo (medido na
+   TV: metade dos quadros travados ao segurar a seta). */
+.f{position:relative;transition:transform .1s ease;scroll-margin:1.2rem}
 .f.focus{transform:scale(1.045);z-index:2}
 .item.f.focus,.tab.f.focus{transform:none}
 .f.focus::before{content:"";position:absolute;inset:-.32rem;border-radius:calc(var(--r) + .32rem);padding:.22rem;
@@ -72,7 +74,7 @@ svg{display:block}
 .layer.side .sheet{border-radius:0;max-height:none;height:100%;width:44rem;border-width:0 0 0 1px;padding:3.4rem 3rem}
 .sheet h2{font-size:2.2rem;font-weight:800}
 .sheet p{font-size:1.3rem;color:var(--dim);line-height:1.45}
-.list{display:flex;flex-direction:column;gap:.7rem;overflow:hidden}
+.list{display:flex;flex-direction:column;gap:.7rem}
 .item{display:flex;align-items:center;gap:1.1rem;min-height:4.2rem;padding:.8rem 1.4rem;border-radius:1rem;
   background:var(--glass);border:1px solid transparent;font-size:1.35rem}
 .item svg{width:1.8rem;height:1.8rem;flex:none}
@@ -84,7 +86,7 @@ svg{display:block}
 .item .arrows{opacity:0;color:var(--mute)}
 .item.focus .arrows{opacity:1}
 .sep{font-size:1rem;letter-spacing:.2em;text-transform:uppercase;color:var(--mute);margin:1.2rem 0 .2rem .4rem}
-.scroll{overflow:hidden;position:relative}
+.scroll{overflow:hidden;position:relative;padding:.6rem;margin:-.6rem}
 .scroll>.inner{transition:transform .2s ease}
 
 .toast{position:fixed;left:50%;bottom:3.4rem;transform:translateX(-50%);z-index:90;padding:1.1rem 2rem;border-radius:999rem;
@@ -94,6 +96,10 @@ svg{display:block}
 .bar .g{background:var(--grad)}
 .bar .r{background:rgba(255,255,255,.22)}
 .bar .u{background:#7c6fb3}
+
+/* Animações desligadas (Configurações → Interface, ou seguindo o Onix). A abertura do GameHub
+   toca mesmo assim: é a transição de entrada, leve (uma linha e o logo). */
+html.no-motion :not(.boot):not(.boot *),html.no-motion :not(.boot *)::before,html.no-motion :not(.boot *)::after{transition:none!important;animation:none!important}
 
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes rise{from{opacity:0;transform:translate(-50%,1rem)}to{opacity:1;transform:translate(-50%,0)}}

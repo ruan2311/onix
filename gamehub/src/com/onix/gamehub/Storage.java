@@ -6,8 +6,10 @@ import android.os.StatFs;
 import org.json.JSONObject;
 
 /**
- * Espaço da TV. O GameHub nunca enche a memória: sempre sobra para o sistema o maior valor entre
- * 2 GB e 10% do total. O que passar disso é "livre para jogos".
+ * Espaço da TV. O GameHub nunca enche a memória: a reserva do sistema acompanha o tamanho de cada
+ * TV (10% do total, entre 768 MB e 2 GB). O piso fica acima do aviso de "pouco espaço" do Android
+ * (5% do total, no máximo 500 MB). O que passar da reserva é "livre para jogos".
+ * Antes era 2 GB fixos, e uma TV de 8 GB com 1,8 GB livres ficava com zero para jogos.
  */
 final class Storage {
 
@@ -33,7 +35,7 @@ final class Storage {
     }
 
     static long reserve(Context c) {
-        return Math.max(2 * GB, total(c) / 10);
+        return Math.min(2 * GB, Math.max(768L * 1024 * 1024, total(c) / 10));
     }
 
     /** Quanto ainda cabe de jogos sem passar da reserva do sistema. */

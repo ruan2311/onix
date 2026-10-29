@@ -36,7 +36,9 @@ final class HubBridge {
             o.put("fromOnix", a.fromOnix);
             o.put("version", a.getPackageManager().getPackageInfo(a.getPackageName(), 0).versionName);
             o.put("onix", installed("com.aurora.launcher"));
-            o.put("gamepads", Gamepads.list());
+            o.put("gamepads", Gamepads.list(a));
+            o.put("onixSound", a.onixSound);
+            o.put("onixMotion", a.onixMotion);
             o.put("abi", android.os.Build.SUPPORTED_ABIS.length > 0 ? android.os.Build.SUPPORTED_ABIS[0] : "");
             return o.toString();
         } catch (Exception e) {
@@ -214,7 +216,36 @@ final class HubBridge {
 
     @JavascriptInterface
     public String gamepads() {
-        return Gamepads.list().toString();
+        return Gamepads.list(a).toString();
+    }
+
+    /** Controle 1 e 2 definidos: {"1": {"name", "connected"}, "2": ...}. */
+    @JavascriptInterface
+    public String players() {
+        JSONObject all = Players.all(a), out = new JSONObject();
+        try {
+            JSONArray pads = Gamepads.list(a);
+            for (int p = 1; p <= Players.MAX; p++) {
+                JSONObject o = all.optJSONObject(String.valueOf(p));
+                if (o == null) continue;
+                boolean on = false;
+                for (int i = 0; i < pads.length(); i++) if (pads.getJSONObject(i).optInt("player") == p) on = true;
+                out.put(String.valueOf(p), new JSONObject().put("name", o.optString("n")).put("connected", on));
+            }
+        } catch (Exception ignored) {
+        }
+        return out.toString();
+    }
+
+    /** O próximo botão apertado num controle de videogame define esse aparelho como o controle 1 ou 2. */
+    @JavascriptInterface
+    public void capturePad(int player) {
+        a.capturePlayer = player >= 1 && player <= Players.MAX ? player : 0;
+    }
+
+    @JavascriptInterface
+    public boolean clearPad(int player) {
+        return Players.clear(a, player);
     }
 
     @JavascriptInterface

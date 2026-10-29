@@ -43,7 +43,7 @@ final class Gamepads implements InputManager.InputDeviceListener {
     }
 
     static boolean isGamepad(InputDevice d) {
-        if (d == null || d.isVirtual()) return false;
+        if (d == null || d.isVirtual() || !external(d)) return false;
         int s = d.getSources();
         boolean pad = (s & InputDevice.SOURCE_GAMEPAD) == InputDevice.SOURCE_GAMEPAD
                 || (s & InputDevice.SOURCE_JOYSTICK) == InputDevice.SOURCE_JOYSTICK;
@@ -52,13 +52,47 @@ final class Gamepads implements InputManager.InputDeviceListener {
         return keys.length == 2 && keys[0] && keys[1];
     }
 
+    /**
+     * Controle de verdade vem de fora (Bluetooth/USB). Algumas TVs têm aparelhos internos que se
+     * dizem gamepad com A e B, como o "virtual-search" da Google TV. isExternal() é pública só a
+     * partir do Android 10; antes, por reflexão (sem ela, aceita).
+     */
+    private static boolean external(InputDevice d) {
+        try {
+            return (Boolean) InputDevice.class.getMethod("isExternal").invoke(d);
+        } catch (Exception e) {
+            return !d.getName().toLowerCase(java.util.Locale.ROOT).startsWith("virtual");
+        }
+    }
+
+    /** O Android junta as partes do controle num aparelho só e às vezes fica o nome de uma
+     *  delas ("DualSense Wireless Controller Touchpad"): mostra só o nome do controle. */
+    static String name(InputDevice d) {
+        return d.getName().replaceAll("(?i)\\s+(touchpad|motion sensors)$", "");
+    }
+
     static JSONArray list() {
         JSONArray out = new JSONArray();
         for (int id : InputDevice.getDeviceIds()) {
             InputDevice d = InputDevice.getDevice(id);
             if (!isGamepad(d)) continue;
             try {
-                out.put(new JSONObject().put("id", id).put("name", d.getName()));
+                out.put(new JSONObject().put("id", id).put("name", name(d)));
+            } catch (Exception ignored) {
+            }
+        }
+        return out;
+    }
+
+    /** A mesma lista com o controle (1 ou 2) que a pessoa definiu para cada aparelho. */
+    static JSONArray list(Context c) {
+        JSONArray out = list();
+        JSONObject players = Players.all(c);
+        for (int i = 0; i < out.length(); i++) {
+            JSONObject o = out.optJSONObject(i);
+            int port = Players.portOf(players, InputDevice.getDevice(o.optInt("id")));
+            try {
+                if (port >= 0) o.put("player", port + 1);
             } catch (Exception ignored) {
             }
         }

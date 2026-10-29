@@ -36,6 +36,9 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
     String profile = "default", profileName = "", lang = "pt", open = "home";
     boolean kids, fromOnix, direct;
     volatile boolean capture;
+    volatile int capturePlayer;
+    /** Som de navegação e animações do Onix (null: aberto sem o Onix, ou um Onix antigo). */
+    Boolean onixSound, onixMotion;
 
     @Override
     protected void onCreate(Bundle state) {
@@ -92,7 +95,10 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
             lang = "es".equals(l) ? "es" : "pt";
             String o = i.getStringExtra("open");
             open = o != null && OPEN.matcher(o).matches() ? o : "home";
-            prefs.edit().putString("profile", profile).putString("profileName", profileName).putBoolean("kids", kids).putString("lang", lang).apply();
+            SharedPreferences.Editor ed = prefs.edit().putString("profile", profile).putString("profileName", profileName).putBoolean("kids", kids).putString("lang", lang);
+            if (i.hasExtra("sound")) ed.putBoolean("onixSound", i.getBooleanExtra("sound", true));
+            if (i.hasExtra("motion")) ed.putBoolean("onixMotion", i.getBooleanExtra("motion", true));
+            ed.apply();
         } else {
             // Aberto pelo ícone: o último perfil que o Onix mandou (ou o padrão, sem o Onix).
             profile = Files.profile(prefs.getString("profile", "default"));
@@ -101,6 +107,8 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
             lang = prefs.getString("lang", "es".equals(Locale.getDefault().getLanguage()) ? "es" : "pt");
             open = "home";
         }
+        onixSound = prefs.contains("onixSound") ? prefs.getBoolean("onixSound", true) : null;
+        onixMotion = prefs.contains("onixMotion") ? prefs.getBoolean("onixMotion", true) : null;
         direct = open.startsWith("resume:");
         if (direct) startGame(open.substring(7), "resume");
     }
@@ -115,9 +123,19 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         i.putExtra("profile", profile);
         i.putExtra("kids", kids);
         i.putExtra("lang", lang);
+        JSONObject cfg = Config.effective(this, "", null);
+        i.putExtra("sounds", ui(cfg.optString("sounds"), onixSound));
+        i.putExtra("motion", ui(cfg.optString("motion"), onixMotion));
         startActivityForResult(i, REQ_GAME);
         overridePendingTransition(0, 0);
         return true;
+    }
+
+    /** "on"/"off" valem por si; "onix" segue o Onix (ligado se ele nunca mandou). */
+    static boolean ui(String v, Boolean onix) {
+        if ("on".equals(v)) return true;
+        if ("off".equals(v)) return false;
+        return onix == null || onix;
     }
 
     @Override
@@ -170,6 +188,20 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
             }
         }
         if (capture && e.getAction() == KeyEvent.ACTION_UP) return true;
+        // Definir controle 1/2: o próximo botão de um controle de videogame escolhe o aparelho.
+        // O controle remoto passa direto (dá para cancelar com ele).
+        if (capturePlayer > 0 && Gamepads.isGamepad(e.getDevice())) {
+            if (e.getAction() == KeyEvent.ACTION_DOWN && e.getRepeatCount() == 0) {
+                int p = capturePlayer;
+                capturePlayer = 0;
+                boolean ok = Players.set(this, p, e.getDevice());
+                try {
+                    Web.emit(web, "padSet", new JSONObject().put("player", p).put("name", Gamepads.name(e.getDevice())).put("ok", ok).toString());
+                } catch (Exception ignored) {
+                }
+            }
+            return true;
+        }
         // Botões do controle de videogame viram teclas que a página entende.
         int code = e.getKeyCode();
         int mapped = navKey(code);
@@ -206,7 +238,7 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
 
     @Override
     public void gamepadsChanged(int added, int removed) {
-        Web.emit(web, "gamepads", Gamepads.list().toString());
+        Web.emit(web, "gamepads", Gamepads.list(this).toString());
     }
 
     @Override

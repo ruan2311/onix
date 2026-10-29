@@ -37,7 +37,9 @@ final class Config {
         flag("autosave", true);
         flag("stickDpad", true);
         flag("showFps", false);
-        flag("sounds", true);
+        // Interface do GameHub: "onix" segue o que está no Onix (som de navegação e animações).
+        choice("sounds", "onix", "onix", "on", "off");
+        choice("motion", "onix", "onix", "on", "off");
     }
 
     private static final Pattern CORE_KEY = Pattern.compile("^[A-Za-z0-9_.-]{1,80}$");

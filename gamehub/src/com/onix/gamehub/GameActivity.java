@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.opengl.GLSurfaceView;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -59,9 +60,28 @@ public class GameActivity extends Activity implements Gamepads.Listener {
 
     /* Jogadores: id do aparelho -> porta (0..3). O controle remoto e o teclado são o jogador 1. */
     private final SparseIntArray ports = new SparseIntArray();
+    private JSONObject players;   // controle 1 e 2 definidos nas Configurações
+    boolean sounds = true, motion = true;
     private final int[] keyBits = new int[4], hatBits = new int[4], stickBits = new int[4];
     private boolean ffHold, rwHold, selectDown, startDown;
     private final SparseIntArray remap = new SparseIntArray();
+
+    private static boolean webDataSeparated;
+
+    /**
+     * O jogo roda no processo ":game" e o GameHub no principal. Desde o Android 9, dois processos
+     * não podem usar o WebView com a mesma pasta de dados: o menu do jogo fechava o app ao abrir
+     * com o GameHub ainda vivo. O menu não guarda nada no WebView, então usa uma pasta só dele.
+     * Por reflexão porque o build compila contra o android-23.
+     */
+    private static void separateWebData() {
+        if (webDataSeparated || Build.VERSION.SDK_INT < 28) return;
+        webDataSeparated = true;
+        try {
+            WebView.class.getMethod("setDataDirectorySuffix", String.class).invoke(null, "game");
+        } catch (Exception ignored) {
+        }
+    }
 
     @Override
     protected void onCreate(Bundle state) {
@@ -72,6 +92,9 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         profile = Files.profile(getIntent().getStringExtra("profile"));
         lang = "es".equals(getIntent().getStringExtra("lang")) ? "es" : "pt";
         kids = getIntent().getBooleanExtra("kids", false);
+        sounds = getIntent().getBooleanExtra("sounds", true);
+        motion = getIntent().getBooleanExtra("motion", true);
+        players = Players.all(this);
         game = id != null && Files.ID.matcher(id).matches() ? Library.game(this, id) : null;
         console = game == null ? null : Consoles.byId(game.optString("console"));
         if (game == null || console == null) {
@@ -93,6 +116,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         gl.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         root.addView(gl, new FrameLayout.LayoutParams(-1, -1));
 
+        separateWebData();
         menu = new WebView(this);
         menu.setBackgroundColor(Color.TRANSPARENT);
         Web.setup(menu, this);
@@ -475,13 +499,13 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     public void gamepadsChanged(int added, int removed) {
         if (added >= 0) {
             InputDevice d = InputDevice.getDevice(added);
-            toast(tr("Controle conectado: ", "Control conectado: ") + (d != null ? d.getName() : ""));
-            if (menuOpen) Web.emit(menu, "gamepads", Gamepads.list().toString());
+            toast(tr("Controle conectado: ", "Control conectado: ") + (d != null ? Gamepads.name(d) : ""));
+            if (menuOpen) Web.emit(menu, "gamepads", Gamepads.list(this).toString());
         }
         if (removed >= 0 && ports.indexOfKey(removed) >= 0) {
             ports.delete(removed);
             if (!menuOpen) openMenu("disconnected");
-            else Web.emit(menu, "gamepads", Gamepads.list().toString());
+            else Web.emit(menu, "gamepads", Gamepads.list(this).toString());
         }
     }
 
@@ -492,10 +516,26 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         if (p >= 0) return p;
         boolean[] used = new boolean[4];
         for (int i = 0; i < ports.size(); i++) used[ports.valueAt(i)] = true;
+        // Definido nas Configurações: sempre a mesma vaga. Quem não foi definido não pega a vaga
+        // de um controle definido que está ligado.
+        int fixed = Players.portOf(players, d);
+        if (fixed >= 0) {
+            for (int i = ports.size() - 1; i >= 0; i--) if (ports.valueAt(i) == fixed) ports.removeAt(i);
+            ports.put(dev, fixed);
+            if (fixed > 0) toast(tr("Jogador ", "Jugador ") + (fixed + 1) + ": " + Gamepads.name(d));
+            return fixed;
+        }
+        for (int id : InputDevice.getDeviceIds()) {
+            InputDevice o = InputDevice.getDevice(id);
+            if (id != dev && Gamepads.isGamepad(o)) {
+                int q = Players.portOf(players, o);
+                if (q >= 0) used[q] = true;
+            }
+        }
         for (p = 0; p < 4 && used[p]; p++) ;
         if (p >= 4) p = 3;
         ports.put(dev, p);
-        if (p > 0) toast(tr("Jogador ", "Jugador ") + (p + 1) + ": " + d.getName());
+        if (p > 0) toast(tr("Jogador ", "Jugador ") + (p + 1) + ": " + Gamepads.name(d));
         return p;
     }
 

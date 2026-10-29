@@ -622,12 +622,12 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public boolean openGameHub(final String profile, final String name, final boolean kids, final String lang, final String open) {
+    public boolean openGameHub(final String profile, final String name, final boolean kids, final String lang, final String open, final boolean sound, final boolean motion) {
         if (!trusted || profile == null || !PROFILE_ID.matcher(profile).matches()) return false;
         activity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                GameHub.get(activity).open(activity, profile, name, kids, lang, open);
+                GameHub.get(activity).open(activity, profile, name, kids, lang, open, sound, motion);
             }
         });
         return GameHub.get(activity).installedVersion() != null;

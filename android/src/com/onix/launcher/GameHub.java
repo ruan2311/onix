@@ -133,8 +133,11 @@ final class GameHub {
         }
     }
 
-    /** Abre o GameHub no perfil do Onix (open = home, console:<id>, game:<id> ou resume:<id>). */
-    boolean open(Activity a, String profile, String name, boolean kids, String lang, String open) {
+    /**
+     * Abre o GameHub no perfil do Onix (open = home, console:<id>, game:<id> ou resume:<id>).
+     * sound/motion: os sons do menu e as animações do Onix, que o GameHub segue por padrão.
+     */
+    boolean open(Activity a, String profile, String name, boolean kids, String lang, String open, boolean sound, boolean motion) {
         if (installedVersion() == null) return false;
         if (profile == null || !PROFILE.matcher(profile).matches()) return false;
         if (open == null || !OPEN.matcher(open).matches()) open = "home";
@@ -144,6 +147,8 @@ final class GameHub {
         i.putExtra("kids", kids);
         i.putExtra("lang", "es".equals(lang) ? "es" : "pt");
         i.putExtra("open", open);
+        i.putExtra("sound", sound);
+        i.putExtra("motion", motion);
         i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         try {
             a.startActivity(i);

@@ -35,7 +35,9 @@ final class MenuBridge {
             o.put("failed", g.isFailed());
             o.put("ff", Native.fastForward());
             o.put("settings", g.settings);
-            o.put("gamepads", Gamepads.list());
+            o.put("gamepads", Gamepads.list(g));
+            o.put("sounds", g.sounds);
+            o.put("motion", g.motion);
             o.put("states", states());
             o.put("cover", new File(Files.covers(g), g.id + ".jpg").isFile());
             return o.toString();
@@ -217,7 +219,7 @@ final class MenuBridge {
 
     @JavascriptInterface
     public String gamepads() {
-        return Gamepads.list().toString();
+        return Gamepads.list(g).toString();
     }
 
     @JavascriptInterface

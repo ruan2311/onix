@@ -75,6 +75,15 @@ final class Files {
     }
 
     static String read(File f) {
+        byte[] b = readBytes(f);
+        try {
+            return b == null ? null : new String(b, "UTF-8");
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    static byte[] readBytes(File f) {
         try {
             InputStream in = new FileInputStream(f);
             try {
@@ -82,7 +91,7 @@ final class Files {
                 byte[] buf = new byte[16 * 1024];
                 int n;
                 while ((n = in.read(buf)) > 0) o.write(buf, 0, n);
-                return o.toString("UTF-8");
+                return o.toByteArray();
             } finally {
                 in.close();
             }

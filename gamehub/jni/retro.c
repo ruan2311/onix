@@ -737,7 +737,7 @@ static const char *FS[5] = {
     /* LCD: grade fina entre os pixels, como a tela do portátil */
     "precision mediump float; varying vec2 vTex; uniform sampler2D uTex; uniform vec2 uTexSize; uniform vec2 uScale;\n"
     "void main(){ vec2 t = vTex * uTexSize; vec3 c = texture2D(uTex, (floor(t) + 0.5) / uTexSize).rgb;\n"
-    " vec2 f = fract(t); float e = 1.0 / max(uScale.x, 1.0); vec2 g = step(e, f) * step(f, 1.0 - e * 0.5);\n"
+    " vec2 f = fract(t); float e = 1.0 / max(uScale.x, 1.0); vec2 g = step(e, f) * step(f, vec2(1.0 - e * 0.5));\n"
     " float k = mix(0.72, 1.0, g.x * g.y); gl_FragColor = vec4(c * k * 1.08, 1.0); }\n",
 };
 

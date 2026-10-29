@@ -27,7 +27,8 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .row-title{font-size:1.45rem;font-weight:700;margin:2.2rem 0 1.1rem .2rem;display:flex;align-items:baseline;gap:1rem}
 .row-title small{font-size:1.05rem;color:var(--mute);font-weight:500}
 .row{display:flex;gap:1.6rem;overflow:visible;padding:.4rem .2rem}
-.tile{flex:none;width:11.6rem;display:flex;flex-direction:column;gap:.7rem;border-radius:var(--r)}
+.tile{flex:none;width:11.6rem;display:flex;flex-direction:column;gap:.7rem;border-radius:var(--r);will-change:transform}
+.ctile{will-change:transform}
 .tile .name{font-size:1.15rem;font-weight:600;line-height:1.25;max-height:2.9rem;overflow:hidden;color:var(--dim)}
 .tile.focus .name{color:var(--ink)}
 
@@ -93,15 +94,19 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .store .legend i{display:inline-block;width:.9rem;height:.9rem;border-radius:.3rem;margin-right:.5rem;vertical-align:-.05rem}
 
 /* Configurações */
-.settings{display:flex;gap:2.4rem;height:100%}
-.settings .menu{flex:none;width:21rem;display:flex;flex-direction:column;gap:.5rem}
-.settings .menu .item{font-weight:600}
+/* Cada coluna rola sozinha (a página não), com folga para o contorno do foco não ser cortado. */
+.page.set{padding-bottom:1rem}
+.settings{display:flex;gap:1.8rem;height:100%}
+.settings .menu{flex:none;width:22rem;display:flex;flex-direction:column;gap:.45rem;overflow:hidden;padding:.7rem}
+.settings .menu .item{font-weight:600;min-height:3.6rem;flex:none}
 .settings .menu .item.cur{background:rgba(255,255,255,.08)}
-.settings .body{flex:1;min-width:0;overflow:hidden;padding:.3rem .5rem 2rem}
+.settings .body{flex:1;min-width:0;overflow:hidden;padding:.7rem .7rem 2rem;margin:0}
 .settings .body h2{font-size:2rem;font-weight:800;margin-bottom:.4rem}
 .settings .body .hint{font-size:1.15rem;color:var(--mute);margin-bottom:1rem}
 .scopes{display:flex;gap:.6rem;margin:.4rem 0 1rem}
 .credits{font-size:1.2rem;color:var(--dim);line-height:1.6}
+.pnum{flex:none;width:2.4rem;height:2.4rem;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.2rem;background:var(--grad);color:#14082c}
+.pnum.big{width:4.4rem;height:4.4rem;font-size:2.2rem}
 
 /* Abertura: a tela "liga" como um console */
 .boot{position:fixed;inset:0;z-index:100;background:#000;display:flex;align-items:center;justify-content:center;pointer-events:none;
@@ -452,7 +457,7 @@ function drawStore() {
       h('span', null, h('i', { style: { background: 'var(--grad)' } }), t('Jogos') + ' ' + fmtBytes(s.used || 0)),
       h('span', null, h('i', { style: { background: 'rgba(255,255,255,.12)' } }), t('Livre para jogos') + ' ' + fmtBytes(s.available || 0)),
       h('span', null, h('i', { style: { background: '#7c6fb3' } }), t('Reservado para a TV') + ' ' + fmtBytes(s.reserve || 0))),
-    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t('O GameHub sempre deixa livre para o sistema o maior valor entre 2 GB e 10% da memória da TV.') }));
+    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t('O GameHub sempre deixa livre para o sistema 10% da memória desta TV (no mínimo 768 MB e no máximo 2 GB).') }));
 }
 function drawXfers() {
   const el = $('#xfers');
@@ -497,13 +502,21 @@ const SETS = {
   turboRate: { label: 'Velocidade do turbo', choices: [[2, '15/s'], [3, '10/s'], [4, '7/s'], [6, '5/s']] },
   stickDpad: { label: 'Analógico como direcional', bool: true },
   deadzone: { label: 'Zona morta do analógico', choices: [10, 15, 20, 25, 30, 40, 50].map(v => [v, v + '%']) },
+  sounds: { label: 'Som de navegação', sub: 'Os toques ao andar pelos menus.', choices: [['onix', 'Igual ao Onix'], ['on', 'Ligado'], ['off', 'Desligado']], onix: 'onixSound' },
+  motion: { label: 'Animações', sub: 'Transições e efeitos do foco. Desligadas, os menus respondem mais rápido em TVs lentas.', choices: [['onix', 'Igual ao Onix'], ['on', 'Ligado'], ['off', 'Desligado']], onix: 'onixMotion' },
 };
 const GROUPS = {
   image: ['filter', 'scale', 'aspect', 'showFps'],
   sound: ['volume', 'latency'],
   game: ['autosave', 'rewind', 'ffspeed', 'runahead', 'turboRate'],
   pads: ['stickDpad', 'deadzone'],
+  ui: ['sounds', 'motion'],
 };
+/* Aplica som e animações conforme a configuração (e o Onix, quando ela é "Igual ao Onix"). */
+function applyUiPrefs(eff) {
+  eff = eff || json(call('effective', 'snes', null), {});
+  applyUi(uiOn(eff.sounds, INFO.onixSound), uiOn(eff.motion, INFO.onixMotion));
+}
 let CFG = {};
 function levelOf(scope) {
   if (scope === 'global') return CFG.global || {};
@@ -520,28 +533,31 @@ function settingRow(scope, key, effective, done) {
   const cur = own ? lv[key] : (inherit ? null : effective[key]);
   const labelOf = v => {
     if (v === null) { const e = choices.find(c => c[0] === effective[key]); return t(opts[0][1]) + ' (' + (e ? t(String(e[1])) : '') + ')'; }
-    const c = choices.find(c => c[0] === v); return c ? t(String(c[1])) : String(v);
+    const c = choices.find(c => c[0] === v);
+    if (v === 'onix' && s.onix) return t('Igual ao Onix') + ' (' + t(INFO[s.onix] === false ? 'Desligado' : 'Ligado') + ')';
+    return c ? t(String(c[1])) : String(v);
   };
   const val = h('span', { class: 'val' }, h('span', { text: labelOf(cur) }), h('span', { class: 'arrows' }, icon('lr')));
   const row = h('button', { class: 'f item' + (own ? ' on' : '') }, h('span', { class: 'grow' }, t(s.label), s.sub ? h('span', { class: 'sub', text: t(s.sub) }) : null), val);
   const set = v => {
     call('setConfig', scope, key, v === null ? null : JSON.stringify(v));
     CFG = json(call('config'), {});
+    if (s.onix) applyUiPrefs();
     (done || redrawSettings)(row);
   };
   const idx = () => Math.max(0, opts.findIndex(o => o[0] === cur));
   row._left = () => set(opts[(idx() + opts.length - 1) % opts.length][0]);
   row._right = () => set(opts[(idx() + 1) % opts.length][0]);
-  row._act = s.bool && !inherit ? () => set(!cur) : () => picker(t(s.label), opts.map(o => ({ value: o[0], label: o[0] === null ? labelOf(null) : t(String(o[1])) })), cur, set);
+  row._act = s.bool && !inherit ? () => set(!cur) : () => picker(t(s.label), opts.map(o => ({ value: o[0], label: o[0] === null || s.onix ? labelOf(o[0]) : t(String(o[1])) })), cur, set);
   return row;
 }
 
-let setSection = 'image', setScope = 'global', redrawSettings = () => { };
+let setSection = 'image', setScope = 'global', redrawSettings = () => { }, bodyTimer = 0;
 function settingsPage() {
   CFG = json(call('config'), {});
-  const page = h('section', { class: 'page' });
+  const page = h('section', { class: 'page set' });
   const sections = [
-    ['image', t('Imagem'), 'img'], ['sound', t('Som'), 'sound'], ['game', t('Jogo'), 'play'], ['pads', t('Controles'), 'pad'],
+    ['image', t('Imagem'), 'img'], ['sound', t('Som'), 'sound'], ['game', t('Jogo'), 'play'], ['pads', t('Controles'), 'pad'], ['ui', t('Interface'), 'sliders'],
     ...CONSOLES.map(c => ['console:' + c.id, t(c.name), null, c.color]),
     ['storage', t('Armazenamento'), 'disk'], ['about', t('Sobre'), 'info'],
   ];
@@ -550,8 +566,16 @@ function settingsPage() {
   const drawMenu = () => menu.replaceChildren(...sections.map(([id, label, ic, color]) => {
     const it = h('button', { class: 'f item' + (setSection === id ? ' cur' : '') },
       ic ? icon(ic) : h('span', { class: 'dot', style: { background: color, width: '1.1rem', height: '1.1rem', margin: '0 .35rem' } }), h('span', { class: 'grow', text: label }));
-    it._act = () => { setSection = id; drawMenu(); drawBody(); ensureFocus($('.f', body)); };
-    it._focus = () => { if (setSection !== id) { setSection = id; drawBody(); $$('.item', menu).forEach(x => x.classList.toggle('cur', x === it)); } };
+    it._act = () => { clearTimeout(bodyTimer); setSection = id; drawMenu(); drawBody(); ensureFocus($('.f', body)); };
+    // Andar pelo menu só marca a seção; o conteúdo troca quando o foco para (segurar ▼ não
+    // redesenha cada seção no caminho, o que deixava a navegação lenta).
+    it._focus = () => {
+      if (setSection === id) return;
+      setSection = id;
+      $$('.item', menu).forEach(x => x.classList.toggle('cur', x === it));
+      clearTimeout(bodyTimer);
+      bodyTimer = setTimeout(() => { if (setSection === id && document.body.contains(body)) drawBody(); }, 140);
+    };
     return it;
   }));
   const drawBody = keep => {
@@ -559,14 +583,10 @@ function settingsPage() {
     const inner = h('div');
     if (GROUPS[sec]) {
       const eff = json(call('effective', 'snes', null), {});
-      inner.append(h('h2', { text: sections.find(s => s[0] === sec)[1] }), h('div', { class: 'hint', text: t('Vale para todos os consoles e jogos.') }));
+      inner.append(h('h2', { text: sections.find(s => s[0] === sec)[1] }), h('div', { class: 'hint', text: sec === 'ui' ? t('Vale para as telas do GameHub e o menu do jogo.') : t('Vale para todos os consoles e jogos.') }));
       const list = h('div', { class: 'list' }, GROUPS[sec].map(k => settingRow('global', k, eff)));
       if (sec === 'pads') {
-        const pads = json(call('gamepads'), []);
-        inner.append(h('div', { class: 'list', style: { marginBottom: '1rem' } },
-          pads.length ? pads.map(p => h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: p.name }), h('span', { class: 'val', style: { color: '#7ef0b0' }, text: t('Controle conectado') })))
-            : [h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: t('Nenhum controle conectado') }))],
-          h('button', { class: 'f item', act: () => call('openBluetooth') }, icon('bt'), h('span', { class: 'grow', text: t('Conectar controle') }), icon('chev'))));
+        inner.append(playersList());
         list.append(h('div', { class: 'sep', text: t('Trocar botões') }));
         for (const c of CONSOLES) list.append(h('button', { class: 'f item', act: () => remapSheet(c.id) }, h('span', { class: 'dot', style: { background: c.color } }), h('span', { class: 'grow', text: t(c.name) }), icon('chev')));
       }
@@ -581,6 +601,7 @@ function settingsPage() {
       inner.append(aboutBody());
     }
     body.replaceChildren(inner);
+    body.scrollTop = 0;
   };
   redrawSettings = row => {
     const i = $$('.f', body).indexOf(row);
@@ -591,6 +612,45 @@ function settingsPage() {
   drawMenu(); drawBody();
   page.append(h('div', { class: 'settings' }, menu, body));
   return page;
+}
+
+/* Controle 1 e controle 2: cada vaga mostra o aparelho definido (ou "Automático") e OK pede para
+   apertar um botão no controle escolhido. Embaixo, os controles ligados agora. */
+function playersList() {
+  const players = json(call('players'), {});
+  const pads = json(call('gamepads'), []);
+  const list = h('div', { class: 'list', style: { marginBottom: '1rem' } });
+  for (let n = 1; n <= 2; n++) {
+    const p = players[n];
+    const sub = p ? p.name + ' · ' + t(p.connected ? 'Ligado' : 'Desligado') : t('Automático: o primeiro controle que apertar um botão');
+    list.append(h('button', { class: 'f item' + (p ? ' on' : ''), act: () => defineSheet(n, !!p) },
+      h('span', { class: 'pnum', text: String(n) }), h('span', { class: 'grow' }, t('Controle {n}', { n }), h('span', { class: 'sub', text: sub })),
+      h('span', { class: 'val', text: t('Definir') })));
+  }
+  list.append(h('div', { class: 'sep', text: t('Ligados agora') }));
+  if (pads.length) for (const p of pads) list.append(h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: p.name }),
+    h('span', { class: 'val', style: { color: '#7ef0b0' }, text: p.player ? t('Controle {n}', { n: p.player }) : t('Automático') })));
+  else list.append(h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: t('Nenhum controle conectado') })));
+  list.append(h('button', { class: 'f item', act: () => call('openBluetooth') }, icon('bt'), h('span', { class: 'grow', text: t('Conectar controle novo') }), icon('chev')));
+  return list;
+}
+function defineSheet(n, isSet) {
+  const redraw = () => { if (PAGE === 'settings' && setSection === 'pads') show('settings', true); };
+  const btns = h('div', { style: { display: 'flex', gap: '1rem' } },
+    h('button', { class: 'f btn', text: t('Cancelar'), act: closeLayer }),
+    isSet ? h('button', { class: 'f btn', text: t('Voltar ao automático'), act: () => { call('clearPad', n); closeLayer(); redraw(); toast(t('Controle {n}', { n }) + ': ' + t('Automático')); } }) : null);
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' },
+    h('span', { class: 'pnum big', text: String(n) }),
+    h('h2', { text: t('Definir o controle {n}', { n }) }),
+    h('p', { text: t('Aperte qualquer botão no controle que vai ser o controle {n}. Ele fica guardado, mesmo depois de desligar.', { n }) }),
+    btns)), { onClose: () => { handlers.padSet = null; call('capturePad', 0); } });
+  handlers.padSet = e => {
+    handlers.padSet = null;
+    closeLayer();
+    toast(e.ok ? t('Controle {n}', { n: e.player }) + ': ' + e.name : t('Não deu para salvar'));
+    redraw();
+  };
+  call('capturePad', n);
 }
 
 /* Configurações de um console (ou de um jogo): imagem, turbo e as opções do próprio emulador. */
@@ -763,6 +823,7 @@ onBack = () => {
 
 function applyOpen() {
   LANG = INFO.lang === 'es' ? 'es' : 'pt';
+  applyUiPrefs();
   document.documentElement.lang = LANG === 'es' ? 'es' : 'pt-BR';
   loadLibrary();
   renderChips();

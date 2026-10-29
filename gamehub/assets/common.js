@@ -38,7 +38,7 @@ const ES = {
   'Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.': 'Usa solo juegos que tengas derecho a usar. Ningún juego viene con GameHub.',
   'Recebendo': 'Recibiendo', 'Pronto': 'Listo', 'Já estava na biblioteca': 'Ya estaba en la biblioteca', 'Aguardando arquivos…': 'Esperando archivos…',
   'Armazenamento': 'Almacenamiento', 'Jogos': 'Juegos', 'Livre para jogos': 'Libre para juegos', 'Reservado para a TV': 'Reservado para la TV',
-  'O GameHub sempre deixa livre para o sistema o maior valor entre 2 GB e 10% da memória da TV.': 'GameHub siempre deja libre para el sistema el mayor valor entre 2 GB y 10% de la memoria de la TV.',
+  'O GameHub sempre deixa livre para o sistema 10% da memória desta TV (no mínimo 768 MB e no máximo 2 GB).': 'GameHub siempre deja libre para el sistema el 10% de la memoria de esta TV (mínimo 768 MB y máximo 2 GB).',
   'Imagem': 'Imagen', 'Som': 'Sonido', 'Jogo': 'Juego', 'Controles': 'Controles', 'Sobre': 'Acerca de',
   'Filtro': 'Filtro', 'Nítido': 'Nítido', 'Pixel puro': 'Píxel puro', 'Suave': 'Suave', 'CRT (TV antiga)': 'CRT (TV antigua)', 'LCD (portátil)': 'LCD (portátil)',
   'Tamanho': 'Tamaño', 'Ajustar à tela': 'Ajustar a la pantalla', 'Pixel perfeito': 'Píxel perfecto', 'Esticar': 'Estirar',
@@ -86,6 +86,14 @@ const ES = {
   'Não deu para abrir este jogo': 'No se pudo abrir este juego', 'O arquivo pode estar corrompido ou ser de outra versão do console.': 'El archivo puede estar dañado o ser de otra versión de la consola.',
   'Atalhos': 'Atajos', 'Segure R2: acelera · Segure L2: rebobina · Select + Start: este menu': 'Mantén R2: acelera · Mantén L2: rebobina · Select + Start: este menú',
   'Ligar': 'Encender', 'Desligar': 'Apagar',
+  'Interface': 'Interfaz', 'Som de navegação': 'Sonido de navegación', 'Os toques ao andar pelos menus.': 'Los toques al moverte por los menús.',
+  'Animações': 'Animaciones', 'Transições e efeitos do foco. Desligadas, os menus respondem mais rápido em TVs lentas.': 'Transiciones y efectos del foco. Apagadas, los menús responden más rápido en TVs lentas.',
+  'Igual ao Onix': 'Igual que Onix', 'Vale para as telas do GameHub e o menu do jogo.': 'Vale para las pantallas de GameHub y el menú del juego.',
+  'Controle {n}': 'Control {n}', 'Definir': 'Definir', 'Ligados agora': 'Conectados ahora', 'Automático': 'Automático',
+  'Automático: o primeiro controle que apertar um botão': 'Automático: el primer control que presione un botón',
+  'Conectar controle novo': 'Conectar control nuevo', 'Voltar ao automático': 'Volver a automático', 'Definir o controle {n}': 'Definir el control {n}',
+  'Aperte qualquer botão no controle que vai ser o controle {n}. Ele fica guardado, mesmo depois de desligar.': 'Presiona cualquier botón en el control que será el control {n}. Queda guardado, incluso después de apagarlo.',
+  'Não deu para salvar': 'No se pudo guardar',
 };
 function t(s, vars) {
   let r = LANG === 'es' && ES[s] ? ES[s] : s;
@@ -194,6 +202,7 @@ function ago(ms) {
 function fmtBytes(b) {
   if (b >= 1e9) return (b / 1073741824).toFixed(1).replace('.', LANG === 'es' ? ',' : ',') + ' GB';
   if (b >= 1e6) return Math.round(b / 1048576) + ' MB';
+  if (b <= 0) return '0 MB';
   return Math.max(1, Math.round(b / 1024)) + ' KB';
 }
 
@@ -330,6 +339,16 @@ function toast(text) {
 /* ---------------- Sons do menu ----------------
    Toques curtos sintetizados (sem arquivos), como os do Onix, mas com timbre de console. */
 let sctx = null, soundsOn = true;
+/* Som de navegação e animações: "on", "off" ou "onix" (segue o Onix; ligado se ele nunca disse). */
+function uiOn(v, onix) {
+  return v === 'on' ? true : v === 'off' ? false : onix !== false;
+}
+function applyUi(sounds, motion) {
+  soundsOn = !!sounds;
+  document.documentElement.classList.toggle('no-motion', !motion);
+  if (!soundsOn && sctx && sctx.state === 'running') sctx.suspend();
+  else if (soundsOn && sctx && sctx.state === 'suspended') sctx.resume();
+}
 function sfx(kind) {
   if (!soundsOn) return;
   try {

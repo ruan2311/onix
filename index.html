@@ -102,6 +102,19 @@ svg{display:block}
 #refreshBtn,#ramBtn,#tvSettingsBtn{padding:.55rem .95rem;font-size:.9rem}
 #refreshBtn.busy svg,#ramBtn.busy svg{animation:spin 1s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* Topo fora da tela inicial: relógio, clima e selos centralizados na mesma linha. Em Jogos, o
+   vão do meio ganha um desenho no traço do Onix. */
+html:not(.on-home) .topbar{align-items:center}
+#topArt{display:none}
+html.on-games #topArt{display:block;flex:1;min-width:0;max-width:26rem;height:7.4rem;margin:0 1rem}
+html.on-games .top-right .chips{flex-direction:column;align-items:flex-end;gap:.45rem}
+#topArt svg{width:100%;height:100%;overflow:visible}
+.ta-pad{animation:taFloat 4s ease-in-out infinite alternate}
+.ta-coin{transform-box:fill-box;transform-origin:50% 50%;animation:taSpin 3s ease-in-out infinite}
+.ta-twinkle{animation:taTwinkle 2.4s ease-in-out infinite alternate}
+@keyframes taFloat{to{transform:translateY(-5px)}}
+@keyframes taSpin{0%,60%{transform:scaleX(1)}80%{transform:scaleX(.15)}100%{transform:scaleX(1)}}
+@keyframes taTwinkle{from{opacity:.35}to{opacity:1}}
 .chip{display:flex;align-items:center;gap:.45rem;padding:.45rem .85rem;border-radius:2rem;font-size:.82rem;color:var(--muted)}
 .chip svg{width:1rem;height:1rem}
 .chip.off{color:#ff8a80;border-color:rgba(255,138,128,.35)}
@@ -195,7 +208,39 @@ svg{display:block}
 .tile.hub .hub-tag{position:absolute;z-index:3;left:.45rem;top:.45rem;font-size:.62rem;font-weight:700;letter-spacing:.06em;padding:.15rem .45rem;border-radius:.4rem;background:rgba(0,0,0,.7)}
 .tile.hub .tile-art .hub-console{position:absolute;top:0;right:0;bottom:0;left:0;display:grid;place-items:center}
 .tile.hub .tile-art .hub-console svg{position:static;width:58%;height:auto}
-.hub-bar{display:flex;gap:.8rem;flex-wrap:wrap;margin:-.2rem 0 .6rem}
+/* Com o GameHub instalado: um cartão só, com abrir, os 4 consoles e (fora do Modo Infantil)
+   atualizar/desinstalar. Antes eram uma fileira de tiles grandes e um botão solto embaixo. */
+.hub-card{display:flex;align-items:center;gap:1.6rem;padding:1.2rem 1.4rem;margin:.9rem 0 .2rem;border-radius:var(--radius);border:1px solid var(--glass-border);
+  background:linear-gradient(115deg,rgba(167,139,250,.13),rgba(56,189,248,.05) 55%,rgba(255,255,255,.03))}
+.hub-card .hub-main{flex:none;width:17rem;display:flex;flex-direction:column;gap:.8rem}
+.hub-card .hub-head{display:flex;align-items:center;gap:.9rem}
+.hub-card .hub-mark{width:3.6rem;height:3.6rem;border-radius:.95rem}
+.hub-card .hub-mark svg{width:2.7rem;height:2.7rem}
+.hub-card .hub-head b{display:block;font-size:1.15rem}
+.hub-card .hub-head small{display:block;font-size:.8rem;color:var(--muted);margin-top:.15rem}
+.hub-actions{display:flex;gap:.5rem;flex-wrap:wrap}
+.hub-play{flex:none;width:17rem;display:flex;align-items:center;gap:.9rem;padding:.55rem .9rem .55rem .55rem;text-align:left}
+.hub-play-art{flex:none;position:relative;width:3.6rem;aspect-ratio:3/4;border-radius:.6rem;overflow:hidden;display:grid;place-items:center}
+.hub-play-art img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+.hub-play-art img.shot{image-rendering:pixelated}
+.hub-play-art .hub-console svg{width:2.6rem;height:auto}
+.hub-play-text{min-width:0;display:flex;flex-direction:column;gap:.3rem}
+.hub-play-text b{font-size:.95rem;font-weight:600;line-height:1.25;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.hub-play-text small{font-size:.75rem;color:var(--muted);font-weight:600;letter-spacing:.04em}
+.hub-actions .btn{padding:.6rem 1.1rem;font-size:.85rem}
+.hub-consoles{flex:1;min-width:0;display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+.hub-con{display:flex;flex-direction:column;align-items:flex-start;gap:.55rem;padding:.9rem .85rem;border-radius:calc(var(--radius) - .2rem);
+  border:1px solid var(--glass-border);text-align:left}
+.hub-con svg{width:3.6rem;height:2.3rem}
+.hub-con b{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.hub-con small{font-size:.75rem;color:var(--muted)}
+/* Minijogos e notícias em fileiras: uma linha cada, em vez de grades que alongavam a aba. */
+#gamesGrid .tile{width:11rem}
+#gamesGrid .tile-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.row.news{gap:1.1rem}
+.row.news .news-card{flex:none;width:18rem}
+.row.news .news-title{-webkit-line-clamp:2;font-size:.95rem}
+.row.news .info{flex:none;width:100%}
 .tile-sub{font-size:.75rem;color:var(--muted);opacity:.8;margin-top:-.35rem}
 /* Entradas: o tile e, embaixo, a canetinha que troca o banner. */
 .input-cell{display:flex;flex-direction:column;align-items:center;gap:.7rem}
@@ -483,7 +528,7 @@ html.kids .tile-art{border-radius:1.6rem}
 html.kids #homeApps .tile{width:11rem}
 html.kids .tile.is-focused .tile-art{border-color:#ffd23f;box-shadow:0 0 0 .22rem #ffd23f,0 .6rem 1.6rem rgba(255,158,196,.45)}
 html.kids .tile.is-focused .tile-label{color:#ffd23f;font-weight:700}
-html.kids .grid.games .tile-art{border-radius:1.6rem}
+html.kids .grid.games .tile-art,html.kids #gamesGrid .tile-art{border-radius:1.6rem}
 
 /* ---------- Camadas da 14.0.0 (perfis, boas-vindas, teclado, PIN, clima, celular) ----------
    Telas por cima do Onix, cada uma com o próprio foco. Ficam abaixo do aviso (#toast) e da tela de descanso. */
@@ -824,6 +869,21 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
       <div id="date"></div>
     </div>
     <button class="f" id="wxBtn" tabindex="-1" hidden><span class="wx-ico" id="wxIco"></span><span class="wx-txt"><span class="wx-temp" id="wxTemp"></span><span class="wx-sub" id="wxSub"></span></span></button>
+    <!-- Aba Jogos: desenho no vão do topo, no traço do planeta do Onix (controle em órbita,
+         moeda, coração de pixel, invasor e estrelinhas). Só aparece em Jogos. -->
+    <div id="topArt" aria-hidden="true"><svg viewBox="0 0 320 130" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round">
+      <ellipse cx="160" cy="74" rx="146" ry="30" stroke-width="2" stroke-dasharray="1.5 9" opacity=".5"/>
+      <path d="M6 14l52 24" stroke-width="2" opacity=".55"/><circle cx="60" cy="39" r="3.2" fill="#fff" stroke="none"/>
+      <g class="ta-pad"><g transform="translate(108 14) rotate(-8 52 48) scale(2.2)" stroke-width="1.6">
+        <path d="M16 14.5h16a9.5 9.5 0 0 1 9.2 7.1l2.3 8.9a5 5 0 0 1-8.9 4.2L31 30H17l-3.6 4.7a5 5 0 0 1-8.9-4.2l2.3-8.9A9.5 9.5 0 0 1 16 14.5z"/>
+        <path d="M15 19.5v6M12 22.5h6"/><circle cx="32.5" cy="20.6" r="1.25" fill="#fff" stroke="none"/><circle cx="35.9" cy="24" r="1.25" fill="#fff" stroke="none"/></g></g>
+      <g class="ta-coin" stroke-width="2.4"><circle cx="86" cy="28" r="12"/><path d="M86 21v14"/></g>
+      <g fill="#fff" stroke="none" opacity=".9"><rect x="34" y="84" width="6" height="6"/><rect x="46" y="84" width="6" height="6"/><rect x="28" y="90" width="30" height="6"/><rect x="34" y="96" width="18" height="6"/><rect x="40" y="102" width="6" height="6"/></g>
+      <g fill="#fff" stroke="none" opacity=".9"><rect x="252" y="20" width="5" height="5"/><rect x="282" y="20" width="5" height="5"/><rect x="257" y="25" width="25" height="5"/><rect x="252" y="30" width="35" height="5"/><rect x="247" y="35" width="10" height="5"/><rect x="262" y="35" width="15" height="5"/><rect x="282" y="35" width="10" height="5"/><rect x="247" y="40" width="45" height="5"/><rect x="252" y="45" width="5" height="5"/><rect x="282" y="45" width="5" height="5"/></g>
+      <g stroke-width="2" opacity=".75"><path d="M290 92v12M284 98h12"/><path d="M110 112v9M105.5 116.5h9"/></g>
+      <g fill="#fff" stroke="none" class="ta-twinkle"><circle cx="222" cy="14" r="2.4"/><circle cx="312" cy="66" r="2"/><circle cx="14" cy="64" r="2"/><circle cx="214" cy="120" r="2.2"/></g>
+      <path d="M306 4l3 7.5 7.5 3-7.5 3-3 7.5-3-7.5-7.5-3 7.5-3z" fill="#fff" stroke="none"/>
+    </svg></div>
     <div class="top-right">
     <div class="top-actions">
     <button class="f btn" id="refreshBtn" tabindex="-1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12a8 8 0 1 1-2.34-5.66"/><path d="M20 4v5h-5"/></svg><span>Atualizar</span></button>
@@ -899,9 +959,10 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
   <section class="section" id="sec-games" aria-label="Jogos">
     <div class="section-title">Jogos</div>
     <div id="hubBox" hidden></div>
-    <div class="grid games" id="gamesGrid"></div>
-    <div class="row-title">Notícias dos games<span class="row-sub">· Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code</span></div>
-    <div class="grid news" id="newsGrid"></div>
+    <div class="row-title">Minijogos do Onix<span class="row-sub">· jogue com o controle remoto</span></div>
+    <div class="row" id="gamesGrid"></div>
+    <div class="row-title">Notícias dos games<span class="row-sub">· as mais recentes da Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code</span></div>
+    <div class="row news" id="newsGrid"></div>
   </section>
 
   <section class="section" id="sec-edit" aria-label="Organizar seus apps">
@@ -1229,7 +1290,6 @@ const ES = Object.freeze({
   "· sem abrir há mais de 30 dias": "· sin abrir hace más de 30 días",
   "Ajustes de imagem da TV": "Ajustes de imagen de la TV",
   "Notícias dos games": "Noticias de videojuegos",
-  "· Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code": "· Adrenaline y Eurogamer.pt, en portugués · OK abre el resumen y el código QR",
   "Organizar seus apps": "Organizar tus apps",
   "Na fileira de cima, aperte OK num app para pegá-lo, use ◀ ▶ para mudar a posição e OK de novo para soltar. Em “Adicionar ou remover”, OK marca ou desmarca o app na tela inicial. Tudo é salvo na hora.": "En la fila de arriba, pulsa OK en una app para tomarla, usa ◀ ▶ para cambiar su posición y OK otra vez para soltarla. En “Agregar o quitar”, OK marca o desmarca la app en la pantalla de inicio. Todo se guarda al instante.",
   "Concluir": "Listo",
@@ -1849,9 +1909,9 @@ const Bridge = (() => {
       } catch (e) { console.warn('gameHub falhou', e); return null; }
     },
     gameHubCheck() { if (has('gameHubCheck')) try { b.gameHubCheck(); } catch (_) {} },
-    openGameHub(profile, name, kids, lang, open) {
+    openGameHub(profile, name, kids, lang, open, sound, motion) {
       if (!has('openGameHub')) return false;
-      try { return b.openGameHub(profile, name, !!kids, lang, open) === true; } catch (e) { console.warn('openGameHub falhou', e); return false; }
+      try { return b.openGameHub(profile, name, !!kids, lang, open, !!sound, !!motion) === true; } catch (e) { console.warn('openGameHub falhou', e); return false; }
     },
     installGameHub() { if (has('installGameHub')) try { return b.installGameHub() === true; } catch (_) {} return false; },
     uninstallGameHub() { if (has('uninstallGameHub')) try { return b.uninstallGameHub() === true; } catch (_) {} return false; },
@@ -2223,7 +2283,9 @@ const PICK_PROVIDERS = Object.freeze({
   "Versão {v}": "Versión {v}",
   "Nintendinho": "Nintendo (NES)",
   "· Seus jogos por console": "· Tus juegos por consola", "· Onix GameHub · OK volta de onde parou": "· Onix GameHub · OK vuelve donde lo dejaste", "Continuar": "Continuar",
-  "Atualizar o GameHub ({v})": "Actualizar GameHub ({v})",
+  "Atualizar ({v})": "Actualizar ({v})", "Desinstalar": "Desinstalar",
+  "Minijogos do Onix": "Minijuegos de Onix", "· jogue com o controle remoto": "· juega con el control remoto",
+  "· as mais recentes da Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code": "· las más recientes de Adrenaline y Eurogamer.pt, en portugués · OK abre el resumen y el código QR",
   "Desinstalar o GameHub": "Desinstalar GameHub",
   "Não deu para abrir o GameHub": "No se pudo abrir GameHub",
 });
@@ -3302,7 +3364,8 @@ const HUB_CONSOLES = [
 let hubChecked = false;
 function openHub(target) {
   const pr = activeProfile();
-  if (!Bridge.openGameHub(pr ? pr.id : FIRST_PROFILE, pr ? pr.name : '', isKids(), LANG, target)) toast('Não deu para abrir o GameHub');
+  // O GameHub segue os sons do menu e as animações daqui (até a pessoa mudar lá dentro).
+  if (!Bridge.openGameHub(pr ? pr.id : FIRST_PROFILE, pr ? pr.name : '', isKids(), LANG, target, settings.sound, settings.motion)) toast('Não deu para abrir o GameHub');
 }
 function renderHub() {
   const box = $('#hubBox');
@@ -3328,54 +3391,55 @@ function renderHub() {
         h('span', { text: 'Um hub de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.' }),
         note ? h('span', { class: 'hub-note', text: note }) : null), btn));
   } else {
-    // "Continuar jogando": a capa do jogo em pé, como os pôsteres das indicações. Sem capa, a tela de
-    // onde parou; sem nenhuma das duas, o desenho do console.
-    const played = h('div', { class: 'row' });
+    // "Continuar jogando", acima do cartão: cartões deitados e baixos (capa pequena, nome e console),
+    // para a fileira não alongar a aba. Sem capa, a tela de onde parou; sem nenhuma, o console.
+    const played = h('div', { class: 'row hub-played' });
     for (const g of st.recent.slice(0, 8)) {
       const c = HUB_CONSOLES.find(x => x[0] === g.console);
-      const art = h('span', { class: 'tile-art glass', style: 'background:linear-gradient(160deg,' + c[2] + '33,#111 75%)' });
+      const art = h('span', { class: 'hub-play-art', style: 'background:linear-gradient(160deg,' + c[2] + '33,#111 75%)' });
       const pic = g.cover || g.shot;
       if (pic) art.append(h('img', { src: pic, alt: '', class: g.cover ? '' : 'shot' }));
       else art.append(h('span', { class: 'hub-console', style: 'color:' + c[2] }, svgFrom(c[3])));
-      art.append(h('span', { class: 'hub-tag', style: 'color:' + c[2], text: c[4] }));
-      const b = h('button', { class: 'f tile pick hub', tabindex: '-1', 'aria-label': g.name }, art,
-        h('span', { class: 'tile-label', text: g.name }), h('span', { class: 'tile-sub', text: g.resume ? 'Continuar' : 'Jogar' }));
+      const b = h('button', { class: 'f hub-play glass', tabindex: '-1', 'aria-label': g.name }, art,
+        h('span', { class: 'hub-play-text' }, h('b', { text: g.name }),
+          h('small', null, h('span', { style: 'color:' + c[2], text: c[4] }), ' · ' + t(g.resume ? 'Continuar' : 'Jogar'))));
       b.dataset.key = 'g' + g.id;
       b._act = () => openHub((g.resume ? 'resume:' : 'game:') + g.id);
       played.append(b);
     }
     if (st.recent.length) kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Continuar jogando' }), h('span', { class: 'row-sub', text: '· Onix GameHub · OK volta de onde parou' })), played);
-    const row = h('div', { class: 'row' });
-    for (const [id, name, color, art] of HUB_CONSOLES) {
-      const n = st.counts[id] || 0;
-      const b = h('button', { class: 'f tile hub', tabindex: '-1', 'aria-label': name },
-        h('span', { class: 'tile-art glass', style: 'background:linear-gradient(150deg,' + color + '33,#111 75%)' }, h('span', { class: 'hub-console', style: 'color:' + color }, svgFrom(art))),
-        h('span', { class: 'tile-label', text: name }), h('span', { class: 'tile-sub', text: n ? n + ' ' + t(n === 1 ? 'jogo' : 'jogos') : 'Nenhum jogo ainda' }));
-      b.dataset.key = 'c' + id;
-      b._act = () => openHub('console:' + id);
-      row.append(b);
-    }
-    const all = h('button', { class: 'f tile hub', tabindex: '-1', 'aria-label': 'Abrir o GameHub' },
-      h('span', { class: 'tile-art glass', style: 'background:#0a0a0b' }, h('span', { class: 'hub-console' }, svgFrom(HUB_MARK))),
-      h('span', { class: 'tile-label', text: 'Abrir o GameHub' }), h('span', { class: 'tile-sub', text: t('Versão {v}').replace('{v}', st.version) }));
-    all.dataset.key = 'open';
-    all._act = () => openHub('home');
-    row.append(all);
-    kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Onix GameHub' }), h('span', { class: 'row-sub', text: '· Seus jogos por console' })), row);
+    // Um cartão: abrir o GameHub, os 4 consoles e (fora do Modo Infantil) atualizar/desinstalar.
+    const total = HUB_CONSOLES.reduce((n, c) => n + (st.counts[c[0]] || 0), 0);
+    const open = h('button', { class: 'f btn primary', tabindex: '-1' }, h('span', { text: 'Abrir o GameHub' }));
+    open.dataset.key = 'open';
+    open._act = () => openHub('home');
+    const actions = h('div', { class: 'hub-actions' }, open);
     if (!isKids()) {
-      const bar = h('div', { class: 'hub-bar' });
       if (st.latest) {
-        const up = h('button', { class: 'f btn primary', tabindex: '-1' }, h('span', { text: busy ? busyText : t('Atualizar o GameHub ({v})').replace('{v}', st.latest) }));
+        const up = h('button', { class: 'f btn', tabindex: '-1' }, h('span', { text: busy ? busyText : t('Atualizar ({v})').replace('{v}', st.latest) }));
         up.dataset.key = 'update';
         up._act = () => { if (!busy) Bridge.installGameHub(); };
-        bar.append(up);
+        actions.append(up);
       }
-      const rm = h('button', { class: 'f btn', tabindex: '-1' }, h('span', { text: 'Desinstalar o GameHub' }));
+      const rm = h('button', { class: 'f btn', tabindex: '-1' }, h('span', { text: 'Desinstalar' }));
       rm.dataset.key = 'remove';
       rm._act = () => Bridge.uninstallGameHub();
-      bar.append(rm);
-      kids.push(bar);
+      actions.append(rm);
     }
+    const consoles = h('div', { class: 'hub-consoles' });
+    for (const [id, name, color, art] of HUB_CONSOLES) {
+      const n = st.counts[id] || 0;
+      const b = h('button', { class: 'f hub-con', tabindex: '-1', 'aria-label': name, style: 'background:linear-gradient(150deg,' + color + '2a,rgba(255,255,255,.02) 80%)' },
+        h('span', { style: 'color:' + color }, svgFrom(art)), h('b', { text: name }),
+        h('small', { text: n ? n + ' ' + t(n === 1 ? 'jogo' : 'jogos') : 'Nenhum jogo ainda' }));
+      b.dataset.key = 'c' + id;
+      b._act = () => openHub('console:' + id);
+      consoles.append(b);
+    }
+    const head = h('div', { class: 'hub-head' }, h('div', { class: 'hub-mark' }, svgFrom(HUB_MARK)),
+      h('div', null, h('b', { text: 'Onix GameHub' }),
+        h('small', { text: (total ? total + ' ' + t(total === 1 ? 'jogo' : 'jogos') : t('Nenhum jogo ainda')) + ' · ' + t('Versão {v}').replace('{v}', st.version) })));
+    kids.push(h('div', { class: 'hub-card' }, h('div', { class: 'hub-main' }, head, actions), consoles));
   }
   box.replaceChildren(...kids);
   if (had) {
@@ -3700,7 +3764,7 @@ function renderNews() {
       : 'As notícias aparecem assim que a TV estiver conectada à internet (atualizadas a cada 3 horas).' }));
     return;
   }
-  grid.replaceChildren(...news.map(n => {
+  grid.replaceChildren(...news.slice(0, 8).map(n => {
     const b = h('button', { class: 'f news-card glass', tabindex: '-1', 'aria-label': n.title },
       n.image ? h('img', { class: 'news-img', src: n.image, alt: '', draggable: 'false', decoding: 'async' }) : h('span', { class: 'news-img news-ph' }),
       h('span', { class: 'news-body' }, h('span', { class: 'news-meta', text: newsMeta(n) }), h('span', { class: 'news-title', text: n.title })));
@@ -5211,7 +5275,8 @@ function showSection(name) {
   $$('.section').forEach(s => s.classList.toggle('active', s.id === 'sec-' + name));
   $$('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.section === name));
   $('.top-actions').hidden = name !== 'home';
-  document.documentElement.classList.toggle('on-home', name === 'home');   // estilos da tela inicial mexem no topo só aqui
+  document.documentElement.classList.toggle('on-home', name === 'home');
+  document.documentElement.classList.toggle('on-games', name === 'games');   // estilos da tela inicial mexem no topo só aqui
   $('#wxBtn').classList.toggle('home', name === 'home');
   $('#main').scrollTop = 0;
 }

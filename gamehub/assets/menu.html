@@ -42,6 +42,7 @@ function json(s, def) { try { return s ? JSON.parse(s) : def; } catch (_) { retu
 function refreshInfo() {
   INFO = json(call('info'), INFO);
   LANG = INFO.lang === 'es' ? 'es' : 'pt';
+  applyUi(INFO.sounds !== false, INFO.motion !== false);
 }
 
 function header() {
@@ -217,7 +218,7 @@ function padsList() {
   const list = h('div', { class: 'list' });
   const pads = INFO.gamepads || [];
   if (!pads.length) list.append(h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: t('Nenhum controle conectado') })));
-  pads.forEach((p, i) => list.append(h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: p.name }), h('span', { class: 'val', text: '#' + (i + 1) }))));
+  pads.forEach((p, i) => list.append(h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: p.name }), h('span', { class: 'val', text: p.player ? t('Controle {n}', { n: p.player }) : t('Automático') }))));
   list.append(item('bt', t('Conectar controle'), () => call('openBluetooth')));
   return list;
 }
