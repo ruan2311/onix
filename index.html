@@ -367,6 +367,22 @@ html.on-games .top-right .chips{flex-direction:column;align-items:flex-end;gap:.
    e some em 12 s (#kitty + !important vence o "html.no-motion *"). */
 #kitty{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;place-items:center;background:radial-gradient(50% 55% at 50% 45%,rgba(255,158,196,.16),transparent 70%),rgba(4,4,6,.94)}
 #kitty[hidden]{display:none}
+/* Apoie o criador (Configurações → Sobre): um painel só, sem nada aparecendo sozinho. */
+#support{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;place-items:center;background:radial-gradient(55% 60% at 50% 45%,rgba(255,111,181,.14),transparent 70%),rgba(4,4,6,.94)}
+#support[hidden]{display:none}
+#support .sp-card{display:flex;gap:2.6rem;align-items:center;width:min(64rem,90vw);padding:2.2rem 2.6rem;border-radius:1.8rem;background:linear-gradient(160deg,#1a1b22,#0c0d11);
+  border:1px solid var(--glass-border);box-shadow:var(--glass-hi),0 2rem 4rem rgba(0,0,0,.5);animation:kittyIn .6s cubic-bezier(.34,1.4,.64,1) both!important}
+#support .sp-text{flex:1;min-width:0}
+#support .sp-free{display:inline-block;padding:.35rem .9rem;border-radius:999px;background:rgba(126,240,176,.12);border:1px solid rgba(126,240,176,.35);color:#9ff5c6;font-weight:700;font-size:.95rem}
+#support h2{font-size:2.3rem;margin:.9rem 0 .7rem}
+#support p{font-size:1.2rem;line-height:1.5;color:rgba(245,246,248,.82);margin:0 0 .8rem}
+#support .sp-thanks{color:var(--muted);font-size:1.05rem}
+#support .sp-qr{flex:none;width:17rem;display:flex;flex-direction:column;align-items:center;gap:.8rem}
+#support .sp-qr svg{width:17rem;height:17rem;border-radius:1rem;background:#fff;display:block}
+#support .sp-qr b{font-size:1rem;letter-spacing:.06em}
+#support .sp-key{font-size:.82rem;color:var(--muted);text-align:center;word-break:break-all}
+#support .sp-hint{position:absolute;right:6vw;bottom:2.4rem;display:flex;gap:.6rem;align-items:center;color:var(--muted)}
+#support .sp-hint b{padding:.2rem .7rem;border:1px solid var(--glass-border);border-radius:.5rem;color:#fff}
 #kitty .kitty-card{position:relative;overflow:hidden;width:90vw;max-width:30rem;padding:1.6rem 2rem 2rem;border-radius:1.8rem;text-align:center;background:linear-gradient(160deg,#1a1b22,#0c0d11);
   animation:kittyIn .7s cubic-bezier(.34,1.56,.64,1) both!important}
 #kitty .kitty-cat{position:relative;z-index:1;width:15rem;height:15rem;margin:0 auto;overflow:visible;animation:kittyBob 2.4s ease-in-out .7s infinite!important}
@@ -1056,6 +1072,7 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
 
 <!-- Easter egg: OK 5 vezes no cartão "Sobre" das Configurações. -->
 <div id="story" hidden role="dialog" aria-label="Trajetória do Onix"></div>
+<div id="support" hidden role="dialog" aria-label="Apoie o criador"></div>
 <div id="kitty" hidden role="dialog" aria-label="Gatinho do Onix">
   <div class="kitty-card glass">
   <svg class="kitty-cat" viewBox="0 0 240 240" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1298,7 +1315,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '16.1.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '16.1.1 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1554,6 +1571,13 @@ const ES = Object.freeze({
   "Indicações: {0}": "Recomendaciones: {0}",
   "Sobre o Onix": "Acerca de Onix",
   "Trajetória do Onix": "Trayectoria de Onix",
+  "Apoie o criador": "Apoya al creador",
+  "*Apoie o criador:* em *Configurações → Sobre*, um QR code Pix para quem quiser ajudar o projeto com qualquer valor. O Onix continua gratuito e sem anúncios; nada aparece sozinho, e o botão não aparece no Modo Infantil.": "*Apoya al creador:* en *Configuración → Acerca de*, un código QR de Pix para quien quiera ayudar al proyecto con cualquier valor (solo bancos de Brasil). Onix sigue gratis y sin anuncios; nada aparece solo, y el botón no aparece en el Modo Infantil.",
+  "O Onix é gratuito e sempre vai ser. Se quiser ajudar o projeto, dá para mandar um Pix de qualquer valor.": "Onix es gratis y siempre lo será. Si quieres ayudar al proyecto, puedes enviar un Pix de cualquier valor (solo desde Brasil).",
+  "O Onix é e sempre vai ser gratuito, sem anúncios.": "Onix es y siempre será gratis, sin anuncios.",
+  "Se o Onix deixou a sua TV melhor e você quiser ajudar a manter o projeto (e as próximas gemas), qualquer valor é bem-vindo.": "Si Onix mejoró tu TV y quieres ayudar a mantener el proyecto (y las próximas gemas), cualquier valor es bienvenido.",
+  "Aponte a câmera do celular ou o app do banco para o código: o Pix abre com a chave pronta, e você escolhe o valor.": "Apunta la cámara del celular o la app del banco al código: el Pix se abre con la clave lista y tú eliges el valor (Pix funciona solo con bancos de Brasil).",
+  "Não pode agora? Tudo bem: usar e indicar o Onix já ajuda muito. Obrigado! 💜": "¿No puedes ahora? No pasa nada: usar y recomendar Onix ya ayuda mucho. ¡Gracias! 💜",
   "A história do Onix e do criador, contada em slides animados. OK passa para o próximo.": "La historia de Onix y de su creador, contada en diapositivas animadas. OK pasa a la siguiente.",
   "*Trajetória do Onix:* a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em *Configurações → Sobre*; OK passa para o próximo.": "*Trayectoria de Onix:* la historia de Onix y de su creador, contada en siete diapositivas animadas: de los primeros bots al nombre en clave Aurora, al estilo de vidrio oscuro y a los proyectos con nombre de piedra preciosa. En *Configuración → Acerca de*; OK pasa a la siguiente.",
   "*Onix GameHub* com página própria no GitHub (ruan2311/onix-gamehub): o Onix passa a instalar e atualizar o GameHub por lá.": "*Onix GameHub* con página propia en GitHub (ruan2311/onix-gamehub): Onix ahora instala y actualiza GameHub desde allí.",
@@ -4165,6 +4189,7 @@ const OPTIONS = [
   { act: 'reset',  name: 'Restaurar padrão',      desc: 'Volta todas as opções do Onix ao original.' },
   { group: 'Sobre' },
   { act: 'changelog', name: 'Novidades',         desc: 'O que mudou em cada versão do Onix, da mais nova para a mais antiga.' },
+  { act: 'support', name: 'Apoie o criador', desc: 'O Onix é gratuito e sempre vai ser. Se quiser ajudar o projeto, dá para mandar um Pix de qualquer valor.' },
   { act: 'story', name: 'Trajetória do Onix', desc: 'A história do Onix e do criador, contada em slides animados. OK passa para o próximo.' },
   { act: 'about' },
 ];
@@ -4172,6 +4197,9 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '16.1.1 beta', date: 'outubro de 2026', items: [
+    ['new', '*Apoie o criador:* em *Configurações → Sobre*, um QR code Pix para quem quiser ajudar o projeto com qualquer valor. O Onix continua gratuito e sem anúncios; nada aparece sozinho, e o botão não aparece no Modo Infantil.'],
+  ] },
   { version: '16.1.0 beta', date: 'outubro de 2026', items: [
     ['new', '*Trajetória do Onix:* a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em *Configurações → Sobre*; OK passa para o próximo.'],
     ['fix', '*Onix GameHub* com página própria no GitHub (ruan2311/onix-gamehub): o Onix passa a instalar e atualizar o GameHub por lá.'],
@@ -4343,7 +4371,7 @@ function renderSettings() {
   if (Bridge.has('remoteInfo')) readRemoteInfo();
   // Os serviços só aparecem com a escolha manual; "Atualizar automaticamente", se a ponte instala.
   const opts = OPTIONS.filter(o => (!o.service || !settings.pickAuto) && (!o.phone || Bridge.has('remoteStart'))
-    && (o.key !== 'autoUpdate' || !Bridge.native || Bridge.has('setAutoUpdate')));
+    && (o.key !== 'autoUpdate' || !Bridge.native || Bridge.has('setAutoUpdate')) && (o.act !== 'support' || !isKids()));
   $('#optsList').replaceChildren(...opts.map(o => {
     if (o.group) return h('div', { class: 'opts-group', text: o.group });
     if (o.act === 'about') {
@@ -4407,6 +4435,7 @@ function renderSettings() {
     else if (o.act === 'city') b._act = chooseCity;
     else if (o.act === 'changelog') b._act = () => openChangelog(b);
     else if (o.act === 'story') b._act = () => openStory(b);
+    else if (o.act === 'support') b._act = () => openSupport(b);
     else if (o.act === 'update') { b.id = 'updateOpt'; b._act = updateAction; }
     return b;
   }));
@@ -4593,6 +4622,46 @@ function storyKey(e) {
   if (dir === 'left') { if (!storyStep(-1)) sfx('edge'); return; }
   if (dir === 'right' || e.key === 'Enter' || e.key === ' ' || e.keyCode === 13 || e.keyCode === 23) { storyStep(1); return; }
   if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4) back();
+}
+
+/* ---------------- Apoie o criador ----------------
+   Configurações → Sobre. O QR code é um Pix "copia e cola" sem valor (o padrão BR Code do Banco
+   Central), montado aqui mesmo: sem internet e sem serviço de fora. Qualquer tecla fecha. */
+const PIX = { key: '5e2f7f87-61ff-476d-a655-25d2c95161cc', name: 'RUAN AMARAL', city: 'BELEM' };
+function pixPayload(p) {
+  const f = (id, v) => id + String(v.length).padStart(2, '0') + v;
+  const body = f('00', '01') + f('26', f('00', 'br.gov.bcb.pix') + f('01', p.key)) + f('52', '0000') + f('53', '986')
+    + f('58', 'BR') + f('59', p.name.slice(0, 25)) + f('60', p.city.slice(0, 15)) + f('62', f('05', '***')) + '6304';
+  let crc = 0xFFFF;   // CRC16-CCITT (0x1021), como pede o padrão
+  for (let i = 0; i < body.length; i++) {
+    crc ^= body.charCodeAt(i) << 8;
+    for (let k = 0; k < 8; k++) crc = crc & 0x8000 ? ((crc << 1) ^ 0x1021) & 0xFFFF : (crc << 1) & 0xFFFF;
+  }
+  return body + crc.toString(16).toUpperCase().padStart(4, '0');
+}
+let support = null;
+function openSupport(from) {
+  support = { from };
+  const qr = qrSvg(pixPayload(PIX));
+  $('#support').replaceChildren(
+    h('div', { class: 'sp-card' },
+      h('div', { class: 'sp-text' },
+        h('span', { class: 'sp-free', text: 'O Onix é e sempre vai ser gratuito, sem anúncios.' }),
+        h('h2', { text: 'Apoie o criador' }),
+        h('p', { text: 'Se o Onix deixou a sua TV melhor e você quiser ajudar a manter o projeto (e as próximas gemas), qualquer valor é bem-vindo.' }),
+        h('p', { text: 'Aponte a câmera do celular ou o app do banco para o código: o Pix abre com a chave pronta, e você escolhe o valor.' }),
+        h('p', { class: 'sp-thanks', text: 'Não pode agora? Tudo bem: usar e indicar o Onix já ajuda muito. Obrigado! 💜' })),
+      h('div', { class: 'sp-qr' }, qr || '', h('b', { text: 'Pix · Ruan Amaral' }), h('span', { class: 'sp-key', text: PIX.key }))),
+    h('div', { class: 'sp-hint' }, h('b', { text: 'OK' }), h('span', { text: 'para fechar' })));
+  $('#support').hidden = false;
+}
+function closeSupport() {
+  if (!support) return;
+  const from = support.from;
+  support = null;
+  $('#support').hidden = true;
+  $('#support').replaceChildren();
+  if (from && document.contains(from)) setFocus(from);
 }
 
 /* ---------------- Atualizações ----------------
@@ -5740,6 +5809,7 @@ function back() {
 function backStep() {
   if (game) { closeGame(); return true; }
   if (story) { closeStory(); return true; }
+  if (support) { closeSupport(); return true; }
   if (kittyOpen) { hideKitty(); return true; }
   // O mesmo Voltar pode chegar duas vezes (tecla na página e Voltar do Android): o que fechou o
   // gatinho não tira o foco do cartão Sobre.
@@ -5763,6 +5833,7 @@ document.addEventListener('keydown', e => {
   if (panes.length) { paneKey(e); return; }
   if (reader) { readerKey(e); return; }
   if (story) { storyKey(e); return; }
+  if (support) { e.preventDefault(); if (!e.repeat) back(); return; }
   // Gatinho aberto: qualquer tecla fecha (Voltar passa pelo back() normal).
   if (kittyOpen && !(e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4)) {
     e.preventDefault(); if (!e.repeat) { hideKitty(); sfx('back'); } return;
@@ -5791,6 +5862,7 @@ document.addEventListener('keydown', e => {
 document.addEventListener('click', e => {
   if (kittyOpen) { hideKitty(); return; }
   if (story) { storyStep(1); return; }
+  if (support) { closeSupport(); sfx('back'); return; }
   if (panes.length) {
     const el = e.target.closest('.f');
     if (el && topPane().el.contains(el)) { e.preventDefault(); setFocus(el); sfx('select'); activate(el); }

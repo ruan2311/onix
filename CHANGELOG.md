@@ -2,6 +2,10 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 16.1.1 beta (outubro de 2026)
+
+- **Apoie o criador:** em **Configurações → Sobre**, um QR code Pix para quem quiser ajudar o projeto com qualquer valor. O Onix continua gratuito e sem anúncios; nada aparece sozinho, e o botão não aparece no Modo Infantil.
+
 ## 16.1.0 beta (outubro de 2026)
 
 - **Trajetória do Onix:** a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em **Configurações → Sobre**; OK passa para o próximo.

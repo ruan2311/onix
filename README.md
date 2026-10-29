@@ -74,6 +74,8 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 ## Novidades da 16.1.0
 
+- **16.1.1 · Apoie o criador:** em **Configurações → Sobre**, um QR code Pix para quem quiser ajudar o projeto com qualquer valor. O Onix continua **gratuito e sem anúncios**: nada aparece sozinho, e o botão não aparece no Modo Infantil.
+
 - **Trajetória do Onix:** a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em **Configurações → Sobre**; OK passa para o próximo.
 - **Onix GameHub** com página própria no GitHub: **[ruan2311/onix-gamehub](https://github.com/ruan2311/onix-gamehub)**. O Onix instala e atualiza o GameHub por lá.
 
