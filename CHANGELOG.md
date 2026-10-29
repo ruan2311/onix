@@ -2,7 +2,7 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
-## 16.1.2 beta (outubro de 2026)
+## 16.3.0 beta (outubro de 2026)
 
 - **Posição do menu:** em **Configurações → Menu**, escolha onde o menu fica. **Lateral** é o de sempre; **Em cima** vira uma barra de abas, com o seu perfil e os atalhos do sistema nas pontas; **Embaixo** vira um dock flutuante, com ícones grandes e um ponto de luz no item aberto. Cada posição tem o visual próprio, e o Modo Infantil continua com o menu lateral.
 - **Esconder o menu ao abrir uma seção:** opcional. Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Apertar na direção do menu, Voltar ou tocar na aba da borda traz o menu de volta.

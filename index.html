@@ -1408,7 +1408,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '16.1.2 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '16.3.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -4310,7 +4310,7 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
-  { version: '16.1.2 beta', date: 'outubro de 2026', items: [
+  { version: '16.3.0 beta', date: 'outubro de 2026', items: [
     ['new', '*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com ícones grandes e um ponto de luz no item aberto. Cada posição tem o visual próprio, e o Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.'],
     ['new', '*Esconder o menu ao abrir uma seção:* opcional. Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Apertar na direção do menu, Voltar ou tocar na aba da borda traz o menu de volta. Em *Configurações → Menu*.'],
   ] },
