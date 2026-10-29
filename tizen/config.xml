@@ -23,6 +23,10 @@
     <!-- Versões novas (GitHub) e o teste de internet do chip "Conectado". -->
     <access origin="https://api.github.com" subdomains="false"/>
     <access origin="https://connectivitycheck.gstatic.com" subdomains="false"/>
+    <!-- Aba Jogos: destaques do Game Pass (lista pública da Microsoft e as imagens). -->
+    <access origin="https://catalog.gamepass.com" subdomains="false"/>
+    <access origin="https://displaycatalog.mp.microsoft.com" subdomains="false"/>
+    <access origin="https://store-images.s-microsoft.com" subdomains="false"/>
 
     <!-- Todos de nível "public": instalam com o certificado comum da Samsung. -->
     <tizen:privilege name="http://tizen.org/privilege/internet"/>

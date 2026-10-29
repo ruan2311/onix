@@ -563,6 +563,70 @@ async function refreshNews(networkBack, force) {
   return true;
 }
 
+/* ---------------- Jogos na nuvem ----------------
+   Sem emuladores nestas TVs, a aba Jogos vira um hub como o Gaming Hub da Samsung: destaques do
+   Game Pass (lista pública da Microsoft, sem login) e os apps de cloud gaming instalados. Os
+   destaques seguem o ritmo das notícias (a cada 3 h, só com o Onix aberto). */
+const GP_LIST = 'https://catalog.gamepass.com/sigls/v2?id=eab7757c-ff70-45af-bfa6-79d3cfb2bf81&language=pt-br&market=BR';   // "Mais populares"
+const GP_PRODUCTS = 'https://displaycatalog.mp.microsoft.com/v7.0/products?market=BR&languages=pt-br&bigIds=';
+const GP_COUNT = 8, GP_ID = /^[A-Z0-9]{12}$/, GP_IMG = /^\/\/store-images\.s-microsoft\.com\/image\/[A-Za-z0-9.-]{10,200}$/;
+// Os IDs dos apps mudam de TV para TV e de ano para ano: o app é achado pelo nome.
+const CLOUD = [
+  ['xbox', 'Xbox Cloud Gaming', /\bxbox\b/i],
+  ['geforce', 'GeForce NOW', /geforce\s*now/i],
+  ['boosteroid', 'Boosteroid', /boosteroid/i],
+  ['luna', 'Amazon Luna', /\bluna\b/i],
+  ['blacknut', 'Blacknut', /blacknut/i],
+  ['antstream', 'Antstream Arcade', /antstream/i],
+];
+function cloudApp(key) {
+  const c = CLOUD.find(x => x[0] === key);
+  return c ? appList.find(a => c[2].test(a.label || '')) || null : null;
+}
+async function fetchGamePass() {
+  const list = JSON.parse(await getText(GP_LIST, 256 * 1024));
+  const ids = (Array.isArray(list) ? list : []).map(o => o && o.id).filter(id => typeof id === 'string' && GP_ID.test(id)).slice(0, GP_COUNT + 4);
+  if (!ids.length) throw new Error('lista vazia');
+  const body = JSON.parse(await getText(GP_PRODUCTS + ids.join(','), 4 * 1024 * 1024));
+  const out = [];
+  for (const id of ids) {
+    if (out.length >= GP_COUNT) break;
+    const p = (body.Products || []).find(x => x && x.ProductId === id);
+    const lp = p && p.LocalizedProperties && p.LocalizedProperties[0];
+    if (!lp || typeof lp.ProductTitle !== 'string') continue;
+    const img = (lp.Images || []).find(i => i.ImagePurpose === 'SuperHeroArt') || (lp.Images || []).find(i => i.ImagePurpose === 'TitledHeroArt');
+    if (!img || !GP_IMG.test(img.Uri)) continue;
+    let image = null;
+    try {
+      const b = await getBytes('https:' + img.Uri + '?w=960&h=540&q=60&format=jpg', MAX_IMG);
+      if (imageType(b) === 'jpeg') image = 'data:image/jpeg;base64,' + base64(b);
+    } catch (_) { }
+    if (!image) continue;
+    out.push({ id, title: trimWords(lp.ProductTitle.trim(), 80), summary: trimSentence(String(lp.ShortDescription || '').replace(/\s+/g, ' ').trim(), 180), image });
+  }
+  return out;
+}
+const gamePass = { fetched: 0, items: [], lastAttempt: 0, inFlight: false };
+(() => {
+  const o = load('gamepass');
+  if (o && Array.isArray(o.items)) { gamePass.fetched = Number(o.fetched) || 0; gamePass.items = o.items; }
+})();
+async function refreshGamePass(networkBack, force) {
+  const now = Date.now();
+  if (gamePass.inFlight || (!force && now - gamePass.fetched >= 0 && now - gamePass.fetched < NEWS_FRESH)) return false;
+  if (!force && !networkBack && gamePass.lastAttempt && now - gamePass.lastAttempt < NEWS_RETRY) return false;
+  gamePass.lastAttempt = now;
+  gamePass.inFlight = true;
+  let items;
+  try { items = await fetchGamePass(); } catch (_) { return false; } finally { gamePass.inFlight = false; }
+  if (!items.length) return false;
+  // Sem espaço para as imagens: fica a lista da sessão (sem banner, o destaque não aparece).
+  save('gamepass', { fetched: now, items });
+  gamePass.fetched = now;
+  gamePass.items = items;
+  return true;
+}
+
 /* ---------------- Entradas ---------------- */
 let inputList = load('inputs') || [];
 // P.scanInputs entrega [{id, label, kind?}]: a TV (antena e cabo) primeiro, depois as HDMI.
@@ -605,6 +669,7 @@ window.addEventListener('keyup', e => { if (watching() || e.keyCode === P.keys.b
 async function backgroundRefresh(networkBack) {
   if (await refreshPicks(networkBack, false)) call('onPicksChanged');
   if (await refreshNews(networkBack, false)) call('onNewsChanged');
+  if (await refreshGamePass(networkBack, false)) call('onGameHub');
 }
 let refreshingAll = false;
 async function refreshAll() {
@@ -612,6 +677,7 @@ async function refreshAll() {
   scanApps();
   const p = await refreshPicks(true, true);
   const n = await refreshNews(true, true);
+  if (await refreshGamePass(true, true)) call('onGameHub');
   refreshingAll = false;
   call('onRefreshed', n, p);
 }
@@ -733,6 +799,16 @@ window.AndroidBridge = Object.freeze(Object.assign({
   },
   getWeeklyPicks: () => JSON.stringify(picks.items),
   getGameNews: () => JSON.stringify(news.items),
+  // Hub de jogos na nuvem (no lugar do GameHub de emuladores do Android).
+  getCloudHub: () => JSON.stringify({
+    gamePass: gamePass.items,
+    apps: CLOUD.map(([key, name]) => { const a = cloudApp(key); return { key, name, installed: !!a, icon: a ? a.icon || null : null }; }),
+  }),
+  // Abre o app de nuvem (o destaque do Game Pass abre o do Xbox). false: não está instalado.
+  openCloud(key) {
+    const a = typeof key === 'string' ? cloudApp(key) : null;
+    return !!a && launch(a.package);
+  },
   // "title" | "app" | "" — o link do título nunca vem da página, só da seleção baixada aqui.
   openPick(title) {
     if (typeof title !== 'string' || !Object.prototype.hasOwnProperty.call(picks.titles, title)) return '';

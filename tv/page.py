@@ -23,7 +23,8 @@ page = re.sub(r"^const APP_VERSION = '[^']*';", lambda m: f"const APP_VERSION = 
 hosts = ' '.join(['https://apis.justwatch.com', 'https://images.justwatch.com', 'https://itunes.apple.com',
                   'https://*.mzstatic.com', 'https://www.adrenaline.com.br', 'https://www.eurogamer.pt',
                   'https://assetsio.gnwcdn.com', 'https://api.github.com', 'https://connectivitycheck.gstatic.com',
-                  'https://api.open-meteo.com', 'https://geocoding-api.open-meteo.com'])
+                  'https://api.open-meteo.com', 'https://geocoding-api.open-meteo.com',
+                  'https://catalog.gamepass.com', 'https://displaycatalog.mp.microsoft.com', 'https://store-images.s-microsoft.com'])
 page = sub(r"img-src data:;", "img-src data: file:;", page)
 page = sub(r"connect-src 'none';", f"connect-src {hosts};", page)
 # O CSS para navegadores antigos (sem inset, aspect-ratio, clamp e gap no flexbox) já vem no index.html.

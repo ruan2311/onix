@@ -234,6 +234,19 @@ html.on-games .top-right .chips{flex-direction:column;align-items:flex-end;gap:.
 .hub-con svg{width:3.6rem;height:2.3rem}
 .hub-con b{font-size:.84rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
 .hub-con small{font-size:.75rem;color:var(--muted)}
+/* Samsung e LG: banners do Game Pass e apps de jogos na nuvem. */
+.gp-row{gap:1.2rem}
+.gp-card{flex:none;position:relative;width:27rem;aspect-ratio:16/9;border-radius:var(--radius);border:1px solid var(--glass-border);background:#111;text-align:left}
+.gp-card img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+.gp-card::before{content:"";position:absolute;z-index:1;top:0;right:0;bottom:0;left:0;background:linear-gradient(0deg,rgba(0,0,0,.92),rgba(0,0,0,.55) 40%,transparent 70%)}
+.gp-info{position:absolute;z-index:2;left:1.1rem;right:1.1rem;bottom:.9rem;display:flex;flex-direction:column;gap:.3rem;min-width:0}
+.gp-badge{align-self:flex-start;font-size:.62rem;font-weight:800;letter-spacing:.14em;padding:.2rem .5rem;border-radius:.35rem;background:#107c10;color:#fff}
+.gp-info b{font-size:1.15rem;font-weight:700;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.gp-info small{font-size:.78rem;color:rgba(255,255,255,.75);line-height:1.35;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2;overflow:hidden}
+.cloud-art img{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+.cloud-art .cloud-glyph{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center}
+.cloud-art .cloud-glyph svg{position:static;width:3.6rem;height:3.6rem}
+.cloud-art.off{opacity:.55}
 /* Minijogos e notícias em fileiras: uma linha cada, em vez de grades que alongavam a aba. */
 #gamesGrid .tile{width:11rem}
 #gamesGrid .tile-sub{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
@@ -1909,6 +1922,20 @@ const Bridge = (() => {
       } catch (e) { console.warn('gameHub falhou', e); return null; }
     },
     gameHubCheck() { if (has('gameHubCheck')) try { b.gameHubCheck(); } catch (_) {} },
+    // Samsung e LG: destaques do Game Pass e apps de jogos na nuvem (no lugar do GameHub).
+    cloudHub() {
+      if (!has('getCloudHub')) return null;
+      try {
+        const o = JSON.parse(b.getCloudHub());
+        const gamePass = (Array.isArray(o.gamePass) ? o.gamePass : []).filter(g => g && typeof g.id === 'string' && /^[A-Z0-9]{12}$/.test(g.id)
+          && typeof g.title === 'string' && typeof g.image === 'string' && g.image.length <= MAX_ICON && ICON_RE.test(g.image)).slice(0, 8)
+          .map(g => ({ id: g.id, title: cleanText(g.title, 80), summary: typeof g.summary === 'string' ? cleanText(g.summary, 180) : '', image: g.image }));
+        const apps = (Array.isArray(o.apps) ? o.apps : []).filter(a => a && /^[a-z]{2,12}$/.test(a.key) && typeof a.name === 'string').slice(0, 8)
+          .map(a => ({ key: a.key, name: cleanText(a.name, 30), installed: a.installed === true, icon: typeof a.icon === 'string' && /^file:\/\/\/[A-Za-z0-9._\/-]{1,300}\.(png|jpe?g|webp)$/i.test(a.icon) ? a.icon : null }));
+        return { gamePass, apps };
+      } catch (e) { console.warn('cloudHub falhou', e); return null; }
+    },
+    openCloud(key) { if (has('openCloud')) try { return b.openCloud(key) === true; } catch (_) {} return false; },
     openGameHub(profile, name, kids, lang, open, sound, motion) {
       if (!has('openGameHub')) return false;
       try { return b.openGameHub(profile, name, !!kids, lang, open, !!sound, !!motion) === true; } catch (e) { console.warn('openGameHub falhou', e); return false; }
@@ -2284,6 +2311,12 @@ const PICK_PROVIDERS = Object.freeze({
   "Nintendinho": "Nintendo (NES)",
   "· Seus jogos por console": "· Tus juegos por consola", "· Onix GameHub · OK volta de onde parou": "· Onix GameHub · OK vuelve donde lo dejaste", "Continuar": "Continuar",
   "Atualizar ({v})": "Actualizar ({v})", "Desinstalar": "Desinstalar",
+  "Em destaque no Game Pass": "Destacados en Game Pass", "· os mais populares · OK abre o app do Xbox": "· los más populares · OK abre la app de Xbox",
+  "· os mais populares · jogue pelo app do Xbox": "· los más populares · juega con la app de Xbox", "Jogue na nuvem": "Juega en la nube",
+  "· sem console: os jogos rodam na internet · use um controle Bluetooth": "· sin consola: los juegos corren por internet · usa un control Bluetooth",
+  "Abrir": "Abrir", "Na loja de apps": "En la tienda de apps",
+  "Instale o app do Xbox pela loja de apps da TV para jogar na nuvem.": "Instala la app de Xbox desde la tienda de apps de la TV para jugar en la nube.",
+  "Instale o {n} pela loja de apps da TV (procure por \"{n}\").": "Instala {n} desde la tienda de apps de la TV (busca \"{n}\").",
   "Minijogos do Onix": "Minijuegos de Onix", "· jogue com o controle remoto": "· juega con el control remoto",
   "· as mais recentes da Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code": "· las más recientes de Adrenaline y Eurogamer.pt, en portugués · OK abre el resumen y el código QR",
   "Desinstalar o GameHub": "Desinstalar GameHub",
@@ -3371,6 +3404,7 @@ function renderHub() {
   const box = $('#hubBox');
   // Só com a aba Jogos aberta: perguntar ao GameHub acorda o processo dele.
   if (!box || activeSection !== 'games') return;
+  if (Bridge.cloudHub()) { renderCloudHub(box); return; }
   const pr = activeProfile();
   const st = Bridge.gameHub(pr ? pr.id : FIRST_PROFILE, isKids());
   if (!st || (isKids() && !st.installed)) { box.hidden = true; box.replaceChildren(); return; }
@@ -3441,6 +3475,54 @@ function renderHub() {
         h('small', { text: (total ? total + ' ' + t(total === 1 ? 'jogo' : 'jogos') : t('Nenhum jogo ainda')) + ' · ' + t('Versão {v}').replace('{v}', st.version) })));
     kids.push(h('div', { class: 'hub-card' }, h('div', { class: 'hub-main' }, head, actions), consoles));
   }
+  box.replaceChildren(...kids);
+  if (had) {
+    const again = (focusedKey && box.querySelector('[data-key="' + focusedKey + '"]')) || box.querySelector('.f');
+    if (again) setFocus(again);
+  }
+}
+
+/* Samsung e LG (sem emuladores): a aba Jogos vira um hub como o Gaming Hub da Samsung. Em cima,
+   os jogos mais populares do Game Pass em banners; embaixo, os apps de jogos na nuvem. Os banners
+   abrem o app do Xbox; app que não está na TV pede para instalar pela loja. Fora do Modo Infantil. */
+const CLOUD_GLYPH = '<svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 34h21a8 8 0 0 0 1-15.9A11 11 0 0 0 15 16a9 9 0 0 0-1 18z"/><path d="M20 26h6M23 23v6"/><circle cx="30" cy="25" r="1.2" fill="#fff" stroke="none"/></svg>';
+const CLOUD_TINT = { xbox: '#107c10', geforce: '#76b900', boosteroid: '#ff6b1a', luna: '#7b3fe4', blacknut: '#e8b400', antstream: '#e0306f' };
+function renderCloudHub(box) {
+  const had = !!current && box.contains(current);
+  const focusedKey = had ? current.dataset.key : null;
+  const st = isKids() ? null : Bridge.cloudHub();
+  if (!st) { box.hidden = true; box.replaceChildren(); return; }
+  box.hidden = false;
+  const xbox = st.apps.find(a => a.key === 'xbox');
+  const kids = [];
+  if (st.gamePass.length) {
+    const row = h('div', { class: 'row gp-row' });
+    for (const g of st.gamePass) {
+      const b = h('button', { class: 'f gp-card', tabindex: '-1', 'aria-label': g.title },
+        h('img', { src: g.image, alt: '', draggable: 'false', decoding: 'async' }),
+        h('span', { class: 'gp-info' }, h('span', { class: 'gp-badge', text: 'GAME PASS' }), h('b', { text: g.title }),
+          g.summary ? h('small', { text: g.summary }) : null));
+      b.dataset.key = 'gp' + g.id;
+      b._act = () => { if (!Bridge.openCloud('xbox')) toast(t('Instale o app do Xbox pela loja de apps da TV para jogar na nuvem.')); };
+      row.append(b);
+    }
+    kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Em destaque no Game Pass' }),
+      h('span', { class: 'row-sub', text: xbox && xbox.installed ? '· os mais populares · OK abre o app do Xbox' : '· os mais populares · jogue pelo app do Xbox' })), row);
+  }
+  const apps = h('div', { class: 'row' });
+  for (const a of st.apps) {
+    // Sem ícone do app: uma nuvem com controle sobre a cor do serviço (sem logos de terceiros).
+    const tint = CLOUD_TINT[a.key] || '#666';
+    const art = h('span', { class: 'tile-art glass cloud-art' + (a.installed ? '' : ' off'), style: 'background:linear-gradient(150deg,' + tint + '66,#111 80%)' });
+    if (a.icon) art.append(h('img', { src: a.icon, alt: '' }));
+    else art.append(h('span', { class: 'cloud-glyph' }, svgFrom(CLOUD_GLYPH)));
+    const b = h('button', { class: 'f tile', tabindex: '-1', 'aria-label': a.name }, art,
+      h('span', { class: 'tile-label', text: a.name }), h('span', { class: 'tile-sub', text: a.installed ? 'Abrir' : 'Na loja de apps' }));
+    b.dataset.key = 'cl' + a.key;
+    b._act = () => { if (!Bridge.openCloud(a.key)) toast(t('Instale o {n} pela loja de apps da TV (procure por "{n}").').split('{n}').join(a.name)); };
+    apps.append(b);
+  }
+  kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Jogue na nuvem' }), h('span', { class: 'row-sub', text: '· sem console: os jogos rodam na internet · use um controle Bluetooth' })), apps);
   box.replaceChildren(...kids);
   if (had) {
     const again = (focusedKey && box.querySelector('[data-key="' + focusedKey + '"]')) || box.querySelector('.f');
