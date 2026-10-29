@@ -511,7 +511,7 @@ Um app **opcional**, no visual do Onix, para jogar os seus jogos de **Nintendinh
 2. Na primeira vez, o Android pede para o **Onix** poder instalar apps: ative e volte. Depois, confirme em **Instalar**.
 3. Pronto: o cartão **Onix GameHub** aparece na aba **Jogos**, com **Abrir o GameHub** e os quatro consoles.
 
-Sem o Onix (ou se preferir): no app **Downloader**, use o link **`github.com/ruan2311/onix/releases/download/gamehub-v1.0.0/onix-gamehub.apk`**, do mesmo jeito do [tutorial do Onix](#instalar-pela-própria-tv-com-o-app-downloader).
+Sem o Onix (ou se preferir): no app **Downloader**, use o link **`github.com/ruan2311/onix/releases/download/gamehub-v1.1.1/onix-gamehub.apk`**, do mesmo jeito do [tutorial do Onix](#instalar-pela-própria-tv-com-o-app-downloader).
 
 O GameHub não aparece na lista de apps do Onix: ele abre pela aba **Jogos**.
 
