@@ -27,7 +27,7 @@
   --radius:1.1rem;
   --nav-w:13.5rem;
   --nav-h:4.8rem;     /* altura da barra do menu em cima */
-  --dock-h:6.9rem;    /* espaço do dock embaixo (inclui a folga da borda) */
+  --dock-h:7.4rem;    /* faixa do dock embaixo (dock + folga da borda e do conteúdo) */
   --ease:cubic-bezier(.2,.8,.2,1);
 }
 html{font-size:1.04vw;font-size:clamp(12px,1.04vw,22px);background:var(--bg);height:100%}
@@ -836,22 +836,7 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
 
 /* ---------- Posição do menu (Configurações → Menu) ----------
    Lateral é o de sempre. "Em cima" é uma barra de abas e "Embaixo", um dock flutuante, cada um com o
-   visual próprio. No celular em pé o menu continua sendo a barra de baixo (bloco mais adiante).
-   "Esconder o menu" (html.nav-auto + nav-hidden) recolhe o menu para a borda: só transform e
-   opacity animam o menu; o conteúdo ocupa o espaço livre com uma transição curta. */
-html.nav-auto #sidebar{transition:transform .36s var(--ease),visibility 0s}
-html.nav-auto.nav-hidden #sidebar{visibility:hidden;transition:transform .36s var(--ease),visibility 0s linear .36s}
-html.nav-auto #main{transition:left .36s var(--ease),top .36s var(--ease),padding .36s var(--ease)}
-html.nav-auto.nav-hidden #sidebar{transform:translateX(-104%)}
-html.nav-auto.nav-hidden #main{left:0}
-/* Aba na borda: aparece com o menu escondido; toque ou mouse trazem o menu de volta. */
-.navhandle{position:fixed;z-index:11;left:0;top:50%;width:1.2rem;height:5.4rem;margin-top:-2.7rem;border-radius:0 1rem 1rem 0;
-  background:linear-gradient(90deg,rgba(255,255,255,.22),rgba(255,255,255,.1));border:1px solid rgba(255,255,255,.2);border-left:0;
-  opacity:0;visibility:hidden;transition:opacity .3s var(--ease) .12s,visibility 0s linear .42s}
-.navhandle::before{content:"";position:absolute;top:0;right:0;bottom:0;left:0;margin:auto;width:.46rem;height:.46rem;
-  border:solid rgba(255,255,255,.9);border-width:0 .14rem .14rem 0;transform:translateX(-.1rem) rotate(-45deg)}
-html.nav-auto.nav-hidden .navhandle{opacity:1;visibility:visible;transition:opacity .3s var(--ease) .25s,visibility 0s;animation:navHint 2.6s ease-in-out 1s 2}
-@keyframes navHint{50%{transform:translateX(.35rem)}}
+   visual próprio. No celular em pé o menu continua sendo a barra de baixo (bloco mais adiante). */
 @media (min-width:761px),(orientation:landscape){
   /* === Em cima: barra de abas, de ponta a ponta === */
   html.nav-top #sidebar{top:0;right:0;bottom:auto;left:0;width:auto;height:var(--nav-h);flex-direction:row;align-items:center;gap:.3rem;
@@ -859,29 +844,29 @@ html.nav-auto.nav-hidden .navhandle{opacity:1;visibility:visible;transition:opac
     background:linear-gradient(180deg,rgba(20,21,26,.98),rgba(9,10,12,.97))}
   html.nav-top #sidebar::after{content:"";position:absolute;left:0;right:0;bottom:-1px;height:1px;pointer-events:none;
     background:linear-gradient(90deg,transparent,rgba(255,255,255,.38) 30%,rgba(255,255,255,.38) 70%,transparent)}
-  html.nav-top .brand{padding:0 1.3rem 0 .1rem;margin-right:.7rem;border-right:1px solid rgba(255,255,255,.12)}
+  html.nav-top .brand{align-self:stretch;padding:0 1.3rem 0 0;margin-right:.7rem;border-right:1px solid rgba(255,255,255,.12)}
   html.nav-top .nav-spacer{flex:1;min-width:1rem;overflow:hidden}
   html.nav-top .nav-art,html.nav-top .nav-mode{display:none}
-  html.nav-top .nav-item{padding:.6rem 1.15rem;gap:.6rem;border-radius:999rem}
+  /* Todos os itens com a mesma altura e centrados na barra: a pílula do perfil, das abas e dos atalhos
+     ficam na mesma linha, e as pontas da barra caem na mesma margem do conteúdo (2.4rem). */
+  html.nav-top .nav-item{height:2.9rem;padding:0 1.15rem;gap:.6rem;border-radius:999rem;line-height:1}
   html.nav-top .nav-item svg{width:1.3rem;height:1.3rem}
-  html.nav-top .nav-item.me{margin:0 .5rem 0 0;padding:.3rem 1rem .3rem .35rem;gap:.6rem}
+  html.nav-top .nav-item.me{margin:0 .5rem 0 0;padding:0 1.1rem 0 .4rem;gap:.6rem}
   html.nav-top .nav-item.me .av{width:2.1rem;height:2.1rem}
+  html.nav-top .me-txt{line-height:1}
   html.nav-top .me-sw{display:none}
-  html.nav-top .nav-item.is-focused{transform:translateY(.14rem)}
+  html.nav-top .nav-item.is-focused{transform:scale(1.05)}
   html.nav-top .nav-item.has-update::after{left:2.35rem;top:.55rem}
   /* A aba aberta: pílula clara e um traço de luz embaixo, como numa barra de abas. */
-  html.nav-top .nav-item.active{background:rgba(255,255,255,.12)}
-  html.nav-top .nav-item.active::before{content:"";position:absolute;left:50%;bottom:.28rem;width:1.5rem;height:.16rem;margin-left:-.75rem;border-radius:.2rem;
+  html.nav-top .nav-item.active:not(.is-focused){background:rgba(255,255,255,.12)}
+  html.nav-top .nav-item.active::before{content:"";position:absolute;left:50%;bottom:.3rem;width:1.5rem;height:.16rem;margin-left:-.75rem;border-radius:.2rem;
     background:#fff;box-shadow:0 0 .6rem rgba(255,255,255,.7)}
   html.nav-top #sidebar.nav-focus .nav-item.active::before{opacity:0}
-  html.nav-top #main{top:var(--nav-h);left:0;padding-top:1.3rem}
-  html.nav-top.nav-auto.nav-hidden #sidebar{transform:translateY(-104%)}
-  html.nav-top.nav-auto.nav-hidden #main{top:0;padding-top:1.8rem}
-  html.nav-top .navhandle{top:0;left:50%;width:5.4rem;height:1.2rem;margin:0 0 0 -2.7rem;border-radius:0 0 1rem 1rem;border:1px solid rgba(255,255,255,.2);border-top:0;
-    background:linear-gradient(180deg,rgba(255,255,255,.22),rgba(255,255,255,.1))}
-  html.nav-top .navhandle::before{transform:translateY(-.1rem) rotate(45deg)}
-  html.nav-top.nav-auto.nav-hidden .navhandle{animation-name:navHintTop}
-  @keyframes navHintTop{50%{transform:translateY(.35rem)}}
+  html.nav-top #main{top:var(--nav-h);left:0;padding-top:1.6rem}
+  /* Com o menu em cima, o botão do clima sai do caminho: subir do conteúdo vai direto para o menu. */
+  html.nav-top #wxBtn{display:none!important}
+  /* Sem o menu do lado, a coluna das Configurações (título e lista) fica no centro da tela, em cima e embaixo. */
+  html.nav-top #sec-settings,html.nav-bottom #sec-settings{max-width:46rem;margin:0 auto}
 
   /* === Embaixo: dock flutuante, com ícones grandes === */
   html.nav-bottom #sidebar{top:auto;right:0;bottom:1rem;left:0;width:max-content;max-width:calc(100% - 3rem);height:auto;margin:0 auto;
@@ -892,31 +877,27 @@ html.nav-auto.nav-hidden .navhandle{opacity:1;visibility:visible;transition:opac
   /* O espaço do meio vira um separador fino entre os itens do Onix e os do sistema. */
   html.nav-bottom .nav-spacer{flex:none;width:1px;margin:.5rem .5rem;padding:0;overflow:visible;
     background:linear-gradient(180deg,transparent,rgba(255,255,255,.26),transparent)}
-  html.nav-bottom .nav-item{flex-direction:column;justify-content:center;gap:.32rem;min-width:5.8rem;padding:.7rem 1rem .9rem;font-size:.8rem;border-radius:1.35rem}
+  /* Todos os itens com a mesma largura: ícone (ou avatar), rótulo e ponto de luz ficam na mesma linha. */
+  html.nav-bottom .nav-item{flex-direction:column;justify-content:center;align-items:center;gap:.4rem;width:7rem;padding:.7rem .4rem .95rem;
+    font-size:.8rem;line-height:1;white-space:nowrap;border-radius:1.35rem}
   html.nav-bottom .nav-item svg{width:1.75rem;height:1.75rem}
-  html.nav-bottom .nav-item.me{margin:0;min-width:5.2rem;padding:.55rem .9rem .7rem;gap:.3rem;background:transparent;border-color:transparent}
-  html.nav-bottom .nav-item.me .av{width:2.1rem;height:2.1rem}
-  html.nav-bottom .me-txt{align-items:center;font-size:.8rem}
-  html.nav-bottom .me-name{max-width:5rem}
+  html.nav-bottom .nav-item.me{margin:0;padding:.7rem .4rem .95rem;gap:.4rem}
+  html.nav-bottom .nav-item.me:not(.is-focused){background:transparent;border-color:transparent}
+  html.nav-bottom .nav-item.me .av{width:1.75rem;height:1.75rem}
+  html.nav-bottom .me-txt{align-items:center;font-size:.8rem;line-height:1}
+  html.nav-bottom .me-name{max-width:6.2rem}
   html.nav-bottom .me-sw{display:none}
   html.nav-bottom .nav-item.has-update::after{left:calc(50% + .7rem);top:.6rem}
   /* O item aberto fica com um ponto de luz embaixo; o focado sobe, como num dock. */
-  html.nav-bottom .nav-item.active{background:rgba(255,255,255,.07);border-color:transparent;color:var(--text)}
+  html.nav-bottom .nav-item.active:not(.is-focused){background:rgba(255,255,255,.07);border-color:transparent;color:var(--text)}
   html.nav-bottom .nav-item.active::before{content:"";position:absolute;left:50%;bottom:.4rem;width:.36rem;height:.36rem;margin-left:-.18rem;border-radius:50%;
     background:#fff;box-shadow:0 0 .7rem .1rem rgba(255,255,255,.75)}
   html.nav-bottom #sidebar.nav-focus .nav-item.active:not(.is-focused)::before{opacity:.5}
   html.nav-bottom .nav-item.is-focused{transform:translateY(-.5rem) scale(1.07)}
   html.nav-bottom .nav-item.is-focused::before{opacity:0}
-  html.nav-bottom #main{left:0;padding-bottom:var(--dock-h)}
+  /* O conteúdo termina acima do dock (não passa por baixo dele), com a mesma folga das outras bordas. */
+  html.nav-bottom #main{left:0;bottom:var(--dock-h);padding-bottom:1.6rem}
   html.nav-bottom #toast{bottom:calc(var(--dock-h) + .4rem)}   /* os avisos ficam acima do dock */
-  html.nav-bottom.nav-auto.nav-hidden #toast{bottom:2.2rem}
-  html.nav-bottom.nav-auto.nav-hidden #sidebar{transform:translateY(calc(100% + 2rem))}
-  html.nav-bottom.nav-auto.nav-hidden #main{padding-bottom:3rem}
-  html.nav-bottom .navhandle{top:auto;bottom:0;left:50%;width:5.4rem;height:1.2rem;margin:0 0 0 -2.7rem;border-radius:1rem 1rem 0 0;border:1px solid rgba(255,255,255,.2);border-bottom:0;
-    background:linear-gradient(0deg,rgba(255,255,255,.22),rgba(255,255,255,.1))}
-  html.nav-bottom .navhandle::before{transform:translateY(.1rem) rotate(-135deg)}
-  html.nav-bottom.nav-auto.nav-hidden .navhandle{animation-name:navHintBottom}
-  @keyframes navHintBottom{50%{transform:translateY(-.35rem)}}
 }
 
 /* ---------- Celular em retrato: menu vira barra inferior ---------- */
@@ -928,11 +909,6 @@ html.nav-auto.nav-hidden .navhandle{opacity:1;visibility:visible;transition:opac
   .nav-item{flex-direction:column;gap:.25rem;padding:.5rem .4rem;font-size:.7rem;flex:1;align-items:center}
   .nav-item.is-focused{transform:translateY(-.2rem)}
   #main{left:0;bottom:4.8rem;padding:1.2rem 1.2rem 2rem}
-  html.nav-auto.nav-hidden #sidebar{transform:translateY(105%)}
-  html.nav-auto.nav-hidden #main{bottom:0}
-  .navhandle{top:auto;bottom:0;left:50%;width:5rem;height:1.1rem;margin:0 0 0 -2.5rem;border-radius:1rem 1rem 0 0;border:1px solid rgba(255,255,255,.2);border-bottom:0}
-  .navhandle::before{transform:translateY(.1rem) rotate(-135deg)}
-  html.nav-auto.nav-hidden .navhandle{animation:none}
   #clock{font-size:3.6rem}
   .hero{min-height:18rem;padding:1.4rem}
   .hero-content{max-width:100%}
@@ -1002,7 +978,6 @@ html.nav-auto.nav-hidden .navhandle{opacity:1;visibility:visible;transition:opac
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v9"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg><span>Desligar TV</span></button>
   <div class="nav-mode" id="navMode"></div>
 </nav>
-<button class="navhandle" id="navHandle" tabindex="-1" aria-label="Mostrar o menu"></button>
 
 <main id="main">
   <!-- Desenhinhos do Modo Infantil, no canto de baixo (só enfeite). -->
@@ -1412,7 +1387,7 @@ const APP_VERSION = '16.3.0 beta'; // o build.sh troca pelo android:versionName 
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
-  anim: 'suave', heroFx: 'fade', tabFx: false, lang: 'auto', remote: true, remoteQr: true, soundFx: 'chime', homeStyle: 'glass', navPos: 'left', navAuto: false });
+  anim: 'suave', heroFx: 'fade', tabFx: false, lang: 'auto', remote: true, remoteQr: true, soundFx: 'chime', homeStyle: 'glass', navPos: 'left' });
 // Opções de escolha (OK passa para a próxima): valor salvo -> nome na tela.
 const CHOICES = Object.freeze({
   anim: [['suave', 'Suave'], ['elastica', 'Elástica'], ['rapida', 'Rápida'], ['flutuar', 'Flutuar'], ['pulsar', 'Pulsar']],
@@ -1442,11 +1417,9 @@ function applySettings() {
   const kid = cl.contains('kids');   // o Modo Infantil tem o visual próprio
   cl.toggle('home-clean', !kid && settings.homeStyle === 'clean');
   cl.toggle('home-cosmos', !kid && settings.homeStyle === 'cosmos');
-  // Posição do menu e esconder ao abrir uma seção (o Modo Infantil tem o menu lateral dele).
+  // Posição do menu (o Modo Infantil tem o menu lateral dele).
   cl.toggle('nav-top', !kid && settings.navPos === 'top');
   cl.toggle('nav-bottom', !kid && settings.navPos === 'bottom');
-  cl.toggle('nav-auto', !kid && settings.navAuto);
-  if (kid || !settings.navAuto) cl.remove('nav-hidden');
 }
 applySettings();
 
@@ -1687,7 +1660,8 @@ const ES = Object.freeze({
   "Capítulo 5": "Capítulo 5",
   "Capítulo 6": "Capítulo 6",
   "Pedras preciosas": "Piedras preciosas",
-  "Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Além dele, já existem o Amethyst e o Opala.": "Los proyectos de Ruan tienen nombres en clave de piedras preciosas, como Onix. Además de él, ya existen Amethyst y Opala.",
+  "Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Além dele, já existem o Amethyst e o Opala. O GameHub ainda não tem nome de pedra, mas já faz parte da família.": "Los proyectos de Ruan tienen nombres en clave de piedras preciosas, como Onix. Además de él, ya existen Amethyst y Opala. GameHub todavía no tiene nombre de piedra, pero ya es parte de la familia.",
+  "jogos retrô para TV, celular e PC": "juegos retro para TV, celular y PC",
   "sistema para TVs": "sistema para TV",
   "karaokê para Windows": "karaoke para Windows",
   "bot para WhatsApp": "bot para WhatsApp",
@@ -1966,11 +1940,8 @@ const ES = Object.freeze({
   "Lateral": "Lateral",
   "Em cima": "Arriba",
   "Embaixo": "Abajo",
-  "Esconder o menu ao abrir uma seção": "Ocultar el menú al abrir una sección",
-  "Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Aperte na direção do menu, ou Voltar, para ele reaparecer.": "Al abrir Inicio, Juegos u otra sección, el menú se oculta con una animación y el contenido ocupa toda la pantalla. Pulsa hacia el menú, o Volver, para que reaparezca.",
-  "Mostrar o menu": "Mostrar el menú",
-  "*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com ícones grandes e um ponto de luz no item aberto. Cada posição tem o visual próprio, e o Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.": "*Posición del menú:* elige dónde queda el menú. *Lateral* es el de siempre; *Arriba* se vuelve una barra de pestañas, con tu perfil y los atajos del sistema en los extremos; *Abajo* se vuelve un dock flotante, con íconos grandes y un punto de luz en el elemento abierto. Cada posición tiene su propio diseño, y el Modo Infantil sigue con el menú lateral. En *Configuración → Menú*.",
-  "*Esconder o menu ao abrir uma seção:* opcional. Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Apertar na direção do menu, Voltar ou tocar na aba da borda traz o menu de volta. Em *Configurações → Menu*.": "*Ocultar el menú al abrir una sección:* opcional. Al abrir Inicio, Juegos u otra sección, el menú se oculta con una animación y el contenido ocupa toda la pantalla. Pulsar hacia el menú, Volver o tocar la pestaña del borde trae el menú de vuelta. En *Configuración → Menú*.",
+  "*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas de ponta a ponta, alinhada com as bordas do conteúdo, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com todos os itens do mesmo tamanho e um ponto de luz no item aberto, e o conteúdo termina acima dele. Sem o menu do lado, as Configurações ficam no centro da tela, e com o menu em cima o botão do clima sai do caminho. O Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.": "*Posición del menú:* elige dónde queda el menú. *Lateral* es el de siempre; *Arriba* se vuelve una barra de pestañas de punta a punta, alineada con los bordes del contenido, con tu perfil y los atajos del sistema en los extremos; *Abajo* se vuelve un dock flotante, con todos los elementos del mismo tamaño y un punto de luz en el elemento abierto, y el contenido termina encima de él. Sin el menú al costado, la Configuración queda en el centro de la pantalla, y con el menú arriba el botón del clima sale del camino. El Modo Infantil sigue con el menú lateral. En *Configuración → Menú*.",
+  "A *Trajetória do Onix* ganhou o Onix GameHub no capítulo das pedras preciosas, e o Opala aparece com o ícone novo, o mesmo do site Project Gems.": "La *Trayectoria de Onix* ahora incluye Onix GameHub en el capítulo de las piedras preciosas, y Opala aparece con el ícono nuevo, el mismo del sitio Project Gems.",
   "Estilo da tela inicial": "Estilo de la pantalla de inicio",
   "Onix Glass é o de sempre. Clean Glass é minimalista: relógio no centro e só os apps e as indicações. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.": "Onix Glass es el de siempre. Clean Glass es minimalista: reloj en el centro y solo las apps y las recomendaciones. Onix Cosmos es artístico, con el planeta de Onix, órbitas y estrellas dibujados. OK cambia.",
   "*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), dois estilos novos. *Clean Glass* é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. *Onix Cosmos* é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em *Configurações → Início*.": "*Estilo de la pantalla de inicio:* además de *Onix Glass* (el de siempre), dos estilos nuevos. *Clean Glass* es minimalista: reloj grande en el centro, las apps en una fila centrada y las recomendaciones en portadas pequeñas. *Onix Cosmos* es artístico: el planeta de Onix, órbitas, lunas y estrellas dibujados detrás del destacado. En *Configuración → Inicio*.",
@@ -4277,7 +4248,6 @@ const OPTIONS = [
   { key: 'tabFx',  name: 'Transição entre abas',  desc: 'A aba nova aparece subindo de leve ao trocar pelo menu.' },
   { group: 'Menu' },
   { key: 'navPos', name: 'Posição do menu', desc: 'Onde o menu fica: na lateral (o de sempre), em cima, numa barra de abas, ou embaixo, num dock flutuante. OK troca.' },
-  { key: 'navAuto', name: 'Esconder o menu ao abrir uma seção', desc: 'Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Aperte na direção do menu, ou Voltar, para ele reaparecer.' },
   { group: 'Início' },
   { key: 'homeStyle', name: 'Estilo da tela inicial', desc: 'Onix Glass é o de sempre. Clean Glass é minimalista: relógio no centro e só os apps e as indicações. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.' },
   { key: 'rotate', name: 'Trocar destaque sozinho', desc: 'Passa para a próxima indicação a cada 9 segundos.' },
@@ -4311,8 +4281,8 @@ const OPTIONS = [
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
   { version: '16.3.0 beta', date: 'outubro de 2026', items: [
-    ['new', '*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com ícones grandes e um ponto de luz no item aberto. Cada posição tem o visual próprio, e o Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.'],
-    ['new', '*Esconder o menu ao abrir uma seção:* opcional. Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Apertar na direção do menu, Voltar ou tocar na aba da borda traz o menu de volta. Em *Configurações → Menu*.'],
+    ['new', '*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas de ponta a ponta, alinhada com as bordas do conteúdo, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com todos os itens do mesmo tamanho e um ponto de luz no item aberto, e o conteúdo termina acima dele. Sem o menu do lado, as Configurações ficam no centro da tela, e com o menu em cima o botão do clima sai do caminho. O Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.'],
+    ['fix', 'A *Trajetória do Onix* ganhou o Onix GameHub no capítulo das pedras preciosas, e o Opala aparece com o ícone novo, o mesmo do site Project Gems.'],
   ] },
   { version: '16.1.1 beta', date: 'outubro de 2026', items: [
     ['new', '*Apoie o criador:* em *Configurações → Sobre*, um QR code Pix para quem quiser ajudar o projeto com qualquer valor. O Onix continua gratuito e sem anúncios; nada aparece sozinho, e o botão não aparece no Modo Infantil.'],
@@ -4463,8 +4433,6 @@ function setOption(key, on) {
   saveSettings();
   applySettings();
   if (key === 'h24') updateClock(true);
-  if (key === 'navAuto' && on) hideNavSoon();   // mostra o efeito na hora
-  if (key === 'navPos') showNav();
   if (key === 'sound') { if (on) sfx('select'); else sfxSleep(); }
   if (key === 'pickAuto' || PICK_KEYS.some(o => o.key === key)) {
     syncPicksChoice();
@@ -4589,17 +4557,20 @@ function hideKitty() {
    Configurações → Sobre. OK (ou ▶) passa o slide, ◀ volta e Voltar fecha. Desenhos em SVG fixo. */
 const STORY_SATURN = (x, y, k) => `<g transform="translate(${x} ${y}) scale(${k})" stroke="#fff" stroke-width="2.2" stroke-linecap="round" fill="none">
   <g transform="rotate(-20)"><path d="M-21 0A21 6 0 0 1 21 0"/></g><circle r="10" fill="#050608"/><g transform="rotate(-20)"><path d="M21 0A21 6 0 0 1 -21 0"/></g></g>`;
-// Gema lapidada centrada em (x, y): o desenho dos projetos com nome de pedra preciosa.
-const STORY_GEM = (x, y, fill, stroke) => `<g transform="translate(${x} ${y})" stroke="${stroke}" stroke-width="2.5" stroke-linejoin="round">
-  <path d="M-20-8l10-13h20l10 13L0 22z" fill="${fill}"/><path d="M-20-8h40M-10-21l4 13L0 22M10-21l-4 13L0 22" opacity=".7"/></g>`;
-// Logos do Onix e do Amethyst (o mesmo traço: pedra e anel inclinado), 60×60 centradas em (x, y).
-const STORY_LOGO = (x, y, color, id, body) => `<svg x="${x - 30}" y="${y - 30}" width="60" height="60" viewBox="0 0 48 48" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+// Logos do Onix, do Amethyst e do Opala (o mesmo traço: pedra e anel inclinado), size×size centradas em (x, y).
+const STORY_LOGO = (x, y, color, id, body, size = 60) => `<svg x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" viewBox="0 0 48 48" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
   <defs><mask id="${id}B" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/>${body.back}</mask>
   <mask id="${id}G" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><path d="M45 24A21 6 0 0 1 3 24" stroke="#000" stroke-width="6" transform="rotate(-20 24 24)"/></mask></defs>
   <g mask="url(#${id}G)">${body.stone}</g><g transform="rotate(-20 24 24)"><path d="M3 24A21 6 0 0 1 45 24" mask="url(#${id}B)"/><path d="M45 24A21 6 0 0 1 3 24"/></g></svg>`;
 const LOGO_ONIX = { back: '<circle cx="24" cy="24" r="11.6" fill="#000"/>', stone: '<circle cx="24" cy="24" r="10"/>' };
 const LOGO_AMETHYST = { back: '<path d="M17 13H31L37 21L24 37L11 21Z" fill="#000" stroke="#000" stroke-width="3"/>',
   stone: '<path d="M17 13H31L37 21L24 37L11 21Z"/><path d="M11 21H37M17 13L21 21L24 37M31 13L27 21L24 37M21 21L24 13L27 21" stroke-width="1.4" opacity=".75"/>' };
+// Opala de fogo: o mesmo desenho do site Project Gems (img/opala.svg).
+const LOGO_OPALA = { back: '<ellipse cx="24" cy="24" rx="11" ry="13" transform="rotate(28 24 24)" fill="#000" stroke="#000" stroke-width="3"/>',
+  stone: '<ellipse cx="24" cy="24" rx="11" ry="13" transform="rotate(28 24 24)"/><path d="M16.4 20.6a10 11.5 28 0 1 7-8" stroke="#ffd3ad" stroke-width="1.7"/>'
+    + '<path d="M27 15.6l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7z" fill="#ffc08a" stroke="#ffc08a" stroke-width=".8"/>'
+    + '<path d="M21.4 27.4l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z" fill="#ff8a55" stroke="#ff8a55" stroke-width=".8"/>'
+    + '<path d="M29.6 26l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4z" fill="#ffe2c4" stroke="#ffe2c4" stroke-width=".7"/>' };
 const STORY = [
   { c1: 'rgba(124,108,255,.35)', c2: 'rgba(80,220,140,.25)', kicker: 'Capítulo 1', title: 'O começo',
     body: 'Ruan começou na programação criando bots para o Discord e o WhatsApp.',
@@ -4666,22 +4637,25 @@ const STORY = [
   <g fill="#fff"><circle class="twinkle" cx="40" cy="40" r="2.5" style="--d:0s"/><circle class="twinkle" cx="360" cy="50" r="2" style="--d:.5s"/>
     <circle class="twinkle" cx="370" cy="230" r="2.5" style="--d:.9s"/><circle class="twinkle" cx="30" cy="220" r="2" style="--d:.3s"/></g>
 </svg>` },
-  { c1: 'rgba(178,139,255,.3)', c2: 'rgba(160,230,255,.22)', kicker: 'Capítulo 6', title: 'Pedras preciosas',
-    body: 'Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Além dele, já existem o Amethyst e o Opala.',
+  { c1: 'rgba(178,139,255,.3)', c2: 'rgba(224,138,76,.24)', kicker: 'Capítulo 6', title: 'Pedras preciosas',
+    body: 'Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Além dele, já existem o Amethyst e o Opala. O GameHub ainda não tem nome de pedra, mas já faz parte da família.',
     art: () => `<svg viewBox="0 0 400 260" fill="none" stroke-linecap="round">
-  <defs><linearGradient id="stOpal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e8f6ff"/><stop offset=".45" stop-color="#9fe3ff"/><stop offset=".75" stop-color="#ffc7e6"/><stop offset="1" stop-color="#c9ffd9"/></linearGradient></defs>
-  <g class="pop" style="--d:.2s">${STORY_LOGO(50, 44, '#fff', 'stOn', LOGO_ONIX)}</g>
-  <path class="draw" style="--d:.5s" d="M80 44h70" stroke="rgba(255,255,255,.5)" stroke-width="2.5"/>
-  <g class="fade" style="--d:.9s" font-family="system-ui,sans-serif"><text x="162" y="40" fill="#fff" font-size="24" font-weight="700">Onix</text>
-    <text x="162" y="64" fill="rgba(245,246,248,.65)" font-size="17">${t('sistema para TVs')}</text></g>
-  <g class="pop" style="--d:1.1s">${STORY_LOGO(50, 130, '#d9c6ff', 'stAm', LOGO_AMETHYST)}</g>
-  <path class="draw" style="--d:1.4s" d="M80 130h70" stroke="#b28bff" stroke-width="2.5"/>
-  <g class="fade" style="--d:1.8s" font-family="system-ui,sans-serif"><text x="162" y="126" fill="#d9c6ff" font-size="24" font-weight="700">Amethyst</text>
-    <text x="162" y="150" fill="rgba(245,246,248,.65)" font-size="17">${t('karaokê para Windows')}</text></g>
-  <g class="pop" style="--d:2s">${STORY_GEM(50, 216, 'url(#stOpal)', '#fff')}</g>
-  <path class="draw" style="--d:2.3s" d="M80 216h70" stroke="#9fe3ff" stroke-width="2.5"/>
-  <g class="fade" style="--d:2.7s" font-family="system-ui,sans-serif"><text x="162" y="212" fill="#bfeeff" font-size="24" font-weight="700">Opala</text>
-    <text x="162" y="236" fill="rgba(245,246,248,.65)" font-size="17">${t('bot para WhatsApp')}</text></g>
+  <g class="pop" style="--d:.2s">${STORY_LOGO(50, 34, '#fff', 'stOn', LOGO_ONIX, 50)}</g>
+  <path class="draw" style="--d:.5s" d="M80 34h70" stroke="rgba(255,255,255,.5)" stroke-width="2.5"/>
+  <g class="fade" style="--d:.9s" font-family="system-ui,sans-serif"><text x="162" y="31" fill="#fff" font-size="22" font-weight="700">Onix</text>
+    <text x="162" y="52" fill="rgba(245,246,248,.65)" font-size="15">${t('sistema para TVs')}</text></g>
+  <g class="pop" style="--d:1s">${HUB_MARK.replace('<svg ', '<svg x="29" y="77" width="42" height="42" ')}</g>
+  <path class="draw" style="--d:1.3s" d="M80 98h70" stroke="#ff6fb5" stroke-width="2.5"/>
+  <g class="fade" style="--d:1.7s" font-family="system-ui,sans-serif"><text x="162" y="95" fill="#ffb3d9" font-size="22" font-weight="700">Onix GameHub</text>
+    <text x="162" y="116" fill="rgba(245,246,248,.65)" font-size="15">${t('jogos retrô para TV, celular e PC')}</text></g>
+  <g class="pop" style="--d:1.8s">${STORY_LOGO(50, 162, '#d9c6ff', 'stAm', LOGO_AMETHYST, 50)}</g>
+  <path class="draw" style="--d:2.1s" d="M80 162h70" stroke="#b28bff" stroke-width="2.5"/>
+  <g class="fade" style="--d:2.5s" font-family="system-ui,sans-serif"><text x="162" y="159" fill="#d9c6ff" font-size="22" font-weight="700">Amethyst</text>
+    <text x="162" y="180" fill="rgba(245,246,248,.65)" font-size="15">${t('karaokê para Windows')}</text></g>
+  <g class="pop" style="--d:2.6s">${STORY_LOGO(50, 226, '#e08a4c', 'stOp', LOGO_OPALA, 50)}</g>
+  <path class="draw" style="--d:2.9s" d="M80 226h70" stroke="#e08a4c" stroke-width="2.5"/>
+  <g class="fade" style="--d:3.3s" font-family="system-ui,sans-serif"><text x="162" y="223" fill="#f0a46b" font-size="22" font-weight="700">Opala</text>
+    <text x="162" y="244" fill="rgba(245,246,248,.65)" font-size="15">${t('bot para WhatsApp')}</text></g>
 </svg>` },
   { end: true, c1: 'rgba(255,158,196,.3)', c2: 'rgba(178,139,255,.3)', title: 'Obrigado por fazer parte disso!',
     body: 'Cada vez que você liga a TV, essa trajetória continua. O próximo capítulo a gente escreve junto.',
@@ -5834,7 +5808,6 @@ function setFocus(el) {
   if (el.closest('.layer')) { el.scrollIntoView({ block: 'nearest', inline: 'nearest' }); return; }
   $('#sidebar').classList.toggle('nav-focus', inNav(el));
   if (inNav(el)) {
-    showNav();
     if (el.dataset.section) queueSection(el.dataset.section);
   } else {
     flushSection();
@@ -5844,18 +5817,6 @@ function setFocus(el) {
     else el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   }
 }
-// Esconder o menu ao abrir uma seção (opcional): o estado é a classe nav-hidden na <html>.
-// O menu volta quando o foco vai para ele (direcional, Voltar, toque na aba da borda).
-let navHideTimer = 0;
-function showNav() { clearTimeout(navHideTimer); document.documentElement.classList.remove('nav-hidden'); }
-function hideNavSoon() {
-  clearTimeout(navHideTimer);
-  if (!document.documentElement.classList.contains('nav-auto')) return;
-  navHideTimer = setTimeout(() => {
-    if (current && !inNav(current) && !current.closest('.layer')) document.documentElement.classList.add('nav-hidden');
-  }, 380);
-}
-$('#navHandle').addEventListener('click', e => { e.stopPropagation(); sfx('select'); setFocus(activeNavItem()); });
 // O destaque do menu muda na hora; a seção (layout pesado da grade de apps) só troca
 // quando o foco para por um instante, então passar pelo menu não engasga.
 let sectionTimer = 0, pendingSection = null;
@@ -5915,7 +5876,6 @@ function move(dir) {
   }
   if (!target) return false;
   setFocus(target);
-  if (fromNav && !inNav(target)) hideNavSoon();
   return true;
 }
 function focusFirstContent() {
@@ -5927,7 +5887,7 @@ function activate(el) {
   if (!el) return;
   if (inNav(el)) {
     if (typeof el._act === 'function') { el._act(); return; }   // item de menu com ação própria
-    showSection(el.dataset.section); focusFirstContent(); hideNavSoon(); return;
+    showSection(el.dataset.section); focusFirstContent(); return;
   }
   if (typeof el._act === 'function') el._act();
 }

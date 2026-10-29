@@ -4,8 +4,8 @@ As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
 ## 16.3.0 beta (outubro de 2026)
 
-- **Posição do menu:** em **Configurações → Menu**, escolha onde o menu fica. **Lateral** é o de sempre; **Em cima** vira uma barra de abas, com o seu perfil e os atalhos do sistema nas pontas; **Embaixo** vira um dock flutuante, com ícones grandes e um ponto de luz no item aberto. Cada posição tem o visual próprio, e o Modo Infantil continua com o menu lateral.
-- **Esconder o menu ao abrir uma seção:** opcional. Ao abrir Início, Jogos ou outra seção, o menu se recolhe com uma animação e o conteúdo ocupa a tela toda. Apertar na direção do menu, Voltar ou tocar na aba da borda traz o menu de volta.
+- **Posição do menu:** em **Configurações → Menu**, escolha onde o menu fica. **Lateral** é o de sempre; **Em cima** vira uma barra de abas de ponta a ponta, alinhada com as bordas do conteúdo, com o seu perfil e os atalhos do sistema nas pontas; **Embaixo** vira um dock flutuante, com todos os itens do mesmo tamanho e um ponto de luz no item aberto, e o conteúdo termina acima dele. Sem o menu do lado, as Configurações ficam no centro da tela, e com o menu em cima o botão do clima sai do caminho. O Modo Infantil continua com o menu lateral.
+- A **Trajetória do Onix** ganhou o Onix GameHub no capítulo das pedras preciosas, e o Opala aparece com o ícone novo, o mesmo do site Project Gems.
 
 ## 16.1.1 beta (outubro de 2026)
 
