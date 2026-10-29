@@ -838,10 +838,11 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
    Lateral é o de sempre. "Em cima" é uma barra de abas e "Embaixo", um dock flutuante, cada um com o
    visual próprio. No celular em pé o menu continua sendo a barra de baixo (bloco mais adiante).
    "Esconder o menu" (html.nav-auto + nav-hidden) recolhe o menu para a borda: só transform e
-   opacity animam o menu; o conteúdo ocupa o espaço livre com uma transição curta. */
-html.nav-auto #sidebar{transition:transform .36s var(--ease),visibility 0s}
-html.nav-auto.nav-hidden #sidebar{visibility:hidden;transition:transform .36s var(--ease),visibility 0s linear .36s}
-html.nav-auto #main{transition:left .36s var(--ease),top .36s var(--ease),padding .36s var(--ease)}
+   opacity animam o menu; o conteúdo ocupa o espaço livre de uma vez, sem animar o layout. */
+html.nav-auto #sidebar{will-change:transform;transition:transform .3s var(--ease),visibility 0s}
+html.nav-auto.nav-hidden #sidebar{visibility:hidden;transition:transform .3s var(--ease),visibility 0s linear .3s}
+/* O #main não anima left/top/padding: isso refaz o layout da página inteira a cada quadro e trava
+   a TV. Ele troca de tamanho de uma vez só, e o menu desliza por cima (só transform, na GPU). */
 html.nav-auto.nav-hidden #sidebar{transform:translateX(-104%)}
 html.nav-auto.nav-hidden #main{left:0}
 /* Aba na borda: aparece com o menu escondido; toque ou mouse trazem o menu de volta. */
