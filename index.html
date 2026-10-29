@@ -863,8 +863,17 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
     background:#fff;box-shadow:0 0 .6rem rgba(255,255,255,.7)}
   html.nav-top #sidebar.nav-focus .nav-item.active::before{opacity:0}
   html.nav-top #main{top:var(--nav-h);left:0;padding-top:1.6rem}
-  /* Com o menu em cima, o botão do clima sai do caminho: subir do conteúdo vai direto para o menu. */
-  html.nav-top #wxBtn{display:none!important}
+  /* Com o menu em cima, o clima fica só à mostra, como o relógio: sem foco nem previsão (subir do
+     conteúdo vai direto para o menu). O applySettings tira a classe .f dele. */
+  html.nav-top #wxBtn{pointer-events:none}
+  /* Atualizar, Limpar memória e Configurações da TV viram botões só de ícone, como no Clean Glass;
+     o nome aparece no botão focado. */
+  html.nav-top .top-actions{gap:.4rem}
+  html.nav-top .top-actions .btn span{display:none}
+  html.nav-top .top-actions .btn.is-focused span{display:inline}
+  html.nav-top #refreshBtn,html.nav-top #ramBtn,html.nav-top #tvSettingsBtn{padding:.6rem;border-radius:50%;background:transparent;border-color:transparent;color:var(--muted)}
+  html.nav-top .top-actions .btn svg{width:1.2rem;height:1.2rem}
+  html.nav-top #refreshBtn.is-focused,html.nav-top #ramBtn.is-focused,html.nav-top #tvSettingsBtn.is-focused{padding:.6rem 1.1rem;border-radius:2rem;background:rgba(255,255,255,.12);color:var(--text)}
   /* Sem o menu do lado, a coluna das Configurações (título e lista) fica no centro da tela, em cima e embaixo. */
   html.nav-top #sec-settings,html.nav-bottom #sec-settings{max-width:46rem;margin:0 auto}
 
@@ -1420,6 +1429,8 @@ function applySettings() {
   // Posição do menu (o Modo Infantil tem o menu lateral dele).
   cl.toggle('nav-top', !kid && settings.navPos === 'top');
   cl.toggle('nav-bottom', !kid && settings.navPos === 'bottom');
+  const wxb = document.getElementById('wxBtn');
+  wxb.classList.toggle('f', !cl.contains('nav-top'));
 }
 applySettings();
 
@@ -1940,7 +1951,7 @@ const ES = Object.freeze({
   "Lateral": "Lateral",
   "Em cima": "Arriba",
   "Embaixo": "Abajo",
-  "*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas de ponta a ponta, alinhada com as bordas do conteúdo, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com todos os itens do mesmo tamanho e um ponto de luz no item aberto, e o conteúdo termina acima dele. Sem o menu do lado, as Configurações ficam no centro da tela, e com o menu em cima o botão do clima sai do caminho. O Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.": "*Posición del menú:* elige dónde queda el menú. *Lateral* es el de siempre; *Arriba* se vuelve una barra de pestañas de punta a punta, alineada con los bordes del contenido, con tu perfil y los atajos del sistema en los extremos; *Abajo* se vuelve un dock flotante, con todos los elementos del mismo tamaño y un punto de luz en el elemento abierto, y el contenido termina encima de él. Sin el menú al costado, la Configuración queda en el centro de la pantalla, y con el menú arriba el botón del clima sale del camino. El Modo Infantil sigue con el menú lateral. En *Configuración → Menú*.",
+  "*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas de ponta a ponta, alinhada com as bordas do conteúdo, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com todos os itens do mesmo tamanho e um ponto de luz no item aberto, e o conteúdo termina acima dele. Sem o menu do lado, as Configurações ficam no centro da tela, e com o menu em cima o clima fica só à mostra, como o relógio, sem atrapalhar o caminho até o menu, e Atualizar, Limpar memória e Configurações da TV viram botões só de ícone, como no Clean Glass. O Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.": "*Posición del menú:* elige dónde queda el menú. *Lateral* es el de siempre; *Arriba* se vuelve una barra de pestañas de punta a punta, alineada con los bordes del contenido, con tu perfil y los atajos del sistema en los extremos; *Abajo* se vuelve un dock flotante, con todos los elementos del mismo tamaño y un punto de luz en el elemento abierto, y el contenido termina encima de él. Sin el menú al costado, la Configuración queda en el centro de la pantalla, y con el menú arriba el clima solo se muestra, como el reloj, sin estorbar el camino hacia el menú, y Actualizar, Liberar memoria y Configuración de la TV se vuelven botones solo de ícono, como en Clean Glass. El Modo Infantil sigue con el menú lateral. En *Configuración → Menú*.",
   "A *Trajetória do Onix* ganhou o Onix GameHub no capítulo das pedras preciosas, e o Opala aparece com o ícone novo, o mesmo do site Project Gems.": "La *Trayectoria de Onix* ahora incluye Onix GameHub en el capítulo de las piedras preciosas, y Opala aparece con el ícono nuevo, el mismo del sitio Project Gems.",
   "Estilo da tela inicial": "Estilo de la pantalla de inicio",
   "Onix Glass é o de sempre. Clean Glass é minimalista: relógio no centro e só os apps e as indicações. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.": "Onix Glass es el de siempre. Clean Glass es minimalista: reloj en el centro y solo las apps y las recomendaciones. Onix Cosmos es artístico, con el planeta de Onix, órbitas y estrellas dibujados. OK cambia.",
@@ -4281,7 +4292,7 @@ const OPTIONS = [
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
   { version: '16.3.0 beta', date: 'outubro de 2026', items: [
-    ['new', '*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas de ponta a ponta, alinhada com as bordas do conteúdo, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com todos os itens do mesmo tamanho e um ponto de luz no item aberto, e o conteúdo termina acima dele. Sem o menu do lado, as Configurações ficam no centro da tela, e com o menu em cima o botão do clima sai do caminho. O Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.'],
+    ['new', '*Posição do menu:* escolha onde o menu fica. *Lateral* é o de sempre; *Em cima* vira uma barra de abas de ponta a ponta, alinhada com as bordas do conteúdo, com o seu perfil e os atalhos do sistema nas pontas; *Embaixo* vira um dock flutuante, com todos os itens do mesmo tamanho e um ponto de luz no item aberto, e o conteúdo termina acima dele. Sem o menu do lado, as Configurações ficam no centro da tela, e com o menu em cima o clima fica só à mostra, como o relógio, sem atrapalhar o caminho até o menu, e Atualizar, Limpar memória e Configurações da TV viram botões só de ícone, como no Clean Glass. O Modo Infantil continua com o menu lateral. Em *Configurações → Menu*.'],
     ['fix', 'A *Trajetória do Onix* ganhou o Onix GameHub no capítulo das pedras preciosas, e o Opala aparece com o ícone novo, o mesmo do site Project Gems.'],
   ] },
   { version: '16.1.1 beta', date: 'outubro de 2026', items: [
