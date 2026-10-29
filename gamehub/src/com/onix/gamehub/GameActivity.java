@@ -54,6 +54,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     Consoles.Console console;
     private File rom, saveDir, stateDir;
     private volatile boolean loaded, failed, menuOpen, quitting;
+    volatile boolean capture;   // menu → Atribuir botões: a próxima tecla vai para a página
     private long started, playedMs;
     private int frames, sramTick;
     private long fpsAt;
@@ -337,12 +338,14 @@ public class GameActivity extends Activity implements Gamepads.Listener {
                     Bitmap b = Bitmap.createBitmap(px, w, h, Bitmap.Config.ARGB_8888);
                     int tw = 320, th = Math.max(1, h * tw / w);
                     Bitmap t = Bitmap.createScaledBitmap(b, tw, th, true);
-                    b.recycle();
+                    // Mesmo tamanho (Mega Drive, 320 de largura): o Android devolve a própria b.
+                    if (t != b) b.recycle();
                     ByteArrayOutputStream o = new ByteArrayOutputStream();
                     t.compress(Bitmap.CompressFormat.JPEG, 82, o);
                     t.recycle();
                     Files.write(new File(stateDir, slot + ".jpg"), o.toByteArray());
-                } catch (Exception ignored) {
+                } catch (Exception e) {
+                    android.util.Log.w("OnixRetro", "miniatura falhou", e);
                 }
             }
         }
@@ -579,6 +582,19 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     @Override
     public boolean dispatchKeyEvent(KeyEvent e) {
         if (gl == null) return super.dispatchKeyEvent(e);
+        if (menuOpen && capture) {
+            int code = e.getKeyCode();
+            if (code != KeyEvent.KEYCODE_HOME && code != KeyEvent.KEYCODE_POWER) {
+                if (e.getAction() == KeyEvent.ACTION_DOWN && e.getRepeatCount() == 0) {
+                    capture = false;
+                    try {
+                        Web.emit(menu, "key", new JSONObject().put("code", code).put("name", Gamepads.keyName(code)).toString());
+                    } catch (Exception ignored) {
+                    }
+                }
+                return true;
+            }
+        }
         if (menuOpen) {
             int mapped = HubActivity.navKey(e.getKeyCode());
             if (mapped != e.getKeyCode()) {

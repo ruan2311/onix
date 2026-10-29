@@ -84,6 +84,7 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .add h1{font-size:2.6rem;font-weight:800}
 .add p{font-size:1.3rem;color:var(--dim);line-height:1.45}
 .add .url{font-size:1.35rem;color:var(--cyan);font-weight:600}
+.add .code{font-size:1.7rem;letter-spacing:.3em;color:var(--ink);font-variant-numeric:tabular-nums}
 .xfers{display:flex;flex-direction:column;gap:.7rem;margin-top:.6rem}
 .xfer{padding:1rem 1.4rem;border-radius:1rem;background:var(--glass);display:flex;flex-direction:column;gap:.6rem;font-size:1.2rem}
 .xfer .top{display:flex;gap:1rem;align-items:center}
@@ -435,6 +436,7 @@ function addPage() {
       h('p', { text: t('Aponte a câmera do celular para o QR code. A página abre no navegador, sem instalar nada; escolha os arquivos e eles vêm para a TV.') }),
       h('p', { text: t('O celular precisa estar no mesmo Wi-Fi da TV.') }),
       uploadInfo.ip ? h('p', { class: 'url', text: t('Ou digite no navegador: {u}', { u: 'http://' + uploadInfo.ip }) }) : null,
+      uploadInfo.ip && uploadInfo.code ? h('p', null, t('Código para quem digitar o endereço:') + ' ', h('b', { class: 'code', id: 'upCode', text: uploadInfo.code })) : null,
       h('p', { text: t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip') }),
       h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }),
       store, xfers)));
@@ -472,6 +474,8 @@ function drawXfers() {
   }));
 }
 handlers.upload = e => {
+  // Errou o código 5 vezes no celular: a TV mostra o código novo.
+  if (e.type === 'code') { const el = $('#upCode'); if (el) el.textContent = e.code; return; }
   const k = e.file || e.name;
   const x = uploading[k] || (uploading[k] = { name: k });
   if (e.type === 'start') Object.assign(x, { size: e.size, sent: 0, done: false });

@@ -27,6 +27,9 @@ import java.util.concurrent.Semaphore;
  * Envio de jogos pelo celular: só fica ligado enquanto a tela "Adicionar jogos" está aberta.
  * O QR leva a http://<ip>:8770/#k=<chave>; a chave (128 bits, nova a cada abertura da tela) fica
  * no fragmento da URL, que o navegador não manda na rede, e volta no cabeçalho X-Key.
+ * Quem digita só o endereço (sem o QR) usa o código de 6 números que a TV mostra: a página manda
+ * o código no X-Key e recebe a chave de volta. 5 códigos errados trocam o código (e a TV mostra o
+ * novo), para ninguém na rede ficar tentando.
  * Cada arquivo vai num PUT /api/upload?name=<nome> e é gravado direto num arquivo temporário.
  */
 final class UploadServer {
@@ -45,7 +48,8 @@ final class UploadServer {
     private final Semaphore slots = new Semaphore(MAX_CONN);
     private volatile ServerSocket socket;
     private volatile int port;
-    private volatile String key;
+    private volatile String key, code;
+    private int codeFails;
     private byte[] page;
 
     UploadServer(Context ctx, Host host) {
@@ -61,6 +65,7 @@ final class UploadServer {
         StringBuilder sb = new StringBuilder();
         for (byte x : b) sb.append(String.format(Locale.ROOT, "%02x", x & 0xff));
         key = sb.toString();
+        newCode();
         for (int p = PORT; p < PORT + 5 && socket == null; p++) {
             try {
                 ServerSocket s = new ServerSocket();
@@ -86,6 +91,7 @@ final class UploadServer {
             String ip = localIp();
             o.put("url", ip == null || s == null ? "" : "http://" + ip + ":" + port + "/#k=" + key);
             o.put("ip", ip == null ? "" : ip + ":" + port);
+            o.put("code", code);
         } catch (Exception ignored) {
         }
         return o;
@@ -95,10 +101,37 @@ final class UploadServer {
         ServerSocket s = socket;
         socket = null;
         key = null;
+        code = null;
         if (s != null) try {
             s.close();
         } catch (Exception ignored) {
         }
+    }
+
+    private synchronized void newCode() {
+        code = String.format(Locale.ROOT, "%06d", random.nextInt(1000000));
+        codeFails = 0;
+    }
+
+    /** Chave do QR, ou o código de 6 números. Código errado conta; no 5º, a TV ganha um novo. */
+    private boolean authorized(String k) {
+        String current = key, c = code;
+        if (current == null || k == null) return false;
+        if (current.equals(k) || k.equals(c)) return true;
+        if (k.matches("^\\d{6}$")) {
+            boolean changed = false;
+            synchronized (this) {
+                if (++codeFails >= 5 && key != null) {
+                    newCode();
+                    changed = true;
+                }
+            }
+            if (changed) try {
+                host.event(new JSONObject().put("type", "code").put("code", code));
+            } catch (Exception ignored) {
+            }
+        }
+        return false;
     }
 
     private void accept(ServerSocket s) {
@@ -156,13 +189,13 @@ final class UploadServer {
                 send(c, 200, "text/html; charset=utf-8", page());
                 return;
             }
-            String current = key;
-            if (current == null || k == null || !current.equals(k)) {
+            if (!authorized(k)) {
                 json(c, 403, "{\"error\":\"key\"}");
                 return;
             }
             if (method.equals("GET") && path.equals("/api/info")) {
                 JSONObject o = Storage.info(ctx);
+                o.put("k", key);   // entrou pelo código: a página passa a usar a chave
                 o.put("es", "es".equals(Locale.getDefault().getLanguage()));
                 json(c, 200, o.toString());
                 return;

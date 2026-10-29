@@ -166,6 +166,12 @@ final class MenuBridge {
         return null;
     }
 
+    /** Atribuir botões: a próxima tecla apertada vai para o menu (evento "key"). */
+    @JavascriptInterface
+    public void captureKey(boolean on) {
+        g.capture = on && !g.kids;
+    }
+
     @JavascriptInterface
     public String effective() {
         return g.settings.toString();

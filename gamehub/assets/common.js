@@ -32,7 +32,7 @@ const ES = {
   'Mande jogos pelo celular': 'Manda juegos desde el celular',
   'Aponte a câmera do celular para o QR code. A página abre no navegador, sem instalar nada; escolha os arquivos e eles vêm para a TV.': 'Apunta la cámara del celular al código QR. La página se abre en el navegador, sin instalar nada; elige los archivos y llegan a la TV.',
   'O celular precisa estar no mesmo Wi-Fi da TV.': 'El celular tiene que estar en el mismo Wi-Fi que la TV.',
-  'Ou digite no navegador: {u}': 'O escribe en el navegador: {u}',
+  'Ou digite no navegador: {u}': 'O escribe en el navegador: {u}', 'Código para quem digitar o endereço:': 'Código para quien escriba la dirección:',
   'Sem rede: conecte a TV ao Wi-Fi para mandar jogos.': 'Sin red: conecta la TV al Wi-Fi para mandar juegos.',
   'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip': 'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin y .zip',
   'Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.': 'Usa solo juegos que tengas derecho a usar. Ningún juego viene con GameHub.',
@@ -53,6 +53,7 @@ const ES = {
   'Adianta o jogo por baixo dos panos para os botões responderem mais rápido. Pesa o dobro no processador.': 'Adelanta el juego por debajo para que los botones respondan más rápido. Pesa el doble en el procesador.',
   'Velocidade do turbo': 'Velocidad del turbo', 'Botões com turbo': 'Botones con turbo', 'Nenhum': 'Ninguno',
   'Analógico como direcional': 'Analógico como direccional', 'Zona morta do analógico': 'Zona muerta del analógico',
+  'Atribuir botões': 'Asignar botones', 'OK num botão do console e aperte, no controle, o botão que vai fazer aquilo. Vale só para este jogo.': 'OK en un botón de la consola y presiona, en el control, el botón que hará eso. Vale solo para este juego.',
   'Trocar botões': 'Cambiar botones', 'Aperte o botão no controle…': 'Presiona el botón en el control…',
   'Padrão': 'Predeterminado', 'Restaurar padrão': 'Restaurar predeterminado', 'Desligar o botão': 'Desactivar el botón',
   'Igual ao global': 'Igual que el global', 'Igual ao console': 'Igual que la consola',
@@ -223,7 +224,8 @@ function focus(el, quiet) {
   if (focused) focused.classList.remove('focus');
   focused = el;
   el.classList.add('focus');
-  el.scrollIntoView({ block: 'nearest', inline: 'nearest' });
+  // O destaque "Continuar jogando" aparece inteiro, não só o botão.
+  (el.closest('.hero') || el).scrollIntoView({ block: 'nearest', inline: 'nearest' });
   if (!quiet && el._focus) el._focus();
 }
 function ensureFocus(preferred) {
@@ -237,8 +239,14 @@ function move(dir) {
   if (!focused || !list.includes(focused)) return ensureFocus();
   const a = focused.getBoundingClientRect();
   const ax = a.left + a.width / 2, ay = a.top + a.height / 2;
+  // Primeiro dentro da mesma área (a página rolável, o topo…): com a página rolada, o que ficou
+  // acima da tela está "atrás" das abas e perdia para elas. Só sai da área se nada servir lá.
+  const area = e => e.closest('main, nav, header, .layer') || document.body;
+  const here = area(focused);
+  return pick(list.filter(e => area(e) === here)) || pick(list);
+  function pick(cands) {
   let best = null, bestScore = Infinity;
-  for (const e of list) {
+  for (const e of cands) {
     if (e === focused) continue;
     const b = e.getBoundingClientRect();
     const bx = b.left + b.width / 2, by = b.top + b.height / 2;
@@ -254,7 +262,10 @@ function move(dir) {
     const score = main + side * (overlap ? 0.5 : 3);
     if (score < bestScore) { bestScore = score; best = e; }
   }
+  if (cands !== list && !best) return false;
   if (best) { focus(best); sfx('move'); } else sfx('edge');
+  return true;
+  }
 }
 let onBack = null;   // cada página define o que Voltar faz quando não há camada aberta
 document.addEventListener('keydown', e => {

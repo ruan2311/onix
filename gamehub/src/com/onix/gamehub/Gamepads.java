@@ -71,6 +71,19 @@ final class Gamepads implements InputManager.InputDeviceListener {
         return d.getName().replaceAll("(?i)\\s+(touchpad|motion sensors)$", "");
     }
 
+    /** Nome curto da tecla para a tela de trocar botões: BUTTON_X → X, DPAD_UP → ▲. */
+    static String keyName(int code) {
+        String n = KeyEvent.keyCodeToString(code).replace("KEYCODE_", "").replace("BUTTON_", "");
+        switch (n) {
+            case "DPAD_UP": return "▲";
+            case "DPAD_DOWN": return "▼";
+            case "DPAD_LEFT": return "◀";
+            case "DPAD_RIGHT": return "▶";
+            case "DPAD_CENTER": return "OK";
+            default: return n.replace('_', ' ');
+        }
+    }
+
     static JSONArray list() {
         JSONArray out = new JSONArray();
         for (int id : InputDevice.getDeviceIds()) {

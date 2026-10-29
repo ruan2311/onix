@@ -19,6 +19,12 @@ h1{font-size:24px;font-weight:800;line-height:1.2}
 p{color:var(--dim);font-size:15px;line-height:1.5}
 .pick{display:flex;align-items:center;justify-content:center;gap:10px;height:58px;border-radius:999px;background:var(--grad);color:#14082c;font-weight:700;font-size:17px;border:0;width:100%}
 input[type=file]{display:none}
+#codeBox{display:flex;flex-direction:column;gap:10px}
+#codeBox[hidden],.pick[hidden],#store[hidden]{display:none}
+.coderow{display:flex;gap:10px}
+#code{flex:1;min-width:0;height:54px;border-radius:12px;border:1px solid var(--line);background:rgba(255,255,255,.06);color:inherit;
+  font:inherit;font-size:26px;letter-spacing:.3em;text-align:center}
+#codeGo{height:54px;padding:0 22px;border-radius:999px;border:0;background:var(--grad);color:#14082c;font:inherit;font-weight:700;font-size:16px}
 .card{background:var(--glass);border:1px solid var(--line);border-radius:16px;padding:14px 16px}
 .list{display:flex;flex-direction:column;gap:10px}
 .x{display:flex;flex-direction:column;gap:8px}
@@ -36,6 +42,9 @@ input[type=file]{display:none}
   <div class="brand"><svg width="40" height="40" viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 14.5h16a9.5 9.5 0 0 1 9.2 7.1l2.3 8.9a5 5 0 0 1-8.9 4.2L31 30H17l-3.6 4.7a5 5 0 0 1-8.9-4.2l2.3-8.9A9.5 9.5 0 0 1 16 14.5z"/><path d="M15 19.5v6M12 22.5h6"/><circle cx="32.5" cy="20.6" r="1.25" fill="#fff" stroke="none"/><circle cx="35.9" cy="24" r="1.25" fill="#fff" stroke="none"/></svg><span><b>ONIX GAMEHUB</b> <small>By Ruan</small></span></div>
   <h1 id="title"></h1>
   <p id="lead"></p>
+  <form class="card" id="codeBox" hidden><label for="code" id="codeLabel"></label>
+    <div class="coderow"><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}"><button id="codeGo"></button></div>
+    <span class="bad" id="codeErr"></span></form>
   <label class="pick" for="files" id="pickLabel"></label>
   <input type="file" id="files" multiple accept=".nes,.unf,.unif,.fds,.sfc,.smc,.swc,.fig,.gba,.md,.gen,.smd,.bin,.zip">
   <div class="list" id="list"></div>
@@ -52,6 +61,7 @@ const T = ES ? {
   legal: 'Usa solo juegos que tengas derecho a usar. Ningún juego viene con GameHub.',
   wait: 'En la fila', send: 'Enviando', done: 'Listo en la TV', dup: 'Ya estaba en la biblioteca', fail: 'No se pudo enviar',
   key: 'Este enlace ya no vale. En la TV, abre Agregar juegos de nuevo y lee el código QR nuevo.',
+  code: 'Escribe el código de 6 números que aparece en la TV, en Agregar juegos.', go: 'Entrar', wrong: 'Código incorrecto. Revísalo en la TV.',
   store: 'Libre para juegos en la TV: {a}', net: 'Se perdió la conexión con la TV. ¿El celular sigue en el mismo Wi-Fi?',
 } : {
   title: 'Mande jogos para a TV', lead: 'Escolha um ou vários arquivos. Eles vão direto para o GameHub na TV.',
@@ -59,6 +69,7 @@ const T = ES ? {
   legal: 'Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.',
   wait: 'Na fila', send: 'Enviando', done: 'Pronto na TV', dup: 'Já estava na biblioteca', fail: 'Não deu para enviar',
   key: 'Este link não vale mais. Na TV, abra Adicionar jogos de novo e leia o QR code novo.',
+  code: 'Digite o código de 6 números que aparece na TV, em Adicionar jogos.', go: 'Entrar', wrong: 'Código errado. Confira na TV.',
   store: 'Livre para jogos na TV: {a}', net: 'A conexão com a TV caiu. O celular continua no mesmo Wi-Fi?',
 };
 // Mensagens que vêm da TV (em português) e a tradução para o espanhol.
@@ -73,10 +84,31 @@ const ERR_ES = {
 };
 const err = m => ES && ERR_ES[m] ? ERR_ES[m] : m;
 const $ = s => document.querySelector(s);
-const KEY = (location.hash.match(/k=([0-9a-f]{32})/) || [])[1] || '';
+let KEY = (location.hash.match(/k=([0-9a-f]{32})/) || [])[1] || '';
 $('#title').textContent = T.title; $('#lead').textContent = T.lead; $('#pickLabel').textContent = T.pick;
 $('#formats').textContent = T.formats; $('#legal').textContent = T.legal;
 if (ES) document.documentElement.lang = 'es';
+
+// Sem a chave do QR (digitou só o endereço): pede o código da TV e troca pela chave.
+$('#codeLabel').textContent = T.code; $('#codeGo').textContent = T.go;
+function askCode() {
+  $('#codeBox').hidden = false; $('#pickLabel').hidden = true; $('#store').hidden = true;
+  $('#code').focus();
+}
+$('#codeBox').addEventListener('submit', e => {
+  e.preventDefault();
+  const c = $('#code').value.replace(/\D/g, '');
+  if (c.length !== 6) { $('#codeErr').textContent = T.wrong; return; }
+  fetch('/api/info', { headers: { 'X-Key': c } }).then(r => {
+    if (r.status === 403) throw new Error('key');
+    return r.json();
+  }).then(s => {
+    if (!/^[0-9a-f]{32}$/.test(s.k || '')) throw new Error('key');
+    KEY = s.k; history.replaceState(null, '', '#k=' + KEY);
+    $('#codeBox').hidden = true; $('#pickLabel').hidden = false; $('#store').hidden = false;
+    info();
+  }).catch(e => { $('#codeErr').textContent = e.message === 'key' ? T.wrong : T.net; $('#code').select(); });
+});
 
 function fmt(b) { return b >= 1e9 ? (b / 1073741824).toFixed(1).replace('.', ',') + ' GB' : Math.round(b / 1048576) + ' MB'; }
 function info() {
@@ -86,7 +118,7 @@ function info() {
   }).then(s => { $('#store').textContent = T.store.replace('{a}', fmt(s.available || 0)); })
     .catch(e => { $('#store').innerHTML = ''; $('#store').append(Object.assign(document.createElement('span'), { className: 'bad', textContent: e.message === 'key' ? T.key : T.net })); });
 }
-info();
+if (KEY) info(); else askCode();
 
 const queue = [];
 let busy = false;

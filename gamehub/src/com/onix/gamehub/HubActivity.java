@@ -181,7 +181,7 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
             if (code != KeyEvent.KEYCODE_HOME && code != KeyEvent.KEYCODE_POWER) {
                 capture = false;
                 try {
-                    Web.emit(web, "key", new JSONObject().put("code", code).put("name", KeyEvent.keyCodeToString(code).replace("KEYCODE_", "")).toString());
+                    Web.emit(web, "key", new JSONObject().put("code", code).put("name", Gamepads.keyName(code)).toString());
                 } catch (Exception ignored) {
                 }
                 return true;

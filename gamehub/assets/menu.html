@@ -73,6 +73,7 @@ function draw(focusIndex) {
   else if (view === 'core') body.append(h('p', { class: 'hint', text: t('Carregando…') }));
   else if (view === 'cheats') body.append(cheatsList());
   else if (view === 'pads') body.append(padsList());
+  else if (view === 'buttons') body.append(buttonsList());
   const list = $$('.f', p);
   focus(list[Math.min(list.length - 1, Math.max(0, focusIndex || 0))] || list[0]);
 }
@@ -93,6 +94,7 @@ function mainList() {
     list.append(item('img', t('Imagem'), () => go('image'), null, { sub: t('Vale só para este jogo.') }));
     list.append(item('sliders', t('Opções do emulador'), () => { go('core'); call('coreOptions'); }));
     list.append(item('code', t('Trapaças'), () => go('cheats')));
+    list.append(item('pad', t('Atribuir botões'), () => go('buttons'), null, { sub: t('Vale só para este jogo.') }));
   }
   list.append(item('pad', t('Controles'), () => go('pads'), String((INFO.gamepads || []).length || t('Sem controle'))));
   list.append(item('reset', t('Reiniciar o jogo'), () => ask(t('Reiniciar o jogo') + '?', t('O que não foi salvo no jogo desde o último save se perde.'),
@@ -157,6 +159,36 @@ function imageList() {
   }
   list.append(h('p', { class: 'hint', text: t('Vale só para este jogo.') }));
   return list;
+}
+
+/* Atribuir botões: escolhe o botão do console e aperta, no controle, o botão que vai fazer aquilo.
+   Fica guardado só para este jogo (por cima do que estiver em Configurações → Controles). */
+let KEYNAMES = {};
+try { KEYNAMES = JSON.parse(localStorage.getItem('keynames') || '{}'); } catch (_) { }
+function buttonsList() {
+  const list = h('div', { class: 'list' });
+  const remap = (INFO.settings || {}).remap || {};
+  for (const [rid, name] of BUTTONS[INFO.console] || []) {
+    const keys = Object.keys(remap).filter(k => remap[k] === rid);
+    const row = item(null, name, () => captureButton(rid, name), keys.length ? keys.map(k => KEYNAMES[k] || ('#' + k)).join(', ') : t('Padrão'), { on: keys.length > 0 });
+    list.append(row);
+  }
+  list.append(item('reset', t('Restaurar padrão'), () => { call('setConfig', 'game:' + INFO.id, 'remap', null); refreshInfo(); draw(focusedIndex()); }));
+  list.append(h('p', { class: 'hint', text: t('OK num botão do console e aperte, no controle, o botão que vai fazer aquilo. Vale só para este jogo.') }));
+  return list;
+}
+function captureButton(rid, name) {
+  const back = focusedIndex();
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' }, h('h2', { text: name }), h('p', { text: t('Aperte o botão no controle…') }),
+    h('button', { class: 'f btn', text: t('Cancelar'), act: closeLayer }))), { onClose: () => { handlers.key = null; call('captureKey', false); } });
+  handlers.key = k => {
+    handlers.key = null;
+    KEYNAMES[k.code] = k.name;
+    try { localStorage.setItem('keynames', JSON.stringify(KEYNAMES)); } catch (_) { }
+    call('setConfig', 'game:' + INFO.id, 'remap.' + k.code, String(rid));
+    closeLayer(); refreshInfo(); draw(back);
+  };
+  call('captureKey', true);
 }
 
 /* Opções do emulador (do próprio núcleo), guardadas para este jogo. */
