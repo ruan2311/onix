@@ -1242,7 +1242,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '15.9.0 teste'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '16.0.0 beta'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1476,6 +1476,11 @@ const ES = Object.freeze({
   "Volta todas as opções do Onix ao original.": "Devuelve todas las opciones de Onix a lo original.",
   "Sobre": "Acerca de",
   "Novidades": "Novedades",
+  "*Onix GameHub:* um app opcional de jogos clássicos para Google TV e Android TV, com Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só. Instale pela aba *Jogos*. Os jogos chegam pelo celular (QR code), com capa e nome certos, e o progresso fica guardado por perfil do Onix.": "*Onix GameHub:* una app opcional de juegos clásicos para Google TV y Android TV, con NES, Super Nintendo, Game Boy Advance y Mega Drive en un solo lugar. Instálala desde la pestaña *Juegos*. Los juegos llegan desde el celular (código QR), con portada y nombre correctos, y el progreso se guarda por perfil de Onix.",
+  "*No GameHub:* \"Continuar jogando\" com a imagem de onde parou, estados salvos, avançar rápido, rebobinar, filtros de imagem (Nítido, CRT, LCD), trapaças, *Atribuir botões* por jogo, *Controle 1 e Controle 2* definidos por você e os jogos liberados no *Modo Infantil*.": "*En GameHub:* \"Seguir jugando\" con la imagen de donde lo dejaste, estados guardados, avance rápido, rebobinar, filtros de imagen (Nítido, CRT, LCD), trucos, *Asignar botones* por juego, *Control 1 y Control 2* definidos por ti y los juegos liberados en el *Modo Infantil*.",
+  "*Aba Jogos* reorganizada: \"Continuar jogando\" em cartões baixos, o GameHub num cartão só com os quatro consoles, os minijogos e as notícias em uma fileira cada, e um desenho de controle em órbita no topo.": "*Pestaña Juegos* reorganizada: \"Seguir jugando\" en tarjetas bajas, GameHub en una sola tarjeta con las cuatro consolas, los minijuegos y las noticias en una fila cada uno, y un dibujo de un control en órbita arriba.",
+  "*Samsung e LG:* a aba *Jogos* virou um hub de jogos na nuvem, com os jogos mais populares do *Game Pass* em destaque e os apps de cloud gaming (Xbox Cloud Gaming, GeForce NOW, Boosteroid e outros).": "*Samsung y LG:* la pestaña *Juegos* se volvió un hub de juegos en la nube, con los juegos más populares de *Game Pass* destacados y las apps de cloud gaming (Xbox Cloud Gaming, GeForce NOW, Boosteroid y otras).",
+  "O GameHub segue os sons do menu e as animações do Onix; dá para mudar só nele, em *Configurações → Interface*.": "GameHub sigue los sonidos del menú y las animaciones de Onix; se puede cambiar solo en él, en *Configuración → Interfaz*.",
   "O que mudou em cada versão do Onix, da mais nova para a mais antiga.": "Lo que cambió en cada versión de Onix, de la más nueva a la más antigua.",
   "Novo": "Nuevo",
   "Correção": "Ajuste",
@@ -4080,6 +4085,13 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '16.0.0 beta', date: 'outubro de 2026', items: [
+    ['new', '*Onix GameHub:* um app opcional de jogos clássicos para Google TV e Android TV, com Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só. Instale pela aba *Jogos*. Os jogos chegam pelo celular (QR code), com capa e nome certos, e o progresso fica guardado por perfil do Onix.'],
+    ['new', '*No GameHub:* "Continuar jogando" com a imagem de onde parou, estados salvos, avançar rápido, rebobinar, filtros de imagem (Nítido, CRT, LCD), trapaças, *Atribuir botões* por jogo, *Controle 1 e Controle 2* definidos por você e os jogos liberados no *Modo Infantil*.'],
+    ['new', '*Aba Jogos* reorganizada: "Continuar jogando" em cartões baixos, o GameHub num cartão só com os quatro consoles, os minijogos e as notícias em uma fileira cada, e um desenho de controle em órbita no topo.'],
+    ['new', '*Samsung e LG:* a aba *Jogos* virou um hub de jogos na nuvem, com os jogos mais populares do *Game Pass* em destaque e os apps de cloud gaming (Xbox Cloud Gaming, GeForce NOW, Boosteroid e outros).'],
+    ['fix', 'O GameHub segue os sons do menu e as animações do Onix; dá para mudar só nele, em *Configurações → Interface*.'],
+  ] },
   { version: '15.0.2 beta', date: 'outubro de 2026', items: [
     ['fix', 'Os avatares dos perfis ganharam o fundo de vidro escuro do Onix, com um brilho suave de cor atrás de cada rosto, no lugar das cores fortes.'],
   ] },

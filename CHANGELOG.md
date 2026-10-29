@@ -2,6 +2,14 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 16.0.0 beta (outubro de 2026)
+
+- **Onix GameHub:** um app opcional de jogos clássicos para Google TV e Android TV, com Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só. Instale pela aba **Jogos**. Os jogos chegam pelo celular (QR code), com capa e nome certos, e o progresso fica guardado por perfil do Onix.
+- **No GameHub:** "Continuar jogando" com a imagem de onde parou, estados salvos, avançar rápido, rebobinar, filtros de imagem (Nítido, CRT, LCD), trapaças, **Atribuir botões** por jogo, **Controle 1 e Controle 2** definidos por você e os jogos liberados no **Modo Infantil**.
+- **Aba Jogos** reorganizada: "Continuar jogando" em cartões baixos, o GameHub num cartão só com os quatro consoles, os minijogos e as notícias em uma fileira cada, e um desenho de controle em órbita no topo.
+- **Samsung e LG:** a aba **Jogos** virou um hub de jogos na nuvem, com os jogos mais populares do **Game Pass** em destaque e os apps de cloud gaming (Xbox Cloud Gaming, GeForce NOW, Boosteroid e outros).
+- O GameHub segue os sons do menu e as animações do Onix; dá para mudar só nele, em **Configurações → Interface**.
+
 ## 15.0.2 beta (outubro de 2026)
 
 - Os avatares dos perfis ganharam o fundo de vidro escuro do Onix, com um brilho suave de cor atrás de cada rosto, no lugar das cores fortes.

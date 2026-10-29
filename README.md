@@ -5,9 +5,9 @@
 **Um launcher para Android TV, Google TV, TVs Samsung (Tizen) e TVs LG (webOS), feito para ser rápido no controle remoto.**
 
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
-notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descanso espacial.
+notícias de games, jogos embutidos, o **Onix GameHub** de jogos clássicos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-15.0.0%20beta-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-16.0.0%20beta-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -23,7 +23,7 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 ## Sumário
 
 - [🇪🇸 En español](#-en-español)
-- [Novidades da 15.0.0](#novidades-da-1500)
+- [Novidades da 16.0.0](#novidades-da-1600)
 - [Recursos](#recursos)
 - [Capturas de tela](#capturas-de-tela)
 - [Instalação: qual é a sua TV?](#instalação)
@@ -31,6 +31,7 @@ notícias de games, jogos embutidos, troca de entradas HDMI e uma tela de descan
 - [TVs Samsung (Tizen) · experimental](#tvs-samsung-tizen)
 - [TVs LG (webOS) · experimental](#tvs-lg-webos)
 - [Usar como tela inicial (Onix Launcher)](#usar-como-tela-inicial-onix-launcher)
+- [Onix GameHub (jogos clássicos)](#onix-gamehub-jogos-clássicos)
 - [Onix Controle (app de celular)](#onix-controle-app-de-celular)
 - [Atualizações automáticas](#atualizações-automáticas)
 - [Ativar o botão "Desligar TV"](#ativar-o-botão-desligar-tv)
@@ -60,27 +61,26 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 > Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
 
+**Novedades de la 16.0.0:** llega **Onix GameHub**, una app opcional de juegos clásicos (NES, Super Nintendo, Game Boy Advance y Mega Drive) para Google TV y Android TV. Se instala desde la pestaña **Juegos** de Onix, los juegos llegan desde el celular por código QR y el progreso se guarda por perfil. La pestaña **Juegos** quedó más organizada y, en **Samsung y LG**, se volvió un hub de juegos en la nube con los destacados de **Game Pass** y las apps de cloud gaming. Detalles (en portugués) en [Onix GameHub](#onix-gamehub-jogos-clássicos).
+
 **Novedades de la 15.0.0:** dos estilos nuevos de pantalla de inicio en **Configuración → Inicio** (*Clean Glass*, minimalista, y *Onix Cosmos*, artístico), cuatro sonidos de navegación nuevos (*Crystal*, *Sharpness*, *Velvet* y *Pulse*), un **Modo Infantil** con estilo propio y el gatito de Onix, y sonidos del menú con menos retraso.
 
 **Onix Controle (app para el celular Android):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. **Solo para Google TV y celular Android** (no funciona en iPhone, ni en TVs Samsung y LG). Descárgalo en el celular: **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk)**. Al abrirlo, elige tu TV, escribe el código de 6 caracteres que aparece en la TV y listo. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
 
 ---
 
-## Novidades da 15.0.0
+## Novidades da 16.0.0
 
-- **Três estilos de tela inicial.** Em **Configurações → Início → Estilo da tela inicial**, OK troca entre:
-  - **Onix Glass**, o visual de sempre (padrão).
-  - **Clean Glass**, minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas, sem destaque nem selos.
-  - **Onix Cosmos**, artístico: o planeta do Onix, órbitas, luas, estrelas e um cometa desenhados atrás do destaque.
-- **Cinco sons de navegação.** Em **Configurações → Início → Som da navegação**: **Onix Chime** (o de sempre, de vidro), **Crystal** (cristal brilhante), **Sharpness** (clique seco), **Velvet** (grave e macio) e **Pulse** (digital). OK troca e toca uma amostra.
-- **Modo Infantil com visual próprio.** Boas-vindas com o nome da criança e o gatinho do Onix num arco-íris, o gatinho no menu, desenhinhos no canto da tela e foco amarelo, mais redondo e colorido.
-- **Sons com menos atraso.** A saída de áudio da TV não "dorme" mais entre um toque e outro.
-- Correções: o perfil no topo do menu fica legível quando selecionado, e o gatinho do cartão **Sobre** se mexe de novo com o **Modo desempenho máximo**.
+- **Onix GameHub:** um app **opcional** de jogos clássicos para **Google TV e Android TV**, com **Nintendinho (NES), Super Nintendo, Game Boy Advance e Mega Drive** num lugar só. Instale pela aba **Jogos** do Onix. Os jogos chegam **pelo celular**, com um QR code, e aparecem com a capa e o nome certos. O progresso fica guardado **por perfil** do Onix. Tem "Continuar jogando" com a imagem de onde você parou, estados salvos, avançar rápido, rebobinar, filtros de imagem, trapaças, **Atribuir botões** por jogo e **Controle 1 e Controle 2**. Tudo explicado em [Onix GameHub](#onix-gamehub-jogos-clássicos).
+- **Aba Jogos reorganizada:** "Continuar jogando" em cartões baixos, o GameHub num cartão só com os quatro consoles, os minijogos e as notícias em uma fileira cada, e um desenho de controle em órbita no topo.
+- **Samsung e LG:** a aba **Jogos** virou um **hub de jogos na nuvem**, como o Gaming Hub da Samsung: os jogos mais populares do **Game Pass** em destaque e os apps de cloud gaming (Xbox Cloud Gaming, GeForce NOW, Boosteroid, Amazon Luna, Blacknut e Antstream Arcade).
 
 <p align="center">
-  <img src="docs/screenshots/estilo-onix-cosmos.png" alt="Estilo Onix Cosmos" width="49%">
-  <img src="docs/screenshots/estilo-clean-glass.png" alt="Estilo Clean Glass" width="49%">
+  <img src="docs/screenshots/gamehub-inicio.jpg" alt="Onix GameHub: Continuar jogando" width="49%">
+  <img src="docs/screenshots/jogos.png" alt="Aba Jogos do Onix com o GameHub" width="49%">
 </p>
+
+Na 15.0.0: **três estilos de tela inicial** (*Onix Glass*, *Clean Glass* e *Onix Cosmos*), **cinco sons de navegação**, **Modo Infantil com visual próprio** e sons do menu com menos atraso.
 
 Na 14.0.0: **perfis** (*Quem está assistindo?*, com os apps, recentes, indicações, recordes e idioma de cada um; com um perfil só, o Onix entra direto), **foto de perfil pelo celular**, **boas-vindas** na primeira vez, **Modo Infantil** (só os apps liberados, PIN para sair e limite de tempo por dia), **controle pelo celular** pelo QR code, sem instalar nada, e **clima na tela inicial** (opcional, dados do Open-Meteo, só da cidade que você escolher).
 
@@ -125,7 +125,10 @@ O histórico completo está no [CHANGELOG.md](CHANGELOG.md) e na [página de Rel
 - Grade com todos os apps instalados, com o banner oficial de TV de cada um quando existir.
 
 ### Jogos
-Quatro jogos feitos para o controle remoto, no visual do Onix (traços coloridos sobre o vidro escuro), com fases, música chiptune e recorde salvo:
+- **Continuar jogando** e o cartão do **[Onix GameHub](#onix-gamehub-jogos-clássicos)** (Google TV e Android TV): abrir o GameHub, os quatro consoles com quantos jogos cada um tem, atualizar e desinstalar.
+- Na **Samsung e na LG**: destaques do **Game Pass** e os apps de **jogos na nuvem** (veja [O que muda na Samsung](#o-que-muda-na-samsung)).
+
+**Minijogos do Onix:** quatro jogos feitos para o controle remoto, no visual do Onix (traços coloridos sobre o vidro escuro), com fases, música chiptune e recorde salvo:
 
 | Jogo | Fases | Poderes e malefícios |
 |---|---|---|
@@ -337,6 +340,7 @@ tizen install -n Onix.wgt -t NOME_DA_TV -- onix      # NOME_DA_TV = o nome que a
 | Recurso | Na Samsung |
 |---|---|
 | Apps, Organizar seus apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android |
+| Aba Jogos | 🎮 No lugar do Onix GameHub (que é só Android), um **hub de jogos na nuvem**: os jogos mais populares do **Game Pass** em banners (OK abre o app do Xbox) e os apps de cloud gaming. Os que já estão na TV abrem direto; os outros pedem para instalar pela loja da Samsung |
 | Indicações da semana + **Assistir na Netflix** | ✅ Abre a Netflix no título. Se a sua TV não aceitar o link direto, abre a Netflix e você procura o título |
 | Atualizações | ⚠️ O Onix avisa quando sai uma versão nova, mas você instala do mesmo jeito que a primeira vez |
 | Indicações do Disney+, HBO Max e Globoplay | ✅ Mesma regra do Android, inclusive a escolha manual em Configurações (mais de 3 aberturas, sai depois de 7 dias). O app abre, mas nem sempre direto no título: o Tizen não documenta links diretos para esses apps |
@@ -415,6 +419,7 @@ Se a sua TV já tem o [Homebrew Channel](https://github.com/webosbrew/webos-home
 
 | Recurso | Na LG |
 |---|---|
+| Aba Jogos | 🎮 O mesmo **hub de jogos na nuvem** da Samsung (Game Pass e apps de cloud gaming) |
 | Apps, Organizar seus apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android. Os apps vêm da barra da LG; se a sua TV não deixar o Onix ler essa lista, ele mostra os apps mais comuns (Netflix, YouTube, Prime Video, Disney+, Spotify, Apple TV, Navegador e Configurações) |
 | Indicações da semana + **Assistir na Netflix** | ✅ Abre a Netflix no título. Se a TV não aceitar o link direto, abre a Netflix e você procura o título |
 | Indicações do Disney+, HBO Max e Globoplay | ⚠️ Mesma regra do Android. O app abre, mas nem sempre direto no título |
@@ -479,6 +484,95 @@ adb shell pm disable-user --user 0 com.google.android.tvlauncher
 ```
 
 </details>
+
+---
+
+## Onix GameHub (jogos clássicos)
+
+<img src="gamehub/res/drawable-xxxhdpi/icon.png" alt="Ícone do Onix GameHub" width="72" align="right">
+
+> ⚠️ **Só para Google TV e Android TV.** Nas TVs Samsung e LG, a aba Jogos mostra o hub de jogos na nuvem no lugar dele.
+
+Um app **opcional**, no visual do Onix, para jogar os seus jogos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advance** e **Mega Drive** na TV. Ele conversa com o Onix: o perfil, o idioma, o Modo Infantil, os sons e as animações vêm de lá, e o "Continuar jogando" aparece na aba **Jogos** do Onix.
+
+✅ *Testado numa Philips Google TV (Android TV 14), com controle DualSense: 60 FPS no Super Nintendo.*
+
+> 🧪 **Experimental:** pode apresentar falhas. Se algo não funcionar, [abra uma issue](https://github.com/ruan2311/onix/issues).
+
+> ⚖️ **Nenhum jogo vem com o GameHub.** Use só jogos que você tem o direito de usar (por exemplo, cópias dos seus próprios cartuchos).
+
+<p align="center">
+  <img src="docs/screenshots/gamehub-inicio.jpg" alt="Início do Onix GameHub com Continuar jogando" width="49%">
+  <img src="docs/screenshots/gamehub-consoles.jpg" alt="Consoles e jogos adicionados" width="49%">
+</p>
+
+### Instalar
+1. No Onix, abra a aba **Jogos** e clique em **Instalar o GameHub**.
+2. Na primeira vez, o Android pede para o **Onix** poder instalar apps: ative e volte. Depois, confirme em **Instalar**.
+3. Pronto: o cartão **Onix GameHub** aparece na aba **Jogos**, com **Abrir o GameHub** e os quatro consoles.
+
+Sem o Onix (ou se preferir): no app **Downloader**, use o link **`github.com/ruan2311/onix/releases/download/gamehub-v1.0.0/onix-gamehub.apk`**, do mesmo jeito do [tutorial do Onix](#instalar-pela-própria-tv-com-o-app-downloader).
+
+O GameHub não aparece na lista de apps do Onix: ele abre pela aba **Jogos**.
+
+### Mandar jogos pelo celular
+1. No GameHub, abra **Adicionar jogos** (o **+** no topo).
+2. Aponte a câmera do celular para o **QR code**. A página abre no navegador, sem instalar nada. O celular precisa estar **no mesmo Wi-Fi** da TV.
+3. Toque em **Escolher arquivos** e escolha um ou vários jogos. A TV mostra o progresso, e a capa e o nome certos aparecem em alguns segundos (precisa de internet).
+
+Sem câmera? Digite no navegador do celular o endereço que aparece na TV (por exemplo `http://192.168.1.75:8770`) e, quando a página pedir, o **código de 6 números** que está logo embaixo. Cinco códigos errados trocam o código, e a TV mostra o novo.
+
+- **Formatos:** `.nes`, `.sfc`, `.smc`, `.gba`, `.md`, `.gen`, `.bin` e `.zip` (com o jogo dentro). Até 64 MB por arquivo.
+- **Espaço:** o GameHub nunca enche a memória da TV. Ele sempre deixa livre para o sistema 10% da memória (no mínimo 768 MB e no máximo 2 GB); o resto aparece como **livre para jogos** no topo.
+- Arquivos que não são jogo, como uma foto, são recusados com aviso.
+
+<p align="center">
+  <img src="docs/screenshots/gamehub-adicionar-jogos.jpg" alt="Adicionar jogos pelo QR code ou pelo endereço com código" width="70%">
+</p>
+
+### Jogar
+- **Use um controle Bluetooth** (Xbox, PlayStation, 8BitDo…). Para parear, clique em **Sem controle** no topo do GameHub ou vá em **Configurações → Controles → Conectar controle novo**. O controle remoto da TV também joga, mas só com poucos botões.
+- **Continuar jogando:** ao sair, o GameHub guarda o ponto exato. **Continuar** volta dali, com a imagem de onde você parou. Também dá para continuar direto pela aba **Jogos** do Onix.
+- **Atalhos:** segure **R2** para acelerar e **L2** para rebobinar (ligue **Rebobinar** em **Configurações → Jogo**).
+
+### Menu do jogo
+Aperte **Voltar** (ou **Select + Start** no controle) durante o jogo:
+
+- **Salvar estado** e **Carregar estado**: quatro espaços por jogo, cada um com a imagem do momento.
+- **Avançar rápido**, **Imagem** (filtro **Nítido**, **CRT** ou **LCD**, tamanho e proporção) e **Opções do emulador**, só para aquele jogo.
+- **Trapaças**: códigos Game Genie, Action Replay, GameShark…
+- **Atribuir botões**: OK num botão do console e aperte, no controle, o botão que vai fazer aquilo. Vale só para aquele jogo.
+- **Reiniciar o jogo** e **Sair do jogo**.
+
+<p align="center">
+  <img src="docs/screenshots/gamehub-menu-do-jogo.jpg" alt="Menu do jogo" width="49%">
+  <img src="docs/screenshots/gamehub-atribuir-botoes.jpg" alt="Atribuir botões" width="49%">
+</p>
+
+### Configurações
+Na engrenagem do topo:
+
+- **Imagem, Som e Jogo**: valem para todos os consoles. **Mostrar FPS**, **Atraso do som** (se o som estalar, teste 96 ms), **Run-ahead** (menos atraso nos botões, pesa mais na TV), velocidade do avançar e do turbo.
+- **Controles → Controle 1 e Controle 2**: clique em **Definir** e aperte um botão no controle escolhido. Ele fica guardado mesmo depois de desligar; sem definir, o primeiro controle que apertar um botão é o jogador 1. Também dá para **trocar botões** de cada console.
+- **Interface**: **Som de navegação** e **Animações**, *Igual ao Onix* (padrão), *Ligado* ou *Desligado*.
+- **Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive**: imagem, turbo e as opções do emulador daquele console.
+- **Armazenamento**: quanto os jogos ocupam e quanto ainda cabe.
+
+<p align="center">
+  <img src="docs/screenshots/gamehub-controles.jpg" alt="Controle 1 e Controle 2" width="49%">
+  <img src="docs/screenshots/gamehub-interface.jpg" alt="Som de navegação e Animações" width="49%">
+</p>
+
+### Perfis e Modo Infantil
+- Cada perfil do Onix tem os **próprios saves e estados**. Os jogos (os arquivos) são os mesmos para todos.
+- No perfil **infantil**, só aparecem os jogos marcados com **Liberar no Modo Infantil** (OK no jogo, num perfil de adulto). Não dá para adicionar, apagar nem instalar ou desinstalar o GameHub.
+
+### Atualizar e desinstalar
+- Quando sai versão nova, o cartão do GameHub na aba **Jogos** mostra **Atualizar**. Dentro dele, também em **Configurações → Sobre → Procurar atualizações**.
+- **Desinstalar** fica no mesmo cartão da aba **Jogos**. Os jogos e os saves saem junto com o app.
+
+### Créditos dos emuladores
+Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): **FCEUmm** (NES, GPL-2.0), **Snes9x** (SNES, licença não comercial), **mGBA** (GBA, MPL-2.0) e **Genesis Plus GX** (Mega Drive, licença não comercial). Nomes dos jogos: libretro-database (No-Intro, CC BY-SA 4.0); capas: libretro-thumbnails. As licenças completas estão em **Configurações → Sobre** e em [`gamehub/assets/licenses`](gamehub/assets/licenses). O GameHub é gratuito e nunca terá anúncios.
 
 ---
 
