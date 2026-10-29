@@ -1,0 +1,18 @@
+{
+  "name": "onix-gamehub",
+  "productName": "Onix GameHub",
+  "version": "1.0.0",
+  "description": "Onix GameHub para PC: jogos clássicos (NES, SNES, GBA e Mega Drive) no visual do Onix",
+  "main": "src/main.js",
+  "private": true,
+  "license": "GPL-3.0-only",
+  "scripts": {
+    "start": "electron .",
+    "build:win": "node build-win.js"
+  },
+  "devDependencies": {
+    "electron": "44.9.3",
+    "pe-library": "^1.0.1",
+    "resedit": "^2.0.3"
+  }
+}

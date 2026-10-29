@@ -1,0 +1,20 @@
+/* Tela do jogo no PC: a imagem (WebGL) na janela toda e o menu do GameHub por cima. */
+html, body { margin: 0; height: 100%; overflow: hidden; background: #000; cursor: none; }
+body.glass { background: radial-gradient(70% 90% at 50% 40%, #1d1240 0%, #0b0718 60%, #05030b 100%); }
+body.menu { cursor: default; }
+#screen { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+/* Sem color-scheme: se o do iframe for diferente do da página do menu, o Chromium pinta um fundo opaco. */
+#menu { position: fixed; inset: 0; width: 100%; height: 100%; border: 0; background: transparent; }
+#loading { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1.4rem;
+  font: 600 1.3rem system-ui, sans-serif; letter-spacing: .08em; color: rgba(236, 230, 255, .75); transition: opacity .4s ease; }
+#loading.gone { opacity: 0; pointer-events: none; }
+#loading .ring { width: 3.4rem; height: 3.4rem; border-radius: 50%; border: .3rem solid rgba(255, 255, 255, .1); border-top-color: #ff6fb5; border-right-color: #5ad8ff;
+  animation: spin .9s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+#toast { position: fixed; left: 2.4rem; bottom: 2rem; max-width: 60vw; padding: .8rem 1.4rem; border-radius: 1rem; font: 500 1.05rem system-ui, sans-serif;
+  color: #fff; background: rgba(12, 8, 28, .78); border: 1px solid rgba(255, 255, 255, .12); backdrop-filter: blur(12px);
+  animation: toastIn .35s cubic-bezier(.2, .9, .3, 1.2); }
+@keyframes toastIn { from { opacity: 0; transform: translateY(1rem) scale(.96); } }
+#fps { position: fixed; top: 1.2rem; right: 1.6rem; padding: .35rem .8rem; border-radius: .6rem; font: 700 .95rem ui-monospace, monospace;
+  color: #7ef0b0; background: rgba(0, 0, 0, .55); }
+[hidden] { display: none !important; }

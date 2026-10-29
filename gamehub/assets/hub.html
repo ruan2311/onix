@@ -126,6 +126,42 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .boot.go,.boot.go .line,.boot.go .brand{animation-play-state:running}
 @media (prefers-reduced-motion:reduce){.boot{display:none}}
 
+/* ---------------- PC ----------------
+   Mais movimento que na TV: as páginas entram deslizando, os cartões sobem com o mouse, as capas
+   ganham um brilho que passa, o fundo tem uma aurora lenta e as janelas surgem com um leve
+   impulso. "Animações" desligado (html.no-motion) desliga tudo, como na TV. */
+html.pc body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;
+  background:radial-gradient(40% 35% at 20% 25%,rgba(255,111,181,.13),transparent 70%),radial-gradient(45% 40% at 80% 70%,rgba(90,216,255,.11),transparent 70%);
+  animation:pcAurora 26s ease-in-out infinite alternate}
+@keyframes pcAurora{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(4%,-3%) rotate(3deg)}100%{transform:translate(-3%,4%) rotate(-2deg)}}
+html.pc .page{overflow-y:auto;scrollbar-width:none;animation:pcPage .5s cubic-bezier(.2,.8,.2,1)}
+html.pc .page::-webkit-scrollbar{display:none}
+@keyframes pcPage{from{opacity:0;transform:translateY(1.4rem) scale(.985)}}
+html.pc .tile,html.pc .ctile,html.pc .btn,html.pc .tab{transition:transform .3s cubic-bezier(.2,.9,.3,1.25),box-shadow .3s,background-color .2s,color .2s}
+html.pc .tile:hover{transform:translateY(-.4rem) scale(1.03);z-index:2}
+html.pc .ctile:hover{transform:translateY(-.3rem) scale(1.02)}
+html.pc .btn:hover,html.pc .tab:hover{transform:translateY(-.12rem)}
+html.pc .tile .cover::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.22) 50%,transparent 65%);
+  transform:translateX(-120%);pointer-events:none}
+html.pc .tile.focus .cover::after,html.pc .tile:hover .cover::after{animation:pcShine .9s ease}
+@keyframes pcShine{to{transform:translateX(120%)}}
+html.pc .row .tile{animation:pcRise .55s cubic-bezier(.2,.8,.2,1) both}
+html.pc .row .tile:nth-child(2){animation-delay:.04s}html.pc .row .tile:nth-child(3){animation-delay:.08s}
+html.pc .row .tile:nth-child(4){animation-delay:.12s}html.pc .row .tile:nth-child(5){animation-delay:.16s}
+html.pc .row .tile:nth-child(6){animation-delay:.2s}html.pc .row .tile:nth-child(n+7){animation-delay:.24s}
+@keyframes pcRise{from{opacity:0;transform:translateY(1.2rem)}}
+html.pc .hero .ambient{animation:pcBreath 10s ease-in-out infinite alternate}
+@keyframes pcBreath{from{transform:scale(1)}to{transform:scale(1.1) rotate(1deg)}}
+html.pc .layer .sheet{animation:pcSheet .38s cubic-bezier(.2,.9,.3,1.2)}
+@keyframes pcSheet{from{opacity:0;transform:translateY(1.2rem) scale(.96)}}
+html.pc .f{cursor:pointer}
+.addpc{display:grid;grid-template-columns:1.25fr 1fr;gap:3rem;align-items:start}
+.addpc .col{display:flex;flex-direction:column;gap:1.1rem}
+.addpc h1{font-size:2.6rem;font-weight:800}
+.addpc p{font-size:1.2rem;color:var(--dim);line-height:1.5}
+.addpc .acts{display:flex;flex-wrap:wrap;gap:1rem}
+.addpc .list .item{font-size:1.1rem;word-break:break-all}
+
 /* ---------------- Celular, em pé ----------------
    Uma coluna: topo compacto, abas que rolam de lado, páginas que rolam com o dedo. */
 html.mobile .app{padding:.9rem .9rem 0}
@@ -218,7 +254,7 @@ html.mobile .pnum{width:2rem;height:2rem;font-size:1rem}
 <script src="common.js"></script>
 <script>
 'use strict';
-const Hub = window.Hub || null;
+const Hub = window.Hub || window.OnixHub || null;   // TV: ponte Java; PC: preload do Electron
 let INFO = {}, LIB = [], PAGE = 'home', sortBy = 'az', uploading = {}, uploadInfo = null;
 
 function call(name, ...args) {
@@ -254,6 +290,7 @@ function renderChips() {
   const chip = pads.length
     ? h('div', { class: 'chip', title: pads.map(p => p.name).join(', ') }, icon('pad'), String(pads.length))
     : INFO.mobile ? null   // no celular, o controle na tela já joga
+      : INFO.pc ? h('div', { class: 'chip', title: t('Teclado: setas, X = A, Z = B, Enter = Start. Esc abre o menu.') }, icon('pad'), t('Teclado'))
       : h('button', { class: 'f chip warn pill', act: () => call('openBluetooth') }, icon('pad'), t('Sem controle'));
   $('#padChip').replaceChildren(...(chip ? [chip] : []));
   const p = $('#profileChip');
@@ -309,13 +346,15 @@ function recent() {
   return LIB.filter(g => g.last).sort((a, b) => b.last - a.last);
 }
 
+/* Como pôr jogos na biblioteca: no PC, pela pasta; na TV, pelo celular. */
+const emptyHint = () => INFO.pc ? 'Abra Adicionar jogos e escolha a pasta onde estão os seus jogos.' : 'Mande seus jogos pelo celular: abra Adicionar jogos e leia o QR code com a câmera.';
 function homePage() {
   const page = h('section', { class: 'page' });
   if (!LIB.length) {
     page.append(INFO.kids
       ? h('div', { class: 'empty' }, h('h1', { text: t('Nenhum jogo liberado ainda') }), h('p', { text: t('Peça para um adulto liberar jogos no GameHub (no jogo, Liberar no Modo Infantil).') }))
       : h('div', { class: 'empty' }, h('h1', { text: t('Sua biblioteca está vazia') }),
-        h('p', { text: t('Mande seus jogos pelo celular: abra Adicionar jogos e leia o QR code com a câmera.') }),
+        h('p', { text: t(emptyHint()) }),
         h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }),
         h('button', { class: 'f btn primary', act: () => show('add') }, icon('plus'), t('Adicionar jogos'))));
     page.append(h('div', { class: 'row-title', text: t('Consoles') }), consoleTiles());
@@ -379,7 +418,7 @@ function consolePage(cid) {
   if (!games.length) {
     page.append(h('div', { class: 'empty' }, h('h1', { text: t('Nenhum jogo') }),
       INFO.kids ? h('p', { text: t('Peça para um adulto liberar jogos no GameHub (no jogo, Liberar no Modo Infantil).') })
-        : h('p', { text: t('Mande seus jogos pelo celular: abra Adicionar jogos e leia o QR code com a câmera.') }),
+        : h('p', { text: t(emptyHint()) }),
       INFO.kids ? null : h('button', { class: 'f btn primary', act: () => show('add') }, icon('plus'), t('Adicionar jogos'))));
     return page;
   }
@@ -416,7 +455,7 @@ function openGame(g) {
     kid._act = () => { call('setKids', g.id, !g.kids); g.kids = !g.kids; kid.classList.toggle('on', g.kids); kid.lastChild.textContent = g.kids ? t('Liberado') : t('Bloqueado'); loadLibrary(); };
     list.append(kid);
     list.append(h('button', { class: 'f item', act: () => renameSheet(g) }, icon('edit'), h('span', { class: 'grow', text: t('Renomear') })));
-    list.append(h('button', { class: 'f item', act: () => ask(t('Apagar {n}?', { n: g.name }), t('O jogo, os saves e os estados salvos dele saem da TV. Não dá para desfazer.'),
+    list.append(h('button', { class: 'f item', act: () => ask(t('Apagar {n}?', { n: g.name }), t(INFO.pc ? 'O jogo sai da biblioteca, com os saves e os estados salvos dele. O arquivo continua na pasta do computador.' : 'O jogo, os saves e os estados salvos dele saem da TV. Não dá para desfazer.'),
       [[t('Apagar'), () => { call('remove', g.id); loadLibrary(); closeAllLayers(); show(PAGE, true); toast(t('Jogo apagado')); }, 'danger'], [t('Cancelar')]]) },
       icon('trash'), h('span', { class: 'grow', text: t('Apagar jogo') })));
   }
@@ -481,7 +520,7 @@ function cheatsSheet(g) {
 let pendingPlay = null;
 function play_(g, mode) {
   const pads = json(call('gamepads'), []);
-  if (INFO.mobile || pads.length || sessionStorage.getItem('remoteOk')) return call('play', g.id, mode);
+  if (INFO.mobile || INFO.pc || pads.length || sessionStorage.getItem('remoteOk')) return call('play', g.id, mode);
   pendingPlay = [g, mode];
   openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' },
     h('span', { style: { color: 'var(--cyan)', width: '5rem' } }, icon('pad')),
@@ -498,6 +537,7 @@ function play_(g, mode) {
 /* ---------------- Adicionar jogos ---------------- */
 function addPage() {
   const page = h('section', { class: 'page' });
+  if (INFO.pc) return pcAddPage(page);
   if (INFO.mobile) {
     // Celular: os jogos vêm de uma pasta do próprio aparelho (o GameHub procura nas subpastas).
     page.append(h('div', { class: 'addm' },
@@ -531,6 +571,33 @@ function addPage() {
   setTimeout(() => { drawStore(); drawXfers(); }, 0);
   return page;
 }
+/* PC: os jogos vêm de pastas do computador. As pastas ficam guardadas e, a cada abertura, o
+   GameHub procura nelas os jogos novos. Os arquivos continuam onde estão (só os de .zip são
+   copiados para a pasta do GameHub). */
+function pcAddPage(page) {
+  const folders = h('div', { class: 'list', id: 'folders' });
+  const drawFolders = () => {
+    const list = json(call('folders'), []);
+    folders.replaceChildren(...(list.length ? list.map(dir => h('div', { class: 'item' }, icon('disk'), h('span', { class: 'grow', text: dir }),
+      h('button', { class: 'f btn', text: t('Tirar'), act: () => { call('removeFolder', dir); drawFolders(); ensureFocus(); toast(t('A pasta saiu da lista. Os jogos dela continuam na biblioteca.')); } }))) :
+      [h('div', { class: 'item', style: { color: 'var(--mute)' } }, t('Nenhuma pasta ainda.'))]));
+  };
+  handlers.folders = () => { if (PAGE === 'add') drawFolders(); };
+  page.append(h('div', { class: 'addm addpc' },
+    h('div', { class: 'col' },
+      h('h1', { text: t('Adicionar jogos') }),
+      h('p', { text: t('Escolha a pasta onde estão os seus jogos. O GameHub procura também nas subpastas e, a cada abertura, traz os jogos novos que aparecerem nela.') }),
+      h('div', { class: 'acts' },
+        h('button', { class: 'f btn primary', act: () => call('pickGames', true) }, icon('plus'), t('Escolher pasta')),
+        h('button', { class: 'f btn', text: t('Escolher arquivos'), act: () => call('pickGames', false) }),
+        h('button', { class: 'f btn', act: () => { call('rescan'); toast(t('Procurando jogos novos…')); } }, icon('reset'), t('Procurar de novo'))),
+      h('div', { class: 'sep', text: t('Pastas de jogos') }), folders,
+      h('p', { text: t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip') }),
+      h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') })),
+    h('div', { class: 'col' }, h('div', { class: 'xfers', id: 'xfers' }), h('div', { class: 'store', id: 'store' }))));
+  setTimeout(() => { drawFolders(); drawStore(); drawXfers(); }, 0);
+  return page;
+}
 function drawStore() {
   const el = $('#store');
   if (!el) return;
@@ -545,14 +612,14 @@ function drawStore() {
     h('div', { class: 'legend' },
       h('span', null, h('i', { style: { background: 'var(--grad)' } }), t('Jogos') + ' ' + fmtBytes(s.used || 0)),
       h('span', null, h('i', { style: { background: 'rgba(255,255,255,.12)' } }), t('Livre para jogos') + ' ' + fmtBytes(s.available || 0)),
-      h('span', null, h('i', { style: { background: '#7c6fb3' } }), t(INFO.mobile ? 'Reservado para o sistema' : 'Reservado para a TV') + ' ' + fmtBytes(s.reserve || 0))),
-    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t(INFO.mobile ? 'O GameHub sempre deixa livre para o sistema 10% da memória do aparelho (no mínimo 768 MB e no máximo 2 GB).' : 'O GameHub sempre deixa livre para o sistema 10% da memória desta TV (no mínimo 768 MB e no máximo 2 GB).') }));
+      h('span', null, h('i', { style: { background: '#7c6fb3' } }), t(INFO.mobile || INFO.pc ? 'Reservado para o sistema' : 'Reservado para a TV') + ' ' + fmtBytes(s.reserve || 0))),
+    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t(INFO.pc ? 'O GameHub sempre deixa livre para o sistema 10% do disco (no mínimo 768 MB e no máximo 2 GB).' : INFO.mobile ? 'O GameHub sempre deixa livre para o sistema 10% da memória do aparelho (no mínimo 768 MB e no máximo 2 GB).' : 'O GameHub sempre deixa livre para o sistema 10% da memória desta TV (no mínimo 768 MB e no máximo 2 GB).') }));
 }
 function drawXfers() {
   const el = $('#xfers');
   if (!el) return;
   const items = Object.values(uploading).slice(-6).reverse();
-  if (!items.length) { el.replaceChildren(INFO.mobile ? '' : h('div', { class: 'xfer', style: { color: 'var(--mute)' }, text: t('Aguardando arquivos…') })); return; }
+  if (!items.length) { el.replaceChildren(INFO.mobile || INFO.pc ? '' : h('div', { class: 'xfer', style: { color: 'var(--mute)' }, text: t('Aguardando arquivos…') })); return; }
   el.replaceChildren(...items.map(x => {
     const st = x.done ? (x.ok ? h('span', { class: 'ok', text: x.dup ? t('Já estava na biblioteca') : t('Pronto') }) : h('span', { class: 'err', text: t(x.error || '') }))
       : h('span', { text: t('Recebendo') + ' ' + Math.round((x.sent || 0) / (x.size || 1) * 100) + '%' });
@@ -690,6 +757,7 @@ function settingsPage() {
         for (const c of CONSOLES) list.append(h('button', { class: 'f item', act: () => remapSheet(c.id) }, h('span', { class: 'dot', style: { background: c.color } }), h('span', { class: 'grow', text: t(c.name) }), icon('chev')));
       }
       if (sec === 'game') list.append(h('div', { class: 'item' }, h('span', { class: 'grow' }, t('Atalhos'), h('span', { class: 'sub', text: t('Segure R2: acelera · Segure L2: rebobina · Select + Start: este menu') }))));
+      if (sec === 'game' && INFO.pc) list.append(h('div', { class: 'item' }, h('span', { class: 'grow' }, t('Teclado'), h('span', { class: 'sub', text: t('Setas: direcional · X: A · Z: B · S: X · A: Y · Q/W: L/R · Enter: Start · Shift direito: Select · Tab: acelera · Backspace: rebobina · Esc: menu · F11: tela cheia') }))));
       inner.append(list);
     } else if (sec.startsWith('console:')) {
       inner.append(scopeBody('console:' + sec.slice(8), sec.slice(8)));
@@ -933,6 +1001,7 @@ onBack = () => {
 function applyOpen() {
   LANG = INFO.lang === 'es' ? 'es' : 'pt';
   setMobile(INFO.mobile);
+  document.documentElement.classList.toggle('pc', !!INFO.pc);
   applyUiPrefs();
   document.documentElement.lang = LANG === 'es' ? 'es' : 'pt-BR';
   loadLibrary();
@@ -945,6 +1014,25 @@ function applyOpen() {
 
 /* ---------------- Início ---------------- */
 INFO = json(call('init'), { profile: 'default', lang: 'pt', gamepads: [] });
+/* PC: mais filtros e ajustes de imagem (feitos na placa de vídeo), tela cheia, e som e animações
+   sem o "Igual ao Onix" (não há Onix no PC). */
+if (INFO.pc) {
+  SETS.filter.choices.splice(4, 0, ['crtcurve', 'CRT curvado'], ['scanlines', 'Linhas de varredura']);
+  Object.assign(SETS, {
+    brightness: { label: 'Brilho', choices: [70, 80, 90, 100, 110, 120, 130, 140].map(v => [v, v + '%']) },
+    saturation: { label: 'Cores (saturação)', choices: [0, 50, 75, 100, 115, 130, 150].map(v => [v, v === 0 ? 'Preto e branco' : v + '%']) },
+    scanStrength: { label: 'Força das linhas (CRT)', choices: [10, 20, 30, 40, 50, 60, 70, 80].map(v => [v, v + '%']) },
+    curvature: { label: 'Curvatura da tela (CRT curvado)', choices: [[0, 'Reta'], [1, 'Leve'], [2, 'Média'], [3, 'Forte'], [4, 'Bem forte']] },
+    vignette: { label: 'Bordas escurecidas', sub: 'Escurece de leve os cantos da imagem, como numa TV de tubo.', bool: true },
+    frameBlend: { label: 'Mistura de quadros', sub: 'Junta cada quadro com o anterior: some a piscada de sombras e transparências (bom no Game Boy Advance).', bool: true },
+    backdrop: { label: 'Fundo ao redor do jogo', choices: [['ambient', 'Ambiente (a imagem do jogo, borrada)'], ['glass', 'Vidro do GameHub'], ['black', 'Preto']] },
+    fullscreen: { label: 'Tela cheia', sub: 'Também com F11 ou Alt + Enter.', bool: true },
+  });
+  GROUPS.image = ['filter', 'scale', 'aspect', 'brightness', 'saturation', 'scanStrength', 'curvature', 'vignette', 'frameBlend', 'backdrop', 'fullscreen', 'showFps'];
+  for (const k of ['sounds', 'motion']) { SETS[k].choices = [['on', 'Ligado'], ['off', 'Desligado']]; delete SETS[k].onix; }
+  SETS.motion.sub = 'Transições e efeitos do foco.';
+  SETS.latency.sub = 'Menos atraso pode estalar em computadores mais lentos.';
+}
 brand($('#brand')); brand($('#bootBrand'));
 // Abertura: toca ao abrir e de novo quando o Onix chama o GameHub que já estava aberto.
 function playBoot() {

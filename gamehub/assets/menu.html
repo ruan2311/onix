@@ -43,7 +43,7 @@ html.mobile .slot .lb{font-size:.85rem}
 <script src="common.js"></script>
 <script>
 'use strict';
-const M = window.Menu || null;
+const M = window.Menu || (window.parent !== window && window.parent.OnixMenu) || null;   // TV: ponte Java; PC: o game.js
 let INFO = {}, view = 'main', reason = '';
 function call(name, ...args) { try { return M ? M[name](...args) : null; } catch (e) { return null; } }
 function json(s, def) { try { return s ? JSON.parse(s) : def; } catch (_) { return def; } }
@@ -53,6 +53,7 @@ function refreshInfo() {
   LANG = INFO.lang === 'es' ? 'es' : 'pt';
   applyUi(INFO.sounds !== false, INFO.motion !== false);
   setMobile(INFO.mobile);
+  document.documentElement.classList.toggle('pc', !!INFO.pc);
 }
 
 function header() {

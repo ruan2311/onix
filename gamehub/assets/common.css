@@ -11,6 +11,7 @@
 html{font-size:calc(100vw / 96);background:var(--bg2);color:var(--ink);
   font-family:Roboto,"Google Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased;overflow:hidden;height:100%}
 body{height:100%;overflow:hidden;user-select:none;-webkit-user-select:none}
+html.pc *{scrollbar-width:none}   /* PC: rola com a roda do mouse, sem a barra clara do Windows */
 button{font:inherit;color:inherit;background:none;border:0;outline:0;cursor:pointer;text-align:left}
 input{font:inherit;color:inherit;outline:0}
 svg{display:block}

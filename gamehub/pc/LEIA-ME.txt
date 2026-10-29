@@ -1,0 +1,24 @@
+ONIX GAMEHUB @VERSION@ PARA PC (WINDOWS) - jogos clássicos no visual do Onix
+==========================================================================
+
+COMO ABRIR
+  Dê dois cliques em "Onix GameHub.exe" (dica: botão direito > Fixar na barra de tarefas).
+  Se o Windows mostrar "O Windows protegeu o computador", clique em "Mais informações" >
+  "Executar assim mesmo" (aparece porque o programa ainda não tem assinatura digital).
+
+PRIMEIRO USO
+  1. Abra "Adicionar jogos" (o + no topo) e clique em "Escolher pasta".
+  2. Aponte a pasta onde estão os seus jogos de NES, Super Nintendo, Game Boy Advance e Mega Drive
+     (.nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip). As subpastas também entram.
+  3. A pasta fica guardada: a cada abertura, o GameHub traz os jogos novos que aparecerem nela.
+  Nenhum jogo vem com o GameHub. Use só jogos que você tem o direito de usar.
+
+CONTROLES
+  - Controles de Xbox, PlayStation, 8BitDo... funcionam direto (aperte um botão para ele aparecer).
+  - Teclado: setas = direcional, X = A, Z = B, S = X, A = Y, Q/W = L/R, Enter = Start,
+    Shift direito = Select. Segure Tab para acelerar e Backspace para rebobinar.
+  - Esc (ou Select + Start no controle) abre o menu do jogo. F11 ou Alt + Enter: tela cheia.
+
+ONDE FICAM SEUS DADOS
+  %APPDATA%\Onix GameHub (saves, estados salvos, capas e configurações).
+  Os jogos continuam na pasta de onde vieram. O registro de erros fica em gamehub.log.

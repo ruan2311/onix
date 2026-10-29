@@ -8,7 +8,7 @@ Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advanc
 |---|---|---|
 | 📺 **Google TV e Android TV** | ✅ Disponível | Pelo celular, com um QR code |
 | 📱 **Celular Android** (5.0 ou mais novo) | 🧪 Experimental | Escolhendo uma pasta do próprio celular |
-| 🖥️ **PC (Windows)** | 🚧 Em desenvolvimento | Escolhendo a pasta dos jogos |
+| 🖥️ **PC (Windows)** | 🧪 Em teste | Escolhendo a pasta dos jogos |
 
 O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde está e muda a interface.
 
@@ -84,12 +84,47 @@ Em **Adicionar jogos**, toque em **Escolher pasta** e escolha a pasta onde estã
 
 ## 🖥️ PC (Windows)
 
-> 🚧 **Em desenvolvimento.** Ainda não há versão para baixar.
+> 🧪 **Em teste.** Windows 10 ou 11, 64 bits. Pode apresentar falhas.
 
-O que já está decidido:
-- A interface segue a mesma estrutura da versão da TV, com **mais animações**.
-- Os jogos entram **escolhendo a pasta** no PC, sem QR code.
-- **Mais configurações gráficas** para os jogos.
+As mesmas telas da TV, com **mais animações** (páginas que deslizam, cartões que sobem com o mouse, brilho nas capas e uma aurora lenta no fundo) e os mesmos 4 emuladores, rodando dentro do app.
+
+### Instalar
+1. Baixe o `Onix-GameHub-win64.zip` nas [Releases](https://github.com/ruan2311/onix-gamehub/releases) (versões `gamehub-pc-vX.Y.Z`).
+2. Extraia a pasta e abra o **Onix GameHub.exe**.
+3. Se o Windows mostrar *"O Windows protegeu o computador"*, clique em **Mais informações → Executar assim mesmo** (o app ainda não tem assinatura digital).
+
+### Adicionar jogos
+Em **Adicionar jogos** (o **+** no topo), clique em **Escolher pasta**. O GameHub procura também nas subpastas, e a pasta fica guardada: a cada abertura, ele traz os jogos novos que aparecerem nela. Os arquivos **continuam onde estão** (só os de `.zip` são copiados para a pasta do GameHub). Também dá para **Escolher arquivos** soltos.
+
+Apagar um jogo no GameHub tira ele da biblioteca, com os saves e os estados salvos, mas o arquivo continua na sua pasta.
+
+### Controles e teclado
+- Controles de Xbox, PlayStation, 8BitDo… funcionam direto: aperte um botão para o GameHub ver o controle. Nos menus, A confirma, B volta e LB/RB trocam de aba.
+- **Teclado:** setas = direcional, **X** = A, **Z** = B, **S** = X, **A** = Y, **Q/W** = L/R, **Enter** = Start, **Shift direito** = Select. Segure **Tab** para acelerar e **Backspace** para rebobinar.
+- **Esc** (ou **Select + Start** no controle) abre o menu do jogo. **F11** ou **Alt + Enter**: tela cheia.
+- Dá para trocar qualquer tecla ou botão em **Configurações → Controles → Trocar botões**, como na TV.
+
+### Configurações gráficas (só no PC)
+Em **Configurações → Imagem** (ou por console, ou por jogo):
+
+- **Filtros:** além de Nítido, Pixel puro, Suave, CRT e LCD, o PC tem **CRT curvado** (a tela de tubo, com a curvatura e os cantos arredondados) e **Linhas de varredura**.
+- **Brilho**, **Cores (saturação)**, até preto e branco.
+- **Força das linhas** e **Curvatura da tela** dos filtros CRT, e **Bordas escurecidas**.
+- **Mistura de quadros:** some a piscada de sombras e transparências (bom no Game Boy Advance).
+- **Fundo ao redor do jogo:** *Ambiente* (a própria imagem do jogo, borrada, preenche as laterais), *Vidro do GameHub* ou *Preto*.
+- **Tela cheia** ao abrir.
+
+### Onde ficam os dados
+Em `%APPDATA%\Onix GameHub`: saves, estados salvos, capas e configurações. Se algo der errado, o arquivo `gamehub.log` dessa pasta conta o que aconteceu.
+
+### Para quem programa
+O app é [Electron](https://www.electronjs.org/) e fica em [`pc/`](pc): as telas são as mesmas da TV (`assets/`), e o motor de jogo da TV (`jni/retro.c`) virou `pc/core/web.c`, compilado com os 4 núcleos para WebAssembly pelo [Emscripten](https://emscripten.org/).
+
+```
+bash pc/cores.sh              # núcleos para WebAssembly (precisa do Emscripten em ~/emsdk)
+cd pc && npm install && npm start
+node pc/build-win.js          # pc/dist/Onix-GameHub-win64.zip
+```
 
 ---
 
@@ -149,4 +184,4 @@ O código do GameHub está sob a [GPL-3.0](LICENSE). O GameHub é gratuito e nun
 
 ---
 
-🇪🇸 **Onix GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** (experimental) se eligen desde una carpeta, con controles táctiles editables; la versión para **PC** está en desarrollo. Ningún juego viene incluido.
+🇪🇸 **Onix GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** (experimental) se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** está en prueba, con juegos agregados desde una carpeta, teclado o control y más ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente). Ningún juego viene incluido.
