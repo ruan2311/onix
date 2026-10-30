@@ -200,7 +200,7 @@ function quad(x, y) {
 }
 function draw() {
   const dpr = window.devicePixelRatio || 1;
-  const vw = Math.round(innerWidth * dpr), vh = Math.round(innerHeight * dpr);
+  const vw = Math.round(canvas.clientWidth * dpr), vh = Math.round(canvas.clientHeight * dpr);
   if (canvas.width !== vw || canvas.height !== vh) { canvas.width = vw; canvas.height = vh; }
   if (!texW) {
     gl.viewport(0, 0, vw, vh);
@@ -261,9 +261,10 @@ function draw() {
 let actx = null, out = null, audioBuf = 0, audioView = null;
 async function audioStart() {
   try {
-    actx = new AudioContext({ latencyHint: 'interactive' });
+    // iPhone: o som vem pronto da página de fora, criado pelo toque em Jogar.
+    actx = (PC.audioContext && PC.audioContext()) || new AudioContext({ latencyHint: 'interactive' });
     await actx.audioWorklet.addModule('audio.js');
-    out = new AudioWorkletNode(actx, 'onix-out', { numberOfInputs: 0, outputChannelCount: [2] });
+    out = new (PC.AudioNode || AudioWorkletNode)(actx, 'onix-out', { numberOfInputs: 0, outputChannelCount: [2] });
     out.port.onmessage = e => M && M._ox_audio_queued(e.data);
     out.connect(actx.destination);
     M._ox_audio_config(actx.sampleRate, S.latency || 64);
@@ -289,6 +290,7 @@ const KEY_DEFAULT = { ArrowUp: RB.UP, ArrowDown: RB.DOWN, ArrowLeft: RB.LEFT, Ar
 let remap = {}, players = {}, ports = new Map();
 const keyBits = [0, 0, 0, 0], padBits = [0, 0, 0, 0];
 let ffHold = false, rwHold = false, capture = false;
+let touchBits = 0, touchFast = false, pad = null, editing = false;   // controle na tela (iPhone)
 
 function readRemap() { remap = S.remap || {}; players = json(PC.call('playersSaved'), {}); }
 function mapped(code, def) {
@@ -310,13 +312,13 @@ function portFor(g) {
 }
 function push() {
   if (!M || !loaded) return;
-  for (let p = 0; p < 4; p++) M._ox_set_buttons(p, keyBits[p] | padBits[p]);
+  for (let p = 0; p < 4; p++) M._ox_set_buttons(p, keyBits[p] | padBits[p] | (p === 0 ? touchBits : 0));
   M._ox_set_hotkeys(ffHold ? 1 : 0, rwHold ? 1 : 0);
 }
 const usesTrigger = b => (CONSOLE_BUTTONS[INFO.console] || []).includes(b);
 let keyFf = false, keyRw = false, padFf = false, padRw = false;
 function hotkeys() {
-  ffHold = keyFf || padFf;
+  ffHold = keyFf || padFf || touchFast;
   const want = keyRw || padRw;
   if (want && !rwHold && !S.rewind) toast(tr('Rebobinar está desligado (Configurações → Jogo).', 'Rebobinar está apagado (Configuración → Juego).'));
   rwHold = want && !!S.rewind;
@@ -357,6 +359,7 @@ function pollPads() {
     }
     if (list.length > before && list.length) toast(tr('Controle conectado: ', 'Control conectado: ') + PC.padName(list[list.length - 1]));
     menuEmit('gamepads', padList());
+    arrangePad();
   }
   if (menuOpen) { menuPads(list); return; }
   const dz = (S.deadzone || 25) / 100;
@@ -395,7 +398,9 @@ function pollPads() {
 }
 function releaseAll() {
   keyBits.fill(0); padBits.fill(0);
-  keyFf = keyRw = padFf = padRw = ffHold = rwHold = false;
+  keyFf = keyRw = padFf = padRw = ffHold = rwHold = touchFast = false;
+  touchBits = 0;
+  if (pad) pad.release();
   if (M && loaded) { for (let p = 0; p < 4; p++) { M._ox_set_analog(p, 0, 0, 0); M._ox_set_analog(p, 1, 0, 0); } push(); }
 }
 function padList() {
@@ -422,7 +427,7 @@ function loop(t) {
   }
   last = t;
   pollPads();
-  if (!loaded || menuOpen) return;
+  if (!loaded || menuOpen || editing) return;
   frames += M._ox_step(t / 1000, hz) ? 1 : 0;
   audioPump();
   upload();
@@ -545,7 +550,7 @@ async function start() {
     await audioStart();
     loaded = true;
     $('#loading').classList.add('gone');
-    if (!pads().length && MODE !== 'resume') toast(tr('Teclado: setas, X = A, Z = B, Enter = Start. Esc abre o menu.', 'Teclado: flechas, X = A, Z = B, Enter = Start. Esc abre el menú.'));
+    if (!pads().length && MODE !== 'resume' && !PC.mobile) toast(tr('Teclado: setas, X = A, Z = B, Enter = Start. Esc abre o menu.', 'Teclado: flechas, X = A, Z = B, Enter = Start. Esc abre el menú.'));
   } catch (e) {
     PC.log('carregar: ' + (e && e.stack || e));
     failed = true;
@@ -568,7 +573,7 @@ function statesList() {
 window.OnixMenu = {
   info: () => JSON.stringify({
     id: ID, name: INFO.name, console: INFO.console, profile: 'default', kids: false, lang: INFO.lang, loaded, failed,
-    ff: M && loaded ? !!M._ox_fast_forward() : false, settings: S, gamepads: padList(), sounds: true, mobile: false, pc: true, motion: true,
+    ff: M && loaded ? !!M._ox_fast_forward() : false, settings: S, gamepads: padList(), sounds: true, mobile: !!PC.mobile, pc: !PC.mobile, motion: true,
     states: statesList(), cover: INFO.cover,
   }),
   resume: () => setTimeout(closeMenu, 0),
@@ -603,7 +608,7 @@ window.OnixMenu = {
     }
     return done;
   },
-  editTouch: () => false,
+  editTouch: () => { if (pad) setTimeout(editPad, 0); return !!pad; },
   captureKey: on => { capture = !!on; },
   effective: () => JSON.stringify(S),
   coreOptions: () => { if (loaded) OPTIONS = M.UTF8ToString(M._ox_options()); setTimeout(() => menuEmit('options', json(OPTIONS, {})), 0); },
@@ -696,8 +701,61 @@ frame.addEventListener('load', () => {
   }, true);
 });
 
-// Janela minimizada: pausa no menu, como o botão Início da TV.
-document.addEventListener('visibilitychange', () => { if (document.hidden && loaded && !menuOpen) openMenu('paused'); });
+/* ---------------- Controle na tela (iPhone) ----------------
+   Como no celular Android: em pé, o jogo em cima e o controle embaixo; deitado, o controle por
+   cima do jogo. Com um controle Bluetooth, ele some e o jogo ocupa a tela; aí um toque abre o menu. */
+function arrangePad() {
+  if (!pad) return;
+  const el = $('#pad'), w = innerWidth, h = innerHeight, show = !pads().length;
+  el.hidden = !show;
+  if (!show) pad.release();
+  if (show && h > w) {
+    const gh = Math.min(w * 3 / 4, h / 2), top = Math.max(0, (h / 2 - gh) / 3);
+    canvas.style.top = top + 'px'; canvas.style.height = gh + 'px';
+    el.style.top = (gh + top) + 'px'; el.style.height = (h - gh - top) + 'px';
+    pad.resize(w, h - gh - top);
+  } else {
+    canvas.style.top = '0'; canvas.style.height = '100%';
+    el.style.top = '0'; el.style.height = '100%';
+    if (show) pad.resize(w, h);
+  }
+}
+function editPad() {
+  closeMenu();
+  if (actx) actx.suspend();
+  editing = true;
+  pad.setEditing(true);
+}
+let wake = null;
+function keepAwake() { if (navigator.wakeLock && !document.hidden) navigator.wakeLock.request('screen').then(l => { wake = l; }).catch(() => { }); }
+if (window.OnixPad) {
+  pad = new window.OnixPad.Pad($('#pad'), INFO ? INFO.console : 'nes', {
+    buttons: bits => { touchBits = bits; push(); },
+    fast: on => { touchFast = on; hotkeys(); push(); },
+    menu: () => openMenu(''),
+    save: PC.touchSave,
+    done: () => {
+      editing = false;
+      started = Date.now();
+      if (M && loaded) M._ox_resync();
+      if (actx) actx.resume();
+    },
+  }, PC.touchLayout(), ES);
+  addEventListener('resize', arrangePad);
+  arrangePad();
+  keepAwake();
+  canvas.addEventListener('pointerup', () => { if ($('#pad').hidden && loaded && !menuOpen) openMenu(''); });
+  // O iOS pausa o som numa ligação ou ao voltar para o app: o próximo toque traz de volta.
+  document.addEventListener('pointerdown', () => { if (actx && actx.state !== 'running' && actx.state !== 'closed' && !menuOpen && !editing) actx.resume(); });
+}
+
+// Janela minimizada: pausa no menu, como o botão Início da TV. No iPhone o sistema pode fechar o
+// app em segundo plano, então já guarda onde parou.
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) { if (pad) keepAwake(); return; }
+  if (loaded && !menuOpen) openMenu('paused');
+  if (PC.mobile && loaded && S.autosave !== false) saveState('auto');
+});
 window.addEventListener('error', e => PC.log('erro: ' + e.message));
 
 requestAnimationFrame(loop);

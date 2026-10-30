@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Onix GameHub</title>
+<link rel="stylesheet" href="pc.css">
+<style>
+html, body { cursor: default; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; }
+#screen { touch-action: none; }
+#pad { position: fixed; left: 0; top: 0; width: 100%; height: 100%; touch-action: none; }
+#toast { left: 50%; bottom: auto; top: 1rem; transform: translateX(-50%); max-width: 86vw; font-size: .95rem; }
+</style>
+</head>
+<body>
+<canvas id="screen"></canvas>
+<canvas id="pad"></canvas>
+<div id="loading"><div class="ring"></div><span id="loadName"></span></div>
+<div id="fps" hidden></div>
+<div id="toast" hidden></div>
+<iframe id="menu" src="menu.html" hidden></iframe>
+<script>window.OnixPC = parent.OnixPC;</script>
+<script src="touch.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+{
+  "name": "Onix GameHub",
+  "short_name": "GameHub",
+  "description": "NES, Super Nintendo, Game Boy Advance e Mega Drive. Grátis e sem anúncios.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#07040f",
+  "theme_color": "#07040f",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

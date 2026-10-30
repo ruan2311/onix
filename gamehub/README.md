@@ -9,6 +9,7 @@ Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advanc
 | 📺 **Google TV e Android TV** | ✅ Disponível | Pelo celular, com um QR code |
 | 📱 **Celular Android** (5.0 ou mais novo) | 🧪 Experimental | Escolhendo uma pasta do próprio celular |
 | 🖥️ **PC (Windows)** | 🧪 Em teste | Escolhendo a pasta dos jogos |
+| 🍎 **iPhone e iPad** (iOS 16.4 ou mais novo) | 🧪 Experimental | Escolhendo os arquivos no app Arquivos |
 
 O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde está e muda a interface.
 
@@ -25,6 +26,7 @@ O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde
 - [📺 Google TV e Android TV](#-google-tv-e-android-tv)
 - [📱 Celular Android](#-celular-android)
 - [🖥️ PC (Windows)](#️-pc-windows)
+- [🍎 iPhone e iPad](#-iphone-e-ipad)
 - [Funciona em todos](#funciona-em-todos)
 - [Atualizar](#atualizar)
 - [Formatos de jogo](#formatos-de-jogo)
@@ -127,6 +129,32 @@ node pc/build-win.js          # pc/dist/Onix-GameHub-win64.zip
 ```
 
 ---
+
+## 🍎 iPhone e iPad
+
+O GameHub roda como um **site instalável**: grátis, sem loja e sem conta da Apple. Abre e joga sem internet depois da primeira vez.
+
+### Instalar
+
+1. Abra [projectgems.github.io/gamehub/app](https://projectgems.github.io/gamehub/app/) no **Safari**.
+2. Toque em **Compartilhar** e depois em **Adicionar à Tela de Início**.
+3. Abra pelo **ícone novo**. Faça isso antes de adicionar jogos: o Safari e o ícone guardam os dados separados.
+
+### Adicionar jogos
+
+Em **Adicionar jogos**, toque em **Escolher arquivos**. O iPhone não deixa um site escolher pastas; escolha os arquivos (pode marcar vários) ou um `.zip`. O GameHub guarda uma cópia dentro dele.
+
+### Saves e backup
+
+Jogos, saves e estados ficam só no aparelho. Em **Configurações → Armazenamento**, **Exportar saves** gera um `.zip` com saves, estados e configurações (sem os jogos) para guardar no app Arquivos ou no iCloud, e **Importar saves** traz ele de volta. Sem o ícone instalado, o Safari pode apagar os dados de sites sem uso.
+
+### Controles
+
+Os controles na tela são os mesmos do Android, com o mesmo editor. Controles Bluetooth funcionam (Xbox, PlayStation, 8BitDo): pareie em **Ajustes → Bluetooth**. Com um conectado, os da tela somem; um toque na imagem abre o menu.
+
+### Para quem programa
+
+Fica em `gamehub/ios/` e reaproveita as telas (`assets/`), o jogo (`pc/web/game.js`) e os núcleos em WebAssembly (`pc/build/cores`). `bash gamehub/ios/build.sh` gera o site em `~/gems/gamehub/app`; depois é só publicar o site. Os dados ficam no IndexedDB (veja o começo de `ios/shell.js`).
 
 ## Funciona em todos
 

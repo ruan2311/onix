@@ -204,6 +204,7 @@ html.mobile .brand b{font-size:.95rem;letter-spacing:.24em}
 html.mobile .brand small{display:none}
 html.mobile header{flex-wrap:nowrap}
 html.mobile .brand{min-width:0;flex:1}
+html.mobile .brand>span{min-width:0}
 html.mobile .brand b{overflow:hidden;text-overflow:ellipsis}
 html.mobile .clock,html.mobile #profileChip,html.mobile .store-chip .mini{display:none}
 html.mobile .right{gap:.4rem}
@@ -289,7 +290,7 @@ html.mobile .pnum{width:2rem;height:2rem;font-size:1rem}
 <script src="common.js"></script>
 <script>
 'use strict';
-const Hub = window.Hub || window.OnixHub || null;   // TV: ponte Java; PC: preload do Electron
+const Hub = window.Hub || window.OnixHub || (window.parent !== window && window.parent.OnixHub) || null;   // TV: ponte Java; PC: preload do Electron; iPhone: shell.js
 let INFO = {}, LIB = [], PAGE = 'home', sortBy = 'az', uploading = {}, uploadInfo = null;
 
 function call(name, ...args) {
@@ -385,7 +386,7 @@ function recent() {
 }
 
 /* Como pôr jogos na biblioteca: no PC, pela pasta; na TV, pelo celular. */
-const emptyHint = () => INFO.pc ? 'Abra Adicionar jogos e escolha a pasta onde estão os seus jogos.' : 'Mande seus jogos pelo celular: abra Adicionar jogos e leia o QR code com a câmera.';
+const emptyHint = () => INFO.web ? 'Abra Adicionar jogos e escolha os arquivos dos seus jogos.' : INFO.pc ? 'Abra Adicionar jogos e escolha a pasta onde estão os seus jogos.' : 'Mande seus jogos pelo celular: abra Adicionar jogos e leia o QR code com a câmera.';
 function homePage() {
   const page = h('section', { class: 'page' });
   if (!LIB.length) {
@@ -493,7 +494,7 @@ function openGame(g) {
     kid._act = () => { call('setKids', g.id, !g.kids); g.kids = !g.kids; kid.classList.toggle('on', g.kids); kid.lastChild.textContent = g.kids ? t('Liberado') : t('Bloqueado'); loadLibrary(); };
     list.append(kid);
     list.append(h('button', { class: 'f item', act: () => renameSheet(g) }, icon('edit'), h('span', { class: 'grow', text: t('Renomear') })));
-    list.append(h('button', { class: 'f item', act: () => ask(t('Apagar {n}?', { n: g.name }), t(INFO.pc ? 'O jogo sai da biblioteca, com os saves e os estados salvos dele. O arquivo continua na pasta do computador.' : 'O jogo, os saves e os estados salvos dele saem da TV. Não dá para desfazer.'),
+    list.append(h('button', { class: 'f item', act: () => ask(t('Apagar {n}?', { n: g.name }), t(INFO.web ? 'O jogo, os saves e os estados salvos dele saem deste aparelho. Não dá para desfazer.' : INFO.pc ? 'O jogo sai da biblioteca, com os saves e os estados salvos dele. O arquivo continua na pasta do computador.' : 'O jogo, os saves e os estados salvos dele saem da TV. Não dá para desfazer.'),
       [[t('Apagar'), () => { call('remove', g.id); loadLibrary(); closeAllLayers(); show(PAGE, true); toast(t('Jogo apagado')); }, 'danger'], [t('Cancelar')]]) },
       icon('trash'), h('span', { class: 'grow', text: t('Apagar jogo') })));
   }
@@ -576,6 +577,18 @@ function play_(g, mode) {
 function addPage() {
   const page = h('section', { class: 'page' });
   if (INFO.pc) return pcAddPage(page);
+  if (INFO.web) {
+    // iPhone: o navegador só deixa escolher arquivos, não pastas. Um .zip com o jogo também vale.
+    page.append(h('div', { class: 'addm' },
+      h('h1', { text: t('Adicionar jogos') }),
+      h('p', { text: t('Escolha os arquivos dos seus jogos no app Arquivos. O GameHub guarda uma cópia aqui e pega a capa e o nome sozinho.') }),
+      h('div', { class: 'acts' }, h('button', { class: 'f btn primary', act: () => call('pickGames', false) }, icon('plus'), t('Escolher arquivos'))),
+      h('p', { text: t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip') }),
+      h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }),
+      h('div', { class: 'xfers', id: 'xfers' }), h('div', { class: 'store', id: 'store' })));
+    setTimeout(() => { drawStore(); drawXfers(); }, 0);
+    return page;
+  }
   if (INFO.mobile) {
     // Celular: os jogos vêm de uma pasta do próprio aparelho (o GameHub procura nas subpastas).
     page.append(h('div', { class: 'addm' },
@@ -650,8 +663,8 @@ function drawStore() {
     h('div', { class: 'legend' },
       h('span', null, h('i', { style: { background: 'var(--grad)' } }), t('Jogos') + ' ' + fmtBytes(s.used || 0)),
       h('span', null, h('i', { style: { background: 'rgba(255,255,255,.12)' } }), t('Livre para jogos') + ' ' + fmtBytes(s.available || 0)),
-      h('span', null, h('i', { style: { background: '#7c6fb3' } }), t(INFO.mobile || INFO.pc ? 'Reservado para o sistema' : 'Reservado para a TV') + ' ' + fmtBytes(s.reserve || 0))),
-    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t(INFO.pc ? 'O GameHub sempre deixa livre para o sistema 10% do disco (no mínimo 768 MB e no máximo 2 GB).' : INFO.mobile ? 'O GameHub sempre deixa livre para o sistema 10% da memória do aparelho (no mínimo 768 MB e no máximo 2 GB).' : 'O GameHub sempre deixa livre para o sistema 10% da memória desta TV (no mínimo 768 MB e no máximo 2 GB).') }));
+      INFO.web ? null : h('span', null, h('i', { style: { background: '#7c6fb3' } }), t(INFO.mobile || INFO.pc ? 'Reservado para o sistema' : 'Reservado para a TV') + ' ' + fmtBytes(s.reserve || 0))),
+    h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t(INFO.web ? 'O espaço é o que o iPhone libera para o GameHub. Faça backup dos saves de vez em quando.' : INFO.pc ? 'O GameHub sempre deixa livre para o sistema 10% do disco (no mínimo 768 MB e no máximo 2 GB).' : INFO.mobile ? 'O GameHub sempre deixa livre para o sistema 10% da memória do aparelho (no mínimo 768 MB e no máximo 2 GB).' : 'O GameHub sempre deixa livre para o sistema 10% da memória desta TV (no mínimo 768 MB e no máximo 2 GB).') }));
 }
 function drawXfers() {
   const el = $('#xfers');
@@ -803,6 +816,7 @@ function settingsPage() {
       inner.append(scopeBody('console:' + sec.slice(8), sec.slice(8)));
     } else if (sec === 'storage') {
       inner.append(h('h2', { text: t('Armazenamento') }), h('div', { class: 'store', id: 'store' }));
+      if (INFO.web) inner.append(backupRows());
       setTimeout(drawStore, 0);
     } else if (sec === 'about') {
       inner.append(aboutBody());
@@ -984,6 +998,23 @@ function aboutBody() {
   wrap.append(h('h2', { text: t('Sobre') }), list);
   return wrap;
 }
+/* iPhone: os saves ficam no navegador. O backup é um .zip que a pessoa guarda no app Arquivos. */
+function backupRows() {
+  return h('div', { class: 'list', style: { marginTop: '1rem' } },
+    h('div', { class: 'sep', text: t('Backup dos saves') }),
+    h('button', { class: 'f item', act: () => call('exportSaves') }, icon('disk'),
+      h('span', { class: 'grow' }, t('Exportar saves'), h('span', { class: 'sub', text: t('Saves, estados salvos e configurações, sem os jogos.') }))),
+    h('button', { class: 'f item', act: () => call('importSaves') }, icon('load'),
+      h('span', { class: 'grow' }, t('Importar saves'), h('span', { class: 'sub', text: t('Traz de volta um backup. Os jogos que faltarem voltam ao adicionar o arquivo deles.') }))));
+}
+handlers.backup = b => {
+  if (b.state === 'working') toast(t('Preparando o backup…'));
+  else if (b.state === 'ready') ask(t('Backup pronto'), t('Guarde o arquivo ({s}) no app Arquivos ou no iCloud.', { s: fmtBytes(b.size) }), [[t('Salvar arquivo'), () => call('saveBackup')], [t('Cancelar')]]);
+  else if (b.state === 'restored') toast(t('Backup restaurado'));
+  else if (b.state === 'badfile') toast(t('Esse arquivo não é um backup do GameHub.'));
+  else toast(t('Não deu para fazer o backup.'));
+};
+handlers.toast = text => toast(t(text));
 function licenseSheet(name, file) {
   const pre = h('pre', { style: { whiteSpace: 'pre-wrap', fontSize: '1.05rem', color: 'var(--dim)', lineHeight: 1.45, fontFamily: 'inherit' } }, t('Carregando…'));
   fetch('licenses/' + file + '.txt').then(r => r.text()).then(s => { pre.textContent = s; }).catch(() => { });
@@ -1071,7 +1102,7 @@ function applyOpen() {
 INFO = json(call('init'), { profile: 'default', lang: 'pt', gamepads: [] });
 /* PC: mais filtros e ajustes de imagem (feitos na placa de vídeo), tela cheia, e som e animações
    sem o "Igual ao Onix" (não há Onix no PC). */
-if (INFO.pc) {
+if (INFO.pc || INFO.web) {
   SETS.filter.choices.splice(4, 0, ['crtcurve', 'CRT curvado'], ['scanlines', 'Linhas de varredura']);
   Object.assign(SETS, {
     brightness: { label: 'Brilho', choices: [70, 80, 90, 100, 110, 120, 130, 140].map(v => [v, v + '%']) },
@@ -1088,6 +1119,7 @@ if (INFO.pc) {
   for (const k of ['sounds', 'motion']) { SETS[k].choices = [['on', 'Ligado'], ['off', 'Desligado']]; delete SETS[k].onix; }
   SETS.motion.sub = 'Transições e efeitos do foco.';
   SETS.latency.sub = 'Menos atraso pode estalar em computadores mais lentos.';
+  if (INFO.web) GROUPS.image = GROUPS.image.filter(k => k !== 'fullscreen' && k !== 'gameFullscreen');
 }
 brand($('#brand'));
 // A marca da abertura: o controle com o anel e cada letra num <i> (sobem uma a uma).

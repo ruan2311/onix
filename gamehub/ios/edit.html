@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Controles na tela</title>
+<style>
+html, body { margin: 0; height: 100%; overflow: hidden; background: #000; touch-action: none; -webkit-user-select: none; user-select: none; -webkit-tap-highlight-color: transparent; }
+#screen { position: fixed; left: 0; right: 0; display: flex; align-items: center; justify-content: center; padding: 0 1rem; box-sizing: border-box; background: #0e0820;
+  border: 2px solid; text-align: center; white-space: pre-line; font: 500 1rem/1.5 system-ui, sans-serif; }
+#pad { position: fixed; left: 0; width: 100%; touch-action: none; }
+</style>
+</head>
+<body>
+<div id="screen"></div>
+<canvas id="pad"></canvas>
+<script src="touch.js"></script>
+<script>
+// Configurações → Controles → Controles na tela (TouchEditActivity.java): o mesmo editor do menu
+// do jogo, sem jogo aberto. Tocar no quadro troca de console; girar o iPhone ajusta o jeito deitado.
+'use strict';
+const PC = parent.OnixPC, CONSOLES = ['nes', 'snes', 'gba', 'md'], NAMES = ['NES', 'SNES', 'GBA', 'Mega Drive'], COLORS = ['#ff5a6e', '#a78bfa', '#38bdf8', '#fbbf24'];
+const es = (navigator.language || '').toLowerCase().startsWith('es');
+const screen = document.getElementById('screen'), canvas = document.getElementById('pad');
+let current = 1, pad = null;
+function show() {
+  const fresh = canvas.cloneNode();   // sem os ouvintes do controle anterior
+  document.getElementById('pad').replaceWith(fresh);
+  pad = new OnixPad.Pad(fresh, CONSOLES[current], { buttons() { }, fast() { }, menu() { }, done: () => PC.closeEditor(), save: PC.touchSave }, PC.touchLayout(), es);
+  pad.setEditing(true);
+  arrange();
+}
+function arrange() {
+  const w = innerWidth, h = innerHeight, c = document.getElementById('pad');
+  if (h > w) {
+    const gh = Math.min(w * 3 / 4, h / 2), top = Math.max(0, (h / 2 - gh) / 3);
+    screen.style.top = top + 'px'; screen.style.height = gh + 'px';
+    c.style.top = (gh + top) + 'px'; c.style.height = (h - gh - top) + 'px';
+    pad.resize(w, h - gh - top);
+  } else {
+    screen.style.top = '0'; screen.style.height = h + 'px';
+    c.style.top = '0'; c.style.height = h + 'px';
+    pad.resize(w, h);
+  }
+  screen.style.color = screen.style.borderColor = COLORS[current];
+  screen.textContent = NAMES[current] + '\n\n' + (es ? 'Toca aquí para cambiar de consola' : 'Toque aqui para trocar de console');
+}
+screen.addEventListener('click', () => { current = (current + 1) % CONSOLES.length; show(); });
+addEventListener('resize', arrange);
+show();
+</script>
+</body>
+</html>
