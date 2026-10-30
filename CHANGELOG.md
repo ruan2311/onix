@@ -2,6 +2,10 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 16.3.3 (outubro de 2026)
+
+- **Avatares dos perfis:** os dez avatares ganharam traços em tons pastéis suaves e fundos com o visual de vidro escuro do Onix, substituindo o contraste excessivo por um acabamento mais elegante.
+
 ## 16.3.2 (outubro de 2026)
 
 - **Fim da fase beta:** o Onix para Google TV e Android TV deixa de ser beta, a partir desta versão. Obrigado a todo mundo que testou! As versões para Samsung e LG continuam em beta.
