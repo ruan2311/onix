@@ -77,7 +77,7 @@ Em **Adicionar jogos**, toque em **Escolher pasta** e escolha a pasta onde estã
 ### Jogar
 - Os menus ficam **em pé**. O jogo pode ser jogado **em pé ou deitado**.
 - Cada console tem os **próprios controles na tela**, no visual do Onix. Com um controle Bluetooth conectado, eles somem.
-- **Editor dos controles:** arraste os botões e mude o tamanho e a transparência. As posições ficam guardadas separadas para em pé e deitado. Fica no menu do jogo e em **Configurações → Controles**.
+- **Editor dos controles:** cada botão se arrasta sozinho (o direcional, A, B, X, Y, L, R, SELECT, START, menu e avançar). Toque num botão para mudar o tamanho e a transparência só dele; sem nenhum escolhido, a mudança vale para todos. As posições ficam guardadas separadas para em pé e deitado. Fica no menu do jogo e em **Configurações → Controles**.
 - A tela cheia só liga durante o jogo.
 
 ---

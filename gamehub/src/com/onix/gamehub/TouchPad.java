@@ -26,8 +26,11 @@ import java.util.List;
  * nos cantos. Vários dedos ao mesmo tempo e arrastar de um botão para outro funcionam; o
  * direcional aceita diagonais.
  *
- * Editor (menu do jogo ou Configurações → Controles): arrastar cada grupo, mudar o tamanho e a
- * transparência; fica guardado em touch.json (TouchLayout), em pé e deitado separados.
+ * Editor (menu do jogo ou Configurações → Controles): arrastar cada botão por conta própria (o
+ * direcional, cada botão de ação, L, R, SELECT, START, menu e avançar), mudar o
+ * tamanho e a transparência de todos ou, tocando num botão, só daquele; fica guardado em touch.json (TouchLayout), em pé e deitado separados.
+ * O tamanho 100% é calculado para caber na tela: o direcional e os botões de ação não se encostam.
+ * Os botões de ação guardam a posição por console ("snes.B"), porque cada um tem o seu esquema.
  */
 final class TouchPad extends View {
 
@@ -43,14 +46,16 @@ final class TouchPad extends View {
     }
 
     private static final int ROUND = 0, PILL = 1, MENU = 2, FAST = 3;
-    /* Grupos que se arrastam juntos no editor. */
-    private static final int G_DPAD = 0, G_FACE = 1, G_L = 2, G_R = 3, G_SYS = 4, G_TOP = 5, GROUPS = 6;
+    /* O que se arrasta no editor: cada botão. Os de ação vêm de G_FACE em diante, um por botão
+     * (o 1 era o conjunto todo na versão 1 e não é mais usado). */
+    private static final int G_DPAD = 0, G_L = 2, G_R = 3, G_SELECT = 4, G_START = 5, G_MENU = 6, G_FAST = 7, G_FACE = 8;
     /* Barra do editor. */
     private static final int T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17;
 
     private static final class Btn {
         String label;
-        final int bit, color, kind, group;
+        final int bit, color, kind;
+        int group;
         final float rx, ry, size;   // posição e tamanho relativos ao grupo
         float cx, cy, r, w, h;
 
@@ -83,6 +88,8 @@ final class TouchPad extends View {
     private final Listener listener;
     private final int accent;
     private final boolean six;   // Mega Drive: 6 botões
+    private final String console;
+    private final int groups;
     private final float dp;
     private final List<Btn> face = new ArrayList<Btn>(), shoulders = new ArrayList<Btn>(), system = new ArrayList<Btn>();
     private final List<Btn> all = new ArrayList<Btn>(), tools = new ArrayList<Btn>();
@@ -96,8 +103,10 @@ final class TouchPad extends View {
 
     private final TouchLayout layout;
     private boolean editing;
-    private int dragGroup = -1, dragId = -1;
-    private float lastX, lastY;
+    private int dragGroup = -1, dragId = -1, pressTool;
+    private float lastX, lastY, downX, downY;
+    private boolean dragging;
+    private int selected = -1;   // botão escolhido no editor: a barra mexe só nele
     private boolean es;
 
     /* Dedo → o que ele aperta: bits do RetroPad, ou -1 menu, -2 avançar. */
@@ -113,6 +122,7 @@ final class TouchPad extends View {
         setLayerType(LAYER_TYPE_SOFTWARE, null);   // o brilho das linhas (setShadowLayer)
         int nes = 0xFFFF5A6E, snes = 0xFFA78BFA, gba = 0xFF38BDF8, md = 0xFFFBBF24;
         String sel = "SELECT";
+        this.console = console;
         six = "md".equals(console);
         if ("snes".equals(console)) {
             accent = snes;
@@ -144,10 +154,12 @@ final class TouchPad extends View {
             face.add(new Btn("B", Native.B, nes, ROUND, G_FACE, -0.62f, 0.38f, 1.12f));
             face.add(new Btn("A", Native.A, nes, ROUND, G_FACE, 0.62f, -0.38f, 1.12f));
         }
-        system.add(new Btn(sel, Native.SELECT, 0xFFA99FD0, PILL, G_SYS, -1, 0, 1));
-        system.add(new Btn("START", Native.START, 0xFFA99FD0, PILL, G_SYS, 1, 0, 1));
-        system.add(new Btn("", -1, 0xFFF1EDFF, MENU, G_TOP, -1, 0, 1));
-        system.add(new Btn("»", -2, 0xFF3DE1FF, FAST, G_TOP, 1, 0, 1));
+        system.add(new Btn(sel, Native.SELECT, 0xFFA99FD0, PILL, G_SELECT, -1, 0, 1));
+        system.add(new Btn("START", Native.START, 0xFFA99FD0, PILL, G_START, 1, 0, 1));
+        system.add(new Btn("", -1, 0xFFF1EDFF, MENU, G_MENU, -1, 0, 1));
+        system.add(new Btn("»", -2, 0xFF3DE1FF, FAST, G_FAST, 1, 0, 1));
+        for (int i = 0; i < face.size(); i++) face.get(i).group = G_FACE + i;
+        groups = G_FACE + face.size();
         all.addAll(face);
         all.addAll(shoulders);
         all.addAll(system);
@@ -158,7 +170,7 @@ final class TouchPad extends View {
         tools.add(new Btn("−", T_LESS, t, PILL, -1, 3, 0, 0.6f));
         tools.add(new Btn("", T_ALPHA, t, PILL, -1, 4, 0, 1.6f));
         tools.add(new Btn("+", T_MORE, t, PILL, -1, 5, 0, 0.6f));
-        tools.add(new Btn("", T_RESET, t, PILL, -1, 6, 1, 1.3f));
+        tools.add(new Btn("", T_RESET, t, PILL, -1, 6, 1, 2.2f));
         tools.add(new Btn("", T_DONE, cyan, PILL, -1, 7, 1, 1.3f));
 
         line.setStyle(Paint.Style.STROKE);
@@ -190,6 +202,7 @@ final class TouchPad extends View {
         if (w == 0 || h == 0) return;
         landscape = w > h;
         float s = Math.min(w, h), k = layout.scale;
+        float reachX = faceReach(true), reachY = faceReach(false);
         if (landscape) {
             // Por cima do jogo: direcional embaixo à esquerda, botões embaixo à direita.
             dpadR = Math.min(s * 0.17f, 92 * dp) * k;
@@ -198,30 +211,97 @@ final class TouchPad extends View {
             dpadY = h - m;
             placeFace(w - m - 8 * dp, h - m, dpadR);
             placeShoulders(m * 0.9f, 30 * dp, w - m * 0.9f, dpadR);
-            placeSystem(w / 2f, h - 26 * dp, 26 * dp * k, w / 2f, 30 * dp);
+            placeSystem(w / 2f, h - 26 * dp, 26 * dp * k, w / 2f, 30 * dp, k);
         } else {
-            // Em pé: a área inteira é do controle (o jogo fica em cima dela).
-            dpadR = Math.min(w * 0.2f, h * 0.24f) * k;
-            float cy = h * 0.55f;
-            dpadX = dpadR * 1.3f + 10 * dp;
+            // Em pé: a área inteira é do controle (o jogo fica em cima dela). O tamanho 100% é o
+            // maior que deixa o direcional e o conjunto de ação lado a lado com folga, entre os
+            // ombros (em cima) e SELECT/START (embaixo).
+            float edge = 12 * dp, mid = 18 * dp, top = 26 * dp, bottom = h - 34 * dp - 30 * dp * k;
+            float fitW = (w - 2 * edge - mid) / (2 + 2 * reachX);
+            float fitH = (h - 26 * dp - 34 * dp - 30 * dp - 24 * dp) / (2 * Math.max(1, reachY) + 0.42f);
+            dpadR = Math.min(Math.min(w * 0.2f, h * 0.24f), Math.min(fitW, fitH)) * k;
+            float cy = (top + dpadR * 0.42f + bottom) / 2;
+            dpadX = edge + dpadR;
             dpadY = cy;
-            placeFace(w - dpadR * 1.3f - 10 * dp, cy, dpadR);
-            placeShoulders(dpadR * 1.1f, 26 * dp, w - dpadR * 1.1f, dpadR);
-            placeSystem(w / 2f, h - 34 * dp, 30 * dp * k, w / 2f, 28 * dp);
+            placeFace(w - edge - reachX * dpadR, cy, dpadR);
+            placeShoulders(dpadR * 1.1f, top, w - dpadR * 1.1f, dpadR);
+            placeSystem(w / 2f, h - 34 * dp, 30 * dp * k, w / 2f, 28 * dp, k);
         }
-        for (int g = 0; g < GROUPS; g++) {
-            float[] p = layout.get(landscape, g);
+        // Ajustes da versão 1: SELECT+START e menu+avançar andavam juntos.
+        legacy("sys", new int[]{G_SELECT, G_START}, w, h, true);
+        legacy("top", new int[]{G_MENU, G_FAST}, w, h, true);
+        // O conjunto de ação salvo na versão 1 vale para todos os consoles: fica guardado.
+        int[] faceGroups = new int[face.size()];
+        for (int i = 0; i < faceGroups.length; i++) faceGroups[i] = G_FACE + i;
+        legacy("face", faceGroups, w, h, false);
+        // Tamanho de cada botão, em volta do próprio centro.
+        for (int g = 0; g < groups; g++) {
+            float m = layout.size(key(g));
+            if (m == 1) continue;
+            if (g == G_DPAD) dpadR *= m;
+            for (Btn b : all) {
+                if (b.group != g) continue;
+                b.r *= m;
+                b.w *= m;
+                b.h *= m;
+            }
+        }
+        for (int g = 0; g < groups; g++) {
+            float[] p = layout.get(landscape, key(g));
             if (p == null) continue;
             center(g, box);
             move(g, p[0] * w - box.centerX(), p[1] * h - box.centerY());
         }
-        placeTools(w);
+        // Nada fica fora da área (tamanho maior, outra tela).
+        for (int g = 0; g < groups; g++) {
+            center(g, box);
+            if (box.isEmpty()) continue;
+            float dx = box.left < 0 ? -box.left : box.right > w ? w - box.right : 0;
+            float dy = box.top < 0 ? -box.top : box.bottom > h ? h - box.bottom : 0;
+            if (dx != 0 || dy != 0) move(g, dx, dy);
+        }
+        placeTools(w, h);
         backdrop = null;
         if (!landscape) {
             backdrop = new Paint();
             backdrop.setShader(new LinearGradient(0, 0, 0, h, Color.argb(0, 0, 0, 0), withAlpha(accent, 40), Shader.TileMode.CLAMP));
         }
         invalidate();
+    }
+
+    /** Até onde o conjunto de ação vai a partir do centro, em raios do direcional (x ou y). */
+    private float faceReach(boolean horizontal) {
+        float br = 0.42f, gap = br * 1.25f * (six ? 1.05f : 1f), out = 0;
+        for (Btn b : face) out = Math.max(out, Math.abs(horizontal ? b.rx : b.ry) * gap + br * b.size);
+        return out;
+    }
+
+    /** Nome do grupo no touch.json: o número, ou console.botão para os de ação. */
+    private String key(int g) {
+        return g >= G_FACE ? console + "." + face.get(g - G_FACE).label : String.valueOf(g);
+    }
+
+    /**
+     * Um grupo salvo na versão 1 (vários botões juntos) move os botões dele. Com split, cada um
+     * ganha a sua posição e o grupo antigo some; sem, o grupo fica (vale para outros consoles).
+     */
+    private void legacy(String key, int[] gs, int w, int h, boolean split) {
+        float[] p = layout.get(landscape, key);
+        if (p == null) return;
+        box.setEmpty();
+        for (int g : gs) {
+            center(g, rect);
+            box.union(rect);
+        }
+        float dx = p[0] * w - box.centerX(), dy = p[1] * h - box.centerY();
+        for (int g : gs) move(g, dx, dy);
+        if (!split) return;
+        for (int g : gs) {
+            center(g, box);
+            layout.set(landscape, key(g), box.centerX() / w, box.centerY() / h);
+        }
+        layout.drop(landscape, key);
+        layout.save(getContext());
     }
 
     private void placeFace(float cx, float cy, float r) {
@@ -242,8 +322,8 @@ final class TouchPad extends View {
         }
     }
 
-    private void placeSystem(float cx, float bottomY, float pillH, float topX, float topY) {
-        float small = 30 * dp * 0.62f;
+    private void placeSystem(float cx, float bottomY, float pillH, float topX, float topY, float k) {
+        float small = 30 * dp * 0.62f * k;
         for (Btn b : system) {
             if (b.kind == PILL) {
                 b.h = pillH;
@@ -259,8 +339,11 @@ final class TouchPad extends View {
         }
     }
 
-    /** A barra do editor: duas fileiras no alto da área (tamanho e transparência; restaurar e concluir). */
-    private void placeTools(int w) {
+    /**
+     * A barra do editor: duas fileiras (tamanho e transparência; restaurar e concluir), no alto da
+     * área ou, se ali houver botões, na primeira faixa livre abaixo deles.
+     */
+    private void placeTools(int w, int areaH) {
         float h = 36 * dp, gap = 8 * dp, unit = 54 * dp;
         float row0 = 0, row1 = 0;
         for (Btn b : tools) {
@@ -269,7 +352,22 @@ final class TouchPad extends View {
             if (b.ry == 0) row0 += b.w + gap;
             else row1 += b.w + gap;
         }
-        float x0 = (w - row0 + gap) / 2, x1 = (w - row1 + gap) / 2, y0 = 12 * dp + h / 2, y1 = y0 + h + gap;
+        float barH = 2 * h + gap, left = (w - Math.max(row0, row1) + gap) / 2, top = 12 * dp;
+        List<Float> tries = new ArrayList<Float>();
+        tries.add(top);
+        for (int g = 0; g < groups; g++) {
+            center(g, box);
+            if (!box.isEmpty()) tries.add(box.bottom + 14 * dp);
+        }
+        java.util.Collections.sort(tries);
+        for (float y : tries) {
+            if (y + barH > areaH - 8 * dp) break;
+            if (free(left, y, w - left, y + barH)) {
+                top = y;
+                break;
+            }
+        }
+        float x0 = (w - row0 + gap) / 2, x1 = (w - row1 + gap) / 2, y0 = top + h / 2, y1 = y0 + h + gap;
         for (Btn b : tools) {
             if (b.ry == 0) {
                 b.cx = x0 + b.w / 2;
@@ -281,6 +379,16 @@ final class TouchPad extends View {
                 x1 += b.w + gap;
             }
         }
+    }
+
+    private boolean free(float l, float t, float r, float b) {
+        for (int g = 0; g < groups; g++) {
+            center(g, box);
+            if (box.isEmpty()) continue;
+            box.inset(-10 * dp, -10 * dp);
+            if (box.intersects(l, t, r, b)) return false;
+        }
+        return true;
     }
 
     /** Caixa do grupo (para arrastar e para o contorno no editor). */
@@ -318,6 +426,7 @@ final class TouchPad extends View {
     void setEditing(boolean on) {
         editing = on;
         dragGroup = -1;
+        selected = -1;
         pointers.clear();
         update();
         invalidate();
@@ -328,7 +437,15 @@ final class TouchPad extends View {
     }
 
     private void tool(int id) {
-        if (id == T_SMALLER || id == T_BIGGER) {
+        float step = id == T_BIGGER || id == T_MORE ? 0.1f : -0.1f;
+        if (selected >= 0 && id != T_DONE) {
+            // Só o botão escolhido.
+            String k = key(selected);
+            if (id == T_SMALLER || id == T_BIGGER) layout.setSize(k, Math.round((layout.size(k) + step) * 10) / 10f);
+            else if (id == T_LESS || id == T_MORE) layout.setOpacity(k, Math.round((layout.opacity(k) + step) * 10) / 10f);
+            else if (id == T_RESET) layout.resetButton(landscape, k);
+            else return;
+        } else if (id == T_SMALLER || id == T_BIGGER) {
             layout.scale = TouchLayout.clamp(Math.round((layout.scale + (id == T_BIGGER ? 0.1f : -0.1f)) * 10) / 10f, TouchLayout.MIN_SCALE, TouchLayout.MAX_SCALE);
         } else if (id == T_LESS || id == T_MORE) {
             layout.opacity = TouchLayout.clamp(Math.round((layout.opacity + (id == T_MORE ? 0.1f : -0.1f)) * 10) / 10f, TouchLayout.MIN_OPACITY, 1);
@@ -350,30 +467,39 @@ final class TouchPad extends View {
     private boolean editTouch(MotionEvent e) {
         int action = e.getActionMasked();
         if (action == MotionEvent.ACTION_DOWN) {
+            // Toque rápido num botão da barra usa a barra; arrastar move o botão que estiver ali.
             float x = e.getX(), y = e.getY();
+            pressTool = 0;
             for (Btn b : tools) {
-                if (b.bit != T_SIZE && b.bit != T_ALPHA && b.hit(x, y, 1.1f)) {
-                    tool(b.bit);
-                    return true;
-                }
+                if (b.bit != T_SIZE && b.bit != T_ALPHA && b.hit(x, y, 1.1f)) pressTool = b.bit;
             }
-            dragGroup = -1;
-            for (int g = GROUPS - 1; g >= 0; g--) {
-                center(g, box);
-                box.inset(-14 * dp, -14 * dp);
-                if (box.contains(x, y)) {
-                    dragGroup = g;
-                    break;
-                }
-            }
+            dragGroup = groupAt(x, y);
+            dragging = false;
             dragId = e.getPointerId(0);
-            lastX = x;
-            lastY = y;
-            if (dragGroup >= 0) performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            lastX = downX = x;
+            lastY = downY = y;
+            if (dragGroup >= 0 && pressTool == 0) performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            if (pressTool == 0) invalidate();
+        } else if (action == MotionEvent.ACTION_UP && pressTool == 0 && !dragging) {
+            // Toque sem arrastar: escolhe o botão (de novo, ou fora de todos, desmarca).
+            selected = dragGroup == selected ? -1 : dragGroup;
+            dragGroup = -1;
+            invalidate();
+        } else if (action == MotionEvent.ACTION_UP && pressTool != 0 && !dragging) {
+            int id = pressTool;
+            pressTool = 0;
+            dragGroup = -1;
+            tool(id);
         } else if (action == MotionEvent.ACTION_MOVE && dragGroup >= 0) {
             int i = e.findPointerIndex(dragId);
             if (i < 0) return true;
             float x = e.getX(i), y = e.getY(i);
+            if (!dragging) {
+                if (Math.hypot(x - downX, y - downY) < 10 * dp) return true;
+                if (pressTool != 0) performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+                if (selected >= 0) selected = dragGroup;
+            }
+            dragging = true;
             center(dragGroup, box);
             // Não deixa o grupo sair da área.
             float dx = Math.max(-box.left, Math.min(getWidth() - box.right, x - lastX));
@@ -384,12 +510,32 @@ final class TouchPad extends View {
             invalidate();
         } else if ((action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_CANCEL) && dragGroup >= 0) {
             center(dragGroup, box);
-            layout.set(landscape, dragGroup, box.centerX() / getWidth(), box.centerY() / getHeight());
+            layout.set(landscape, key(dragGroup), box.centerX() / getWidth(), box.centerY() / getHeight());
             layout.save(getContext());
             dragGroup = -1;
+            pressTool = 0;
+            placeTools(getWidth(), getHeight());
             invalidate();
         }
         return true;
+    }
+
+    /** O grupo sob o dedo; com dois perto, o mais próximo (botões soltos ficam lado a lado). */
+    private int groupAt(float x, float y) {
+        int best = -1;
+        float bestD = Float.MAX_VALUE;
+        for (int g = 0; g < groups; g++) {
+            center(g, box);
+            if (box.isEmpty()) continue;
+            float out = (float) Math.hypot(Math.max(0, Math.max(box.left - x, x - box.right)), Math.max(0, Math.max(box.top - y, y - box.bottom)));
+            if (out > 14 * dp) continue;
+            float d = out * 1000 + (float) Math.hypot(x - box.centerX(), y - box.centerY());
+            if (d < bestD) {
+                bestD = d;
+                best = g;
+            }
+        }
+        return best;
     }
 
     /* ---------------- Desenho ---------------- */
@@ -402,35 +548,58 @@ final class TouchPad extends View {
     protected void onDraw(Canvas c) {
         if (backdrop != null) c.drawRect(0, 0, getWidth(), getHeight(), backdrop);
         if (editing) c.drawColor(Color.argb(110, 4, 2, 10));
-        int base = Math.round(255 * (editing ? Math.max(layout.opacity, 0.6f) : layout.opacity));
-        drawDpad(c, base);
-        for (Btn b : all) drawButton(c, b, base);
+        drawDpad(c, alpha(G_DPAD));
+        for (Btn b : all) drawButton(c, b, alpha(b.group));
         if (editing) drawEditor(c);
     }
 
+    /** Opacidade do botão (no editor, nunca some de vez). */
+    private int alpha(int g) {
+        float o = layout.opacity(key(g));
+        return Math.round(255 * (editing ? Math.max(o, 0.6f) : o));
+    }
+
+    /** Nome curto do botão escolhido, para a barra do editor. */
+    private String name(int g) {
+        if (g == G_DPAD) return es ? "Cruceta" : "Direcional";
+        if (g == G_MENU) return "Menu";
+        for (Btn b : all) if (b.group == g) return b.label;
+        return "";
+    }
+
     private void drawEditor(Canvas c) {
-        for (int g = 0; g < GROUPS; g++) {
+        for (int g = 0; g < groups; g++) {
             center(g, box);
             if (box.isEmpty()) continue;
             box.inset(-10 * dp, -10 * dp);
+            if (g == selected) {
+                stroke(0xFF3DE1FF, 255, 2.2f * dp);
+                c.drawRoundRect(box, 14 * dp, 14 * dp, line);
+                continue;
+            }
             dash.setColor(g == dragGroup ? 0xFF3DE1FF : 0x88FFFFFF);
             c.drawRoundRect(box, 14 * dp, 14 * dp, dash);
         }
+        boolean one = selected >= 0;
         for (Btn b : tools) {
-            if (b.bit == T_SIZE) b.label = (es ? "Tamaño " : "Tamanho ") + Math.round(layout.scale * 100) + "%";
-            else if (b.bit == T_ALPHA) b.label = (es ? "Opacidad " : "Opacidade ") + Math.round(layout.opacity * 100) + "%";
-            else if (b.bit == T_RESET) b.label = es ? "Restaurar" : "Restaurar";
+            if (b.bit == T_SIZE) b.label = (es ? "Tamaño " : "Tamanho ") + Math.round((one ? layout.size(key(selected)) : layout.scale) * 100) + "%";
+            else if (b.bit == T_ALPHA) b.label = (es ? "Opacidad " : "Opacidade ") + Math.round((one ? layout.opacity(key(selected)) : layout.opacity) * 100) + "%";
+            else if (b.bit == T_RESET) b.label = one ? (es ? "Restaurar " : "Restaurar ") + name(selected) : "Restaurar";
             else if (b.bit == T_DONE) b.label = es ? "Listo" : "Concluir";
             rect.set(b.cx - b.w / 2, b.cy - b.h / 2, b.cx + b.w / 2, b.cy + b.h / 2);
             fill.setColor(0xE60E0820);
             c.drawRoundRect(rect, b.h / 2, b.h / 2, fill);
             boolean info = b.bit == T_SIZE || b.bit == T_ALPHA;
-            stroke(b.color, info ? 70 : 220, 1.6f * dp);
+            // Com um botão escolhido, a barra fica ciano: vale só para ele.
+            int col = one && b.bit != T_DONE ? 0xFF3DE1FF : b.color;
+            stroke(col, info ? (one ? 160 : 70) : 220, 1.6f * dp);
             c.drawRoundRect(rect, b.h / 2, b.h / 2, line);
-            text.setColor(b.color);
+            text.setColor(col);
             text.setShadowLayer(0, 0, 0, 0);
             text.setLetterSpacing(0);
             text.setTextSize(b.label.length() <= 1 ? 20 * dp : 13 * dp);
+            float fit = (b.w - 14 * dp) / text.measureText(b.label);
+            if (fit < 1) text.setTextSize(text.getTextSize() * fit);
             c.drawText(b.label, b.cx, b.cy - (text.descent() + text.ascent()) / 2, text);
         }
     }
@@ -547,15 +716,6 @@ final class TouchPad extends View {
     /** O que está sob o dedo: bits do RetroPad (direcional + botão), -1 menu, -2 avançar, 0 nada. */
     private int target(float x, float y) {
         float dx = x - dpadX, dy = y - dpadY, dist = (float) Math.sqrt(dx * dx + dy * dy);
-        if (dist <= dpadR * 1.35f) {
-            if (dist < dpadR * 0.16f) return 0;
-            int out = 0;
-            if (dy < -0.38f * dist) out |= 1 << Native.UP;
-            if (dy > 0.38f * dist) out |= 1 << Native.DOWN;
-            if (dx < -0.38f * dist) out |= 1 << Native.LEFT;
-            if (dx > 0.38f * dist) out |= 1 << Native.RIGHT;
-            return out | 1 << 30;   // marca: veio do direcional
-        }
         Btn best = null;
         float bestD = Float.MAX_VALUE;
         for (Btn b : all) {
@@ -565,6 +725,16 @@ final class TouchPad extends View {
                 bestD = d;
                 best = b;
             }
+        }
+        // A folga do direcional só vale onde não há botão: perto dele, o botão vizinho ganha.
+        if (dist <= dpadR || (best == null && dist <= dpadR * 1.35f)) {
+            if (dist < dpadR * 0.16f) return 0;
+            int out = 0;
+            if (dy < -0.38f * dist) out |= 1 << Native.UP;
+            if (dy > 0.38f * dist) out |= 1 << Native.DOWN;
+            if (dx < -0.38f * dist) out |= 1 << Native.LEFT;
+            if (dx > 0.38f * dist) out |= 1 << Native.RIGHT;
+            return out | 1 << 30;   // marca: veio do direcional
         }
         if (best == null) return 0;
         if (best.bit == -1) return -1;

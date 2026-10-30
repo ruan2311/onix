@@ -4,6 +4,8 @@
 #   bash gamehub/build.sh          # gera onix-gamehub.apk na raiz do projeto
 # Os núcleos vêm de gamehub/build/cores (bash gamehub/cores.sh compila a partir do código-fonte).
 # Só compila neste PC: precisa do NDK e da mesma chave das releases do Onix.
+# Sem NDK (no celular), quando só o Java/HTML mudou: NATIVE_FROM=<apk anterior> reaproveita as
+# bibliotecas nativas (frontend e núcleos) daquela APK em vez de compilar o jni/.
 set -euo pipefail
 cd "$(dirname "$0")"
 ROOT=$(cd .. && pwd)
@@ -31,6 +33,13 @@ echo "[3/8] Assets"
 cp -r assets/. "$OUT/assets/"
 
 echo "[4/8] Frontend nativo (NDK)"
+if [ -n "${NATIVE_FROM:-}" ]; then
+  echo "    reaproveitando as bibliotecas de $NATIVE_FROM"
+  unzip -q "$NATIVE_FROM" 'lib/*' -d "$OUT/native"
+  for abi in $ABIS; do for c in onixretro $CORES; do
+    [ -f "$OUT/native/lib/$abi/lib$c.so" ] || { echo "Falta lib/$abi/lib$c.so em $NATIVE_FROM" >&2; exit 1; }
+  done; done
+else
 [ -x "$NDK/ndk-build" ] || { echo "NDK não encontrado em $NDK" >&2; exit 1; }
 "$NDK/ndk-build" -s -j6 NDK_PROJECT_PATH=. APP_BUILD_SCRIPT=jni/Android.mk NDK_APPLICATION_MK=jni/Application.mk \
   NDK_OUT=build/ndk-obj NDK_LIBS_OUT=build/ndk-libs
@@ -43,6 +52,7 @@ for abi in $ABIS; do
     cp "$f" "$OUT/native/lib/$abi/"
   done
 done
+fi
 
 echo "[5/8] javac"
 javac -source 8 -target 8 -Xlint:-options -encoding UTF-8 -bootclasspath "$SDK_JAR" \
