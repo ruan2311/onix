@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, o **Onix GameHub** de jogos clássicos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-16.3.2-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-16.4.1-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -23,7 +23,7 @@ notícias de games, jogos embutidos, o **Onix GameHub** de jogos clássicos, tro
 ## Sumário
 
 - [🇪🇸 En español](#-en-español)
-- [Novidades da 16.1.0](#novidades-da-1610)
+- [Novidades da 16.4](#novidades-da-164)
 - [Novidades da 16.0.0](#novidades-da-1600)
 - [Recursos](#recursos)
 - [Capturas de tela](#capturas-de-tela)
@@ -62,25 +62,32 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 > Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
 
+**Novedades de la 16.4.1:** actualizador oficial de **Cobalt GameHub** conectado directamente al repositorio [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) (`cobalt-gamehub.apk`).
+
+**Novedades de la 16.4.0:** llega **Cobalt GameHub** como gema oficial de Project Gems junto a Onix, Amethyst y Opala. **Onix Controle** renovado con nuevo icono cósmico, gamepad virtual integrado para emuladores en la TV y versión Web App instalable para iPhone y iPad ([projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)). La Trayectoria de Onix también se actualizó con la gema Cobalt GameHub.
+
 **Novedades de la 16.1.0:** nueva **Trayectoria de Onix** en **Configuración → Acerca de**: la historia de Onix y de su creador en siete diapositivas animadas (OK pasa a la siguiente). Onix GameHub ahora tiene página propia: [ruan2311/onix-gamehub](https://github.com/ruan2311/onix-gamehub).
 
 **Novedades de la 16.0.0:** llega **Onix GameHub**, una app opcional de juegos clásicos (NES, Super Nintendo, Game Boy Advance y Mega Drive) para Google TV y Android TV. Se instala desde la pestaña **Juegos** de Onix, los juegos llegan desde el celular por código QR y el progreso se guarda por perfil. La pestaña **Juegos** quedó más organizada y, en **Samsung y LG**, se volvió un hub de juegos en la nube con los destacados de **Game Pass** y las apps de cloud gaming. Detalles (en portugués) en [Onix GameHub](#onix-gamehub-jogos-clássicos).
 
 **Novedades de la 15.0.0:** dos estilos nuevos de pantalla de inicio en **Configuración → Inicio** (*Clean Glass*, minimalista, y *Onix Cosmos*, artístico), cuatro sonidos de navegación nuevos (*Crystal*, *Sharpness*, *Velvet* y *Pulse*), un **Modo Infantil** con estilo propio y el gatito de Onix, y sonidos del menú con menos retraso.
 
-**Onix Controle (app para el celular Android):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. **Solo para Google TV y celular Android** (no funciona en iPhone, ni en TVs Samsung y LG). Descárgalo en el celular: **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk)**. Al abrirlo, elige tu TV, escribe el código de 6 caracteres que aparece en la TV y listo. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
+**Onix Controle (app para Android e iPhone/iPad):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. Ahora cuenta con **gamepad virtual** integrado para los juegos de Cobalt GameHub. Disponible como app para Android (**[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk)**) y como Web App instalable para iPhone y iPad (**[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**). Funciona con Google TV y Android TV. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
 
 ---
 
-## Novidades da 16.1.0
+## Novidades da 16.4
 
-- **16.3.2 · Fim da fase beta:** o Onix para Google TV e Android TV deixa de ser beta. As versões para Samsung e LG continuam em beta.
-- **16.3.2 · Project Gems no Sobre:** o cartão **Sobre** mostra o endereço do site com todos os projetos: **[projectgems.github.io](https://projectgems.github.io)**. A aba **Jogos** ganhou a logomarca nova do GameHub no desenho do topo.
-- **16.3.0 · Posição do menu:** em **Configurações → Menu**, o menu pode ficar na **lateral** (o de sempre), **em cima** (barra de abas) ou **embaixo** (dock flutuante), cada um com o visual próprio e alinhado com as bordas do conteúdo. A **Trajetória do Onix** também ganhou o Onix GameHub e o ícone novo do Opala.
+- **16.4.1 · Atualizador do Cobalt GameHub:** o Onix agora instala e atualiza o emulador diretamente do repositório oficial [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) com o pacote `cobalt-gamehub.apk`.
+- **16.4.0 · Cobalt GameHub oficial:** o emulador clássico do Onix agora se chama Cobalt GameHub, a mais nova gema oficial do Project Gems ao lado de Onix, Amethyst e Opala.
+- **16.4.0 · Onix Controle renovado e no iPhone:** o app de controle pelo celular ganhou novo ícone do Saturno cósmico, integração com o Cobalt GameHub com **gamepad virtual** para jogar os clássicos na TV e versão Web App instalável para iPhone e iPad em **[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**.
+- **16.4.0 · Trajetória do Onix:** o slide das pedras preciosas atualizado com a gema Cobalt GameHub.
+- **16.3.3 · Avatares dos perfis:** os dez avatares ganharam traços em tons pastéis suaves e fundos com o visual de vidro escuro do Onix, substituindo o contraste excessivo por um acabamento mais elegante.
+- **16.3.2 · Fim da fase beta:** o Onix para Google TV e Android TV deixa de ser beta, a partir desta versão. Obrigado a todo mundo que testou! As versões para Samsung e LG continuam em beta.
+- **16.3.2 · Project Gems no Sobre:** o cartão **Sobre** mostra o endereço do site com todos os projetos: **[projectgems.github.io](https://projectgems.github.io)**. A aba **Jogos** ganhou a logomarca cósmica do Cobalt GameHub.
+- **16.3.0 · Posição do menu:** em **Configurações → Menu**, o menu pode ficar na **lateral** (o de sempre), **em cima** (barra de abas) ou **embaixo** (dock flutuante), cada um com o visual próprio e alinhado com as bordas do conteúdo.
 - **16.1.1 · Apoie o criador:** em **Configurações → Sobre**, um QR code Pix para quem quiser ajudar o projeto com qualquer valor. O Onix continua **gratuito e sem anúncios**: nada aparece sozinho, e o botão não aparece no Modo Infantil.
-
-- **Trajetória do Onix:** a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em **Configurações → Sobre**; OK passa para o próximo.
-- **Onix GameHub** com página própria no GitHub: **[ruan2311/onix-gamehub](https://github.com/ruan2311/onix-gamehub)**. O Onix instala e atualiza o GameHub por lá.
+- **16.1.0 · Trajetória do Onix:** a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em **Configurações → Sobre**; OK passa para o próximo.
 
 ## Novidades da 16.0.0
 
@@ -97,7 +104,7 @@ Na 15.0.0: **três estilos de tela inicial** (*Onix Glass*, *Clean Glass* e *Oni
 
 Na 14.0.0: **perfis** (*Quem está assistindo?*, com os apps, recentes, indicações, recordes e idioma de cada um; com um perfil só, o Onix entra direto), **foto de perfil pelo celular**, **boas-vindas** na primeira vez, **Modo Infantil** (só os apps liberados, PIN para sair e limite de tempo por dia), **controle pelo celular** pelo QR code, sem instalar nada, e **clima na tela inicial** (opcional, dados do Open-Meteo, só da cidade que você escolher).
 
-**Novo: [Onix Controle](#onix-controle-app-de-celular)**, um app de celular que controla a TV inteira, dentro de qualquer app, pelo Wi-Fi de casa. **Só para Google TV e celular Android** (não funciona em iPhone, nem em TVs Samsung e LG).
+**Novo: [Onix Controle](#onix-controle-app-de-celular)**, o controle remoto da TV inteira pelo Wi-Fi de casa, com gamepad virtual integrado para emulação. Disponível para **Android** (APK nativo) e **iPhone/iPad** (Web App instalável em [projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)).
 
 Na 13.7.5: os jogos ganharam o visual do Onix e fases. Na 13.7.4: o Onix passou a falar **espanhol**.
 
@@ -593,18 +600,19 @@ Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): *
 
 <img src="controle/res/mipmap-xxxhdpi/icon.png" alt="Ícone do Onix Controle" width="72" align="right">
 
-> ⚠️ **Só para Google TV e celular Android.** Não funciona em iPhone, nem em TVs Samsung e LG.
+> 📱 **Disponível para Android e iPhone/iPad.** Funciona em Google TV e Android TV. Não funciona em TVs Samsung e LG.
 
-Um app para o **celular Android** que vira o **controle remoto da TV inteira**: dentro da Netflix, do YouTube, das configurações e, claro, no Onix. Ele usa o mesmo sistema de controle do app oficial do Google TV, direto pelo Wi-Fi de casa.
+Transforma o celular no **controle remoto da TV inteira** e em **gamepad para jogos clássicos**: funciona dentro da Netflix, do YouTube, das configurações, no Onix e emulando comandos para o Cobalt GameHub. Ele se conecta direto pelo Wi-Fi de casa.
 
 ✅ *Testado numa Philips Google TV (Android TV 14).*
 
 > 🧪 **Experimental:** pode apresentar falhas. Se algo não funcionar, [abra uma issue](https://github.com/ruan2311/onix/issues).
 
-**Funciona com:** TVs **Google TV** (com ou sem o Onix), no mesmo Wi-Fi do celular. Em Android TV "clássico" deve funcionar se a TV tiver o serviço de controle do Google, mas ainda não foi testado. Celular **Android 6 ou mais novo**. Não funciona em TVs Samsung e LG, nem em iPhone.
+**Funciona com:** TVs **Google TV** e **Android TV** (com ou sem o Onix), no mesmo Wi-Fi do celular. Celular **Android 6 ou mais novo** (app `.apk`) ou **iPhone e iPad com iOS 14+** (Web App instalável pelo navegador em [projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)). Não funciona em TVs Samsung e LG.
 
 ### O que ele faz
 - **Setas ou "Deslizar":** use o direcional ou deslize o dedo na tela (cada deslizada é um passo; um toque é **OK**). Segurar uma seta repete.
+- **Gamepad para emuladores:** botões A, B, X, Y, L, R, Start, Select e D-Pad dedicados para jogar os clássicos do Cobalt GameHub na TV sem precisar de controle físico.
 - **Ligar/desligar, Voltar** e **Início**.
 - **Volume e mudo**, com o nível atual na tela. Com o app aberto, os **botões de volume do celular** mudam o volume da TV.
 - **Mídia:** voltar, tocar/pausar e avançar.
@@ -614,10 +622,17 @@ Um app para o **celular Android** que vira o **controle remoto da TV inteira**: 
 - Português e espanhol, no visual escuro do Onix.
 
 ### Instalar
+
+**No Android:**
 1. No celular, abra este link no navegador e baixe o arquivo (ou, na TV, vá em **Configurações → Controle pelo celular → Baixar o Onix Controle** e aponte a câmera do celular para o QR code):
    **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk)**
 2. Toque no arquivo baixado. Se o Android pedir, permita **instalar apps desta fonte** para o navegador (ou para o app de arquivos) e volte.
 3. Toque em **Instalar**. Se o **Play Protect** avisar que o app é desconhecido, toque em **Mais detalhes → Instalar mesmo assim** (o aviso aparece porque o app não vem da Play Store; o código está todo neste GitHub).
+
+**No iPhone e iPad (iOS):**
+1. No Safari do iPhone ou iPad, acesse **[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**.
+2. Toque no botão de **Compartilhar** do Safari e selecione **Adicionar à Tela de Início**.
+3. O Onix Controle será instalado na tela inicial como um app, com suporte a tela cheia.
 
 ### Primeiro uso
 1. Abra o **Onix Controle**. Ele procura as TVs no Wi-Fi sozinho; toque na sua.
@@ -626,12 +641,12 @@ Um app para o **celular Android** que vira o **controle remoto da TV inteira**: 
 3. Pronto. Das próximas vezes, ele conecta sozinho ao abrir.
 
 ### Atualizações
-Em **Configurações** (a engrenagem, no alto) → **Atualização**, toque em **Procurar atualização**. O app também procura sozinho, uma vez a cada 6 horas, e mostra um ponto verde na engrenagem quando há versão nova. Ele baixa daqui do GitHub, confere o arquivo e o Android pede a confirmação para instalar.
+Em **Configurações** (a engrenagem, no alto) → **Atualização**, toque em **Procurar atualização**. O app também procura sozinho, uma vez a cada 6 horas, e mostra um ponto verde na engrenagem quando há versão nova. Ele baixa daqui do GitHub, confere o arquivo e o Android pede a confirmação para instalar. No iPhone e iPad, o Web App atualiza automaticamente sempre que você abrir.
 
 ### E o QR code do Onix?
-São dois controles diferentes, e os dois continuam:
-- **Controle web** (o QR code do Onix): não instala nada, abre no navegador de qualquer celular (iPhone também), mas só controla o **Onix**.
-- **Onix Controle:** precisa instalar (só celular Android e só Google TV), mas controla a **TV inteira**, em qualquer app.
+São duas opções complementares:
+- **Controle web clássico** (o QR code rápido do Onix): não instala nada, abre no navegador e controla o Onix na tela.
+- **Onix Controle**: app para Android e Web App instalável para iOS ([projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)). Controla a **TV inteira**, dentro de qualquer app, e tem **gamepad virtual** para os jogos do Cobalt GameHub.
 
 ---
 
