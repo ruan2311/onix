@@ -7,15 +7,13 @@ Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advanc
 | Plataforma | Situação | Como os jogos entram |
 |---|---|---|
 | 📺 **Google TV e Android TV** | ✅ Disponível | Pelo celular, com um QR code |
-| 📱 **Celular Android** (5.0 ou mais novo) | 🧪 Experimental | Escolhendo uma pasta do próprio celular |
-| 🖥️ **PC (Windows)** | 🧪 Em teste | Escolhendo a pasta dos jogos |
-| 🍎 **iPhone e iPad** (iOS 16.4 ou mais novo) | 🧪 Experimental | Escolhendo os arquivos no app Arquivos |
+| 📱 **Celular Android** (5.0 ou mais novo) | ✅ Disponível | Escolhendo uma pasta do próprio celular |
+| 🖥️ **PC (Windows)** | ✅ Disponível | Escolhendo a pasta dos jogos |
+| 🍎 **iPhone e iPad** (iOS 16.4 ou mais novo) | ✅ Disponível | Web app instalável em [projectgems.github.io/gamehub/app](https://projectgems.github.io/gamehub/app/) |
 
 O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde está e muda a interface.
 
 > ⚖️ **Nenhum jogo vem com o GameHub.** Use só jogos que você tem o direito de usar (por exemplo, cópias dos seus próprios cartuchos).
-
-> 🧪 **Experimental:** pode apresentar falhas. Se algo não funcionar, [abra uma issue](https://github.com/ruan2311/onix/issues).
 
 <p align="center">
   <img src="docs/screenshots/gamehub-inicio.jpg" alt="Início do Cobalt GameHub com Continuar jogando" width="49%">
@@ -67,7 +65,7 @@ Use um **controle Bluetooth** (Xbox, PlayStation, 8BitDo…). Para parear, cliqu
 
 ## 📱 Celular Android
 
-> 🧪 **Experimental.** Funciona no Android 5.0 ou mais novo.
+> 📱 Funciona no Android 5.0 ou mais novo.
 
 ### Instalar
 1. No celular, baixe o [`onix-gamehub.apk`](https://github.com/ruan2311/onix-gamehub/releases/latest/download/onix-gamehub.apk) (o mesmo da TV).
@@ -86,7 +84,7 @@ Em **Adicionar jogos**, toque em **Escolher pasta** e escolha a pasta onde estã
 
 ## 🖥️ PC (Windows)
 
-> 🧪 **Em teste.** Windows 10 ou 11, 64 bits. Pode apresentar falhas.
+> 🖥️ Windows 10 ou 11, 64 bits.
 
 As mesmas telas da TV, com **mais animações** (páginas que deslizam, cartões que sobem com o mouse, brilho nas capas e uma aurora lenta no fundo) e os mesmos 4 emuladores, rodando dentro do app.
 
@@ -150,7 +148,7 @@ Jogos, saves e estados ficam só no aparelho. Em **Configurações → Armazenam
 
 ### Controles
 
-Os controles na tela são os mesmos do Android, com o mesmo editor. Controles Bluetooth funcionam (Xbox, PlayStation, 8BitDo): pareie em **Ajustes → Bluetooth**. Com um conectado, os da tela somem; um toque na imagem abre o menu.
+Os controles na tela contam com edição independente para as orientações **vertical e horizontal**: personalize o tamanho, transparência e posição dos botões em cada modo separadamente. Controles Bluetooth funcionam perfeitamente (Xbox, PlayStation, 8BitDo): pareie em **Ajustes → Bluetooth**. Com um conectado, os da tela somem; um toque na imagem abre o menu.
 
 ### Para quem programa
 
@@ -212,4 +210,4 @@ O código do GameHub está sob a [GPL-3.0](LICENSE). O GameHub é gratuito e nun
 
 ---
 
-🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** (experimental) se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** está en prueba, con juegos agregados desde una carpeta, teclado o control y más ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente). Ningún juego viene incluido.
+🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente); y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido.

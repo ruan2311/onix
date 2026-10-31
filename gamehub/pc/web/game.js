@@ -742,6 +742,10 @@ if (window.OnixPad) {
     },
   }, PC.touchLayout(), ES);
   addEventListener('resize', arrangePad);
+  window.addEventListener('orientationchange', () => {
+    setTimeout(arrangePad, 60);
+    setTimeout(arrangePad, 220);
+  });
   arrangePad();
   keepAwake();
   canvas.addEventListener('pointerup', () => { if ($('#pad').hidden && loaded && !menuOpen) openMenu(''); });

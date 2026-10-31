@@ -12,32 +12,94 @@ window.OnixPad = (function () {
   const round1 = v => Math.round(v * 10) / 10;
   const hexA = (rgb, a) => 'rgba(' + (rgb >> 16 & 255) + ',' + (rgb >> 8 & 255) + ',' + (rgb & 255) + ',' + a + ')';
 
-  /* ---------------- touch.json (TouchLayout.java) ---------------- */
+  /* ---------------- touch.json (Layout v4: Retrato e Paisagem 100% independentes) ---------------- */
+  function defaultSide() {
+    return { scale: 1, opacity: 0.85, pos: {}, each: {} };
+  }
+
   function Layout(text) {
     let o = {};
     try { o = JSON.parse(text || '{}') || {}; } catch (_) { o = {}; }
-    this.scale = clamp(Number(o.scale) || 1, MIN_SCALE, MAX_SCALE);
-    this.opacity = clamp(o.opacity === undefined ? 0.85 : Number(o.opacity), MIN_OPACITY, 1);
-    this.pos = o.pos && typeof o.pos === 'object' ? o.pos : {};
-    this.each = o.each && typeof o.each === 'object' ? o.each : {};
+    this.port = defaultSide();
+    this.land = defaultSide();
+
+    if (o.v === 4 && (o.portrait || o.landscape)) {
+      if (o.portrait) {
+        this.port.scale = clamp(Number(o.portrait.scale) || 1, MIN_SCALE, MAX_SCALE);
+        this.port.opacity = clamp(o.portrait.opacity === undefined ? 0.85 : Number(o.portrait.opacity), MIN_OPACITY, 1);
+        this.port.pos = o.portrait.pos && typeof o.portrait.pos === 'object' ? o.portrait.pos : {};
+        this.port.each = o.portrait.each && typeof o.portrait.each === 'object' ? o.portrait.each : {};
+      }
+      if (o.landscape) {
+        this.land.scale = clamp(Number(o.landscape.scale) || 1, MIN_SCALE, MAX_SCALE);
+        this.land.opacity = clamp(o.landscape.opacity === undefined ? 0.85 : Number(o.landscape.opacity), MIN_OPACITY, 1);
+        this.land.pos = o.landscape.pos && typeof o.landscape.pos === 'object' ? o.landscape.pos : {};
+        this.land.each = o.landscape.each && typeof o.landscape.each === 'object' ? o.landscape.each : {};
+      }
+    } else {
+      const scale = clamp(Number(o.scale) || 1, MIN_SCALE, MAX_SCALE);
+      const opacity = clamp(o.opacity === undefined ? 0.85 : Number(o.opacity), MIN_OPACITY, 1);
+      this.port = { scale, opacity, pos: {}, each: {} };
+      this.land = { scale, opacity, pos: {}, each: {} };
+      if (o.pos && typeof o.pos === 'object') {
+        for (const [k, v] of Object.entries(o.pos)) {
+          if (k.startsWith('p.')) this.port.pos[k.slice(2)] = v;
+          else if (k.startsWith('l.')) this.land.pos[k.slice(2)] = v;
+          else { this.port.pos[k] = v; this.land.pos[k] = v; }
+        }
+      }
+      if (o.each && typeof o.each === 'object') {
+        this.port.each = JSON.parse(JSON.stringify(o.each));
+        this.land.each = JSON.parse(JSON.stringify(o.each));
+      }
+    }
   }
   Layout.prototype = {
-    text() { return JSON.stringify({ v: 2, scale: this.scale, opacity: this.opacity, pos: this.pos, each: this.each }); },
+    side(land) { return land ? this.land : this.port; },
+    text() {
+      return JSON.stringify({
+        v: 4,
+        portrait: this.port,
+        landscape: this.land
+      });
+    },
+    scale(land) { return this.side(land).scale; },
+    setScale(land, v) { this.side(land).scale = clamp(v, MIN_SCALE, MAX_SCALE); },
+    opacity(land) { return this.side(land).opacity; },
+    setOpacityAll(land, v) { this.side(land).opacity = clamp(v, MIN_OPACITY, 1); },
     get(land, key) {
-      const a = this.pos[(land ? 'l.' : 'p.') + key];
+      const a = this.side(land).pos[key];
       return Array.isArray(a) && a.length === 2 ? [clamp(Number(a[0]), 0, 1), clamp(Number(a[1]), 0, 1)] : null;
     },
-    set(land, key, fx, fy) { this.pos[(land ? 'l.' : 'p.') + key] = [clamp(fx, 0, 1), clamp(fy, 0, 1)]; },
-    size(key) { const o = this.each[key]; return o && o.s !== undefined ? clamp(Number(o.s), MIN_SIZE, MAX_SIZE) : 1; },
-    opacityOf(key) { const o = this.each[key]; return o && o.o !== undefined ? clamp(Number(o.o), MIN_OPACITY, 1) : this.opacity; },
-    put(key, field, v) { (this.each[key] || (this.each[key] = {}))[field] = Math.round(v * 100) / 100; },
-    setSize(key, v) { this.put(key, 's', clamp(v, MIN_SIZE, MAX_SIZE)); },
-    setOpacity(key, v) { this.put(key, 'o', clamp(v, MIN_OPACITY, 1)); },
-    resetButton(land, key) { delete this.each[key]; delete this.pos[(land ? 'l.' : 'p.') + key]; },
+    set(land, key, fx, fy) {
+      this.side(land).pos[key] = [clamp(fx, 0, 1), clamp(fy, 0, 1)];
+    },
+    size(land, key) {
+      const o = this.side(land).each[key];
+      return o && o.s !== undefined ? clamp(Number(o.s), MIN_SIZE, MAX_SIZE) : 1;
+    },
+    opacityOf(land, key) {
+      const s = this.side(land);
+      const o = s.each[key];
+      return o && o.o !== undefined ? clamp(Number(o.o), MIN_OPACITY, 1) : s.opacity;
+    },
+    put(land, key, field, v) {
+      const s = this.side(land);
+      (s.each[key] || (s.each[key] = {}))[field] = Math.round(v * 100) / 100;
+    },
+    setSize(land, key, v) { this.put(land, key, 's', clamp(v, MIN_SIZE, MAX_SIZE)); },
+    setOpacity(land, key, v) { this.put(land, key, 'o', clamp(v, MIN_OPACITY, 1)); },
+    resetButton(land, key) {
+      const s = this.side(land);
+      delete s.each[key];
+      delete s.pos[key];
+    },
     reset(land) {
-      this.scale = 1; this.opacity = 0.85; this.each = {};
-      const prefix = land ? 'l.' : 'p.';
-      for (const k of Object.keys(this.pos)) if (k.startsWith(prefix)) delete this.pos[k];
+      const s = this.side(land);
+      s.scale = 1;
+      s.opacity = 0.85;
+      s.pos = {};
+      s.each = {};
     },
   };
 
@@ -126,7 +188,7 @@ window.OnixPad = (function () {
     place(w, h) {
       if (!w || !h) return;
       this.w = w; this.h = h;
-      const land = this.landscape = w > h, s = Math.min(w, h), k = this.layout.scale;
+      const land = this.landscape = w > h, s = Math.min(w, h), k = this.layout.scale(land);
       const reachX = this.faceReach(true), reachY = this.faceReach(false);
       if (land) {
         this.dpadR = Math.min(s * 0.17, 92) * k;
@@ -147,7 +209,7 @@ window.OnixPad = (function () {
         this.placeSystem(w / 2, h - 34, 30 * k, w / 2, 28, k);
       }
       for (let g = 0; g < this.groups; g++) {
-        const m = this.layout.size(this.key(g));
+        const m = this.layout.size(land, this.key(g));
         if (m === 1) continue;
         if (g === G_DPAD) this.dpadR *= m;
         for (const b of this.all) if (b.group === g) { b.r *= m; b.w *= m; b.h *= m; }
@@ -239,16 +301,17 @@ window.OnixPad = (function () {
       this.invalidate();
     }
     tool(id) {
+      const land = this.landscape;
       const step = id === T_BIGGER || id === T_MORE ? 0.1 : -0.1, L = this.layout;
       if (this.selected >= 0 && id !== T_DONE) {
         const k = this.key(this.selected);
-        if (id === T_SMALLER || id === T_BIGGER) L.setSize(k, round1(L.size(k) + step));
-        else if (id === T_LESS || id === T_MORE) L.setOpacity(k, round1(L.opacityOf(k) + step));
-        else if (id === T_RESET) L.resetButton(this.landscape, k);
+        if (id === T_SMALLER || id === T_BIGGER) L.setSize(land, k, round1(L.size(land, k) + step));
+        else if (id === T_LESS || id === T_MORE) L.setOpacity(land, k, round1(L.opacityOf(land, k) + step));
+        else if (id === T_RESET) L.resetButton(land, k);
         else return;
-      } else if (id === T_SMALLER || id === T_BIGGER) L.scale = clamp(round1(L.scale + step), MIN_SCALE, MAX_SCALE);
-      else if (id === T_LESS || id === T_MORE) L.opacity = clamp(round1(L.opacity + step), MIN_OPACITY, 1);
-      else if (id === T_RESET) L.reset(this.landscape);
+      } else if (id === T_SMALLER || id === T_BIGGER) L.setScale(land, clamp(round1(L.scale(land) + step), MIN_SCALE, MAX_SCALE));
+      else if (id === T_LESS || id === T_MORE) L.setOpacityAll(land, clamp(round1(L.opacity(land) + step), MIN_OPACITY, 1));
+      else if (id === T_RESET) L.reset(land);
       else if (id === T_DONE) { this.save(); this.setEditing(false); this.l.done(); return; }
       else return;
       this.save();
@@ -330,7 +393,7 @@ window.OnixPad = (function () {
       for (const b of this.all) this.drawButton(b, this.alpha(b.group));
       if (this.editing) this.drawEditor();
     }
-    alpha(group) { const o = this.layout.opacityOf(this.key(group)); return this.editing ? Math.max(o, 0.6) : o; }
+    alpha(group) { const o = this.layout.opacityOf(this.landscape, this.key(group)); return this.editing ? Math.max(o, 0.6) : o; }
     name(group) {
       if (group === G_DPAD) return this.es ? 'Cruceta' : 'Direcional';
       if (group === G_MENU) return 'Menu';
@@ -355,10 +418,10 @@ window.OnixPad = (function () {
         g.stroke();
       }
       g.setLineDash([]);
-      const one = this.selected >= 0, L = this.layout, k = one ? this.key(this.selected) : '';
+      const one = this.selected >= 0, L = this.layout, k = one ? this.key(this.selected) : '', land = this.landscape;
       for (const b of this.tools) {
-        if (b.bit === T_SIZE) b.label = (this.es ? 'Tamaño ' : 'Tamanho ') + Math.round((one ? L.size(k) : L.scale) * 100) + '%';
-        else if (b.bit === T_ALPHA) b.label = (this.es ? 'Opacidad ' : 'Opacidade ') + Math.round((one ? L.opacityOf(k) : L.opacity) * 100) + '%';
+        if (b.bit === T_SIZE) b.label = (this.es ? 'Tamaño ' : 'Tamanho ') + Math.round((one ? L.size(land, k) : L.scale(land)) * 100) + '%';
+        else if (b.bit === T_ALPHA) b.label = (this.es ? 'Opacidad ' : 'Opacidade ') + Math.round((one ? L.opacityOf(land, k) : L.opacity(land)) * 100) + '%';
         else if (b.bit === T_RESET) b.label = one ? 'Restaurar ' + this.name(this.selected) : 'Restaurar';
         else if (b.bit === T_DONE) b.label = this.es ? 'Listo' : 'Concluir';
         const x = b.cx - b.w / 2, y = b.cy - b.h / 2, info = b.bit === T_SIZE || b.bit === T_ALPHA;

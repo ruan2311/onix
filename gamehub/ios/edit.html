@@ -32,7 +32,8 @@ function show() {
 }
 function arrange() {
   const w = innerWidth, h = innerHeight, c = document.getElementById('pad');
-  if (h > w) {
+  const isPort = h > w;
+  if (isPort) {
     const gh = Math.min(w * 3 / 4, h / 2), top = Math.max(0, (h / 2 - gh) / 3);
     screen.style.top = top + 'px'; screen.style.height = gh + 'px';
     c.style.top = (gh + top) + 'px'; c.style.height = (h - gh - top) + 'px';
@@ -43,10 +44,17 @@ function arrange() {
     pad.resize(w, h);
   }
   screen.style.color = screen.style.borderColor = COLORS[current];
-  screen.textContent = NAMES[current] + '\n\n' + (es ? 'Toca aquí para cambiar de consola' : 'Toque aqui para trocar de console');
+  const modeText = isPort
+    ? (es ? 'Modo vertical (gira para editar horizontal)' : 'Modo vertical (gire para editar na horizontal)')
+    : (es ? 'Modo horizontal (gira para editar vertical)' : 'Modo horizontal (gire para editar na vertical)');
+  screen.textContent = NAMES[current] + ' · ' + modeText + '\n\n' + (es ? 'Toca aquí para cambiar de consola' : 'Toque aqui para trocar de console');
 }
 screen.addEventListener('click', () => { current = (current + 1) % CONSOLES.length; show(); });
 addEventListener('resize', arrange);
+window.addEventListener('orientationchange', () => {
+  setTimeout(arrange, 60);
+  setTimeout(arrange, 220);
+});
 show();
 </script>
 </body>
