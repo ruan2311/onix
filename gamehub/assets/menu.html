@@ -84,6 +84,7 @@ function draw(focusIndex) {
   else if (view === 'core') body.append(h('p', { class: 'hint', text: t('Carregando…') }));
   else if (view === 'cheats') body.append(cheatsList());
   else if (view === 'pads') body.append(padsList());
+  else if (view === 'phonePad') body.append(phonePadView());
   else if (view === 'buttons') body.append(buttonsList());
   const list = $$('.f', p);
   focus(list[Math.min(list.length - 1, Math.max(0, focusIndex || 0))] || list[0]);
@@ -269,8 +270,40 @@ function padsList() {
   const pads = INFO.gamepads || [];
   if (!pads.length) list.append(h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: t('Nenhum controle conectado') })));
   pads.forEach((p, i) => list.append(h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: p.name }), h('span', { class: 'val', text: p.player ? t('Controle {n}', { n: p.player }) : t('Automático') }))));
-  list.append(item('bt', t('Conectar controle'), () => call('openBluetooth')));
+  if (INFO.gamepadUrl) {
+    const clients = INFO.gamepadClients || 0;
+    const sub = clients > 0 ? (clients === 1 ? t('1 celular conectado') : t('{n} celulares conectados', { n: clients })) : t('Jogue pelo navegador do celular sem instalar nada');
+    list.append(item('phone', t('Usar celular como controle'), () => go('phonePad'), clients > 0 ? 'P' + clients : t('Abrir QR'), { sub }));
+  }
+  list.append(item('bt', t('Conectar controle Bluetooth'), () => call('openBluetooth')));
   return list;
+}
+
+function phonePadView() {
+  const box = h('div', { style: { display: 'flex', flexDirection: 'column', gap: '1.2rem', alignItems: 'center', textAlign: 'center', padding: '1rem 0' } });
+  const url = INFO.gamepadUrl || '';
+  if (url) {
+    const qrWrapper = h('div', { style: { background: '#fff', padding: '1.2rem', borderRadius: '1.2rem', display: 'inline-block', boxShadow: '0 8px 24px rgba(0,0,0,.4)' } });
+    const qr = qrSvg(url);
+    if (qr) {
+      qr.setAttribute('width', '180');
+      qr.setAttribute('height', '180');
+      qrWrapper.append(qr);
+    }
+    box.append(qrWrapper);
+    box.append(h('div', { style: { fontSize: '1.5rem', fontWeight: '800', color: '#3de1ff', letterSpacing: '.04em' }, text: url }));
+    const clients = INFO.gamepadClients || 0;
+    const statusText = clients > 0
+      ? (clients === 1 ? '🎮 1 celular conectado jogando!' : `🎮 ${clients} celulares conectados!`)
+      : t('Aponte a câmera do celular para o QR code ou digite o link no navegador.');
+    box.append(h('p', { class: 'hint', style: { maxWidth: '34rem', fontSize: '1.2rem', color: clients > 0 ? '#4ade80' : 'var(--dim)' }, text: statusText }));
+  } else {
+    box.append(h('p', { class: 'hint', text: t('Não foi possível iniciar o controle web.') }));
+  }
+  const backBtn = h('button', { class: 'f btn primary', style: { minWidth: '16rem', marginTop: '.8rem' }, text: t('Voltar aos controles') });
+  backBtn._act = () => onBack();
+  box.append(backBtn);
+  return box;
 }
 
 /* ---------------- Eventos ---------------- */
@@ -292,6 +325,13 @@ handlers.gamepads = list => {
   INFO.gamepads = list;
   if (reason === 'disconnected' && list.length) reason = '';
   if (!layers.length) draw(focusedIndex());
+};
+handlers.gamepadClients = r => {
+  try {
+    const o = typeof r === 'string' ? JSON.parse(r) : r;
+    INFO.gamepadClients = o.count;
+    if (view === 'pads' || view === 'phonePad') draw(focusedIndex());
+  } catch (_) {}
 };
 handlers.back = () => back();
 // Mouse: clicar fora do painel (em cima do jogo) volta, como Voltar.

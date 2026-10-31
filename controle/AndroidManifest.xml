@@ -6,13 +6,14 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.onix.controle"
-    android:versionCode="4"
-    android:versionName="1.0.3">
+    android:versionCode="5"
+    android:versionName="1.0.4">
 
     <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="35" />
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.VIBRATE" />
     <!-- Atualizações pelo próprio app (o Android sempre pede confirmação na tela). -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
@@ -21,14 +22,14 @@
         android:icon="@mipmap/icon"
         android:allowBackup="false"
         android:hardwareAccelerated="true"
-        android:usesCleartextTraffic="false"
-        android:theme="@android:style/Theme.Material.NoActionBar">
+        android:usesCleartextTraffic="true"
+        android:theme="@android:style/Theme.Material.NoActionBar.Fullscreen">
 
         <activity
             android:name="com.onix.controle.MainActivity"
             android:exported="true"
             android:launchMode="singleTask"
-            android:screenOrientation="portrait"
+            android:screenOrientation="sensor"
             android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

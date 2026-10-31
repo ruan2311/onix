@@ -1,0 +1,417 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#04020a">
+<title>Onix GamePad</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
+  background: #04020a;
+  color: #f1edff;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: none;
+}
+#pad {
+  position: fixed; inset: 0;
+  width: 100%; height: 100%;
+  touch-action: none;
+  z-index: 1;
+}
+.bar {
+  position: fixed; top: 0; left: 0; right: 0;
+  height: 44px;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: env(safe-area-inset-top, 6px) 16px 6px 16px;
+  background: linear-gradient(180deg, rgba(4,2,10,.85) 0%, rgba(4,2,10,.4) 75%, transparent 100%);
+  pointer-events: none;
+  z-index: 10;
+  transition: opacity .2s ease;
+}
+.bar.editing { opacity: 0; pointer-events: none; }
+.bar > * { pointer-events: auto; }
+.status {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; letter-spacing: .02em;
+}
+.dot {
+  width: 9px; height: 9px; border-radius: 50%;
+  background: #ef4444;
+  box-shadow: 0 0 8px rgba(239,68,68,.7);
+  transition: background .2s, box-shadow .2s;
+}
+.dot.ok {
+  background: #10b981;
+  box-shadow: 0 0 8px rgba(16,185,129,.7);
+}
+.dot.connecting {
+  background: #f59e0b;
+  box-shadow: 0 0 8px rgba(245,158,11,.7);
+  animation: pulse 1s infinite alternate;
+}
+@keyframes pulse { from { opacity: .4; } to { opacity: 1; } }
+.title {
+  max-width: 180px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  color: rgba(241,237,255,.65); font-weight: 400; font-size: 12px;
+}
+.actions {
+  display: flex; align-items: center; gap: 6px;
+}
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 4px;
+  height: 30px; padding: 0 10px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.14);
+  border-radius: 8px;
+  color: #f1edff; font-size: 12px; font-weight: 600;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  transition: background .15s, transform .1s;
+}
+.btn:active { background: rgba(255,255,255,.2); transform: scale(.96); }
+.btn svg { width: 14px; height: 14px; }
+.ping {
+  font-size: 11px; color: rgba(241,237,255,.5); font-weight: 500;
+  padding: 0 4px;
+}
+#notice {
+  position: fixed; top: 50px; left: 50%; transform: translateX(-50%);
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: rgba(14,8,32,.92);
+  border: 1px solid rgba(255,255,255,.2);
+  font-size: 12px; text-align: center;
+  color: #f1edff;
+  z-index: 20;
+  display: none;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(0,0,0,.5);
+  white-space: nowrap;
+}
+</style>
+</head>
+<body>
+<canvas id="pad"></canvas>
+
+<div class="bar" id="topBar">
+  <div class="status">
+    <div class="dot connecting" id="statusDot"></div>
+    <span id="playerLabel">P1</span>
+    <span class="title" id="gameTitle">Conectando…</span>
+    <span class="ping" id="pingLabel"></span>
+  </div>
+  <div class="actions">
+    <button class="btn" id="btnTurbo" title="Turbo (Avanço rápido)">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg>
+      <span>Turbo</span>
+    </button>
+    <button class="btn" id="btnMenu" title="Menu na TV">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      <span>Menu</span>
+    </button>
+    <button class="btn" id="btnVibe" title="Vibração">
+      <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><circle cx="12" cy="18" r=".5" fill="currentColor"/><path d="M2 9v6M22 9v6M4 7v10M20 7v10"/></svg>
+    </button>
+    <button class="btn" id="btnEdit" title="Personalizar botões">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg>
+      <span>Editar</span>
+    </button>
+    <button class="btn" id="btnFull" title="Tela cheia">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+    </button>
+  </div>
+</div>
+
+<div id="notice"></div>
+
+<!-- Vídeo mudo em loop para impedir que o celular durma quando a API WakeLock não estiver disponível -->
+<video id="keepAliveVideo" playsinline muted loop style="position:fixed;width:1px;height:1px;opacity:0.001;pointer-events:none"></video>
+
+<script src="touch.js"></script>
+<script>
+'use strict';
+(function () {
+  const canvas = document.getElementById('pad');
+  const topBar = document.getElementById('topBar');
+  const statusDot = document.getElementById('statusDot');
+  const playerLabel = document.getElementById('playerLabel');
+  const gameTitle = document.getElementById('gameTitle');
+  const pingLabel = document.getElementById('pingLabel');
+  const btnVibe = document.getElementById('btnVibe');
+  const btnTurbo = document.getElementById('btnTurbo');
+  const btnMenu = document.getElementById('btnMenu');
+  const btnEdit = document.getElementById('btnEdit');
+  const btnFull = document.getElementById('btnFull');
+  const noticeEl = document.getElementById('notice');
+  const videoEl = document.getElementById('keepAliveVideo');
+
+  let consoleId = 'nes';
+  let gameName = '';
+  let playerPort = 0;
+  let pad = null;
+  let ws = null;
+  let connecting = false;
+  let lastBits = 0;
+  let vibrateOn = localStorage.getItem('onix_pad_vibe') !== 'false';
+  let pingTimer = null;
+  let reconnectTimer = null;
+  let wakeLock = null;
+
+  // Mini canvas de 1x1 para gerar stream de vídeo silencioso contra suspensão de tela
+  try {
+    const c = document.createElement('canvas');
+    c.width = 2; c.height = 2;
+    if (c.captureStream) {
+      videoEl.srcObject = c.captureStream(1);
+    }
+  } catch (_) {}
+
+  function updateVibeBtn() {
+    btnVibe.style.opacity = vibrateOn ? '1' : '0.4';
+    btnVibe.style.borderColor = vibrateOn ? 'rgba(61,225,255,.5)' : 'rgba(255,255,255,.14)';
+  }
+  updateVibeBtn();
+
+  btnVibe.addEventListener('click', () => {
+    vibrateOn = !vibrateOn;
+    localStorage.setItem('onix_pad_vibe', vibrateOn ? 'true' : 'false');
+    updateVibeBtn();
+    if (vibrateOn && navigator.vibrate) navigator.vibrate(20);
+  });
+
+  btnTurbo.addEventListener('click', () => {
+    if (pad) {
+      pad.isFast = !pad.isFast;
+      sendJson({ type: 'fast', on: pad.isFast });
+      btnTurbo.style.borderColor = pad.isFast ? '#3de1ff' : '';
+      btnTurbo.style.color = pad.isFast ? '#3de1ff' : '';
+      if (vibrateOn && navigator.vibrate) navigator.vibrate(15);
+    }
+  });
+
+  btnMenu.addEventListener('click', () => {
+    sendJson({ type: 'menu' });
+    if (vibrateOn && navigator.vibrate) navigator.vibrate(15);
+  });
+
+  btnFull.addEventListener('click', () => {
+    if (!document.fullscreenElement) {
+      if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen().catch(() => {});
+      else if (document.documentElement.webkitRequestFullscreen) document.documentElement.webkitRequestFullscreen();
+    } else {
+      if (document.exitFullscreen) document.exitFullscreen().catch(() => {});
+    }
+  });
+
+  btnEdit.addEventListener('click', () => {
+    if (pad) {
+      topBar.classList.add('editing');
+      pad.setEditing(true);
+    }
+  });
+
+  // WakeLock para manter a tela sempre ligada
+  async function acquireWakeLock() {
+    try {
+      if ('wakeLock' in navigator && (!wakeLock || wakeLock.released)) {
+        wakeLock = await navigator.wakeLock.request('screen');
+        wakeLock.addEventListener('release', () => { wakeLock = null; });
+      }
+    } catch (_) {}
+    try {
+      if (videoEl.paused) videoEl.play().catch(() => {});
+    } catch (_) {}
+  }
+
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      acquireWakeLock();
+      if (!ws || ws.readyState > 1) connectWs();
+    }
+  });
+  window.addEventListener('focus', () => {
+    acquireWakeLock();
+    if (!ws || ws.readyState > 1) connectWs();
+  });
+  window.addEventListener('online', () => {
+    if (!ws || ws.readyState > 1) connectWs();
+  });
+  window.addEventListener('touchstart', () => {
+    acquireWakeLock();
+    if (!ws || ws.readyState > 1) connectWs();
+  }, { passive: true, once: false });
+
+  function showNotice(text, timeMs) {
+    noticeEl.textContent = text;
+    noticeEl.style.display = 'block';
+    if (timeMs) setTimeout(() => { noticeEl.style.display = 'none'; }, timeMs);
+  }
+
+  function initPad(cid) {
+    if (pad) {
+      try { pad.destroy(); } catch (_) {}
+      pad = null;
+    }
+    consoleId = cid || consoleId;
+    const key = 'onix_pad_layout_' + consoleId;
+    const saved = localStorage.getItem(key);
+    const es = (navigator.language || '').toLowerCase().startsWith('es');
+
+    pad = new OnixPad.Pad(canvas, consoleId, {
+      buttons: bits => {
+        sendButtons(bits);
+        if (vibrateOn && navigator.vibrate) {
+          // vibra apenas ao apertar novos botões
+          const pressed = bits & ~lastBits;
+          if (pressed !== 0) navigator.vibrate(12);
+        }
+        lastBits = bits;
+      },
+      fast: on => sendJson({ type: 'fast', on: !!on }),
+      menu: () => sendJson({ type: 'menu' }),
+      done: () => {
+        topBar.classList.remove('editing');
+      },
+      save: text => {
+        try { localStorage.setItem(key, text); } catch (_) {}
+      }
+    }, saved, es);
+
+    resize();
+  }
+
+  function resize() {
+    if (!pad) return;
+    const w = window.innerWidth, h = window.innerHeight;
+    if (w > 0 && h > 0) pad.resize(w, h);
+  }
+  window.addEventListener('resize', resize);
+  window.addEventListener('orientationchange', () => {
+    setTimeout(resize, 40);
+    setTimeout(resize, 180);
+  });
+  if (window.ResizeObserver) {
+    new ResizeObserver(() => resize()).observe(document.body);
+  }
+
+  /* ---------------- WebSocket ---------------- */
+  function connectWs() {
+    if (connecting || (ws && ws.readyState === WebSocket.OPEN)) return;
+    connecting = true;
+    if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+
+    statusDot.className = 'dot connecting';
+    gameTitle.textContent = 'Conectando…';
+
+    const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const url = proto + '//' + location.host + '/ws';
+
+    try {
+      if (ws) {
+        try { ws.close(); } catch (_) {}
+      }
+      ws = new WebSocket(url);
+      ws.binaryType = 'arraybuffer';
+    } catch (e) {
+      onWsClosed();
+      return;
+    }
+
+    ws.onopen = () => {
+      connecting = false;
+      statusDot.className = 'dot ok';
+      gameTitle.textContent = gameName || 'Conectado à TV';
+      startPing();
+      acquireWakeLock();
+    };
+
+    ws.onmessage = ev => {
+      if (typeof ev.data === 'string') {
+        try {
+          const msg = JSON.parse(ev.data);
+          if (msg.type === 'init') {
+            playerPort = msg.player !== undefined ? msg.player : 0;
+            playerLabel.textContent = 'P' + (playerPort + 1);
+            playerLabel.style.color = ['#38bdf8', '#ff5a6e', '#4ade80', '#fbbf24'][playerPort] || '#38bdf8';
+            if (msg.title) {
+              gameName = msg.title;
+              gameTitle.textContent = gameName;
+            }
+            if (msg.console && (!pad || msg.console !== consoleId)) {
+              initPad(msg.console);
+            }
+          } else if (msg.type === 'pong') {
+            const diff = Date.now() - (msg.t || 0);
+            if (diff >= 0 && diff < 500) {
+              pingLabel.textContent = diff + 'ms';
+            }
+          }
+        } catch (_) {}
+      }
+    };
+
+    ws.onclose = () => onWsClosed();
+    ws.onerror = () => onWsClosed();
+  }
+
+  function onWsClosed() {
+    connecting = false;
+    statusDot.className = 'dot';
+    pingLabel.textContent = '';
+    gameTitle.textContent = 'Reconectando…';
+    stopPing();
+    if (!reconnectTimer) {
+      reconnectTimer = setTimeout(() => {
+        reconnectTimer = null;
+        connectWs();
+      }, 700);
+    }
+  }
+
+  function startPing() {
+    stopPing();
+    pingTimer = setInterval(() => {
+      if (ws && ws.readyState === WebSocket.OPEN) {
+        sendJson({ type: 'ping', t: Date.now() });
+      }
+    }, 2000);
+  }
+
+  function stopPing() {
+    if (pingTimer) { clearInterval(pingTimer); pingTimer = null; }
+  }
+
+  function sendButtons(bits) {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    // Envia frame binário de 3 bytes: [porta, bits_low, bits_high]
+    const buf = new Uint8Array(3);
+    buf[0] = playerPort & 0xFF;
+    buf[1] = bits & 0xFF;
+    buf[2] = (bits >> 8) & 0xFF;
+    try {
+      ws.send(buf.buffer);
+    } catch (_) {}
+  }
+
+  function sendJson(obj) {
+    if (!ws || ws.readyState !== WebSocket.OPEN) return;
+    try {
+      ws.send(JSON.stringify(obj));
+    } catch (_) {}
+  }
+
+  // Inicializa com console padrão (o servidor atualiza pelo 'init')
+  initPad('nes');
+  connectWs();
+})();
+</script>
+</body>
+</html>

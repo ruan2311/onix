@@ -15,7 +15,7 @@ echo "[1/7] Ícone"
 [ -f res/mipmap-xxxhdpi/icon.png ] || java -Djava.awt.headless=true ../android/tools/GenArt.java res controle
 
 echo "[2/7] Assets"
-cp assets/controle.html "$OUT/assets/"
+cp assets/* "$OUT/assets/"
 VERSION=$(sed -n 's/.*android:versionName="\([^"]*\)".*/\1/p' AndroidManifest.xml)
 sed -i "s|^const APP_VERSION = '[^']*';|const APP_VERSION = '$VERSION';|" "$OUT/assets/controle.html"
 grep -q "^const APP_VERSION = '$VERSION';" "$OUT/assets/controle.html" || { echo "APP_VERSION não encontrado no controle.html" >&2; exit 1; }

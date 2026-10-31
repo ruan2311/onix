@@ -71,6 +71,8 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     boolean mobile;
     private boolean ffHold, rwHold, selectDown, startDown;
     private final SparseIntArray remap = new SparseIntArray();
+    private final int[] webBits = new int[4];
+    private RemoteGamepadServer gamepadServer;
 
     private static boolean webDataSeparated;
 
@@ -178,6 +180,61 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         setContentView(root);
         gamepads = new Gamepads(this, this);
         started = System.currentTimeMillis();
+
+        gamepadServer = new RemoteGamepadServer(this, new RemoteGamepadServer.Listener() {
+            @Override
+            public void onButtons(int port, int bits) {
+                if (port >= 0 && port < 4) {
+                    webBits[port] = bits;
+                    push(port);
+                }
+            }
+
+            @Override
+            public void onMenu() {
+                ui.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        openMenu("");
+                    }
+                });
+            }
+
+            @Override
+            public void onFastForward(final boolean on) {
+                ui.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        touchFast = on;
+                        Native.setHotkeys(ffHold || touchFast, rwHold);
+                    }
+                });
+            }
+
+            @Override
+            public void onClientsChanged(final int count) {
+                ui.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (menu != null) {
+                                Web.emit(menu, "gamepadClients", new JSONObject().put("count", count).toString());
+                            }
+                        } catch (Exception ignored) {
+                        }
+                    }
+                });
+            }
+        }, console.id, game.optString("name"));
+        gamepadServer.start();
+    }
+
+    String gamepadUrl() {
+        return gamepadServer != null ? gamepadServer.url() : "";
+    }
+
+    int gamepadClients() {
+        return gamepadServer != null ? gamepadServer.clientCount() : 0;
     }
 
     private Gamepads gamepads;
@@ -555,6 +612,10 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        if (gamepadServer != null) {
+            gamepadServer.stop();
+            gamepadServer = null;
+        }
         if (isFinishing()) {
             if (menu != null) menu.destroy();
             // Processo só do jogo: termina junto, e o próximo jogo começa com o núcleo limpo.
@@ -795,12 +856,12 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     }
 
     private void push(int port) {
-        Native.setButtons(port, keyBits[port] | hatBits[port] | stickBits[port] | (port == 0 ? touchBits : 0));
+        Native.setButtons(port, keyBits[port] | hatBits[port] | stickBits[port] | webBits[port] | (port == 0 ? touchBits : 0));
     }
 
     private void releaseAll() {
         for (int p = 0; p < 4; p++) {
-            keyBits[p] = hatBits[p] = stickBits[p] = 0;
+            keyBits[p] = hatBits[p] = stickBits[p] = webBits[p] = 0;
             Native.setButtons(p, 0);
             Native.setAnalog(p, 0, 0, 0);
             Native.setAnalog(p, 1, 0, 0);

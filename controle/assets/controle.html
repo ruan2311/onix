@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline' 'self'; style-src 'unsafe-inline'; connect-src * ws: wss: http: https:; img-src data:; media-src data: blob:;">
 <title>Onix Controle</title>
 <!--
   Tela do Onix Controle (app de celular). Roda offline nos assets; a rede fica no Java
@@ -12,7 +12,7 @@
 <style>
 :root{--bg:#0b0c0f;--fg:#f2f3f6;--muted:#9aa0ad;--line:rgba(255,255,255,.1);--card:rgba(255,255,255,.07);--ok:#4ade80;--warn:#ffb070;--bad:#ff6b6b}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{height:100%;margin:0}
+html,body{height:100%;margin:0;overflow-x:hidden}
 body{background:linear-gradient(170deg,#1a1c22,#08090b 70%) var(--bg);color:var(--fg);font:15px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
   display:flex;flex-direction:column;user-select:none;-webkit-user-select:none;overscroll-behavior:none}
 button,input{font:inherit;color:inherit}
@@ -120,15 +120,76 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
 .upd p{margin:0;color:var(--muted);font-size:13px;line-height:1.5}
 .upd .cta{align-self:flex-start;padding:11px 20px}
 .upd .cta:disabled{opacity:.5}
+.upd-card{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:16px;background:linear-gradient(135deg,rgba(46,204,113,.15),rgba(20,22,28,.8));border:1px solid rgba(46,204,113,.35);margin:10px 0 4px}
+.upd-card b{display:block;font-size:13.5px;color:#fff}
+.upd-card small{display:block;font-size:12px;color:rgba(255,255,255,.7)}
+.upd-card .cta{padding:8px 14px;font-size:13px;flex:none;white-space:nowrap}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,10px);opacity:0;transition:.25s;background:#1d1f25;border:1px solid rgba(255,255,255,.2);
   padding:10px 16px;border-radius:999px;font-size:14px;pointer-events:none;max-width:90vw;text-align:center;z-index:9}
 .toast.show{opacity:1;transform:translate(-50%,0)}
+@media (max-width: 680px), (orientation: portrait){
+  .gp-lbl{display:none!important}
+  #gpBar{padding:env(safe-area-inset-top,4px) 8px 4px 8px!important}
+  #gpBar button.ghost{padding:5px 7px!important;gap:0!important}
+  #gpTitle{display:none!important}
+  #gpBack{padding:4px 7px!important}
+}
+.gp-notice{
+  position:fixed;
+  left:50%;
+  top:22%;
+  transform:translateX(-50%);
+  max-width:min(90vw,360px);
+  width:calc(100% - 40px);
+  padding:18px 20px;
+  border-radius:24px;
+  background:linear-gradient(150deg,rgba(26,14,46,.96),rgba(12,8,24,.96));
+  border:1px solid rgba(167,139,250,.4);
+  box-shadow:0 14px 40px rgba(0,0,0,.7);
+  z-index:35;
+  display:none;
+  flex-direction:column;
+  align-items:center;
+  text-align:center;
+  gap:12px;
+  pointer-events:auto;
+}
+.gp-notice-body b{display:block;font-size:15px;color:#fff;margin-bottom:4px}
+.gp-notice-body span{display:block;font-size:13px;color:rgba(241,237,255,.8);line-height:1.45}
+.gp-notice .cta{
+  font-size:13.5px;
+  padding:10px 22px;
+  border-radius:999px;
+  background:#38bdf8;
+  color:#04020a;
+  font-weight:700;
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  box-shadow:0 4px 16px rgba(56,189,248,.35);
+  cursor:pointer;
+}
+.gp-notice .cta:active{transform:scale(.95)}
+@media (orientation: landscape){
+  .gp-notice{
+    top:48px!important;
+    max-width:min(90vw,580px);
+    width:max-content;
+    flex-direction:row!important;
+    padding:8px 16px!important;
+    gap:14px!important;
+  }
+  .gp-notice-body{text-align:left!important}
+  .gp-notice-body b{display:none}
+  .gp-notice .cta{padding:6px 14px!important;font-size:12px!important;white-space:nowrap}
+}
 </style>
 </head>
 <body>
 <header>
   <svg viewBox="0 0 48 48" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><circle cx="24" cy="24" r="10"/><ellipse cx="24" cy="24" rx="21" ry="6" transform="rotate(-20 24 24)"/></svg>
   <button class="t" id="tvBtn"><b>ONIX</b><small><span class="dot" id="dot"></span><span id="sub">Controle</span></small></button>
+  <button class="icon" id="gpBtn" aria-label="Controle de jogos" title="Controle de jogos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5.5"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="15.5" cy="11.5" r=".6" fill="currentColor"/><circle cx="18" cy="14" r=".6" fill="currentColor"/></svg></button>
   <button class="icon" id="setBtn" aria-label="Configurações"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="badge" id="updBadge" hidden></span></button>
 </header>
 
@@ -168,6 +229,13 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
   <!-- Controle -->
   <section id="vRemote" hidden>
     <div class="now" id="now" hidden></div>
+    <div class="upd-card" id="updCard" hidden>
+      <div style="flex:1;min-width:0">
+        <b id="updCardTitle">Onix Controle</b>
+        <small id="updCardSub">Versão nova pronta para instalar.</small>
+      </div>
+      <button class="cta" id="updCardBtn">Instalar</button>
+    </div>
     <div class="top">
       <button class="round power" data-k="26" aria-label="Ligar ou desligar a TV"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v8"/><path d="M6.3 6.8a8 8 0 1 0 11.4 0"/></svg></button>
       <div class="seg" role="group" aria-label="Modo">
@@ -223,6 +291,7 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
     </div>
     <div class="lbl">Atualização</div>
     <div class="set">
+      <button class="opt" id="optAutoUpd" role="switch" aria-checked="true"><div>Atualizar automaticamente<small>Baixa versões novas sozinho em segundo plano.</small></div><span class="sw"></span></button>
       <div class="upd">
         <div><b>Onix Controle <span id="ver"></span></b></div>
         <p id="updText">Procura versões novas na página do Onix no GitHub.</p>
@@ -231,7 +300,69 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
     </div>
     <p class="hint">Funciona só com Google TV (com ou sem o Onix), no mesmo Wi-Fi; não funciona em TVs Samsung e LG. A conexão é direta com a TV, sem passar pela internet, e só fica aberta com o app na tela.</p>
   </section>
+
+  <!-- Controle de Jogos (Gamepad) -->
+  <section id="vGamepad" style="position:fixed;inset:0;background:#04020a;z-index:20;display:flex;flex-direction:column;" hidden>
+    <div id="gpBar" style="position:fixed;top:0;left:0;right:0;height:44px;display:flex;align-items:center;justify-content:space-between;padding:env(safe-area-inset-top,6px) 12px 6px 12px;background:linear-gradient(180deg,rgba(4,2,10,.85) 0%,rgba(4,2,10,.4) 75%,transparent 100%);z-index:30;">
+      <div style="display:flex;align-items:center;gap:6px;min-width:0;flex:1;">
+        <button class="ghost" id="gpBack" style="padding:4px 9px;font-size:12px;border-radius:8px;flex:none;">← Voltar</button>
+        <div class="dot" id="gpDot" style="flex:none;"></div>
+        <span id="gpPlayer" style="font-weight:700;font-size:13px;flex:none;">P1</span>
+        <button class="ghost" id="gpConsoleBtn" title="Escolha seu emulador" style="padding:3px 8px;font-size:11.5px;font-weight:700;border-radius:8px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;display:flex;align-items:center;gap:4px;flex:none;"><span id="gpConsoleLbl">SNES</span> <small style="opacity:.6;font-size:9px;">▼</small></button>
+        <span id="gpTitle" style="font-size:12px;color:rgba(241,237,255,.65);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">GameHub</span>
+        <span id="gpPing" style="font-size:11px;color:rgba(241,237,255,.5);flex:none;"></span>
+      </div>
+      <div style="display:flex;align-items:center;gap:5px;flex:none;">
+        <button class="ghost" id="gpTurbo" title="Turbo (Avanço rápido)" style="padding:4px 8px;font-size:12px;border-radius:8px;display:flex;align-items:center;gap:4px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M4 18l8.5-6L4 6v12zm9-12v12l8.5-6L13 6z"/></svg><span class="gp-lbl">Turbo</span></button>
+        <button class="ghost" id="gpRotate" title="Girar tela" style="padding:4px 8px;border-radius:8px;display:flex;align-items:center;"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 0 0-9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/><path d="M3 12a9 9 0 0 0 9 9 9.75 9.75 0 0 0 6.74-2.74L21 16"/><path d="M16 16h5v5"/></svg></button>
+        <button class="ghost" id="gpMenu" title="Menu na TV" style="padding:4px 8px;font-size:12px;border-radius:8px;display:flex;align-items:center;gap:4px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg><span class="gp-lbl">Menu</span></button>
+        <button class="ghost" id="gpVibe" title="Vibração" style="padding:4px 8px;border-radius:8px;display:flex;align-items:center;"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><circle cx="12" cy="18" r=".5" fill="currentColor"/><path d="M2 9v6M22 9v6M4 7v10M20 7v10"/></svg></button>
+        <button class="ghost" id="gpEdit" title="Personalizar botões" style="padding:4px 8px;font-size:12px;border-radius:8px;display:flex;align-items:center;gap:4px;"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9l-4-4L4 16z"/></svg><span class="gp-lbl">Editar</span></button>
+      </div>
+    </div>
+    <div id="gpNotice" class="gp-notice" style="display:none;">
+      <div style="flex:none;">
+        <svg viewBox="0 0 48 48" width="30" height="30" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round"><circle cx="24" cy="24" r="10"/><ellipse cx="24" cy="24" rx="21" ry="6" transform="rotate(-20 24 24)"/></svg>
+      </div>
+      <div class="gp-notice-body">
+        <b>Onix GameHub</b>
+        <span id="gpNoticeText">Abra um jogo no Onix GameHub na TV para começar!</span>
+      </div>
+      <button class="cta" id="gpLaunchBtn">
+        <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+        <span>Abrir GameHub</span>
+      </button>
+    </div>
+    <canvas id="gpCanvas" style="position:fixed;inset:0;width:100%;height:100%;touch-action:none;user-select:none;z-index:25;"></canvas>
+  </section>
 </main>
+
+<div class="sheet" id="gpConsoleSheet" style="z-index:40;" hidden>
+  <div>
+    <div style="display:flex;align-items:center;justify-content:space-between;">
+      <div class="lbl" style="font-size:15px;color:#fff;">Escolha seu emulador</div>
+      <button class="ghost" id="gpConsoleClose" style="padding:4px 10px;font-size:12px;border-radius:8px;">✕ Fechar</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+      <button class="ghost gp-opt" data-c="snes" style="padding:14px;border-radius:14px;background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.4);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;">
+        <b style="color:#a78bfa;font-size:15px;">Super Nintendo</b>
+        <small style="color:rgba(255,255,255,.65);font-size:11px;">SNES • 4 botões + L/R</small>
+      </button>
+      <button class="ghost gp-opt" data-c="gba" style="padding:14px;border-radius:14px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.4);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;">
+        <b style="color:#38bdf8;font-size:15px;">Game Boy Advance</b>
+        <small style="color:rgba(255,255,255,.65);font-size:11px;">GBA • 2 botões + L/R</small>
+      </button>
+      <button class="ghost gp-opt" data-c="md" style="padding:14px;border-radius:14px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.4);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;">
+        <b style="color:#fbbf24;font-size:15px;">Mega Drive</b>
+        <small style="color:rgba(255,255,255,.65);font-size:11px;">MD • 6 botões (2x3)</small>
+      </button>
+      <button class="ghost gp-opt" data-c="nes" style="padding:14px;border-radius:14px;background:rgba(255,90,110,.12);border:1px solid rgba(255,90,110,.4);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;">
+        <b style="color:#ff5a6e;font-size:15px;">Nintendinho</b>
+        <small style="color:rgba(255,255,255,.65);font-size:11px;">NES • 2 botões (B e A)</small>
+      </button>
+    </div>
+  </div>
+</div>
 
 <div class="sheet" id="kb" hidden>
   <div>
@@ -243,10 +374,11 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
 </div>
 <div class="toast" id="toast" role="status"></div>
 
+<script src="touch.js"></script>
 <script>
 (() => {
 'use strict';
-const APP_VERSION = '1.0.3';
+const APP_VERSION = '1.0.4';
 const $ = id => document.getElementById(id);
 const O = window.Onix;
 const ES = /^es\b/i.test(navigator.language || '');
@@ -282,6 +414,14 @@ const T = {
   'O código tem 6 letras e números, como aparece na TV.': 'El código tiene 6 letras y números, como aparece en la TV.',
   'Código errado. Confira o que está na TV e tente de novo.': 'Código incorrecto. Revisa lo que aparece en la TV e inténtalo de nuevo.',
   'O tempo para digitar o código acabou.': 'Se acabó el tiempo para escribir el código.', 'A TV não aceitou o pareamento. Tente de novo.': 'La TV no aceptó la vinculación. Inténtalo de nuevo.',
+  'Controle de jogos': 'Control de juegos', 'Editar': 'Editar',
+  'Atualizar automaticamente': 'Actualizar automáticamente',
+  'Baixa versões novas sozinho em segundo plano.': 'Descarga versiones nuevas solo en segundo plano.',
+  'Versão nova pronta para instalar.': 'Nueva versión lista para instalar.',
+  'Abrir GameHub na TV': 'Abrir GameHub en la TV', 'Sem TV selecionada': 'Sin TV seleccionada',
+  'Conecte a uma TV primeiro para usar o Gamepad.': 'Conecta a una TV primero para usar el Gamepad.',
+  'Conectando ao GameHub…': 'Conectando a GameHub…', 'Aguardando jogo na TV…': 'Esperando juego en la TV…',
+  'Abra um jogo no Onix GameHub na TV para começar!': '¡Abre un juego en Onix GameHub en la TV para empezar!',
 };
 const t = s => (ES && T[s]) || s;
 if (ES) {
@@ -301,9 +441,13 @@ let view = 'tvs', prev = 'remote', conn = { s: 'idle' }, tvName = '', vibrate = 
 let toastT = 0;
 function toast(m) { const el = $('toast'); el.textContent = t(m); el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.remove('show'), 2400); }
 function show(v) {
-  if (v !== 'set' && v !== 'tvs') prev = v;
+  if (v !== 'set' && v !== 'tvs' && v !== 'gamepad') prev = v;
+  if (view === 'gamepad' && v !== 'gamepad') disconnectGpWs();
   view = v;
-  ['tvs', 'code', 'msg', 'remote', 'set'].forEach(n => { $('v' + n.charAt(0).toUpperCase() + n.slice(1)).hidden = n !== v; });
+  ['tvs', 'code', 'msg', 'remote', 'set', 'gamepad'].forEach(n => {
+    const el = $('v' + n.charAt(0).toUpperCase() + n.slice(1));
+    if (el) el.hidden = n !== v;
+  });
   if (v === 'tvs') renderTvs();
 }
 function msg(title, text, btn, act, btn2, act2) {
@@ -501,8 +645,10 @@ $('kbClear').onclick = () => { clearTimeout(typing); $('kbIn').value = ''; sync(
 const sw = (el, on) => el.setAttribute('aria-checked', String(on));
 sw($('optVol'), O ? O.volumeKeys() : true);
 sw($('optVib'), vibrate);
+sw($('optAutoUpd'), O && O.autoUpdate !== undefined ? O.autoUpdate() : true);
 $('optVol').onclick = () => { const on = $('optVol').getAttribute('aria-checked') !== 'true'; sw($('optVol'), on); O.setVolumeKeys(on); };
 $('optVib').onclick = () => { vibrate = $('optVib').getAttribute('aria-checked') !== 'true'; sw($('optVib'), vibrate); store.set('vib', vibrate); };
+$('optAutoUpd').onclick = () => { const on = $('optAutoUpd').getAttribute('aria-checked') !== 'true'; sw($('optAutoUpd'), on); if (O && O.setAutoUpdate) O.setAutoUpdate(on); };
 $('setBtn').onclick = () => { if (view === 'set') show(prev === 'set' ? 'tvs' : prev); else { show('set'); renderUpd(JSON.parse(O.update())); } };
 $('ver').textContent = APP_VERSION;
 
@@ -512,6 +658,15 @@ function renderUpd(u) {
   const b = $('updBtn'), txt = $('updText');
   b.disabled = false;
   $('updBadge').hidden = !(upd.state === 'available' || upd.state === 'ready');
+  if (typeof upd.auto === 'boolean') sw($('optAutoUpd'), upd.auto);
+  if (upd.state === 'ready') {
+    $('updCard').hidden = false;
+    $('updCardTitle').textContent = t('Onix Controle') + (upd.latest ? ' ' + upd.latest : '');
+    $('updCardSub').textContent = t('Versão nova pronta para instalar.');
+    $('updCardBtn').textContent = t('Instalar');
+  } else {
+    $('updCard').hidden = true;
+  }
   if (upd.state === 'checking') { txt.textContent = t('Procurando…'); b.disabled = true; b.textContent = t('Procurar atualização'); }
   else if (upd.state === 'available' || upd.state === 'ready') {
     txt.textContent = (ES ? 'Versión ' : 'Versão ') + upd.latest + (ES ? ' disponible.' : ' disponível.');
@@ -526,6 +681,320 @@ $('updBtn').onclick = () => {
   if (upd.state === 'available' || upd.state === 'ready') O.updateInstall();
   else O.updateCheck();
 };
+$('updCardBtn').onclick = () => {
+  if (O && O.updateInstall) O.updateInstall();
+};
+
+// --- Gamepad para GameHub ---
+const CONSOLE_NAMES = { snes: 'SNES', gba: 'GBA', md: 'Mega Drive', nes: 'NES' };
+const CONSOLE_COLORS = { snes: '#a78bfa', gba: '#38bdf8', md: '#fbbf24', nes: '#ff5a6e' };
+let gpPad = null, gpWs = null, gpConnecting = false, gpConsole = store.get('gp_console', 'snes'), gpTitle = '', gpPlayer = 0;
+let gpLastBits = 0, gpVibeOn = store.get('gp_vibe', true), gpPingT = 0, gpReconnectT = 0, gpWakeLock = null;
+
+function updateConsoleBadge() {
+  const lbl = $('gpConsoleLbl');
+  const btn = $('gpConsoleBtn');
+  if (lbl) lbl.textContent = CONSOLE_NAMES[gpConsole] || (gpConsole ? gpConsole.toUpperCase() : 'SNES');
+  if (btn) {
+    btn.style.borderColor = CONSOLE_COLORS[gpConsole] || 'rgba(255,255,255,.2)';
+    btn.style.color = CONSOLE_COLORS[gpConsole] || '#fff';
+  }
+}
+
+function updateGpVibeBtn() {
+  $('gpVibe').style.opacity = gpVibeOn ? '1' : '0.4';
+  $('gpVibe').style.borderColor = gpVibeOn ? 'rgba(61,225,255,.5)' : 'rgba(255,255,255,.14)';
+}
+
+$('gpConsoleBtn').onclick = () => {
+  $('gpConsoleSheet').hidden = false;
+};
+$('gpConsoleClose').onclick = () => {
+  $('gpConsoleSheet').hidden = true;
+};
+$('gpConsoleSheet').onclick = ev => {
+  if (ev.target === $('gpConsoleSheet')) $('gpConsoleSheet').hidden = true;
+};
+document.querySelectorAll('.gp-opt').forEach(btn => {
+  btn.onclick = () => {
+    const cid = btn.getAttribute('data-c');
+    if (cid) {
+      gpConsole = cid;
+      store.set('gp_console', cid);
+      $('gpConsoleSheet').hidden = true;
+      updateConsoleBadge();
+      initGamepad();
+      toast('Emulador definido: ' + (CONSOLE_NAMES[cid] || cid.toUpperCase()));
+    }
+  };
+});
+
+$('gpBtn').onclick = () => {
+  if (view === 'gamepad') {
+    show('remote');
+  } else {
+    show('gamepad');
+    initGamepad();
+  }
+};
+$('gpBack').onclick = () => {
+  disconnectGpWs();
+  if (O && O.setOrientation) O.setOrientation('sensor');
+  show(conn.s === 'connected' ? 'remote' : 'tvs');
+};
+$('gpRotate').onclick = () => {
+  const isLand = window.innerWidth > window.innerHeight;
+  if (O && O.setOrientation) {
+    O.setOrientation(isLand ? 'portrait' : 'landscape');
+  }
+};
+$('gpTurbo').onclick = () => {
+  if (gpPad) {
+    gpPad.isFast = !gpPad.isFast;
+    sendGpJson({ type: 'fast', on: gpPad.isFast });
+    $('gpTurbo').style.borderColor = gpPad.isFast ? '#3de1ff' : '';
+    $('gpTurbo').style.color = gpPad.isFast ? '#3de1ff' : '';
+    if (gpVibeOn && navigator.vibrate) navigator.vibrate(15);
+  }
+};
+$('gpMenu').onclick = () => {
+  sendGpJson({ type: 'menu' });
+  if (gpVibeOn && navigator.vibrate) navigator.vibrate(15);
+};
+$('gpVibe').onclick = () => {
+  gpVibeOn = !gpVibeOn;
+  store.set('gp_vibe', gpVibeOn);
+  updateGpVibeBtn();
+  if (gpVibeOn && navigator.vibrate) navigator.vibrate(15);
+};
+$('gpEdit').onclick = () => {
+  if (gpPad) {
+    $('gpBar').style.opacity = '0';
+    $('gpBar').style.pointerEvents = 'none';
+    gpPad.setEditing(true);
+  }
+};
+$('gpLaunchBtn').onclick = () => {
+  if (O) {
+    O.link('gamehub://open');
+    if (O.openApp) O.openApp('com.onix.gamehub');
+  }
+  if (conn.s === 'connected') {
+    toast(t('Abrindo Onix GameHub na TV…'));
+  } else {
+    toast(t('Comando enviado! Conecte à TV se necessário.'));
+  }
+};
+
+async function acquireGpWakeLock() {
+  try {
+    if ('wakeLock' in navigator && (!gpWakeLock || gpWakeLock.released)) {
+      gpWakeLock = await navigator.wakeLock.request('screen');
+      gpWakeLock.addEventListener('release', () => { gpWakeLock = null; });
+    }
+  } catch (_) {}
+}
+
+function initGamepad() {
+  if (gpPad) {
+    try { gpPad.destroy(); } catch (_) {}
+    gpPad = null;
+  }
+  updateConsoleBadge();
+  updateGpVibeBtn();
+  const canvas = $('gpCanvas');
+  const key = 'onix_pad_layout_' + gpConsole;
+  let saved = null;
+  try { saved = localStorage.getItem(key); } catch (_) {}
+
+  gpPad = new OnixPad.Pad(canvas, gpConsole, {
+    buttons: bits => {
+      sendGpButtons(bits);
+      if (gpVibeOn && navigator.vibrate) {
+        const pressed = bits & ~gpLastBits;
+        if (pressed !== 0) navigator.vibrate(12);
+      }
+      gpLastBits = bits;
+    },
+    fast: on => sendGpJson({ type: 'fast', on: !!on }),
+    menu: () => {
+      sendGpJson({ type: 'menu' });
+      if (gpVibeOn && navigator.vibrate) navigator.vibrate(15);
+      toast(t('Menu do jogo na TV'));
+    },
+    done: () => {
+      $('gpBar').style.opacity = '1';
+      $('gpBar').style.pointerEvents = 'auto';
+    },
+    save: text => {
+      try { localStorage.setItem(key, text); } catch (_) {}
+    }
+  }, saved, ES);
+
+  resizeGpCanvas();
+  connectGpWs();
+  acquireGpWakeLock();
+}
+
+function resizeGpCanvas() {
+  if (!gpPad || view !== 'gamepad') return;
+  const w = window.innerWidth, h = window.innerHeight;
+  if (w > 0 && h > 0) gpPad.resize(w, h);
+}
+window.addEventListener('resize', resizeGpCanvas);
+window.addEventListener('orientationchange', () => {
+  setTimeout(resizeGpCanvas, 40);
+  setTimeout(resizeGpCanvas, 180);
+});
+if (window.ResizeObserver) {
+  new ResizeObserver(() => {
+    if (view === 'gamepad') resizeGpCanvas();
+  }).observe($('vGamepad'));
+}
+
+function getTvHost() {
+  if (conn.host) return conn.host;
+  const last = tvs.last;
+  const p = (tvs.paired || []).find(x => x.name === last);
+  return p ? p.host : '';
+}
+
+function connectGpWs() {
+  if (view !== 'gamepad' || gpConnecting || (gpWs && gpWs.readyState === WebSocket.OPEN)) return;
+  const host = getTvHost();
+  if (!host) {
+    $('gpDot').className = 'dot';
+    $('gpTitle').textContent = t('Sem TV selecionada');
+    $('gpNoticeText').textContent = t('Conecte a uma TV primeiro para usar o Gamepad.');
+    $('gpNotice').style.display = 'flex';
+    return;
+  }
+  gpConnecting = true;
+  if (gpReconnectT) { clearTimeout(gpReconnectT); gpReconnectT = null; }
+
+  $('gpDot').className = 'dot';
+  $('gpDot').style.background = '#f59e0b';
+  $('gpTitle').textContent = t('Conectando ao GameHub…');
+
+  const url = 'ws://' + host + ':8772/ws';
+  try {
+    if (gpWs) { try { gpWs.close(); } catch (_) {} }
+    gpWs = new WebSocket(url);
+    gpWs.binaryType = 'arraybuffer';
+  } catch (e) {
+    onGpWsClosed();
+    return;
+  }
+
+  gpWs.onopen = () => {
+    gpConnecting = false;
+    $('gpDot').className = 'dot on';
+    $('gpDot').style.background = '#10b981';
+    $('gpTitle').textContent = gpTitle || 'Onix GameHub';
+    $('gpNotice').style.display = 'none';
+    startGpPing();
+    acquireGpWakeLock();
+  };
+
+  gpWs.onmessage = ev => {
+    if (typeof ev.data === 'string') {
+      try {
+        const msg = JSON.parse(ev.data);
+        if (msg.type === 'init') {
+          gpPlayer = msg.player !== undefined ? msg.player : 0;
+          $('gpPlayer').textContent = 'P' + (gpPlayer + 1);
+          $('gpPlayer').style.color = ['#38bdf8', '#ff5a6e', '#4ade80', '#fbbf24'][gpPlayer] || '#38bdf8';
+          if (msg.title) {
+            gpTitle = msg.title;
+            $('gpTitle').textContent = gpTitle;
+          }
+          if (msg.console && msg.console !== gpConsole) {
+            gpConsole = msg.console;
+            initGamepad();
+          }
+        } else if (msg.type === 'pong') {
+          const diff = Date.now() - (msg.t || 0);
+          if (diff >= 0 && diff < 500) $('gpPing').textContent = diff + 'ms';
+        }
+      } catch (_) {}
+    }
+  };
+
+  gpWs.onclose = () => onGpWsClosed();
+  gpWs.onerror = () => onGpWsClosed();
+}
+
+function onGpWsClosed() {
+  gpConnecting = false;
+  $('gpDot').className = 'dot';
+  $('gpDot').style.background = '#ef4444';
+  $('gpPing').textContent = '';
+  $('gpTitle').textContent = t('Aguardando jogo na TV…');
+  $('gpNoticeText').textContent = t('Abra um jogo no Onix GameHub na TV para começar!');
+  $('gpNotice').style.display = 'flex';
+  stopGpPing();
+  if (view === 'gamepad' && !gpReconnectT) {
+    gpReconnectT = setTimeout(() => {
+      gpReconnectT = null;
+      connectGpWs();
+    }, 900);
+  }
+}
+
+function startGpPing() {
+  stopGpPing();
+  gpPingT = setInterval(() => {
+    if (gpWs && gpWs.readyState === WebSocket.OPEN) {
+      sendGpJson({ type: 'ping', t: Date.now() });
+    }
+  }, 2000);
+}
+
+function stopGpPing() {
+  if (gpPingT) { clearInterval(gpPingT); gpPingT = null; }
+}
+
+function disconnectGpWs() {
+  stopGpPing();
+  if (gpReconnectT) { clearTimeout(gpReconnectT); gpReconnectT = null; }
+  if (gpWs) { try { gpWs.close(); } catch (_) {} gpWs = null; }
+  gpConnecting = false;
+  $('gpNotice').style.display = 'none';
+  if (gpPad) {
+    try { gpPad.destroy(); } catch (_) {}
+    gpPad = null;
+  }
+}
+
+function sendGpButtons(bits) {
+  if (!gpWs || gpWs.readyState !== WebSocket.OPEN) return;
+  const buf = new Uint8Array(3);
+  buf[0] = gpPlayer & 0xFF;
+  buf[1] = bits & 0xFF;
+  buf[2] = (bits >> 8) & 0xFF;
+  try { gpWs.send(buf.buffer); } catch (_) {}
+}
+
+function sendGpJson(obj) {
+  if (!gpWs || gpWs.readyState !== WebSocket.OPEN) return;
+  try { gpWs.send(JSON.stringify(obj)); } catch (_) {}
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible' && view === 'gamepad') {
+    acquireGpWakeLock();
+    if (!gpWs || gpWs.readyState > 1) connectGpWs();
+  }
+});
+window.addEventListener('focus', () => {
+  if (view === 'gamepad' && (!gpWs || gpWs.readyState > 1)) connectGpWs();
+});
+window.addEventListener('touchstart', () => {
+  if (view === 'gamepad') {
+    acquireGpWakeLock();
+    if (!gpWs || gpWs.readyState > 1) connectGpWs();
+  }
+}, { passive: true });
 
 // --- eventos do Java ---
 window.onixEvent = (type, d) => {
@@ -547,6 +1016,22 @@ window.onixEvent = (type, d) => {
 };
 // Botão Voltar do celular: fecha o teclado ou a tela aberta antes de sair do app.
 window.onixBack = () => {
+  if (view === 'gamepad') {
+    if (!$('gpConsoleSheet').hidden) {
+      $('gpConsoleSheet').hidden = true;
+      return true;
+    }
+    if (gpPad && gpPad.editing) {
+      gpPad.setEditing(false);
+      $('gpBar').style.opacity = '1';
+      $('gpBar').style.pointerEvents = 'auto';
+      return true;
+    }
+    disconnectGpWs();
+    if (O && O.setOrientation) O.setOrientation('sensor');
+    show(conn.s === 'connected' ? 'remote' : 'tvs');
+    return true;
+  }
   if (!$('kb').hidden) { closeKb(); return true; }
   if (view === 'set' || (view === 'tvs' && conn.s === 'connected')) { show(conn.s === 'connected' ? 'remote' : 'tvs'); return true; }
   if (view === 'code') { $('codeCancel').click(); return true; }
@@ -563,6 +1048,10 @@ if (O) {
   // O Java pode ter conectado antes de a página carregar: aplica o que já aconteceu.
   const snap = JSON.parse(O.snapshot());
   ['state', 'app', 'volume', 'field'].forEach(k => { if (snap[k]) onixEvent(k, JSON.parse(snap[k])); });
+}
+if (location.hash === '#gamepad') {
+  show('gamepad');
+  initGamepad();
 }
 })();
 </script>

@@ -45,6 +45,8 @@ final class Updater {
             "^https://github\\.com/ruan2311/onix/releases/download/controle-v[0-9.]{5,14}/onix-controle\\.apk$");
     private static final Pattern DOWNLOAD_HOST = Pattern.compile("^(github\\.com|(release-assets|objects)\\.githubusercontent\\.com)$");
     private static final long CHECK_MS = 6 * 60 * 60 * 1000L;
+    /** Atualização automática: pede a confirmação no máximo uma vez por dia (se a pessoa recusou). */
+    private static final long PROMPT_MS = 24 * 60 * 60 * 1000L;
     private static final int MAX_JSON = 1024 * 1024, MAX_APK = 20 * 1024 * 1024;
 
     interface Listener {
@@ -104,6 +106,32 @@ final class Updater {
         }
     }
 
+    boolean auto() {
+        return prefs.getBoolean("auto", true);
+    }
+
+    void setAuto(boolean on) {
+        prefs.edit().putBoolean("auto", on).apply();
+    }
+
+    synchronized boolean hasUpdate() {
+        return "available".equals(state) || "ready".equals(state);
+    }
+
+    synchronized boolean isReady() {
+        return "ready".equals(state);
+    }
+
+    boolean canInstall() {
+        if (Build.VERSION.SDK_INT < 26) return true;
+        return canInstall(ctx.getPackageManager());
+    }
+
+    boolean promptedRecently() {
+        long now = System.currentTimeMillis(), last = prefs.getLong("prompted", 0);
+        return now >= last && now - last < PROMPT_MS;
+    }
+
     synchronized String json() {
         try {
             JSONObject o = new JSONObject();
@@ -112,6 +140,7 @@ final class Updater {
             o.put("latest", pending ? latest : "");
             o.put("state", state);
             o.put("error", error);
+            o.put("auto", auto());
             o.put("checked", prefs.getLong("checked", 0));
             return o.toString();
         } catch (Exception e) {
@@ -174,19 +203,27 @@ final class Updater {
                 return true;
             }
             if (link == null || !DOWNLOAD.matcher(link).matches() || digest == null) throw new Exception("arquivo da atualização não encontrado");
+            boolean needDownload = false;
             synchronized (this) {
                 boolean same = version.equals(latest) && digest.equals(sha256);
                 latest = version;
                 url = link;
                 sha256 = digest;
                 prefs.edit().putString("latest", version).putString("url", link).putString("sha256", digest).apply();
-                set(same && isApkReady() ? "ready" : "available", null);
+                boolean ready = same && isApkReady();
+                set(ready ? "ready" : "available", null);
+                if (!ready && auto()) needDownload = true;
             }
+            changed();
+            if (needDownload) {
+                download();
+            }
+            return true;
         } catch (Exception e) {
             set(latest != null && newer(latest, current()) ? (isApkReady() ? "ready" : "available") : "error", e.getMessage());
+            changed();
+            return false;
         }
-        changed();
-        return true;
     }
 
     /** Baixa e confere a APK. Bloqueia (rede): chamar fora da UI thread. */
@@ -281,6 +318,7 @@ final class Updater {
             PendingIntent done = PendingIntent.getBroadcast(ctx, id, new Intent(ctx, UpdateReceiver.class), flags);
             session.commit(done.getIntentSender());
             session = null;
+            prefs.edit().putLong("prompted", System.currentTimeMillis()).apply();
             set("installing", null);
             changed();
             return "ok";

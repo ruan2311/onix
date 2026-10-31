@@ -2,6 +2,13 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 16.4.0 (outubro de 2026)
+
+- **Cobalt GameHub:** o emulador clássico do Onix agora se chama Cobalt GameHub, a mais nova gema oficial do Project Gems ao lado de Onix, Amethyst e Opala.
+- **Onix Controle renovado:** o app de controle pelo celular teve um rebrand para integrar com o Cobalt GameHub, com novo ícone do Saturno cósmico e conexão direta para jogar os clássicos na TV.
+- **Ícone do Onix Controle na aba Jogos:** o botão de baixar o controle e o cartão com QR code agora exibem o ícone oficial do Onix Controle.
+- **Trajetória do Onix:** o slide das pedras preciosas atualizado com a gema Cobalt GameHub.
+
 ## 16.3.3 (outubro de 2026)
 
 - **Avatares dos perfis:** os dez avatares ganharam traços em tons pastéis suaves e fundos com o visual de vidro escuro do Onix, substituindo o contraste excessivo por um acabamento mais elegante.

@@ -41,6 +41,8 @@ final class MenuBridge {
             o.put("motion", g.motion);
             o.put("states", states());
             o.put("cover", new File(Files.covers(g), g.id + ".jpg").isFile());
+            o.put("gamepadUrl", g.gamepadUrl());
+            o.put("gamepadClients", g.gamepadClients());
             return o.toString();
         } catch (Exception e) {
             return "{}";

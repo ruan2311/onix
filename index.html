@@ -369,22 +369,23 @@ html.on-games .top-right .chips{flex-direction:column;align-items:flex-end;gap:.
    e some em 12 s (#kitty + !important vence o "html.no-motion *"). */
 #kitty{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;place-items:center;background:radial-gradient(50% 55% at 50% 45%,rgba(255,158,196,.16),transparent 70%),rgba(4,4,6,.94)}
 #kitty[hidden]{display:none}
-/* Apoie o criador (Configurações → Sobre): um painel só, sem nada aparecendo sozinho. */
-#support{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;place-items:center;background:radial-gradient(55% 60% at 50% 45%,rgba(255,111,181,.14),transparent 70%),rgba(4,4,6,.94)}
-#support[hidden]{display:none}
-#support .sp-card{display:flex;gap:2.6rem;align-items:center;width:min(64rem,90vw);padding:2.2rem 2.6rem;border-radius:1.8rem;background:linear-gradient(160deg,#1a1b22,#0c0d11);
+/* Apoie o criador (Configurações → Sobre) e Controle para celular (Aba Jogos): cartões em destaque. */
+#support,#gamepadModal{position:fixed;top:0;right:0;bottom:0;left:0;z-index:30;display:grid;place-items:center;background:radial-gradient(55% 60% at 50% 45%,rgba(167,139,250,.16),transparent 70%),rgba(4,4,6,.94)}
+#support[hidden],#gamepadModal[hidden]{display:none}
+#support .sp-card,#gamepadModal .sp-card{display:flex;gap:2.6rem;align-items:center;width:min(64rem,90vw);padding:2.2rem 2.6rem;border-radius:1.8rem;background:linear-gradient(160deg,#1a1b22,#0c0d11);
   border:1px solid var(--glass-border);box-shadow:var(--glass-hi),0 2rem 4rem rgba(0,0,0,.5);animation:kittyIn .6s cubic-bezier(.34,1.4,.64,1) both!important}
-#support .sp-text{flex:1;min-width:0}
+#support .sp-text,#gamepadModal .sp-text{flex:1;min-width:0}
 #support .sp-free{display:inline-block;padding:.35rem .9rem;border-radius:999px;background:rgba(126,240,176,.12);border:1px solid rgba(126,240,176,.35);color:#9ff5c6;font-weight:700;font-size:.95rem}
-#support h2{font-size:2.3rem;margin:.9rem 0 .7rem}
-#support p{font-size:1.2rem;line-height:1.5;color:rgba(245,246,248,.82);margin:0 0 .8rem}
-#support .sp-thanks{color:var(--muted);font-size:1.05rem}
-#support .sp-qr{flex:none;width:17rem;display:flex;flex-direction:column;align-items:center;gap:.8rem}
-#support .sp-qr svg{width:17rem;height:17rem;border-radius:1rem;background:#fff;display:block}
-#support .sp-qr b{font-size:1rem;letter-spacing:.06em}
-#support .sp-key{font-size:.82rem;color:var(--muted);text-align:center;word-break:break-all}
-#support .sp-hint{position:absolute;right:6vw;bottom:2.4rem;display:flex;gap:.6rem;align-items:center;color:var(--muted)}
-#support .sp-hint b{padding:.2rem .7rem;border:1px solid var(--glass-border);border-radius:.5rem;color:#fff}
+#gamepadModal .sp-free{display:inline-block;padding:.35rem .9rem;border-radius:999px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.35);color:#c4b5fd;font-weight:700;font-size:.95rem}
+#support h2,#gamepadModal h2{font-size:2.3rem;margin:.9rem 0 .7rem}
+#support p,#gamepadModal p{font-size:1.2rem;line-height:1.5;color:rgba(245,246,248,.82);margin:0 0 .8rem}
+#support .sp-thanks,#gamepadModal .sp-thanks{color:var(--muted);font-size:1.05rem}
+#support .sp-qr,#gamepadModal .sp-qr{flex:none;width:17rem;display:flex;flex-direction:column;align-items:center;gap:.8rem}
+#support .sp-qr svg,#gamepadModal .sp-qr svg{width:17rem;height:17rem;border-radius:1rem;background:#fff;display:block}
+#support .sp-qr b,#gamepadModal .sp-qr b{font-size:1rem;letter-spacing:.06em}
+#support .sp-key,#gamepadModal .sp-key{font-size:.82rem;color:var(--muted);text-align:center;word-break:break-all}
+#support .sp-hint,#gamepadModal .sp-hint{position:absolute;right:6vw;bottom:2.4rem;display:flex;gap:.6rem;align-items:center;color:var(--muted)}
+#support .sp-hint b,#gamepadModal .sp-hint b{padding:.2rem .7rem;border:1px solid var(--glass-border);border-radius:.5rem;color:#fff}
 #kitty .kitty-card{position:relative;overflow:hidden;width:90vw;max-width:30rem;padding:1.6rem 2rem 2rem;border-radius:1.8rem;text-align:center;background:linear-gradient(160deg,#1a1b22,#0c0d11);
   animation:kittyIn .7s cubic-bezier(.34,1.56,.64,1) both!important}
 #kitty .kitty-cat{position:relative;z-index:1;width:15rem;height:15rem;margin:0 auto;overflow:visible;animation:kittyBob 2.4s ease-in-out .7s infinite!important}
@@ -640,7 +641,7 @@ html.kids .grid.games .tile-art,html.kids #gamesGrid .tile-art{border-radius:1.6
 .pf{display:flex;flex-direction:column;align-items:center;gap:.8rem;width:9.5rem}
 .pf.f::after{display:none}
 .pf.f,.av-opt.f,.svc.f,.kb-key.f,.pin-key.f,.row-opt.f{overflow:visible}
-.pf .av{width:9.5rem;height:9.5rem;transition:transform .2s var(--ease),box-shadow .2s}
+.pf .av{width:9.5rem;height:9.5rem;will-change:transform;transition:transform .2s var(--ease)}
 .pf.is-focused{transform:none;box-shadow:none}
 .pf.is-focused .av{transform:scale(1.08);box-shadow:0 0 0 .2rem #fff,0 .8rem 2rem rgba(0,0,0,.6)}
 .pf-name{font-size:1.2rem;color:var(--muted);max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
@@ -1148,6 +1149,7 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
 <!-- Easter egg: OK 5 vezes no cartão "Sobre" das Configurações. -->
 <div id="story" hidden role="dialog" aria-label="Trajetória do Onix"></div>
 <div id="support" hidden role="dialog" aria-label="Apoie o criador"></div>
+<div id="gamepadModal" hidden role="dialog" aria-label="Controle para celular"></div>
 <div id="kitty" hidden role="dialog" aria-label="Gatinho do Onix">
   <div class="kitty-card glass">
   <svg class="kitty-cat" viewBox="0 0 240 240" fill="none" stroke="#fff" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -1390,7 +1392,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '16.3.3'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '16.4.0'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1901,6 +1903,15 @@ const ES = Object.freeze({
   "Meu perfil": "Mi perfil",
   "Nenhum app liberado. Peça para um adulto liberar em Gerenciar perfis.": "Ninguna app permitida. Pide a un adulto que las permita en Administrar perfiles.",
   "Controle pelo celular": "Control desde el celular",
+  "Baixar controle": "Descargar control",
+  "Controle para celular": "Control para celular",
+  "🎮 Onix GameHub · Controle no celular": "🎮 Onix GameHub · Control en el celular",
+  "100% personalizável: mova os botões na tela, altere o tamanho e a transparência e jogue sem atraso na rede local.": "100% personalizable: mueve los botones en pantalla, cambia el tamaño y la transparencia y juega sin retraso en la red local.",
+  "Não tem controle Bluetooth? Você pode jogar pelo app no celular ou abrir direto pelo navegador durante a partida!": "¿No tienes control Bluetooth? ¡Puedes jugar desde la app en el celular o abrir directo desde el navegador durante la partida!",
+  "Aponte a câmera para baixar": "Apunta la cámara para descargar",
+  "para fechar": "para cerrar",
+  "Aponte a câmera do celular para o código QR para baixar o Onix Controle.": "Apunta la cámara del celular al código QR para descargar Onix Controle.",
+  "Jogue seus clássicos no Onix GameHub usando o celular como controle 100% personalizável, ou jogue pelo navegador sem instalar nada durante a partida.": "Juega a tus clásicos en Onix GameHub usando el celular como control 100% personalizable, o juega desde el navegador sin instalar nada durante la partida.",
   "Controle web": "Control web",
   "Ligue o Controle web em Configurações": "Activa el Control web en Configuración",
   "Baixar o Onix Controle": "Descargar Onix Controle",
@@ -2007,6 +2018,20 @@ const ES = Object.freeze({
   "· as mais recentes da Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code": "· las más recientes de Adrenaline y Eurogamer.pt, en portugués · OK abre el resumen y el código QR",
   "Desinstalar o GameHub": "Desinstalar GameHub",
   "Não deu para abrir o GameHub": "No se pudo abrir GameHub",
+  // Onix 16.4.0
+  "*Cobalt GameHub:* o emulador clássico do Onix agora se chama Cobalt GameHub, a mais nova gema oficial do Project Gems ao lado de Onix, Amethyst e Opala.": "*Cobalt GameHub:* el emulador clásico de Onix ahora se llama Cobalt GameHub, la gema más nueva de Project Gems junto a Onix, Amethyst y Opala.",
+  "*Onix Controle renovado:* o app de controle pelo celular teve um rebrand para integrar com o Cobalt GameHub, com novo ícone do Saturno cósmico e conexão direta para jogar os clássicos na TV.": "*Onix Controle renovado:* la app de control desde el celular tuvo un rebrand para integrarse con Cobalt GameHub, con nuevo ícono del Saturno cósmico y conexión directa para jugar a los clásicos en la TV.",
+  "*Ícone do Onix Controle na aba Jogos:* o botão de baixar o controle e o cartão com QR code agora exibem o ícone oficial do Onix Controle.": "*Ícono de Onix Controle en la pestaña Juegos:* el botón para descargar el control y la tarjeta con código QR ahora muestran el ícono oficial de Onix Controle.",
+  "*Trajetória do Onix:* o slide das pedras preciosas atualizado com a gema Cobalt GameHub.": "*Trayectoria de Onix:* la diapositiva de las piedras preciosas actualizada con la gema Cobalt GameHub.",
+  "Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Ao lado dele estão o Cobalt GameHub, o Amethyst e o Opala, formando a família Project Gems.": "Los proyectos de Ruan tienen nombres en clave de piedras preciosas, como Onix. A su lado están Cobalt GameHub, Amethyst y Opala, formando la familia Project Gems.",
+  "Cobalt GameHub": "Cobalt GameHub",
+  "Baixando o Cobalt GameHub…": "Descargando Cobalt GameHub…",
+  "· Cobalt GameHub · OK volta de onde parou": "· Cobalt GameHub · OK vuelve donde lo dejaste",
+  "🎮 Cobalt GameHub · Controle no celular": "🎮 Cobalt GameHub · Control en el celular",
+  "Jogue seus clássicos no Cobalt GameHub usando o celular como controle 100% personalizável, ou jogue pelo navegador sem instalar nada durante a partida.": "Juega a tus clásicos en Cobalt GameHub usando el celular como control 100% personalizable, o juega desde el navegador sin instalar nada durante la partida.",
+  "O Cobalt GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "Cobalt GameHub todavía no fue publicado. Llega en una próxima actualización.",
+  "Não deu para baixar o Cobalt GameHub. Confira a internet e tente de novo.": "No se pudo descargar Cobalt GameHub. Revisa internet e inténtalo de nuevo.",
+  "Não deu para abrir o Cobalt GameHub": "No se pudo abrir Cobalt GameHub",
   });
 let LANG = 'pt';
 function resolveLang() {
@@ -3600,6 +3625,8 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) pause
 const HUB_MARK = '<svg viewBox="0 0 32 32" shape-rendering="crispEdges"><path fill="#0a051a" d="M12 7h7v1h-7zM11 8h1v1h-1zM19 8h1v1h-1zM9 9h2v1h-2zM20 9h9v1h-9zM8 10h1v1h-1zM29 10h1v1h-1zM8 11h1v1h-1zM30 11h1v1h-1zM7 12h1v1h-1zM23 12h2v1h-2zM30 12h1v1h-1zM6 13h1v1h-1zM24 13h2v1h-2zM30 13h1v1h-1zM4 14h2v1h-2zM24 14h2v1h-2zM30 14h1v1h-1zM3 15h1v1h-1zM24 15h1v1h-1zM29 15h1v1h-1zM2 16h1v1h-1zM28 16h1v1h-1zM1 17h1v1h-1zM6 17h1v1h-1zM27 17h1v1h-1zM0 18h1v1h-1zM5 18h2v1h-2zM25 18h2v1h-2zM0 19h1v1h-1zM5 19h2v1h-2zM24 19h1v1h-1zM0 20h1v1h-1zM6 20h2v1h-2zM23 20h1v1h-1zM0 21h1v1h-1zM22 21h1v1h-1zM1 22h1v1h-1zM22 22h1v1h-1zM2 23h9v1h-9zM20 23h2v1h-2zM11 24h1v1h-1zM19 24h1v1h-1zM12 25h7v1h-7z"/><path fill="#d6c8ff" d="M12 8h1v1h-1zM14 8h1v1h-1zM11 9h3v1h-3zM10 10h5v1h-5zM16 10h1v1h-1zM9 11h3v1h-3zM13 11h3v1h-3zM8 12h7v1h-7zM16 12h1v1h-1zM7 13h7v1h-7zM15 13h1v1h-1zM7 14h6v1h-6zM7 15h1v1h-1zM9 15h1v1h-1zM8 16h1v1h-1z"/><path fill="#8b6cf0" d="M13 8h1v1h-1zM15 8h2v1h-2zM14 9h4v1h-4zM9 10h1v1h-1zM15 10h1v1h-1zM17 10h2v1h-2zM12 11h1v1h-1zM16 11h2v1h-2zM15 12h1v1h-1zM17 12h2v1h-2zM14 13h1v1h-1zM16 13h2v1h-2zM13 14h4v1h-4zM8 15h1v1h-1zM10 15h3v1h-3zM7 16h1v1h-1zM9 16h2v1h-2zM16 16h1v1h-1zM13 17h1v1h-1zM15 17h1v1h-1zM10 18h3v1h-3zM14 18h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1z"/><path fill="#5438c4" d="M17 8h2v1h-2zM18 9h2v1h-2zM19 10h2v1h-2zM18 11h2v1h-2zM19 12h2v1h-2zM18 13h2v1h-2zM13 15h1v1h-1zM15 15h1v1h-1zM11 16h5v1h-5zM17 16h2v1h-2zM7 17h3v1h-3zM11 17h2v1h-2zM14 17h1v1h-1zM16 17h2v1h-2zM8 18h2v1h-2zM13 18h1v1h-1zM15 18h2v1h-2zM18 18h1v1h-1zM7 19h2v1h-2zM10 19h1v1h-1zM12 19h4v1h-4zM8 20h7v1h-7z"/><path fill="#2d1a78" d="M21 10h1v1h-1zM20 11h2v1h-2zM21 12h1v1h-1zM17 14h2v1h-2zM14 15h1v1h-1zM16 15h2v1h-2zM19 15h3v1h-3zM23 15h1v1h-1zM19 16h2v1h-2zM22 16h1v1h-1zM10 17h1v1h-1zM18 17h2v1h-2zM21 17h1v1h-1zM7 18h1v1h-1zM17 18h1v1h-1zM19 18h2v1h-2zM16 19h2v1h-2zM15 20h1v1h-1zM21 21h1v1h-1zM18 22h1v1h-1zM20 22h1v1h-1zM15 23h1v1h-1zM19 23h1v1h-1zM12 24h1v1h-1zM14 24h1v1h-1zM16 24h1v1h-1zM18 24h1v1h-1z"/><path fill="#3f6e96" d="M22 10h5v1h-5zM22 11h5v1h-5zM25 12h2v1h-2z"/><path fill="#2a80a1" d="M27 10h2v1h-2zM27 11h3v1h-3zM27 12h2v1h-2z"/><path fill="#160c38" d="M22 12h1v1h-1zM20 13h4v1h-4zM19 14h5v1h-5zM18 15h1v1h-1zM22 15h1v1h-1zM21 16h1v1h-1zM23 16h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM18 19h1v1h-1zM23 19h1v1h-1zM21 20h2v1h-2zM18 21h3v1h-3zM15 22h3v1h-3zM19 22h1v1h-1zM21 22h1v1h-1zM11 23h4v1h-4zM16 23h3v1h-3zM13 24h1v1h-1zM15 24h1v1h-1zM17 24h1v1h-1z"/><path fill="#3de1ff" d="M29 12h1v1h-1zM27 13h3v1h-3zM28 14h2v1h-2zM28 15h1v1h-1z"/><path fill="#64c0eb" d="M26 13h1v1h-1zM26 14h2v1h-2zM25 15h3v1h-3zM24 16h4v1h-4zM23 17h4v1h-4zM22 18h3v1h-3z"/><path fill="#7f3874" d="M6 14h1v1h-1zM4 15h3v1h-3zM3 16h4v1h-4zM3 17h3v1h-3zM3 18h2v1h-2zM4 19h1v1h-1z"/><path fill="#942669" d="M2 17h1v1h-1zM1 18h2v1h-2zM1 19h3v1h-3zM1 20h1v1h-1z"/><path fill="#8b9fd7" d="M21 18h1v1h-1zM19 19h4v1h-4zM17 20h4v1h-4zM17 21h1v1h-1z"/><path fill="#3da0c8" d="M27 19h1v1h-1zM26 20h1v1h-1zM29 21h1v1h-1zM28 22h1v1h-1z"/><path fill="#ff3d9a" d="M2 20h2v1h-2zM1 21h3v1h-3zM2 22h2v1h-2z"/><path fill="#d85eae" d="M4 20h2v1h-2zM4 21h7v1h-7zM4 22h7v1h-7z"/><path fill="#b17fc2" d="M16 20h1v1h-1zM11 21h6v1h-6zM11 22h4v1h-4z"/><path fill="#ffffff" d="M27 20h2v1h-2zM27 21h1v1h-1z"/><path fill="#d2f5ff" d="M28 21h1v1h-1z"/></svg>';
 // No desenho do topo da aba Jogos, a logomarca do GameHub flutua no centro da órbita.
 $('#topArt .ta-pad').append(svgFrom(HUB_MARK.replace('<svg ', '<svg x="112" y="26" width="96" height="96" stroke="none" ')));
+const CONTROLE_MARK = '<svg viewBox="0 0 32 32" shape-rendering="crispEdges"><path fill="#1e1150" d="M4 0h2v1h-2zM14 0h9v1h-9zM3 1h2v1h-2zM16 1h7v1h-7zM2 2h2v1h-2zM16 2h7v1h-7zM1 3h2v1h-2zM21 3h3v1h-3zM0 4h3v1h-3zM17 4h4v1h-4zM22 4h2v1h-2zM0 5h3v1h-3zM18 5h4v1h-4zM23 5h1v1h-1zM0 6h2v1h-2zM18 6h4v1h-4zM23 6h1v1h-1zM0 7h2v1h-2zM18 7h4v1h-4zM23 7h1v1h-1zM0 8h3v1h-3zM18 8h4v1h-4zM23 8h1v1h-1zM0 9h3v1h-3zM17 9h5v1h-5zM23 9h1v1h-1zM0 10h3v1h-3zM17 10h5v1h-5zM23 10h1v1h-1zM0 11h4v1h-4zM0 12h5v1h-5zM0 13h6v1h-6zM20 13h2v1h-2zM0 14h9v1h-9zM21 14h1v1h-1zM0 15h8v1h-8zM0 16h8v1h-8zM1 17h7v1h-7zM10 17h1v1h-1zM2 18h6v1h-6zM4 19h4v1h-4zM6 20h3v1h-3zM10 20h4v1h-4z"/><path fill="#2c1866" d="M6 0h8v1h-8zM5 1h11v1h-11zM4 2h12v1h-12zM3 3h8v1h-8zM3 4h1v1h-1zM5 4h5v1h-5zM11 4h6v1h-6zM6 5h3v1h-3zM10 5h8v1h-8zM2 6h2v1h-2zM5 6h4v1h-4zM10 6h5v1h-5zM17 6h1v1h-1zM2 7h7v1h-7zM10 7h8v1h-8zM3 8h6v1h-6zM10 8h8v1h-8zM3 9h6v1h-6zM10 9h7v1h-7zM3 10h6v1h-6zM10 10h4v1h-4zM4 11h5v1h-5zM10 11h2v1h-2zM5 12h4v1h-4zM10 12h1v1h-1zM6 13h3v1h-3zM10 13h1v1h-1z"/><path fill="#120a2e" d="M23 0h5v1h-5zM23 1h6v1h-6zM23 2h7v1h-7zM24 3h3v1h-3zM28 3h2v1h-2zM24 4h2v1h-2zM29 4h1v1h-1zM24 5h3v1h-3zM28 5h3v1h-3zM24 6h7v1h-7zM24 7h7v1h-7zM24 8h7v1h-7zM24 9h6v1h-6zM24 10h6v1h-6zM23 11h7v1h-7zM24 12h6v1h-6zM24 13h5v1h-5zM24 14h5v1h-5zM23 15h6v1h-6zM23 16h5v1h-5zM0 17h1v1h-1zM20 17h2v1h-2zM23 17h5v1h-5zM0 18h2v1h-2zM20 18h1v1h-1zM23 18h4v1h-4zM0 19h4v1h-4zM19 19h3v1h-3zM23 19h3v1h-3zM0 20h6v1h-6zM17 20h5v1h-5zM23 20h2v1h-2zM0 21h9v1h-9zM10 21h12v1h-12zM23 21h1v1h-1zM0 22h9v1h-9zM10 22h12v1h-12zM0 23h9v1h-9zM10 23h5v1h-5zM16 23h6v1h-6zM0 24h9v1h-9zM10 24h11v1h-11zM2 25h7v1h-7zM10 25h3v1h-3zM14 25h4v1h-4zM4 26h5v1h-5zM10 26h6v1h-6z"/><path fill="#ffffff" d="M11 3h10v1h-10zM10 4h1v1h-1zM21 4h1v1h-1zM9 5h1v1h-1zM22 5h1v1h-1zM9 6h1v1h-1zM22 6h1v1h-1zM9 7h1v1h-1zM22 7h1v1h-1zM9 8h1v1h-1zM22 8h1v1h-1zM9 9h1v1h-1zM22 9h1v1h-1zM9 10h1v1h-1zM22 10h1v1h-1zM9 11h1v1h-1zM9 12h1v1h-1zM9 13h1v1h-1zM9 16h1v1h-1zM22 16h1v1h-1zM9 17h1v1h-1zM22 17h1v1h-1zM21 18h1v1h-1zM22 19h1v1h-1zM9 20h1v1h-1zM22 20h1v1h-1zM9 21h1v1h-1zM22 21h1v1h-1zM9 22h1v1h-1zM22 22h1v1h-1zM9 23h1v1h-1zM22 23h1v1h-1zM9 24h1v1h-1zM22 24h1v1h-1zM9 25h1v1h-1zM22 25h1v1h-1zM9 26h1v1h-1zM22 26h1v1h-1zM9 27h1v1h-1zM22 27h1v1h-1zM10 28h1v1h-1zM21 28h1v1h-1zM11 29h10v1h-10z"/><path fill="#2b7eb1" d="M27 3h1v1h-1zM26 4h1v1h-1zM28 4h1v1h-1zM27 5h1v1h-1z"/><path fill="#07040f" d="M30 3h1v1h-1zM30 4h2v1h-2zM31 5h1v1h-1zM31 6h1v1h-1zM31 7h1v1h-1zM31 8h1v1h-1zM30 9h2v1h-2zM30 10h2v1h-2zM30 11h2v1h-2zM30 12h2v1h-2zM29 13h3v1h-3zM29 14h3v1h-3zM29 15h3v1h-3zM28 16h4v1h-4zM28 17h4v1h-4zM27 18h5v1h-5zM26 19h6v1h-6zM25 20h7v1h-7zM24 21h8v1h-8zM23 22h9v1h-9zM23 23h9v1h-9zM21 24h1v1h-1zM23 24h9v1h-9zM0 25h2v1h-2zM19 25h3v1h-3zM23 25h9v1h-9zM0 26h3v1h-3zM16 26h6v1h-6zM23 26h3v1h-3zM27 26h5v1h-5zM0 27h2v1h-2zM5 27h4v1h-4zM10 27h5v1h-5zM16 27h6v1h-6zM23 27h2v1h-2zM28 27h4v1h-4zM1 28h2v1h-2zM4 28h6v1h-6zM11 28h10v1h-10zM22 28h4v1h-4zM27 28h4v1h-4zM2 29h9v1h-9zM21 29h9v1h-9zM3 30h26v1h-26zM4 31h24v1h-24z"/><path fill="#ac3e58" d="M4 4h1v1h-1zM3 5h1v1h-1zM5 5h1v1h-1zM4 6h1v1h-1z"/><path fill="#38bdf8" d="M27 4h1v1h-1zM15 23h1v1h-1z"/><path fill="#ff5a6e" d="M4 5h1v1h-1zM15 6h2v1h-2zM18 25h1v1h-1z"/><path fill="#d6c8ff" d="M14 10h1v1h-1zM13 11h1v1h-1zM11 12h6v1h-6zM11 13h3v1h-3zM15 13h1v1h-1zM10 14h5v1h-5z"/><path fill="#8b6cf0" d="M15 10h2v1h-2zM12 11h1v1h-1zM14 11h2v1h-2zM17 12h1v1h-1zM14 13h1v1h-1zM16 13h2v1h-2zM15 14h2v1h-2zM10 15h4v1h-4zM12 16h1v1h-1zM14 16h1v1h-1z"/><path fill="#5438c4" d="M16 11h2v1h-2zM18 12h1v1h-1zM14 15h2v1h-2zM10 16h2v1h-2zM13 16h1v1h-1zM15 16h2v1h-2zM11 17h5v1h-5z"/><path fill="#2d1a78" d="M18 11h1v1h-1zM19 12h1v1h-1zM18 13h2v1h-2zM17 14h2v1h-2zM16 15h4v1h-4zM17 16h2v1h-2zM16 17h1v1h-1zM16 20h1v1h-1z"/><path fill="#436b94" d="M19 11h1v1h-1z"/><path fill="#3e6f96" d="M20 11h1v1h-1z"/><path fill="#387499" d="M21 11h1v1h-1z"/><path fill="#33799c" d="M22 11h1v1h-1z"/><path fill="#3f6e95" d="M20 12h1v1h-1z"/><path fill="#3a7299" d="M21 12h1v1h-1z"/><path fill="#35779b" d="M22 12h1v1h-1z"/><path fill="#2f7c9e" d="M23 12h1v1h-1z"/><path fill="#54cef3" d="M22 13h1v1h-1z"/><path fill="#4ad6f8" d="M23 13h1v1h-1z"/><path fill="#7e3975" d="M9 14h1v1h-1z"/><path fill="#160c38" d="M19 14h2v1h-2zM20 15h1v1h-1zM19 16h1v1h-1zM18 18h2v1h-2zM14 19h5v1h-5zM14 20h2v1h-2z"/><path fill="#56cbf2" d="M22 14h1v1h-1z"/><path fill="#4dd4f7" d="M23 14h1v1h-1z"/><path fill="#853372" d="M8 15h1v1h-1z"/><path fill="#7f3874" d="M9 15h1v1h-1z"/><path fill="#63c1eb" d="M21 15h1v1h-1z"/><path fill="#59c9f0" d="M22 15h1v1h-1z"/><path fill="#873271" d="M8 16h1v1h-1z"/><path fill="#70b6e5" d="M20 16h1v1h-1z"/><path fill="#66beea" d="M21 16h1v1h-1z"/><path fill="#883070" d="M8 17h1v1h-1z"/><path fill="#909bd4" d="M17 17h1v1h-1z"/><path fill="#86a3d9" d="M18 17h1v1h-1z"/><path fill="#7cabde" d="M19 17h1v1h-1z"/><path fill="#eb4ea4" d="M8 18h1v1h-1z"/><path fill="#e156a9" d="M9 18h1v1h-1z"/><path fill="#d85eaf" d="M10 18h1v1h-1z"/><path fill="#ce67b4" d="M11 18h1v1h-1z"/><path fill="#c46fb9" d="M12 18h1v1h-1z"/><path fill="#ba77be" d="M13 18h1v1h-1z"/><path fill="#b080c3" d="M14 18h1v1h-1z"/><path fill="#a688c8" d="M15 18h1v1h-1z"/><path fill="#9d90cd" d="M16 18h1v1h-1z"/><path fill="#9398d2" d="M17 18h1v1h-1z"/><path fill="#3de1ff" d="M22 18h1v1h-1z"/><path fill="#ee4ba3" d="M8 19h1v1h-1z"/><path fill="#e454a8" d="M9 19h1v1h-1z"/><path fill="#da5cad" d="M10 19h1v1h-1z"/><path fill="#d164b2" d="M11 19h1v1h-1z"/><path fill="#c76db7" d="M12 19h1v1h-1z"/><path fill="#bd75bc" d="M13 19h1v1h-1z"/><path fill="#a78bfa" d="M13 25h1v1h-1zM26 27h1v1h-1z"/><path fill="#a98028" d="M3 26h1v1h-1zM2 27h1v1h-1zM4 27h1v1h-1zM3 28h1v1h-1z"/><path fill="#735eb3" d="M26 26h1v1h-1zM25 27h1v1h-1zM27 27h1v1h-1zM26 28h1v1h-1z"/><path fill="#fbbf24" d="M3 27h1v1h-1zM15 27h1v1h-1z"/></svg>';
+const controleIcon = (style = '') => svgFrom(style ? CONTROLE_MARK.replace('<svg ', '<svg style="' + style + '" ') : CONTROLE_MARK);
 const HUB_CONSOLES = [
   ['nes', 'Nintendinho', '#ff5a6e', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="8" width="56" height="26" rx="3"/><path d="M4 18h56M10 26h12M40 24h6M50 24h4"/><rect x="12" y="11" width="22" height="4" rx="1"/></svg>', 'NES'],
   ['snes', 'Super Nintendo', '#a78bfa', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 12h48a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6v-6a6 6 0 0 1 6-6z"/><rect x="18" y="5" width="28" height="9" rx="2"/><circle cx="48" cy="21" r="2.2"/><circle cx="54" cy="21" r="2.2"/><path d="M10 21h8M14 17v8"/></svg>', 'SNES'],
@@ -3610,7 +3637,7 @@ let hubChecked = false;
 function openHub(target) {
   const pr = activeProfile();
   // O GameHub segue os sons do menu e as animações daqui (até a pessoa mudar lá dentro).
-  if (!Bridge.openGameHub(pr ? pr.id : FIRST_PROFILE, pr ? pr.name : '', isKids(), LANG, target, settings.sound, settings.motion)) toast('Não deu para abrir o GameHub');
+  if (!Bridge.openGameHub(pr ? pr.id : FIRST_PROFILE, pr ? pr.name : '', isKids(), LANG, target, settings.sound, settings.motion)) toast('Não deu para abrir o Cobalt GameHub');
 }
 function renderHub() {
   const box = $('#hubBox');
@@ -3629,11 +3656,11 @@ function renderHub() {
   if (!st.installed) {
     const btn = h('button', { class: 'f btn primary', tabindex: '-1' }, h('span', { text: busy ? busyText : 'Instalar o GameHub' }));
     btn.dataset.key = 'install';
-    btn._act = () => { if (busy) return; Bridge.installGameHub(); toast('Baixando o Onix GameHub…'); };
-    const note = st.state === 'error' && st.error === 'missing' ? 'O GameHub ainda não foi publicado. Ele chega numa próxima atualização.'
-      : st.state === 'error' && st.error ? 'Não deu para baixar o GameHub. Confira a internet e tente de novo.' : null;
+    btn._act = () => { if (busy) return; Bridge.installGameHub(); toast('Baixando o Cobalt GameHub…'); };
+    const note = st.state === 'error' && st.error === 'missing' ? 'O Cobalt GameHub ainda não foi publicado. Ele chega numa próxima atualização.'
+      : st.state === 'error' && st.error ? 'Não deu para baixar o Cobalt GameHub. Confira a internet e tente de novo.' : null;
     kids.push(h('div', { class: 'hub-promo' }, h('div', { class: 'hub-mark' }, svgFrom(HUB_MARK)),
-      h('div', { class: 'hub-text' }, h('b', { text: 'Onix GameHub' }),
+      h('div', { class: 'hub-text' }, h('b', { text: 'Cobalt GameHub' }),
         h('span', { text: 'Um hub de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.' }),
         note ? h('span', { class: 'hub-note', text: note }) : null), btn));
   } else {
@@ -3653,13 +3680,16 @@ function renderHub() {
       b._act = () => openHub((g.resume ? 'resume:' : 'game:') + g.id);
       played.append(b);
     }
-    if (st.recent.length) kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Continuar jogando' }), h('span', { class: 'row-sub', text: '· Onix GameHub · OK volta de onde parou' })), played);
+    if (st.recent.length) kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Continuar jogando' }), h('span', { class: 'row-sub', text: '· Cobalt GameHub · OK volta de onde parou' })), played);
     // Um cartão: abrir o GameHub, os 4 consoles e (fora do Modo Infantil) atualizar/desinstalar.
     const total = HUB_CONSOLES.reduce((n, c) => n + (st.counts[c[0]] || 0), 0);
     const open = h('button', { class: 'f btn primary', tabindex: '-1' }, h('span', { text: 'Abrir o GameHub' }));
     open.dataset.key = 'open';
     open._act = () => openHub('home');
-    const actions = h('div', { class: 'hub-actions' }, open);
+    const ctrl = h('button', { class: 'f btn', tabindex: '-1' }, controleIcon(), h('span', { text: 'Baixar controle' }));
+    ctrl.dataset.key = 'ctrl';
+    ctrl._act = () => openGamepadCard(ctrl);
+    const actions = h('div', { class: 'hub-actions' }, open, ctrl);
     if (!isKids()) {
       if (st.latest) {
         const up = h('button', { class: 'f btn', tabindex: '-1' }, h('span', { text: busy ? busyText : t('Atualizar ({v})').replace('{v}', st.latest) }));
@@ -3683,7 +3713,7 @@ function renderHub() {
       consoles.append(b);
     }
     const head = h('div', { class: 'hub-head' }, h('div', { class: 'hub-mark' }, svgFrom(HUB_MARK)),
-      h('div', null, h('b', { text: 'Onix GameHub' }),
+      h('div', null, h('b', { text: 'Cobalt GameHub' }),
         h('small', { text: (total ? total + ' ' + t(total === 1 ? 'jogo' : 'jogos') : t('Nenhum jogo ainda')) + ' · ' + t('Versão {v}').replace('{v}', st.version) })));
     kids.push(h('div', { class: 'hub-card' }, h('div', { class: 'hub-main' }, head, actions), consoles));
   }
@@ -4296,6 +4326,12 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '16.4.0', date: 'outubro de 2026', items: [
+    ['new', '*Cobalt GameHub:* o emulador clássico do Onix agora se chama Cobalt GameHub, a mais nova gema oficial do Project Gems ao lado de Onix, Amethyst e Opala.'],
+    ['new', '*Onix Controle renovado:* o app de controle pelo celular teve um rebrand para integrar com o Cobalt GameHub, com novo ícone do Saturno cósmico e conexão direta para jogar os clássicos na TV.'],
+    ['new', '*Ícone do Onix Controle na aba Jogos:* o botão de baixar o controle e o cartão com QR code agora exibem o ícone oficial do Onix Controle.'],
+    ['fix', '*Trajetória do Onix:* o slide das pedras preciosas atualizado com a gema Cobalt GameHub.'],
+  ] },
   { version: '16.3.3', date: 'outubro de 2026', items: [
     ['fix', '*Avatares dos perfis:* os dez avatares ganharam traços em tons pastéis suaves e fundos com o visual de vidro escuro do Onix, substituindo o contraste excessivo por um acabamento mais elegante.'],
   ] },
@@ -4663,7 +4699,7 @@ const STORY = [
     <circle class="twinkle" cx="370" cy="230" r="2.5" style="--d:.9s"/><circle class="twinkle" cx="30" cy="220" r="2" style="--d:.3s"/></g>
 </svg>` },
   { c1: 'rgba(178,139,255,.3)', c2: 'rgba(224,138,76,.24)', kicker: 'Capítulo 6', title: 'Pedras preciosas',
-    body: 'Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Além dele, já existem o Amethyst e o Opala. O GameHub ainda não tem nome de pedra, mas já faz parte da família.',
+    body: 'Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Ao lado dele estão o Cobalt GameHub, o Amethyst e o Opala, formando a família Project Gems.',
     art: () => `<svg viewBox="0 0 400 260" fill="none" stroke-linecap="round">
   <g class="pop" style="--d:.2s">${STORY_LOGO(50, 34, '#fff', 'stOn', LOGO_ONIX, 50)}</g>
   <path class="draw" style="--d:.5s" d="M80 34h70" stroke="rgba(255,255,255,.5)" stroke-width="2.5"/>
@@ -4671,7 +4707,7 @@ const STORY = [
     <text x="162" y="52" fill="rgba(245,246,248,.65)" font-size="15">${t('sistema para TVs')}</text></g>
   <g class="pop" style="--d:1s">${HUB_MARK.replace('<svg ', '<svg x="29" y="77" width="42" height="42" ')}</g>
   <path class="draw" style="--d:1.3s" d="M80 98h70" stroke="#ff6fb5" stroke-width="2.5"/>
-  <g class="fade" style="--d:1.7s" font-family="system-ui,sans-serif"><text x="162" y="95" fill="#ffb3d9" font-size="22" font-weight="700">Onix GameHub</text>
+  <g class="fade" style="--d:1.7s" font-family="system-ui,sans-serif"><text x="162" y="95" fill="#ffb3d9" font-size="22" font-weight="700">Cobalt GameHub</text>
     <text x="162" y="116" fill="rgba(245,246,248,.65)" font-size="15">${t('jogos retrô para TV, celular e PC')}</text></g>
   <g class="pop" style="--d:1.8s">${STORY_LOGO(50, 162, '#d9c6ff', 'stAm', LOGO_AMETHYST, 50)}</g>
   <path class="draw" style="--d:2.1s" d="M80 162h70" stroke="#b28bff" stroke-width="2.5"/>
@@ -4779,6 +4815,40 @@ function closeSupport() {
   support = null;
   $('#support').hidden = true;
   $('#support').replaceChildren();
+  if (from && document.contains(from)) setFocus(from);
+}
+
+/* ---------------- Cartão do Controle (GameHub) ----------------
+   Abre o QR code como cartão em destaque (como o Apoie o criador / Pix). Qualquer tecla ou OK fecha. */
+let gamepadCard = null;
+function openGamepadCard(from) {
+  gamepadCard = { from: from || current };
+  const qr = qrSvg(CONTROLE_URL);
+  $('#gamepadModal').replaceChildren(
+    h('div', { class: 'sp-card' },
+      h('div', { class: 'sp-text' },
+        h('span', { class: 'sp-free', text: t('🎮 Cobalt GameHub · Controle no celular') }),
+        h('div', { style: 'display:flex;align-items:center;gap:.9rem;margin:.9rem 0 .7rem;' },
+          controleIcon('width:2.6rem;height:2.6rem;flex:none;filter:drop-shadow(0 4px 14px rgba(0,0,0,.45));'),
+          h('h2', { style: 'margin:0', text: t('Controle para celular') })),
+        h('p', { text: t('Aponte a câmera do celular para o código QR para baixar o Onix Controle.') }),
+        h('p', { text: t('100% personalizável: mova os botões na tela, altere o tamanho e a transparência e jogue sem atraso na rede local.') }),
+        h('p', { class: 'sp-thanks', text: t('Não tem controle Bluetooth? Você pode jogar pelo app no celular ou abrir direto pelo navegador durante a partida!') })),
+      h('div', { class: 'sp-qr' }, qr || '',
+        h('div', { style: 'display:flex;align-items:center;gap:.5rem;' },
+          controleIcon('width:1.4rem;height:1.4rem;flex:none;'),
+          h('b', { text: 'Onix Controle' })),
+        h('span', { class: 'sp-key', text: 'github.com/ruan2311/onix' }))),
+    h('div', { class: 'sp-hint' }, h('b', { text: 'OK' }), h('span', { text: t('para fechar') })));
+  $('#gamepadModal').hidden = false;
+  sfx('select');
+}
+function closeGamepadCard() {
+  if (!gamepadCard) return;
+  const from = gamepadCard.from;
+  gamepadCard = null;
+  $('#gamepadModal').hidden = true;
+  $('#gamepadModal').replaceChildren();
   if (from && document.contains(from)) setFocus(from);
 }
 
@@ -4922,23 +4992,30 @@ function btnAct(id, fn) { $('#' + id)._act = fn; }
    Dez rostos de frente no traço do gatinho do Onix (miolo escuro, contorno branco, bochechas rosa)
    ou a foto que veio do celular (JPEG validado). A ordem é a gravada nos perfis: só acrescente no fim. */
 const AVATARS = [
-  { name: 'Gatinho do Onix', bg: 'radial-gradient(circle at 50% 42%,rgba(118,128,255,.10),rgba(118,128,255,.03) 55%,transparent 72%),linear-gradient(160deg,#111318,#0a0b0f)', g: '<g fill="none" stroke="#c4c9ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 104C24 88 37 82 50 82S76 88 76 104z" fill="#0e1015"/><path d="M30 46l-1-27 19 13z" fill="#0e1015"/><path d="M33.5 38l-.5-11 8 6z" fill="#ff9ec4" stroke="none" opacity=".5"/><path d="M70 46l1-27-19 13z" fill="#0e1015"/><path d="M66.5 38l.5-11-8 6z" fill="#ff9ec4" stroke="none" opacity=".5"/><circle cx="50" cy="54" r="24" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="40.5" cy="52" rx="2.7" ry="3.8"/><ellipse cx="59.5" cy="52" rx="2.7" ry="3.8"/><circle cx="41.5" cy="50.5" r="1" fill="#0e1015"/><circle cx="60.5" cy="50.5" r="1" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="34.5" cy="61" r="3.2"/><circle cx="65.5" cy="61" r="3.2"/></g><path d="M47.5 59h5l-2.5 2.6z" fill="#ff9ec4" stroke="#ff9ec4" stroke-width="1.6"/><path d="M45 64q2.5 3 5 0q2.5 3 5 0" stroke-width="2.2"/><g stroke-width="1.5" opacity=".6"><path d="M33 59l-13-2.5M33 63l-13 1.5M67 59l13-2.5M67 63l13 1.5"/></g></g>' },
-  { name: 'Cachorro', bg: 'radial-gradient(circle at 50% 42%,rgba(255,158,84,.10),rgba(255,158,84,.03) 55%,transparent 72%),linear-gradient(160deg,#111318,#0a0b0f)', g: '<g fill="none" stroke="#ffd4a8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 104C24 88 37 82 50 82S76 88 76 104z" fill="#0e1015"/><circle cx="50" cy="52" r="23" fill="#0e1015"/><path d="M30 36c-9 2-13 14-11 26 1 5 6 6 8 2l5-16" fill="#0e1015"/><path d="M70 36c9 2 13 14 11 26-1 5-6 6-8 2l-5-16" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="41" cy="47" rx="2.7" ry="3.8"/><ellipse cx="59" cy="47" rx="2.7" ry="3.8"/><circle cx="42" cy="45.5" r="1" fill="#0e1015"/><circle cx="60" cy="45.5" r="1" fill="#0e1015"/></g><ellipse cx="50" cy="60" rx="10.5" ry="8" stroke-width="1.8" opacity=".5"/><path d="M45.5 55.5q4.5-2.5 9 0q-1 4-4.5 4.5q-3.5-.5-4.5-4.5z" fill="#fff" stroke="none"/><path d="M50 60v2.5M50 62.5q-3 3-6 1M50 62.5q3 3 6 1" stroke-width="2"/><path d="M47 64.5h6v3a3 3 0 0 1-6 0z" fill="#ff9ec4" stroke="none"/><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="35" cy="60" r="3.2"/><circle cx="65" cy="60" r="3.2"/></g></g>' },
-  { name: 'Bebê', bg: 'radial-gradient(circle at 50% 42%,rgba(96,182,255,.10),rgba(96,182,255,.03) 55%,transparent 72%),linear-gradient(160deg,#111318,#0a0b0f)', g: '<g fill="none" stroke="#b8e0ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M26 104C26 90 38 84 50 84S74 90 74 104z" fill="#0e1015"/><circle cx="27" cy="54" r="4.5" fill="#0e1015"/><circle cx="73" cy="54" r="4.5" fill="#0e1015"/><circle cx="50" cy="52" r="24" fill="#0e1015"/><path d="M50 28c-1-6 4-9 7-6 2 2 0 5-2.5 4" stroke-width="2.4"/><g fill="#fff" stroke="none"><ellipse cx="40.5" cy="51" rx="3.024" ry="4.256"/><ellipse cx="59.5" cy="51" rx="3.024" ry="4.256"/><circle cx="41.5" cy="49.5" r="1.12" fill="#0e1015"/><circle cx="60.5" cy="49.5" r="1.12" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="35" cy="60" r="3.6"/><circle cx="65" cy="60" r="3.6"/></g><circle cx="50" cy="65" r="4.6" fill="#ff9ec4" stroke="none"/><path d="M43.5 63.5h13" stroke="#b8e0ff" stroke-width="2.2"/><circle cx="50" cy="65" r="1.6" fill="#fff" stroke="none"/></g>' },
-  { name: 'Homem', bg: 'radial-gradient(circle at 50% 42%,rgba(52,206,174,.10),rgba(52,206,174,.03) 55%,transparent 72%),linear-gradient(160deg,#111318,#0a0b0f)', g: '<g fill="none" stroke="#9eeddb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 104C18 86 34 80 50 80S82 86 82 104z" fill="#0e1015"/><path d="M42 81l8 9 8-9" stroke-width="2.2"/><rect x="44" y="66" width="12" height="14" fill="#0e1015"/><circle cx="29" cy="52" r="4" fill="#0e1015"/><circle cx="71" cy="52" r="4" fill="#0e1015"/><ellipse cx="50" cy="50" rx="20" ry="23" fill="#0e1015"/><path d="M29.5 49c-2-17 7-25 20.5-25s23 7 20.5 25c-2-5-3-9-7-11-6 3-17 4-27 2-4 2-6 5-7 9z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="51" rx="2.484" ry="3.496"/><ellipse cx="58" cy="51" rx="2.484" ry="3.496"/><circle cx="43" cy="49.5" r="0.92" fill="#0e1015"/><circle cx="59" cy="49.5" r="0.92" fill="#0e1015"/></g><path d="M38 43.5q4-2 7 0M55 43.5q3-2 7 0" stroke-width="2"/><path d="M45 61q5 4 10 0" stroke-width="2.4"/></g>' },
-  { name: 'Mulher', bg: 'radial-gradient(circle at 50% 42%,rgba(244,114,176,.10),rgba(244,114,176,.03) 55%,transparent 72%),linear-gradient(160deg,#111318,#0a0b0f)', g: '<g fill="none" stroke="#ffb8d9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M27 48c-2-18 9-28 23-28s25 10 23 28c-1 12 3 22 9 30-12 6-52 6-64 0 6-8 10-18 9-30z" fill="#0e1015"/><path d="M20 104C20 88 35 82 50 82S80 88 80 104z" fill="#0e1015"/><rect x="44.5" y="66" width="11" height="16" fill="#0e1015"/><ellipse cx="50" cy="51" rx="19" ry="22" fill="#0e1015"/><path d="M31 50c0-14 8-22 19-22 8 0 15 4 18 12-9 1-19-3-24-9-3 7-8 12-13 19z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="52" rx="2.484" ry="3.496"/><ellipse cx="58" cy="52" rx="2.484" ry="3.496"/><circle cx="43" cy="50.5" r="0.92" fill="#0e1015"/><circle cx="59" cy="50.5" r="0.92" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="37" cy="60" r="2.8"/><circle cx="63" cy="60" r="2.8"/></g><path d="M45.5 61.5q4.5 3.6 9 0" stroke="#ff9ec4" stroke-width="2.4"/></g>' },
-  { name: 'Menino', bg: 'radial-gradient(circle at 50% 42%,rgba(78,138,255,.10),rgba(78,138,255,.03) 55%,transparent 72%),linear-gradient(160deg,#111318,#0a0b0f)', g: '<g fill="none" stroke="#b4d4ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 104C24 90 37 84 50 84S76 90 76 104z" fill="#0e1015"/><circle cx="29" cy="55" r="4" fill="#0e1015"/><circle cx="71" cy="55" r="4" fill="#0e1015"/><circle cx="50" cy="54" r="21" fill="#0e1015"/><path d="M29.5 53c-3-10 1-19 8-22l-1-6 7 3 4-7 4 6 7-4-1 7c9 3 13 13 9 23-3-6-8-10-14-12-5 4-12 5-18 4-2 2-4 5-5 8z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="55" rx="2.565" ry="3.61"/><ellipse cx="58" cy="55" rx="2.565" ry="3.61"/><circle cx="43" cy="53.5" r="0.95" fill="#0e1015"/><circle cx="59" cy="53.5" r="0.95" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="36.5" cy="63" r="2.8"/><circle cx="63.5" cy="63" r="2.8"/></g><path d="M44.5 63.5q5.5 5 11 0z" fill="#fff" stroke-width="1.6"/></g>' },
-  { name: 'Menina', bg: 'radial-gradient(circle at 50% 42%,rgba(250,198,72,.10),rgba(250,198,72,.03) 55%,transparent 72%),linear-gradient(160deg,#111318,#0a0b0f)', g: '<g fill="none" stroke="#ffe294" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="23" cy="40" r="9.5" fill="#0e1015"/><circle cx="77" cy="40" r="9.5" fill="#0e1015"/><path d="M25 104C25 90 37.5 84 50 84S75 90 75 104z" fill="#0e1015"/><circle cx="50" cy="54" r="21" fill="#0e1015"/><path d="M29.2 52c-1-14 8-21 20.8-21s21.8 7 20.8 21c-5-3-9-8-11-13-8 6-21 8-30.6 13z" fill="#0e1015"/><path d="M30 33.5l-6-4.5v9zM30 33.5l6-4.5v9z" fill="#ff9ec4" stroke="#ff9ec4" stroke-width="1.6"/><circle cx="30" cy="33.5" r="2" fill="#fff" stroke="none"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="56" rx="2.565" ry="3.61"/><ellipse cx="58" cy="56" rx="2.565" ry="3.61"/><circle cx="43" cy="54.5" r="0.95" fill="#0e1015"/><circle cx="59" cy="54.5" r="0.95" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="36.5" cy="64" r="2.8"/><circle cx="63.5" cy="64" r="2.8"/></g><path d="M45.5 64q4.5 3.6 9.0 0" stroke-width="2.4"/></g>' },
-  { name: 'Vovô', bg: 'radial-gradient(circle at 50% 42%,rgba(128,206,96,.10),rgba(128,206,96,.03) 55%,transparent 72%),linear-gradient(160deg,#111318,#0a0b0f)', g: '<g fill="none" stroke="#c8f2b4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 104C19 86 34.5 80 50 80S81 86 81 104z" fill="#0e1015"/><path d="M43 81l7 8 7-8" stroke-width="2.2"/><rect x="44" y="66" width="12" height="14" fill="#0e1015"/><circle cx="29" cy="52" r="4" fill="#0e1015"/><circle cx="71" cy="52" r="4" fill="#0e1015"/><ellipse cx="50" cy="50" rx="20" ry="23" fill="#0e1015"/><path d="M31 46c-2-5 0-10 4-12M69 46c2-5 0-10-4-12" stroke-width="2.4"/><path d="M37 41q4-2.5 8 0M55 41q4-2.5 8 0" stroke-width="2.2"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="50" rx="2.16" ry="3.04"/><ellipse cx="58" cy="50" rx="2.16" ry="3.04"/><circle cx="43" cy="48.5" r="0.8" fill="#0e1015"/><circle cx="59" cy="48.5" r="0.8" fill="#0e1015"/></g><g stroke-width="1.8"><circle cx="42" cy="50" r="6"/><circle cx="58" cy="50" r="6"/><path d="M48 49.5q2-1.6 4 0M36 49l-5-2M64 49l5-2"/></g><path d="M50 59.5c-4-1-9 0-10 4 3 0 6-1 10-2.5 4 1.5 7 2.5 10 2.5-1-4-6-5-10-4z" fill="#fff" stroke="none"/><path d="M46 66q4 2.5 8 0" stroke-width="2"/></g>' },
-  { name: 'Vovó', bg: 'radial-gradient(circle at 50% 42%,rgba(168,128,255,.10),rgba(168,128,255,.03) 55%,transparent 72%),linear-gradient(160deg,#111318,#0a0b0f)', g: '<g fill="none" stroke="#e0ccff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="24" r="8.5" fill="#0e1015"/><path d="M21 104C21 88 35.5 82 50 82S79 88 79 104z" fill="#0e1015"/><path d="M37 86q13 8 26 0" stroke="#ff9ec4" stroke-width="2" stroke-dasharray=".1 4.2" opacity=".9"/><rect x="44.5" y="66" width="11" height="16" fill="#0e1015"/><circle cx="31" cy="44" r="7" fill="#0e1015"/><circle cx="69" cy="44" r="7" fill="#0e1015"/><ellipse cx="50" cy="51" rx="19.5" ry="22" fill="#0e1015"/><path d="M30.6 49c-1-13 8-20 19.4-20s20.4 7 19.4 20c-3-7-8-10-11-10-3 3-12 3-16 0-3 0-9 3-11.8 10z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="53" rx="2.16" ry="3.04"/><ellipse cx="58" cy="53" rx="2.16" ry="3.04"/><circle cx="43" cy="51.5" r="0.8" fill="#0e1015"/><circle cx="59" cy="51.5" r="0.8" fill="#0e1015"/></g><g stroke-width="1.8"><circle cx="42" cy="53" r="6"/><circle cx="58" cy="53" r="6"/><path d="M48 52.5q2-1.6 4 0"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="36.5" cy="61" r="2.6"/><circle cx="63.5" cy="61" r="2.6"/></g><path d="M45.5 63q4.5 3.6 9 0" stroke="#ff9ec4" stroke-width="2.4"/></g>' },
-  { name: 'Astronauta', bg: 'radial-gradient(circle at 50% 42%,rgba(255,104,104,.10),rgba(255,104,104,.03) 55%,transparent 72%),linear-gradient(160deg,#111318,#0a0b0f)', g: '<g fill="none" stroke="#ffb8b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 104C17 86 33.5 80 50 80S83 86 83 104z" fill="#0e1015"/><path d="M38 88h24" stroke-width="2" opacity=".5"/><circle cx="62" cy="94" r="2.2" fill="#fff" stroke="none" opacity=".6"/><path d="M50 20v-6" stroke-width="2.4"/><circle cx="50" cy="12" r="3" fill="#ff9ec4" stroke="none"/><circle cx="50" cy="50" r="30" fill="#0e1015"/><rect x="28" y="33" width="44" height="36" rx="18" fill="#0e1015" stroke-width="2.2"/><path d="M33.5 46c1-5 4-8 9-9.5" stroke-width="2" opacity=".6"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="51" rx="2.565" ry="3.61"/><ellipse cx="58" cy="51" rx="2.565" ry="3.61"/><circle cx="43" cy="49.5" r="0.95" fill="#0e1015"/><circle cx="59" cy="49.5" r="0.95" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="37" cy="59" r="2.6"/><circle cx="63" cy="59" r="2.6"/></g><path d="M46 59.5q4 3.2 8 0" stroke-width="2.4"/><g fill="#fff" stroke="none"><path d="M78 23l1.3 3 3 1.3-3 1.3-1.3 3-1.3-3-3-1.3 3-1.3z"/><circle cx="19" cy="22" r="1.4"/><circle cx="85" cy="44" r="1.1"/></g></g>' }
+  { name: 'Gatinho do Onix', bg: 'linear-gradient(160deg,#1c1e30,#0b0c10)', g: '<g fill="none" stroke="#c4c9ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 104C24 88 37 82 50 82S76 88 76 104z" fill="#0e1015"/><path d="M30 46l-1-27 19 13z" fill="#0e1015"/><path d="M33.5 38l-.5-11 8 6z" fill="#ff9ec4" stroke="none" opacity=".5"/><path d="M70 46l1-27-19 13z" fill="#0e1015"/><path d="M66.5 38l.5-11-8 6z" fill="#ff9ec4" stroke="none" opacity=".5"/><circle cx="50" cy="54" r="24" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="40.5" cy="52" rx="2.7" ry="3.8"/><ellipse cx="59.5" cy="52" rx="2.7" ry="3.8"/><circle cx="41.5" cy="50.5" r="1" fill="#0e1015"/><circle cx="60.5" cy="50.5" r="1" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="34.5" cy="61" r="3.2"/><circle cx="65.5" cy="61" r="3.2"/></g><path d="M47.5 59h5l-2.5 2.6z" fill="#ff9ec4" stroke="#ff9ec4" stroke-width="1.6"/><path d="M45 64q2.5 3 5 0q2.5 3 5 0" stroke-width="2.2"/><g stroke-width="1.5" opacity=".6"><path d="M33 59l-13-2.5M33 63l-13 1.5M67 59l13-2.5M67 63l13 1.5"/></g></g>' },
+  { name: 'Cachorro', bg: 'linear-gradient(160deg,#281c14,#0b0c10)', g: '<g fill="none" stroke="#ffd4a8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 104C24 88 37 82 50 82S76 88 76 104z" fill="#0e1015"/><circle cx="50" cy="52" r="23" fill="#0e1015"/><path d="M30 36c-9 2-13 14-11 26 1 5 6 6 8 2l5-16" fill="#0e1015"/><path d="M70 36c9 2 13 14 11 26-1 5-6 6-8 2l-5-16" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="41" cy="47" rx="2.7" ry="3.8"/><ellipse cx="59" cy="47" rx="2.7" ry="3.8"/><circle cx="42" cy="45.5" r="1" fill="#0e1015"/><circle cx="60" cy="45.5" r="1" fill="#0e1015"/></g><ellipse cx="50" cy="60" rx="10.5" ry="8" stroke-width="1.8" opacity=".5"/><path d="M45.5 55.5q4.5-2.5 9 0q-1 4-4.5 4.5q-3.5-.5-4.5-4.5z" fill="#fff" stroke="none"/><path d="M50 60v2.5M50 62.5q-3 3-6 1M50 62.5q3 3 6 1" stroke-width="2"/><path d="M47 64.5h6v3a3 3 0 0 1-6 0z" fill="#ff9ec4" stroke="none"/><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="35" cy="60" r="3.2"/><circle cx="65" cy="60" r="3.2"/></g></g>' },
+  { name: 'Bebê', bg: 'linear-gradient(160deg,#142030,#0b0c10)', g: '<g fill="none" stroke="#b8e0ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M26 104C26 90 38 84 50 84S74 90 74 104z" fill="#0e1015"/><circle cx="27" cy="54" r="4.5" fill="#0e1015"/><circle cx="73" cy="54" r="4.5" fill="#0e1015"/><circle cx="50" cy="52" r="24" fill="#0e1015"/><path d="M50 28c-1-6 4-9 7-6 2 2 0 5-2.5 4" stroke-width="2.4"/><g fill="#fff" stroke="none"><ellipse cx="40.5" cy="51" rx="3.024" ry="4.256"/><ellipse cx="59.5" cy="51" rx="3.024" ry="4.256"/><circle cx="41.5" cy="49.5" r="1.12" fill="#0e1015"/><circle cx="60.5" cy="49.5" r="1.12" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="35" cy="60" r="3.6"/><circle cx="65" cy="60" r="3.6"/></g><circle cx="50" cy="65" r="4.6" fill="#ff9ec4" stroke="none"/><path d="M43.5 63.5h13" stroke="#b8e0ff" stroke-width="2.2"/><circle cx="50" cy="65" r="1.6" fill="#fff" stroke="none"/></g>' },
+  { name: 'Homem', bg: 'linear-gradient(160deg,#122420,#0b0c10)', g: '<g fill="none" stroke="#9eeddb" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 104C18 86 34 80 50 80S82 86 82 104z" fill="#0e1015"/><path d="M42 81l8 9 8-9" stroke-width="2.2"/><rect x="44" y="66" width="12" height="14" fill="#0e1015"/><circle cx="29" cy="52" r="4" fill="#0e1015"/><circle cx="71" cy="52" r="4" fill="#0e1015"/><ellipse cx="50" cy="50" rx="20" ry="23" fill="#0e1015"/><path d="M29.5 49c-2-17 7-25 20.5-25s23 7 20.5 25c-2-5-3-9-7-11-6 3-17 4-27 2-4 2-6 5-7 9z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="51" rx="2.484" ry="3.496"/><ellipse cx="58" cy="51" rx="2.484" ry="3.496"/><circle cx="43" cy="49.5" r="0.92" fill="#0e1015"/><circle cx="59" cy="49.5" r="0.92" fill="#0e1015"/></g><path d="M38 43.5q4-2 7 0M55 43.5q3-2 7 0" stroke-width="2"/><path d="M45 61q5 4 10 0" stroke-width="2.4"/></g>' },
+  { name: 'Mulher', bg: 'linear-gradient(160deg,#2a1422,#0b0c10)', g: '<g fill="none" stroke="#ffb8d9" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M27 48c-2-18 9-28 23-28s25 10 23 28c-1 12 3 22 9 30-12 6-52 6-64 0 6-8 10-18 9-30z" fill="#0e1015"/><path d="M20 104C20 88 35 82 50 82S80 88 80 104z" fill="#0e1015"/><rect x="44.5" y="66" width="11" height="16" fill="#0e1015"/><ellipse cx="50" cy="51" rx="19" ry="22" fill="#0e1015"/><path d="M31 50c0-14 8-22 19-22 8 0 15 4 18 12-9 1-19-3-24-9-3 7-8 12-13 19z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="52" rx="2.484" ry="3.496"/><ellipse cx="58" cy="52" rx="2.484" ry="3.496"/><circle cx="43" cy="50.5" r="0.92" fill="#0e1015"/><circle cx="59" cy="50.5" r="0.92" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="37" cy="60" r="2.8"/><circle cx="63" cy="60" r="2.8"/></g><path d="M45.5 61.5q4.5 3.6 9 0" stroke="#ff9ec4" stroke-width="2.4"/></g>' },
+  { name: 'Menino', bg: 'linear-gradient(160deg,#142032,#0b0c10)', g: '<g fill="none" stroke="#b4d4ff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M24 104C24 90 37 84 50 84S76 90 76 104z" fill="#0e1015"/><circle cx="29" cy="55" r="4" fill="#0e1015"/><circle cx="71" cy="55" r="4" fill="#0e1015"/><circle cx="50" cy="54" r="21" fill="#0e1015"/><path d="M29.5 53c-3-10 1-19 8-22l-1-6 7 3 4-7 4 6 7-4-1 7c9 3 13 13 9 23-3-6-8-10-14-12-5 4-12 5-18 4-2 2-4 5-5 8z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="55" rx="2.565" ry="3.61"/><ellipse cx="58" cy="55" rx="2.565" ry="3.61"/><circle cx="43" cy="53.5" r="0.95" fill="#0e1015"/><circle cx="59" cy="53.5" r="0.95" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="36.5" cy="63" r="2.8"/><circle cx="63.5" cy="63" r="2.8"/></g><path d="M44.5 63.5q5.5 5 11 0z" fill="#fff" stroke-width="1.6"/></g>' },
+  { name: 'Menina', bg: 'linear-gradient(160deg,#2a2212,#0b0c10)', g: '<g fill="none" stroke="#ffe294" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="23" cy="40" r="9.5" fill="#0e1015"/><circle cx="77" cy="40" r="9.5" fill="#0e1015"/><path d="M25 104C25 90 37.5 84 50 84S75 90 75 104z" fill="#0e1015"/><circle cx="50" cy="54" r="21" fill="#0e1015"/><path d="M29.2 52c-1-14 8-21 20.8-21s21.8 7 20.8 21c-5-3-9-8-11-13-8 6-21 8-30.6 13z" fill="#0e1015"/><path d="M30 33.5l-6-4.5v9zM30 33.5l6-4.5v9z" fill="#ff9ec4" stroke="#ff9ec4" stroke-width="1.6"/><circle cx="30" cy="33.5" r="2" fill="#fff" stroke="none"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="56" rx="2.565" ry="3.61"/><ellipse cx="58" cy="56" rx="2.565" ry="3.61"/><circle cx="43" cy="54.5" r="0.95" fill="#0e1015"/><circle cx="59" cy="54.5" r="0.95" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="36.5" cy="64" r="2.8"/><circle cx="63.5" cy="64" r="2.8"/></g><path d="M45.5 64q4.5 3.6 9.0 0" stroke-width="2.4"/></g>' },
+  { name: 'Vovô', bg: 'linear-gradient(160deg,#142416,#0b0c10)', g: '<g fill="none" stroke="#c8f2b4" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 104C19 86 34.5 80 50 80S81 86 81 104z" fill="#0e1015"/><path d="M43 81l7 8 7-8" stroke-width="2.2"/><rect x="44" y="66" width="12" height="14" fill="#0e1015"/><circle cx="29" cy="52" r="4" fill="#0e1015"/><circle cx="71" cy="52" r="4" fill="#0e1015"/><ellipse cx="50" cy="50" rx="20" ry="23" fill="#0e1015"/><path d="M31 46c-2-5 0-10 4-12M69 46c2-5 0-10-4-12" stroke-width="2.4"/><path d="M37 41q4-2.5 8 0M55 41q4-2.5 8 0" stroke-width="2.2"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="50" rx="2.16" ry="3.04"/><ellipse cx="58" cy="50" rx="2.16" ry="3.04"/><circle cx="43" cy="48.5" r="0.8" fill="#0e1015"/><circle cx="59" cy="48.5" r="0.8" fill="#0e1015"/></g><g stroke-width="1.8"><circle cx="42" cy="50" r="6"/><circle cx="58" cy="50" r="6"/><path d="M48 49.5q2-1.6 4 0M36 49l-5-2M64 49l5-2"/></g><path d="M50 59.5c-4-1-9 0-10 4 3 0 6-1 10-2.5 4 1.5 7 2.5 10 2.5-1-4-6-5-10-4z" fill="#fff" stroke="none"/><path d="M46 66q4 2.5 8 0" stroke-width="2"/></g>' },
+  { name: 'Vovó', bg: 'linear-gradient(160deg,#22182e,#0b0c10)', g: '<g fill="none" stroke="#e0ccff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="50" cy="24" r="8.5" fill="#0e1015"/><path d="M21 104C21 88 35.5 82 50 82S79 88 79 104z" fill="#0e1015"/><path d="M37 86q13 8 26 0" stroke="#ff9ec4" stroke-width="2" stroke-dasharray=".1 4.2" opacity=".9"/><rect x="44.5" y="66" width="11" height="16" fill="#0e1015"/><circle cx="31" cy="44" r="7" fill="#0e1015"/><circle cx="69" cy="44" r="7" fill="#0e1015"/><ellipse cx="50" cy="51" rx="19.5" ry="22" fill="#0e1015"/><path d="M30.6 49c-1-13 8-20 19.4-20s20.4 7 19.4 20c-3-7-8-10-11-10-3 3-12 3-16 0-3 0-9 3-11.8 10z" fill="#0e1015"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="53" rx="2.16" ry="3.04"/><ellipse cx="58" cy="53" rx="2.16" ry="3.04"/><circle cx="43" cy="51.5" r="0.8" fill="#0e1015"/><circle cx="59" cy="51.5" r="0.8" fill="#0e1015"/></g><g stroke-width="1.8"><circle cx="42" cy="53" r="6"/><circle cx="58" cy="53" r="6"/><path d="M48 52.5q2-1.6 4 0"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="36.5" cy="61" r="2.6"/><circle cx="63.5" cy="61" r="2.6"/></g><path d="M45.5 63q4.5 3.6 9 0" stroke="#ff9ec4" stroke-width="2.4"/></g>' },
+  { name: 'Astronauta', bg: 'linear-gradient(160deg,#2a1616,#0b0c10)', g: '<g fill="none" stroke="#ffb8b8" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 104C17 86 33.5 80 50 80S83 86 83 104z" fill="#0e1015"/><path d="M38 88h24" stroke-width="2" opacity=".5"/><circle cx="62" cy="94" r="2.2" fill="#fff" stroke="none" opacity=".6"/><path d="M50 20v-6" stroke-width="2.4"/><circle cx="50" cy="12" r="3" fill="#ff9ec4" stroke="none"/><circle cx="50" cy="50" r="30" fill="#0e1015"/><rect x="28" y="33" width="44" height="36" rx="18" fill="#0e1015" stroke-width="2.2"/><path d="M33.5 46c1-5 4-8 9-9.5" stroke-width="2" opacity=".6"/><g fill="#fff" stroke="none"><ellipse cx="42" cy="51" rx="2.565" ry="3.61"/><ellipse cx="58" cy="51" rx="2.565" ry="3.61"/><circle cx="43" cy="49.5" r="0.95" fill="#0e1015"/><circle cx="59" cy="49.5" r="0.95" fill="#0e1015"/></g><g fill="#ff9ec4" stroke="none" opacity=".25"><circle cx="37" cy="59" r="2.6"/><circle cx="63" cy="59" r="2.6"/></g><path d="M46 59.5q4 3.2 8 0" stroke-width="2.4"/><g fill="#fff" stroke="none"><path d="M78 23l1.3 3 3 1.3-3 1.3-1.3 3-1.3-3-3-1.3 3-1.3z"/><circle cx="19" cy="22" r="1.4"/><circle cx="85" cy="44" r="1.1"/></g></g>' }
 ];
 const PLUS_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>';
+const GAMEPAD_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="11" rx="5.5"/><path d="M7 10.5v4M5 12.5h4"/><circle cx="15.5" cy="11.5" r=".6" fill="currentColor"/><circle cx="18" cy="14" r=".6" fill="currentColor"/></svg>';
 const PHONE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="7" y="2.5" width="10" height="19" rx="2.5"/><path d="M11 18.5h2"/></svg>';
 const LOCK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
 function avatarFill(el, pr) {
   el.style.background = pr.photo ? '#222' : AVATARS[pr.av].bg;
-  el.replaceChildren(pr.photo ? h('img', { src: pr.photo, alt: '', draggable: 'false' }) : svgFrom('<svg class="face" viewBox="0 0 100 100" aria-hidden="true">' + AVATARS[pr.av].g + '</svg>'));
+  if (pr.photo) {
+    el.replaceChildren(h('img', { src: pr.photo, alt: '', draggable: 'false' }));
+  } else {
+    const a = AVATARS[pr.av];
+    if (!a._node) a._node = svgFrom('<svg class="face" viewBox="0 0 100 100" aria-hidden="true">' + a.g + '</svg>');
+    el.replaceChildren(a._node.cloneNode(true));
+  }
   return el;
 }
 const avatar = pr => avatarFill(h('span', { class: 'av' }), pr);
@@ -5139,6 +5216,7 @@ function openProfileEditor(pr) {
   draft = pr ? { id: pr.id, name: pr.name, av: pr.av, photo: pr.photo, kids: pr.kids, allow: pr.allow.slice(), limit: pr.limit, isNew: false }
     : { id: newProfileId(), name: '', av: free, photo: null, kids: false, allow: defaultKidsApps(), limit: 60, isNew: true };
   disarmDelete();
+  $('#peAvs').replaceChildren();
   openPane('profileEdit');
   renderDraft();
   setFocus($('#peNameBtn'));
@@ -5149,18 +5227,27 @@ function renderDraft() {
   $('#peBadge').hidden = !draft.kids;
   $('#peTitle').textContent = t(draft.isNew ? 'Novo perfil' : 'Editar perfil');
   $('#peNameVal').textContent = draft.name || t('Digite o nome');
-  const opts = AVATARS.map((_, i) => {
-    const b = h('button', { class: 'f av-opt' + (!draft.photo && draft.av === i ? ' sel' : ''), tabindex: '-1', 'aria-label': t(AVATARS[i].name), 'data-av': i },
-      avatarFill(h('span', { class: 'av' }), { av: i, photo: null }));
-    b._act = () => { draft.av = i; draft.photo = null; renderDraft(); setFocus($('#peAvs [data-av="' + i + '"]')); };
-    return b;
-  });
-  if (Bridge.has('remoteStart')) {
-    const ph = h('button', { class: 'f av-photo' + (draft.photo ? ' sel' : ''), tabindex: '-1', id: 'pePhoto' }, svgFrom(PHONE_SVG), h('span', { text: 'Foto do celular' }));
-    ph._act = () => askPhoto(photo => { if (draft) { draft.photo = photo; renderDraft(); setFocus($('#pePhoto')); } });
-    opts.push(ph);
+  const peAvs = $('#peAvs');
+  if (!peAvs.children.length) {
+    const opts = AVATARS.map((_, i) => {
+      const b = h('button', { class: 'f av-opt' + (!draft.photo && draft.av === i ? ' sel' : ''), tabindex: '-1', 'aria-label': t(AVATARS[i].name), 'data-av': i },
+        avatarFill(h('span', { class: 'av' }), { av: i, photo: null }));
+      b._act = () => { draft.av = i; draft.photo = null; renderDraft(); setFocus(b); };
+      return b;
+    });
+    if (Bridge.has('remoteStart')) {
+      const ph = h('button', { class: 'f av-photo' + (draft.photo ? ' sel' : ''), tabindex: '-1', id: 'pePhoto' }, svgFrom(PHONE_SVG), h('span', { text: 'Foto do celular' }));
+      ph._act = () => askPhoto(photo => { if (draft) { draft.photo = photo; renderDraft(); setFocus($('#pePhoto')); } });
+      opts.push(ph);
+    }
+    peAvs.replaceChildren(...opts);
+  } else {
+    for (const b of peAvs.querySelectorAll('.av-opt')) {
+      b.classList.toggle('sel', !draft.photo && Number(b.dataset.av) === draft.av);
+    }
+    const ph = $('#pePhoto');
+    if (ph) ph.classList.toggle('sel', !!draft.photo);
   }
-  $('#peAvs').replaceChildren(...opts);
   $('#peKidsSw').classList.toggle('on', draft.kids);
   $('#peKidsOpts').hidden = !draft.kids;
   $('#pePinVal').textContent = kidsPin ? t('•••• · OK troca') : t('Criar');
@@ -5735,7 +5822,7 @@ let phoneMode = 'qr';
 function phoneOpen(mode) {
   phoneMode = mode;
   readRemoteInfo();
-  if (mode !== 'app' && (!remoteInfo || !remoteInfo.on || !remoteInfo.url)) {
+  if (mode !== 'app' && mode !== 'gamepad' && (!remoteInfo || !remoteInfo.on || !remoteInfo.url)) {
     photoCb = null;
     toast(settings.remote ? 'A TV não está numa rede Wi-Fi ou cabo agora' : 'Ligue o Controle web em Configurações');
     return;
@@ -5750,12 +5837,16 @@ function askPhoto(cb) {
   phoneOpen('photo');
 }
 function renderPhonePane() {
-  if (phoneMode === 'app') {
+  if (phoneMode === 'app' || phoneMode === 'gamepad') {
     const svg = qrSvg(CONTROLE_URL);
     $('#ppQr').replaceChildren(...(svg ? [svg] : []));
-    $('#ppTitle').textContent = 'Onix Controle';
-    $('#ppText').textContent = t('Aponte a câmera do celular (Android) para o código. Ele abre a página do Onix Controle no GitHub, com o link para baixar o app.');
-    $('#ppNote').textContent = t('Funciona só em Google TV, com celular Android 6 ou mais novo (não funciona em iPhone, nem em TVs Samsung e LG). Na primeira vez, o app pede o código que aparece na TV.');
+    $('#ppTitle').textContent = t(phoneMode === 'gamepad' ? 'Controle para celular' : 'Onix Controle');
+    $('#ppText').textContent = t(phoneMode === 'gamepad'
+      ? 'Aponte a câmera do celular para o código QR para baixar o Onix Controle.'
+      : 'Aponte a câmera do celular (Android) para o código. Ele abre a página do Onix Controle no GitHub, com o link para baixar o app.');
+    $('#ppNote').textContent = t(phoneMode === 'gamepad'
+      ? 'Jogue seus clássicos no Onix GameHub usando o celular como controle 100% personalizável, ou jogue pelo navegador sem instalar nada durante a partida.'
+      : 'Funciona só em Google TV, com celular Android 6 ou mais novo (não funciona em iPhone, nem em TVs Samsung e LG). Na primeira vez, o app pede o código que aparece na TV.');
     $('#ppWait').hidden = true;
     return;
   }
@@ -5928,6 +6019,7 @@ function backStep() {
   if (game) { closeGame(); return true; }
   if (story) { closeStory(); return true; }
   if (support) { closeSupport(); return true; }
+  if (gamepadCard) { closeGamepadCard(); return true; }
   if (kittyOpen) { hideKitty(); return true; }
   // O mesmo Voltar pode chegar duas vezes (tecla na página e Voltar do Android): o que fechou o
   // gatinho não tira o foco do cartão Sobre.
@@ -5952,6 +6044,7 @@ document.addEventListener('keydown', e => {
   if (reader) { readerKey(e); return; }
   if (story) { storyKey(e); return; }
   if (support) { e.preventDefault(); if (!e.repeat) back(); return; }
+  if (gamepadCard) { e.preventDefault(); if (!e.repeat) back(); return; }
   // Gatinho aberto: qualquer tecla fecha (Voltar passa pelo back() normal).
   if (kittyOpen && !(e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4)) {
     e.preventDefault(); if (!e.repeat) { hideKitty(); sfx('back'); } return;
@@ -5981,6 +6074,7 @@ document.addEventListener('click', e => {
   if (kittyOpen) { hideKitty(); return; }
   if (story) { storyStep(1); return; }
   if (support) { closeSupport(); sfx('back'); return; }
+  if (gamepadCard) { closeGamepadCard(); sfx('back'); return; }
   if (panes.length) {
     const el = e.target.closest('.f');
     if (el && topPane().el.contains(el)) { e.preventDefault(); setFocus(el); sfx('select'); activate(el); }

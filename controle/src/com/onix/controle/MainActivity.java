@@ -46,6 +46,11 @@ public class MainActivity extends Activity implements Tv.Listener, Finder.Listen
     @Override
     protected void onCreate(Bundle saved) {
         super.onCreate(saved);
+        requestWindowFeature(android.view.Window.FEATURE_NO_TITLE);
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        getWindow().addFlags(android.view.WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+        setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        hideSystemUi();
         prefs = getSharedPreferences("controle", MODE_PRIVATE);
         volumeKeys = prefs.getBoolean("volumeKeys", true);
         tv = new Tv(this, this);
@@ -78,31 +83,60 @@ public class MainActivity extends Activity implements Tv.Listener, Finder.Listen
         web.addJavascriptInterface(new Bridge(), "Onix");
         web.loadUrl("file:///android_asset/controle.html");
         root.addView(web, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.MATCH_PARENT, FrameLayout.LayoutParams.MATCH_PARENT));
-        // Android 15 desenha atrás das barras do sistema: o espaço delas vira margem da página.
-        if (Build.VERSION.SDK_INT >= 20) {
-            root.setOnApplyWindowInsetsListener(new View.OnApplyWindowInsetsListener() {
-                @SuppressWarnings("deprecation")
-                public WindowInsets onApplyWindowInsets(View v, WindowInsets in) {
-                    v.setPadding(in.getSystemWindowInsetLeft(), in.getSystemWindowInsetTop(),
-                            in.getSystemWindowInsetRight(), in.getSystemWindowInsetBottom());
-                    return in;
-                }
-            });
-        }
         setContentView(root);
         Updater.get(this).setListener(this);
     }
 
     @Override
+    public void onWindowFocusChanged(boolean focus) {
+        super.onWindowFocusChanged(focus);
+        if (focus) hideSystemUi();
+    }
+
+    private void hideSystemUi() {
+        if (Build.VERSION.SDK_INT >= 19) {
+            getWindow().getDecorView().setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
+        }
+        if (Build.VERSION.SDK_INT >= 30) {
+            try {
+                Object c = getWindow().getClass().getMethod("getInsetsController").invoke(getWindow());
+                if (c != null) {
+                    Class<?> insetsType = Class.forName("android.view.WindowInsets$Type");
+                    int sb = (Integer) insetsType.getMethod("statusBars").invoke(null);
+                    int nb = (Integer) insetsType.getMethod("navigationBars").invoke(null);
+                    c.getClass().getMethod("hide", int.class).invoke(c, sb | nb);
+                    c.getClass().getMethod("setSystemBarsBehavior", int.class).invoke(c, 2); // BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+                }
+            } catch (Throwable ignored) {}
+        }
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
+        hideSystemUi();
         finder.start();
         String last = prefs.getString("last", null);
         JSONObject p = paired().optJSONObject(last == null ? "" : last);
         if (p != null) tv.connect(p.optString("host"), last, p.optString("pin"));
         new Thread(new Runnable() {
             public void run() {
-                Updater.get(MainActivity.this).check(false);
+                final Updater up = Updater.get(MainActivity.this);
+                up.check(false);
+                if (!up.auto() || !up.isReady() || up.promptedRecently()) return;
+                ui.post(new Runnable() {
+                    public void run() {
+                        if (!isFinishing() && up.isReady() && up.canInstall()) {
+                            up.install(MainActivity.this);
+                        }
+                    }
+                });
             }
         }, "update").start();
     }
@@ -325,6 +359,36 @@ public class MainActivity extends Activity implements Tv.Listener, Finder.Listen
         }
 
         @JavascriptInterface
+        public boolean openApp(final String pkg) {
+            if (pkg == null || pkg.isEmpty()) return false;
+            tv.link("gamehub://open");
+            try {
+                android.content.Intent it = getPackageManager().getLaunchIntentForPackage(pkg);
+                if (it != null) {
+                    it.addFlags(android.content.Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(it);
+                    return true;
+                }
+            } catch (Exception ignored) {}
+            return false;
+        }
+
+        @JavascriptInterface
+        public void setOrientation(final String mode) {
+            ui.post(new Runnable() {
+                public void run() {
+                    if ("landscape".equals(mode)) {
+                        setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_LANDSCAPE);
+                    } else if ("portrait".equals(mode)) {
+                        setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR_PORTRAIT);
+                    } else {
+                        setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+                    }
+                }
+            });
+        }
+
+        @JavascriptInterface
         public void haptic() {
             ui.post(new Runnable() {
                 public void run() {
@@ -347,6 +411,17 @@ public class MainActivity extends Activity implements Tv.Listener, Finder.Listen
         @JavascriptInterface
         public String update() {
             return Updater.get(MainActivity.this).json();
+        }
+
+        @JavascriptInterface
+        public void setAutoUpdate(boolean on) {
+            Updater.get(MainActivity.this).setAuto(on);
+            emit("update", Updater.get(MainActivity.this).json());
+        }
+
+        @JavascriptInterface
+        public boolean autoUpdate() {
+            return Updater.get(MainActivity.this).auto();
         }
 
         @JavascriptInterface

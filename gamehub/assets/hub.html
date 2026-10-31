@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Onix GameHub</title>
+<title>Cobalt GameHub</title>
 <link rel="stylesheet" href="common.css">
 <style>
 .app{position:fixed;inset:0;display:flex;flex-direction:column;padding:3rem 4.4rem 0}
@@ -299,7 +299,7 @@ function call(name, ...args) {
 function json(s, def) { try { return s ? JSON.parse(s) : def; } catch (_) { return def; } }
 
 function brand(el) {
-  el.replaceChildren(svg(MARK), h('span', null, h('b', { text: 'ONIX GAMEHUB' }), h('small', { text: 'By Ruan' })));
+  el.replaceChildren(svg(MARK), h('span', null, h('b', { text: 'COBALT GAMEHUB' }), h('small', { text: 'By Ruan' })));
 }
 
 function loadLibrary() { LIB = json(call('library'), []); }
@@ -330,7 +330,7 @@ function renderChips() {
     ? h('div', { class: 'chip', title: pads.map(p => p.name).join(', ') }, icon('pad'), String(pads.length))
     : INFO.mobile ? null   // no celular, o controle na tela já joga
       : INFO.pc ? h('div', { class: 'chip', title: t('Teclado: setas, X = A, Z = B, Enter = Start. Esc abre o menu.') }, icon('pad'), t('Teclado'))
-      : h('button', { class: 'f chip warn pill', act: () => call('openBluetooth') }, icon('pad'), t('Sem controle'));
+      : h('button', { class: 'f chip warn pill', act: () => openConnectPadSheet() }, icon('pad'), t('Sem controle'));
   $('#padChip').replaceChildren(...(chip ? [chip] : []));
   const p = $('#profileChip');
   if (INFO.profileName) {
@@ -555,22 +555,99 @@ function cheatsSheet(g) {
     h('div', { class: 'scroll', style: { overflowY: 'auto', maxHeight: '40vh' } }, box), h('div', null, add))));
 }
 
-/* Jogar: sem controle conectado, oferece o Bluetooth antes. */
+/* ---------------- Conectar controle (Bluetooth ou Celular) ---------------- */
+const CONTROLE_APK_URL = 'https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk';
+
+function openConnectPadSheet(onDone) {
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '56rem', maxWidth: '92vw', background: 'linear-gradient(135deg, #130a2a, #0b0618)', border: '1px solid rgba(255,255,255,.18)', boxShadow: '0 2rem 6rem rgba(0,0,0,.8)' } },
+    h('div', { style: { display: 'flex', alignItems: 'center', gap: '1rem' } },
+      h('span', { style: { color: 'var(--cyan)', width: '3.2rem', height: '3.2rem', display: 'flex', alignItems: 'center' } }, icon('pad')),
+      h('h2', { text: t('Conectar um controle') })),
+    h('p', { text: t('Escolha como você deseja controlar seus jogos no Cobalt GameHub:') }),
+    h('div', { class: 'list' },
+      h('button', { class: 'f item', act: () => { closeLayer(); call('openBluetooth'); if (onDone) onDone(); } },
+        icon('bt'),
+        h('span', { class: 'grow' }, t('Conectar controle Bluetooth'),
+          h('span', { class: 'sub', text: t('Controles de Xbox, PlayStation, 8BitDo ou genéricos nas configurações da TV.') })),
+        icon('chev')),
+      h('button', { class: 'f item', act: () => { closeLayer(); openPhonePadTutorialSheet(onDone); } },
+        icon('pad'),
+        h('span', { class: 'grow' }, t('Conectar controle de celular'),
+          h('span', { class: 'sub', text: t('Use o aplicativo Onix Controle no seu smartphone como um controle completo via Wi-Fi.') })),
+        icon('chev'))),
+    h('div', { style: { display: 'flex', justifyContent: 'flex-end', marginTop: '.6rem' } },
+      h('button', { class: 'f btn', text: t('Fechar'), act: closeLayer })))));
+}
+
+function openPhonePadTutorialSheet(onDone) {
+  const qr = qrSvg(CONTROLE_APK_URL);
+  if (qr) {
+    qr.setAttribute('width', '150');
+    qr.setAttribute('height', '150');
+    qr.style.display = 'block';
+  }
+
+  const steps = h('div', { style: { display: 'flex', flexDirection: 'column', gap: '1rem', flex: '1', minWidth: '0' } },
+    h('div', { style: { display: 'flex', gap: '.8rem', alignItems: 'flex-start' } },
+      h('span', { style: { background: 'var(--cyan)', color: '#04020a', fontWeight: '800', width: '2.2rem', height: '2.2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', fontSize: '1.2rem' }, text: '1' }),
+      h('div', null,
+        h('b', { style: { display: 'block', fontSize: '1.3rem', color: '#fff', marginBottom: '.2rem' }, text: t('Baixe o Onix Controle') }),
+        h('span', { style: { fontSize: '1.15rem', color: 'var(--dim)', lineHeight: '1.4' }, text: t('Aponte a câmera do celular para o QR Code ao lado para baixar o APK no celular Android.') }))),
+    h('div', { style: { display: 'flex', gap: '.8rem', alignItems: 'flex-start' } },
+      h('span', { style: { background: 'var(--cyan)', color: '#04020a', fontWeight: '800', width: '2.2rem', height: '2.2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', fontSize: '1.2rem' }, text: '2' }),
+      h('div', null,
+        h('b', { style: { display: 'block', fontSize: '1.3rem', color: '#fff', marginBottom: '.2rem' }, text: t('Mesma rede Wi-Fi') }),
+        h('span', { style: { fontSize: '1.15rem', color: 'var(--dim)', lineHeight: '1.4' }, text: t('Conecte o celular na mesma rede Wi-Fi desta TV.') }))),
+    h('div', { style: { display: 'flex', gap: '.8rem', alignItems: 'flex-start' } },
+      h('span', { style: { background: 'var(--cyan)', color: '#04020a', fontWeight: '800', width: '2.2rem', height: '2.2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', fontSize: '1.2rem' }, text: '3' }),
+      h('div', null,
+        h('b', { style: { display: 'block', fontSize: '1.3rem', color: '#fff', marginBottom: '.2rem' }, text: t('Conecte e jogue') }),
+        h('span', { style: { fontSize: '1.15rem', color: 'var(--dim)', lineHeight: '1.4' }, text: t('No Onix Controle, selecione esta TV e toque no ícone de controle de jogos 🎮 no topo.') }))));
+
+  const qrBox = h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.6rem', flex: 'none', background: 'rgba(255,255,255,.05)', padding: '1.4rem', borderRadius: '1.4rem', border: '1px solid rgba(255,255,255,.1)' } },
+    h('div', { style: { background: '#fff', padding: '.8rem', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, qr),
+    h('span', { style: { fontSize: '1.05rem', color: 'var(--cyan)', fontWeight: '700' }, text: t('Baixar APK') }));
+
+  const body = h('div', { style: { display: 'flex', gap: '2rem', alignItems: 'center', margin: '.6rem 0' } }, steps, qrBox);
+
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '62rem', maxWidth: '94vw' } },
+    h('div', { style: { display: 'flex', alignItems: 'center', gap: '1rem' } },
+      h('span', { style: { color: 'var(--cyan)', width: '3.2rem', height: '3.2rem', display: 'flex', alignItems: 'center' } }, icon('pad')),
+      h('h2', { text: t('Como usar o celular como controle') })),
+    body,
+    h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '.8rem' } },
+      h('button', { class: 'f btn', text: '← ' + t('Voltar'), act: () => { closeLayer(); openConnectPadSheet(onDone); } }),
+      h('button', { class: 'f btn primary', text: t('Entendi'), act: () => { closeLayer(); if (onDone) onDone(); } })))));
+}
+
+/* Jogar: sem controle conectado, oferece o Bluetooth ou Celular antes. */
 let pendingPlay = null;
 function play_(g, mode) {
   const pads = json(call('gamepads'), []);
   if (INFO.mobile || INFO.pc || pads.length || sessionStorage.getItem('remoteOk')) return call('play', g.id, mode);
   pendingPlay = [g, mode];
-  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet' },
-    h('span', { style: { color: 'var(--cyan)', width: '5rem' } }, icon('pad')),
-    h('h2', { text: t('Conecte um controle') }),
-    h('p', { text: t('Para jogar de verdade, use um controle Bluetooth (Xbox, PlayStation, 8BitDo…). O controle remoto da TV também joga, mas só com poucos botões.') }),
-    h('div', { style: { display: 'flex', gap: '1rem' } },
-      h('button', { class: 'f btn primary', act: () => call('openBluetooth') }, icon('bt'), t('Conectar controle')),
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '56rem', maxWidth: '92vw' } },
+    h('div', { style: { display: 'flex', alignItems: 'center', gap: '1rem' } },
+      h('span', { style: { color: 'var(--cyan)', width: '3.2rem', height: '3.2rem', display: 'flex', alignItems: 'center' } }, icon('pad')),
+      h('h2', { text: t('Conecte um controle') })),
+    h('p', { text: t('Para jogar de verdade, conecte um controle Bluetooth ou use o app Onix Controle no celular. O controle remoto da TV também joga, mas só com poucos botões.') }),
+    h('div', { class: 'list' },
+      h('button', { class: 'f item', act: () => { closeLayer(); call('openBluetooth'); } },
+        icon('bt'),
+        h('span', { class: 'grow' }, t('Conectar controle Bluetooth'),
+          h('span', { class: 'sub', text: t('Controles de Xbox, PlayStation, 8BitDo ou genéricos nas configurações da TV.') })),
+        icon('chev')),
+      h('button', { class: 'f item', act: () => { closeLayer(); openPhonePadTutorialSheet(); } },
+        icon('pad'),
+        h('span', { class: 'grow' }, t('Conectar controle de celular'),
+          h('span', { class: 'sub', text: t('Use o aplicativo Onix Controle no seu smartphone como um controle completo via Wi-Fi.') })),
+        icon('chev'))),
+    h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '.8rem' } },
       h('button', { class: 'f btn', text: t('Jogar com o controle remoto'), act: () => {
         try { sessionStorage.setItem('remoteOk', '1'); } catch (_) { }
         closeLayer(); const p = pendingPlay; pendingPlay = null; if (p) call('play', p[0].id, p[1]);
-      } })))), { onClose: () => { } });
+      } }),
+      h('button', { class: 'f btn', text: t('Cancelar'), act: closeLayer })))), { onClose: () => { } });
 }
 
 /* ---------------- Adicionar jogos ---------------- */
@@ -852,7 +929,7 @@ function playersList() {
   if (pads.length) for (const p of pads) list.append(h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: p.name }),
     h('span', { class: 'val', style: { color: '#7ef0b0' }, text: p.player ? t('Controle {n}', { n: p.player }) : t('Automático') })));
   else list.append(h('div', { class: 'item' }, icon('pad'), h('span', { class: 'grow', text: t('Nenhum controle conectado') })));
-  list.append(h('button', { class: 'f item', act: () => call('openBluetooth') }, icon('bt'), h('span', { class: 'grow', text: t('Conectar controle novo') }), icon('chev')));
+  list.append(h('button', { class: 'f item', act: () => openConnectPadSheet() }, icon('bt'), h('span', { class: 'grow', text: t('Conectar controle novo') }), icon('chev')));
   return list;
 }
 function defineSheet(n, isSet) {
@@ -984,7 +1061,7 @@ function aboutBody() {
   const wrap = h('div');
   const status = { none: t('Em dia'), checking: t('Procurando…'), downloading: t('Baixando…'), installing: t('Instalando…'), error: t('Sem conexão com o GitHub') }[up.state] || '';
   const list = h('div', { class: 'list' },
-    h('div', { class: 'item' }, h('span', { style: { width: '3.4rem' } }, svg(MARK)), h('span', { class: 'grow' }, 'Onix GameHub', h('span', { class: 'sub', text: t('Versão {v}', { v: INFO.version || '' }) + (status ? ' · ' + status : '') }))),
+    h('div', { class: 'item' }, h('span', { style: { width: '3.4rem' } }, svg(MARK)), h('span', { class: 'grow' }, 'Cobalt GameHub', h('span', { class: 'sub', text: t('Versão {v}', { v: INFO.version || '' }) + (status ? ' · ' + status : '') }))),
     up.latest && (up.state === 'available' || up.state === 'ready' || up.state === 'error')
       ? h('button', { class: 'f item', act: () => { call('installUpdate'); toast(t('Baixando…')); } }, icon('load'), h('span', { class: 'grow', text: t('Instalar atualização {v}', { v: up.latest }) }))
       : h('button', { class: 'f item', act: () => { call('checkUpdate'); toast(t('Procurando…')); } }, icon('reset'), h('span', { class: 'grow', text: t('Procurar atualizações') })),
@@ -1124,10 +1201,16 @@ if (INFO.pc || INFO.web) {
 brand($('#brand'));
 // A marca da abertura: o controle com o anel e cada letra num <i> (sobem uma a uma).
 $('#bootBrand').replaceChildren(h('span', { class: 'mk' }, svg(MARK), h('i', { class: 'ring' })),
-  h('span', null, h('b', null, ...Array.from('ONIX GAMEHUB', (ch, i) => h('i', { style: '--i:' + i }, ch === ' ' ? '\u00a0' : ch))),
+  h('span', null, h('b', null, ...Array.from('COBALT GAMEHUB', (ch, i) => h('i', { style: '--i:' + i }, ch === ' ' ? '\u00a0' : ch))),
     h('small', { text: 'By Ruan' }), h('i', { class: 'bar' })));
 // Abertura: toca ao abrir e de novo quando o Onix chama o GameHub que já estava aberto.
 function playBoot() {
+  if (location.hash) {
+    const old = $('#boot');
+    if (old) old.remove();
+    document.documentElement.classList.remove('booting');
+    return;
+  }
   const old = $('#boot');
   const n = old.cloneNode(true);
   n.classList.remove('go');
@@ -1151,6 +1234,8 @@ applyOpen();
 if (!Hub) {   // aberto num navegador comum (pré-visualização): dados de exemplo
   LIB = [];
   show('home');
+  if (location.hash === '#connect-pad') openConnectPadSheet();
+  else if (location.hash === '#phone-pad') openPhonePadTutorialSheet();
 }
 </script>
 </body>

@@ -13,7 +13,7 @@ const updater = require('./updater');
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } },
 ]);
-if (process.platform === 'win32') app.setAppUserModelId('Onix GameHub');
+if (process.platform === 'win32') app.setAppUserModelId('Cobalt GameHub');
 // O jogo não pode desacelerar com a janela atrás de outra (o som estalaria).
 app.commandLine.appendSwitch('disable-renderer-backgrounding');
 app.commandLine.appendSwitch('disable-background-timer-throttling');
@@ -271,7 +271,7 @@ const GAME_ASYNC = {
 /* ---------------- Janela ---------------- */
 function createWindow() {
   win = new BrowserWindow({
-    width: 1600, height: 900, minWidth: 960, minHeight: 540, show: false, backgroundColor: '#07040f', title: 'Onix GameHub',
+    width: 1600, height: 900, minWidth: 960, minHeight: 540, show: false, backgroundColor: '#07040f', title: 'Cobalt GameHub',
     icon: path.join(HERE, 'icon.png'), autoHideMenuBar: true,
     webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, backgroundThrottling: false },
   });
