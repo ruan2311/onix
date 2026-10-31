@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Onix Controle</title>
+<meta name="description" content="Onix Controle no iPhone e iPad: controle remoto e gamepad para Google TV e Cobalt GameHub.">
+<meta name="theme-color" content="#0b0c0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Onix Controle">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-180.png">
+<link rel="stylesheet" href="controle.css">
+</head>
+<body>
+
+<!-- Cabeçalho -->
+<header>
+  <img class="brand-icon" src="icon-180.png" alt="Onix Controle">
+  <div class="hdr-title">
+    <b>ONIX CONTROLE</b>
+    <div class="hdr-sub">
+      <span class="dot" id="dot"></span>
+      <span id="hdrSub">Desconectado</span>
+    </div>
+  </div>
+  <div class="hdr-actions">
+    <button class="btn-icon" id="btnToggleGp" type="button" aria-label="Gamepad GameHub" title="Gamepad para jogos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="6" width="20" height="12" rx="6"/><path d="M6 12h4M8 10v4M15 11h.01M17 13h.01"/></svg>
+    </button>
+    <button class="btn-icon" id="btnTvSettings" type="button" aria-label="Conectar à TV" title="Conectar TV">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+    </button>
+  </div>
+</header>
+
+<main>
+  <!-- Modo Controle Remoto -->
+  <div class="view-remote" id="viewRemote">
+    <div class="top-bar">
+      <div class="mode-pill">
+        <button type="button" id="tabDpad" class="cur">D-Pad</button>
+        <button type="button" id="tabTouchpad">Touchpad</button>
+      </div>
+      <button class="power-btn" id="btnPower" type="button" aria-label="Desligar TV" title="Desligar TV">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18.36 6.64a9 9 0 1 1-12.73 0M12 2v10"/></svg>
+      </button>
+    </div>
+
+    <!-- Navegação D-Pad -->
+    <div class="dpad-wrap" id="dpadWrap">
+      <div class="dpad">
+        <button class="dir up" data-k="up" type="button" aria-label="Cima">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+        </button>
+        <button class="dir down" data-k="down" type="button" aria-label="Baixo">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+        </button>
+        <button class="dir left" data-k="left" type="button" aria-label="Esquerda">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+        </button>
+        <button class="dir right" data-k="right" type="button" aria-label="Direita">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg>
+        </button>
+        <button class="center-ok" id="btnOk" type="button" aria-label="OK">OK</button>
+      </div>
+    </div>
+
+    <!-- Navegação Touchpad -->
+    <div class="touchpad" id="touchpad" hidden>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M12 8v8M8 12h8"/></svg>
+      <span>Arraste para navegar · Toque para OK</span>
+    </div>
+
+    <!-- Ações Rápidas -->
+    <div class="acts-grid">
+      <button class="act-btn" data-key="back" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <span>Voltar</span>
+      </button>
+      <button class="act-btn" data-key="home" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5l9-7 9 7v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/></svg>
+        <span>Início</span>
+      </button>
+      <button class="act-btn" id="btnKeyboard" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="3"/><path d="M6 8h.01M10 8h.01M14 8h.01M18 8h.01M6 12h.01M10 12h.01M14 12h.01M18 12h.01M8 16h8"/></svg>
+        <span>Teclado</span>
+      </button>
+      <button class="act-btn" data-key="menu" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        <span>Menu</span>
+      </button>
+    </div>
+
+    <!-- Volume -->
+    <div class="vol-row">
+      <button class="vol-btn" data-key="voldown" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        <span>Vol -</span>
+      </button>
+      <button class="vol-btn" data-key="mute" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5zM23 9l-6 6M17 9l6 6"/></svg>
+        <span>Mudo</span>
+      </button>
+      <button class="vol-btn" data-key="volup" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/></svg>
+        <span>Vol +</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Modo Gamepad (Cobalt GameHub) -->
+  <div class="view-gamepad" id="viewGamepad" hidden>
+    <div class="gp-bar">
+      <button class="gp-badge" id="gpConsoleBtn" type="button">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="4"/><path d="M6 12h4M8 10v4M16 11h.01M18 13h.01"/></svg>
+        <span id="gpConsoleLbl">SNES</span>
+      </button>
+      <div class="gp-acts">
+        <button class="btn-secondary" id="gpBackRemote" type="button" style="padding:6px 12px;font-size:12px;">← TV</button>
+      </div>
+    </div>
+    <div class="gp-canvas-wrap">
+      <canvas id="gpCanvas"></canvas>
+    </div>
+  </div>
+</main>
+
+<!-- Sheet: Conexão / TV -->
+<div class="sheet-backdrop" id="tvSheet">
+  <div class="sheet-card">
+    <div class="sheet-header">
+      <h3 class="sheet-title">Conectar à TV</h3>
+      <button class="sheet-close" id="tvSheetClose" type="button" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+
+    <!-- Link direto na TV (evita Mixed Content no Safari) -->
+    <div class="tv-direct-card" id="tvDirectBox" hidden>
+      <div class="tv-direct-title">
+        <span>⚡ Conexão direta na TV</span>
+      </div>
+      <p class="tv-direct-desc">No iPhone, você pode abrir o Controle diretamente pelo servidor da TV para resposta instantânea sem limites de rede:</p>
+      <a class="btn-primary" id="tvDirectLink" href="#" target="_blank" rel="noopener">Abrir Controle Web na TV</a>
+    </div>
+
+    <label for="tvIpInput" style="font-size:13px;font-weight:600;color:var(--muted)">Endereço IP da TV:</label>
+    <div class="ip-row">
+      <input class="input-text" id="tvIpInput" type="text" placeholder="Ex: 192.168.1.75" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+      <button class="btn-primary" id="tvSaveBtn" type="button">Salvar</button>
+    </div>
+
+    <div class="guide-box">
+      <b>Como achar o IP da TV:</b>
+      <ol>
+        <li>No Onix na TV, abra <b>Configurações → Controle pelo celular</b>.</li>
+        <li>O IP da TV aparecerá na tela (ex.: <i>192.168.1.75</i>).</li>
+        <li>Certifique-se de que o iPhone e a TV estão conectados no <b>mesmo Wi-Fi</b> de casa.</li>
+      </ol>
+    </div>
+  </div>
+</div>
+
+<!-- Sheet: Digitação na TV (Teclado) -->
+<div class="sheet-backdrop" id="kbSheet">
+  <div class="sheet-card">
+    <div class="sheet-header">
+      <h3 class="sheet-title">Digitar na TV</h3>
+      <button class="sheet-close" id="kbSheetClose" type="button" aria-label="Fechar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="ip-row">
+      <input class="input-text" id="kbInput" type="text" placeholder="Digite aqui o texto..." autocomplete="off">
+      <button class="btn-primary" id="kbSendBtn" type="button">Enviar</button>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin:0;">O texto será digitado no campo de busca ou no campo aberto na TV.</p>
+  </div>
+</div>
+
+<!-- Prompt de Instalação no Safari iOS -->
+<div class="install-card" id="installPrompt" hidden>
+  <div class="install-inner">
+    <img class="install-icon" src="icon-180.png" alt="Onix Controle">
+    <h4 class="install-title">Instale no seu iPhone</h4>
+    <p class="install-text">
+      Para usar o Onix Controle em tela cheia como um aplicativo:
+      <br><br>
+      1. Toque em <span class="install-step">Compartilhar ⎋</span> no Safari.
+      <br>
+      2. Escolha <span class="install-step">Adicionar à Tela de Início ➕</span>.
+    </p>
+    <button class="btn-secondary" id="installSkip" type="button" style="width:100%">Continuar no navegador</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="touch.js"></script>
+<script src="controle.js"></script>
+</body>
+</html>

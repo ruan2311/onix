@@ -1,0 +1,16 @@
+{
+  "name": "Onix Controle",
+  "short_name": "Controle",
+  "description": "Controle remoto e gamepad para Google TV e Cobalt GameHub.",
+  "lang": "pt-BR",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0c0f",
+  "theme_color": "#0b0c0f",
+  "icons": [
+    { "src": "icon-180.png", "sizes": "180x180", "type": "image/png" },
+    { "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

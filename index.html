@@ -1912,6 +1912,11 @@ const ES = Object.freeze({
   "para fechar": "para cerrar",
   "Aponte a câmera do celular para o código QR para baixar o Onix Controle.": "Apunta la cámara del celular al código QR para descargar Onix Controle.",
   "Jogue seus clássicos no Onix GameHub usando o celular como controle 100% personalizável, ou jogue pelo navegador sem instalar nada durante a partida.": "Juega a tus clásicos en Onix GameHub usando el celular como control 100% personalizable, o juega desde el navegador sin instalar nada durante la partida.",
+  "Tem iPhone ou iPad? Acesse projectgems.github.io/onix/controle e adicione à Tela de Início.": "¿Tienes iPhone o iPad? Accede a projectgems.github.io/onix/controle y agrégalo a la pantalla de inicio.",
+  "Aponte a câmera do celular (Android) para o código para baixar o app, ou acesse no iPhone: projectgems.github.io/onix/controle": "Apunta la cámara del celular (Android) al código para descargar la app, o accede en iPhone a: projectgems.github.io/onix/controle",
+  "No iPhone ou iPad: acesse projectgems.github.io/onix/controle no Safari e adicione à Tela de Início.": "En iPhone o iPad: accede a projectgems.github.io/onix/controle en Safari y agrégalo a la pantalla de inicio.",
+  "No Android: app para celular. No iPhone ou iPad: acesse projectgems.github.io/onix/controle no Safari e adicione à Tela de Início.": "En Android: app para celular. En iPhone o iPad: accede a projectgems.github.io/onix/controle en Safari y agrégalo a la pantalla de inicio.",
+  "Mostra o QR code para baixar no celular o app que controla a TV inteira. No iPhone e iPad, acesse projectgems.github.io/onix/controle.": "Muestra el código QR para descargar en el celular la app que controla toda la TV. En iPhone y iPad, accede a projectgems.github.io/onix/controle.",
   "Controle web": "Control web",
   "Ligue o Controle web em Configurações": "Activa el Control web en Configuración",
   "Baixar o Onix Controle": "Descargar Onix Controle",
@@ -4281,7 +4286,7 @@ const OPTIONS = [
   { key: 'remote', phone: true, name: 'Controle web', desc: 'O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.' },
   { key: 'remoteQr', phone: true, name: 'QR code na tela de descanso', desc: 'Quando nenhum celular está conectado, a tela de descanso mostra o QR code, em tom escuro, para conectar sem usar o controle da TV.' },
   { act: 'remoteForget', phone: true, name: 'Desconectar os celulares', desc: 'Cada celular precisa ler o QR code de novo para voltar.' },
-  { act: 'controleApp', phone: true, name: 'Baixar o Onix Controle', desc: 'Mostra o QR code para baixar no celular o app que controla a TV inteira, dentro de qualquer app. Só para Google TV e celular Android (não funciona em iPhone, nem em TVs Samsung e LG).' },
+  { act: 'controleApp', phone: true, name: 'Baixar o Onix Controle', desc: 'Mostra o QR code para baixar no celular o app que controla a TV inteira. No iPhone e iPad, acesse projectgems.github.io/onix/controle.' },
   { group: 'Idioma' },
   { key: 'lang',   name: 'Idioma',                desc: 'Português ou espanhol. Automático segue o idioma da TV. OK troca.' },
   { group: 'Desempenho' },
@@ -4838,12 +4843,13 @@ function openGamepadCard(from) {
           h('h2', { style: 'margin:0', text: t('Controle para celular') })),
         h('p', { text: t('Aponte a câmera do celular para o código QR para baixar o Onix Controle.') }),
         h('p', { text: t('100% personalizável: mova os botões na tela, altere o tamanho e a transparência e jogue sem atraso na rede local.') }),
-        h('p', { class: 'sp-thanks', text: t('Não tem controle Bluetooth? Você pode jogar pelo app no celular ou abrir direto pelo navegador durante a partida!') })),
+        h('p', { class: 'sp-thanks', text: t('Tem iPhone ou iPad? Acesse projectgems.github.io/onix/controle e adicione à Tela de Início.') }),
+        h('p', { class: 'sp-thanks', style: 'margin-top:.4rem;opacity:.8;', text: t('Não tem controle Bluetooth? Você pode jogar pelo app no celular ou abrir direto pelo navegador durante a partida!') })),
       h('div', { class: 'sp-qr' }, qr || '',
         h('div', { style: 'display:flex;align-items:center;gap:.5rem;' },
           controleIcon('width:1.4rem;height:1.4rem;flex:none;'),
           h('b', { text: 'Onix Controle' })),
-        h('span', { class: 'sp-key', text: 'github.com/ruan2311/onix' }))),
+        h('span', { class: 'sp-key', text: 'projectgems.github.io/onix/controle' }))),
     h('div', { class: 'sp-hint' }, h('b', { text: 'OK' }), h('span', { text: t('para fechar') })));
   $('#gamepadModal').hidden = false;
   sfx('select');
@@ -5848,10 +5854,10 @@ function renderPhonePane() {
     $('#ppTitle').textContent = t(phoneMode === 'gamepad' ? 'Controle para celular' : 'Onix Controle');
     $('#ppText').textContent = t(phoneMode === 'gamepad'
       ? 'Aponte a câmera do celular para o código QR para baixar o Onix Controle.'
-      : 'Aponte a câmera do celular (Android) para o código. Ele abre a página do Onix Controle no GitHub, com o link para baixar o app.');
+      : 'Aponte a câmera do celular (Android) para o código para baixar o app, ou acesse no iPhone: projectgems.github.io/onix/controle');
     $('#ppNote').textContent = t(phoneMode === 'gamepad'
-      ? 'Jogue seus clássicos no Onix GameHub usando o celular como controle 100% personalizável, ou jogue pelo navegador sem instalar nada durante a partida.'
-      : 'Funciona só em Google TV, com celular Android 6 ou mais novo (não funciona em iPhone, nem em TVs Samsung e LG). Na primeira vez, o app pede o código que aparece na TV.');
+      ? 'No iPhone ou iPad: acesse projectgems.github.io/onix/controle no Safari e adicione à Tela de Início.'
+      : 'No Android: app para celular. No iPhone ou iPad: acesse projectgems.github.io/onix/controle no Safari e adicione à Tela de Início.');
     $('#ppWait').hidden = true;
     return;
   }
