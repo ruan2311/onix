@@ -42,8 +42,8 @@ final class RemoteGamepadServer {
 
     private final Context ctx;
     private final Listener listener;
-    private final String consoleId;
-    private final String gameTitle;
+    private volatile String consoleId;
+    private volatile String gameTitle;
 
     private volatile ServerSocket serverSocket;
     private volatile boolean running;
@@ -105,6 +105,21 @@ final class RemoteGamepadServer {
 
     int clientCount() {
         return clients.size();
+    }
+
+    void updateState(String consoleId, String gameTitle) {
+        this.consoleId = consoleId != null ? consoleId : "snes";
+        this.gameTitle = gameTitle != null ? gameTitle : "";
+        JSONObject init = new JSONObject();
+        try {
+            init.put("type", "init");
+            init.put("console", this.consoleId);
+            init.put("title", this.gameTitle);
+            for (ClientHandler h : clients.values()) {
+                init.put("player", h.playerPort);
+                h.sendWsText(init.toString());
+            }
+        } catch (Exception ignored) {}
     }
 
     String url() {
@@ -210,6 +225,15 @@ final class RemoteGamepadServer {
             if ("/touch.js".equals(path)) {
                 body = readFile("touch.js");
                 mime = "application/javascript; charset=utf-8";
+            } else if ("/manifest.webmanifest".equals(path) || "/manifest.json".equals(path)) {
+                String m = "{\"name\":\"Cobalt GamePad\",\"short_name\":\"GamePad\",\"start_url\":\"/\","
+                        + "\"display\":\"standalone\",\"orientation\":\"landscape\",\"background_color\":\"#04020a\",\"theme_color\":\"#04020a\","
+                        + "\"icons\":[{\"src\":\"/icon.png\",\"sizes\":\"180x180\",\"type\":\"image/png\"}]}";
+                body = m.getBytes("UTF-8");
+                mime = "application/manifest+json; charset=utf-8";
+            } else if ("/icon.png".equals(path)) {
+                body = readFile("icon.png");
+                mime = "image/png";
             } else if ("/info".equals(path)) {
                 JSONObject info = new JSONObject();
                 info.put("console", consoleId);

@@ -6,7 +6,9 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="theme-color" content="#04020a">
-<title>Onix GamePad</title>
+<title>Cobalt GamePad</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon.png">
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 html, body {
@@ -127,10 +129,31 @@ html, body {
     <button class="btn" id="btnFull" title="Tela cheia">
       <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
     </button>
+    <button class="btn" id="btnTv" title="Configurar TV">
+      <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" /><polyline points="17 2 12 7 7 2" /></svg>
+      <span>TV</span>
+    </button>
   </div>
 </div>
 
 <div id="notice"></div>
+
+<div id="tvModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99;align-items:center;justify-content:center;padding:16px;">
+  <div style="background:#151128;border:1px solid rgba(255,255,255,.2);border-radius:18px;max-width:340px;width:100%;padding:20px;text-align:center;box-shadow:0 12px 36px rgba(0,0,0,.8);">
+    <h3 style="margin-bottom:8px;font-size:17px;font-weight:700;">Conectar à TV</h3>
+    <p style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.4;margin-bottom:14px;">Digite o IP que aparece no Cobalt GameHub da sua TV:</p>
+    <input id="tvIpInput" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;padding:10px 14px;font-size:15px;margin-bottom:14px;outline:none;" placeholder="Ex: 192.168.1.75">
+    <div style="display:flex;gap:8px;">
+      <button class="btn" id="tvModalCancel" style="flex:1;height:38px;font-size:13px;">Cancelar</button>
+      <button class="btn" id="tvModalSave" style="flex:1;height:38px;background:var(--cyan,#38bdf8);color:#04020a;font-weight:700;font-size:13px;">Conectar</button>
+    </div>
+  </div>
+</div>
+
+<div id="iosBanner" style="display:none;position:fixed;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(18,10,36,.94);border:1px solid rgba(56,189,248,.4);padding:8px 16px;border-radius:999px;font-size:12px;color:#fff;z-index:25;box-shadow:0 6px 20px rgba(0,0,0,.6);white-space:nowrap;align-items:center;gap:10px;">
+  <span>📱 <b>Dica iPhone:</b> toque em Compartilhar e "Adicionar à Tela de Início"</span>
+  <button id="iosBannerClose" style="background:none;border:none;color:#fff;font-size:16px;cursor:pointer;padding:0 4px;line-height:1;">×</button>
+</div>
 
 <!-- Vídeo mudo em loop para impedir que o celular durma quando a API WakeLock não estiver disponível -->
 <video id="keepAliveVideo" playsinline muted loop style="position:fixed;width:1px;height:1px;opacity:0.001;pointer-events:none"></video>
@@ -167,10 +190,12 @@ html, body {
 
   // Mini canvas de 1x1 para gerar stream de vídeo silencioso contra suspensão de tela
   try {
-    const c = document.createElement('canvas');
-    c.width = 2; c.height = 2;
-    if (c.captureStream) {
-      videoEl.srcObject = c.captureStream(1);
+    if (!location.search.includes('noconn')) {
+      const c = document.createElement('canvas');
+      c.width = 2; c.height = 2;
+      if (c.captureStream) {
+        videoEl.srcObject = c.captureStream(1);
+      }
     }
   } catch (_) {}
 
@@ -302,6 +327,8 @@ html, body {
     new ResizeObserver(() => resize()).observe(document.body);
   }
 
+  let connectFails = 0;
+
   /* ---------------- WebSocket ---------------- */
   function connectWs() {
     if (connecting || (ws && ws.readyState === WebSocket.OPEN)) return;
@@ -312,7 +339,12 @@ html, body {
     gameTitle.textContent = 'Conectando…';
 
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    const url = proto + '//' + location.host + '/ws';
+    let host = localStorage.getItem('gamehub_tv_host') || location.host;
+    if (!host || host === 'null' || host.startsWith('file')) {
+      host = '192.168.1.75:8772';
+    }
+    const cleanHost = host.replace(/\/.*$/, '');
+    const url = proto + '//' + cleanHost + '/ws';
 
     try {
       if (ws) {
@@ -327,8 +359,10 @@ html, body {
 
     ws.onopen = () => {
       connecting = false;
+      connectFails = 0;
       statusDot.className = 'dot ok';
       gameTitle.textContent = gameName || 'Conectado à TV';
+      localStorage.setItem('gamehub_tv_host', cleanHost);
       startPing();
       acquireWakeLock();
     };
@@ -368,11 +402,20 @@ html, body {
     pingLabel.textContent = '';
     gameTitle.textContent = 'Reconectando…';
     stopPing();
+    connectFails++;
+    if (connectFails >= 4) {
+      const modal = document.getElementById('tvModal');
+      if (modal) {
+        modal.style.display = 'flex';
+        const inp = document.getElementById('tvIpInput');
+        if (inp) inp.value = (localStorage.getItem('gamehub_tv_host') || '').replace(/:8772$/, '');
+      }
+    }
     if (!reconnectTimer) {
       reconnectTimer = setTimeout(() => {
         reconnectTimer = null;
         connectWs();
-      }, 700);
+      }, 900);
     }
   }
 
@@ -408,9 +451,62 @@ html, body {
     } catch (_) {}
   }
 
-  // Inicializa com console padrão (o servidor atualiza pelo 'init')
-  initPad('nes');
-  connectWs();
+  // Configuração da TV e banner iOS
+  const tvModal = document.getElementById('tvModal');
+  const tvIpInput = document.getElementById('tvIpInput');
+  const tvModalSave = document.getElementById('tvModalSave');
+  const tvModalCancel = document.getElementById('tvModalCancel');
+  const btnTv = document.getElementById('btnTv');
+
+  if (btnTv && tvModal) {
+    btnTv.addEventListener('click', () => {
+      tvModal.style.display = 'flex';
+      if (tvIpInput) tvIpInput.value = (localStorage.getItem('gamehub_tv_host') || location.host || '').replace(/:8772$/, '');
+    });
+  }
+  if (tvModalCancel && tvModal) {
+    tvModalCancel.addEventListener('click', () => { tvModal.style.display = 'none'; });
+  }
+  if (tvModalSave && tvModal && tvIpInput) {
+    tvModalSave.addEventListener('click', () => {
+      let val = tvIpInput.value.trim().replace(/^https?:\/\//, '').replace(/\/.*$/, '');
+      if (val) {
+        if (!val.includes(':')) val += ':8772';
+        localStorage.setItem('gamehub_tv_host', val);
+        tvModal.style.display = 'none';
+        connectFails = 0;
+        if (ws) { try { ws.close(); } catch (_) {} }
+        connectWs();
+      }
+    });
+  }
+
+  const isIos = /iPhone|iPad|iPod/.test(navigator.userAgent);
+  const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+  if (isIos && !isStandalone && !localStorage.getItem('gamehub_ios_banner_dismissed')) {
+    const banner = document.getElementById('iosBanner');
+    const closeBtn = document.getElementById('iosBannerClose');
+    if (banner) {
+      banner.style.display = 'inline-flex';
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          banner.style.display = 'none';
+          localStorage.setItem('gamehub_ios_banner_dismissed', '1');
+        });
+      }
+    }
+  }
+
+  // Inicializa com SNES para cobrir o menu com D-Pad, A, B, X, Y (o servidor atualiza pelo 'init')
+  const urlParams = new URLSearchParams(location.search);
+  const initialConsole = urlParams.get('console') || 'snes';
+  initPad(initialConsole);
+  if (!urlParams.has('noconn')) {
+    connectWs();
+  } else {
+    gameTitle.textContent = 'Cobalt GameHub';
+    statusDot.className = 'dot ok';
+  }
 })();
 </script>
 </body>

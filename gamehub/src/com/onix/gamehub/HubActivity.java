@@ -35,6 +35,8 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
     HubBridge bridge;
     Gamepads gamepads;
     UploadServer upload;
+    RemoteGamepadServer gamepadServer;
+    private int prevWebBits = 0;
     SharedPreferences prefs;
     String profile = "default", profileName = "", lang = "pt", open = "home";
     boolean kids, fromOnix, direct, autoDownload;
@@ -168,8 +170,112 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         }
     }
 
+    String gamepadUrl() {
+        return gamepadServer != null ? gamepadServer.url() : "";
+    }
+
+    int gamepadClients() {
+        return gamepadServer != null ? gamepadServer.clientCount() : 0;
+    }
+
+    void startGamepadServer() {
+        if (Device.mobile(this) || gamepadServer != null) return;
+        gamepadServer = new RemoteGamepadServer(this, new RemoteGamepadServer.Listener() {
+            @Override
+            public void onButtons(int port, int bits) {
+                if (port == 0) handleWebButtons(bits);
+            }
+
+            @Override
+            public void onMenu() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU));
+                        dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MENU));
+                    }
+                });
+            }
+
+            @Override
+            public void onFastForward(boolean on) {}
+
+            @Override
+            public void onClientsChanged(final int count) {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            if (web != null) {
+                                Web.emit(web, "gamepadClients", new JSONObject().put("count", count).toString());
+                            }
+                        } catch (Exception ignored) {}
+                    }
+                });
+            }
+        }, "snes", "Cobalt GameHub");
+        gamepadServer.start();
+    }
+
+    void stopGamepadServer() {
+        if (gamepadServer != null) {
+            gamepadServer.stop();
+            gamepadServer = null;
+        }
+    }
+
+    private void handleWebButtons(final int bits) {
+        final int pressed = bits & ~prevWebBits;
+        final int released = ~bits & prevWebBits;
+        prevWebBits = bits;
+
+        if (pressed == 0 && released == 0) return;
+
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                // Seta Cima (bit 4)
+                if ((pressed & (1 << 4)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_UP));
+                if ((released & (1 << 4)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_UP));
+
+                // Seta Baixo (bit 5)
+                if ((pressed & (1 << 5)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_DOWN));
+                if ((released & (1 << 5)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_DOWN));
+
+                // Seta Esquerda (bit 6)
+                if ((pressed & (1 << 6)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_LEFT));
+                if ((released & (1 << 6)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_LEFT));
+
+                // Seta Direita (bit 7)
+                if ((pressed & (1 << 7)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DPAD_RIGHT));
+                if ((released & (1 << 7)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DPAD_RIGHT));
+
+                // Botão A (bit 8) -> Enter (Confirmar / Selecionar)
+                if ((pressed & (1 << 8)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+                if ((released & (1 << 8)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER));
+
+                // Botão B (bit 0) -> Back (Voltar)
+                if ((pressed & (1 << 0)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_BACK));
+                if ((released & (1 << 0)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_BACK));
+
+                // Botão X (bit 9) -> Menu
+                if ((pressed & (1 << 9)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MENU));
+                if ((released & (1 << 9)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MENU));
+
+                // Botão START (bit 3) -> Enter
+                if ((pressed & (1 << 3)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_ENTER));
+                if ((released & (1 << 3)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_ENTER));
+
+                // Botão SELECT (bit 2) -> Tab
+                if ((pressed & (1 << 2)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_TAB));
+                if ((released & (1 << 2)) != 0) dispatchKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_TAB));
+            }
+        });
+    }
+
     /** Abre o jogo no processo dele (um núcleo travado não derruba o GameHub). */
     boolean startGame(String id, String mode) {
+        stopGamepadServer();
         JSONObject g = Library.game(this, id);
         if (g == null || (kids && !g.optBoolean("kids"))) return false;
         Intent i = new Intent(this, GameActivity.class);
@@ -225,6 +331,7 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
     protected void onResume() {
         super.onResume();
         gamepads.start();
+        startGamepadServer();
         Web.emit(web, "resume", null);
     }
 
@@ -233,10 +340,12 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         super.onPause();
         gamepads.stop();
         upload.stop();
+        stopGamepadServer();
     }
 
     @Override
     protected void onDestroy() {
+        stopGamepadServer();
         Covers.listener = null;
         upload.stop();
         web.destroy();

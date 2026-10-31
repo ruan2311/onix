@@ -41,6 +41,8 @@ final class HubBridge {
             o.put("onixMotion", a.onixMotion);
             o.put("abi", android.os.Build.SUPPORTED_ABIS.length > 0 ? android.os.Build.SUPPORTED_ABIS[0] : "");
             o.put("mobile", Device.mobile(a));
+            o.put("gamepadUrl", a.gamepadUrl());
+            o.put("gamepadClients", a.gamepadClients());
             return o.toString();
         } catch (Exception e) {
             return "{}";
@@ -340,5 +342,15 @@ final class HubBridge {
                 a.finish();
             }
         });
+    }
+
+    @JavascriptInterface
+    public String gamepadUrl() {
+        return a.gamepadUrl();
+    }
+
+    @JavascriptInterface
+    public int gamepadClients() {
+        return a.gamepadClients();
     }
 }
