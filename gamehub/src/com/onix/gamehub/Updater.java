@@ -233,7 +233,7 @@ final class Updater {
             }
             PackageInfo info = ctx.getPackageManager().getPackageArchiveInfo(tmp.getPath(), 0);
             if (info == null || !ctx.getPackageName().equals(info.packageName) || !newer(info.versionName, current())) {
-                throw new Exception("a APK baixada não é uma versão nova do Onix GameHub");
+                throw new Exception("a APK baixada não é uma versão nova do Cobalt GameHub");
             }
             if (apk.exists()) apk.delete();
             if (!tmp.renameTo(apk)) throw new Exception("sem espaço para a atualização");

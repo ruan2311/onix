@@ -1,6 +1,6 @@
-# Onix GameHub
+# Cobalt GameHub
 
-<img src="res/drawable-xxxhdpi/icon.png" alt="Ícone do Onix GameHub" width="96" align="right">
+<img src="res/drawable-xxxhdpi/icon.png" alt="Ícone do Cobalt GameHub" width="96" align="right">
 
 Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advance** e **Mega Drive** num lugar só, no visual do [Onix](https://github.com/ruan2311/onix). Ele guarda o ponto onde você parou e tem estados salvos, avançar rápido, rebobinar, filtros de imagem, trapaças e botões configuráveis por jogo.
 
@@ -18,7 +18,7 @@ O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde
 > 🧪 **Experimental:** pode apresentar falhas. Se algo não funcionar, [abra uma issue](https://github.com/ruan2311/onix/issues).
 
 <p align="center">
-  <img src="docs/screenshots/gamehub-inicio.jpg" alt="Início do Onix GameHub com Continuar jogando" width="49%">
+  <img src="docs/screenshots/gamehub-inicio.jpg" alt="Início do Cobalt GameHub com Continuar jogando" width="49%">
   <img src="docs/screenshots/gamehub-consoles.jpg" alt="Consoles e jogos adicionados" width="49%">
 </p>
 
@@ -39,7 +39,7 @@ O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde
 ### Instalar
 1. No Onix, abra a aba **Jogos** e clique em **Instalar o GameHub**.
 2. Na primeira vez, o Android pede para o **Onix** poder instalar apps: ative e volte. Depois, confirme em **Instalar**.
-3. Pronto: o cartão **Onix GameHub** aparece na aba **Jogos**, com **Abrir o GameHub** e os quatro consoles.
+3. Pronto: o cartão **Cobalt GameHub** aparece na aba **Jogos**, com **Abrir o GameHub** e os quatro consoles.
 
 Sem o Onix: no app **Downloader**, use o link **`github.com/ruan2311/onix-gamehub/releases/latest/download/onix-gamehub.apk`**.
 
@@ -91,8 +91,8 @@ Em **Adicionar jogos**, toque em **Escolher pasta** e escolha a pasta onde estã
 As mesmas telas da TV, com **mais animações** (páginas que deslizam, cartões que sobem com o mouse, brilho nas capas e uma aurora lenta no fundo) e os mesmos 4 emuladores, rodando dentro do app.
 
 ### Instalar
-1. Baixe o `Onix-GameHub-win64.zip` nas [Releases](https://github.com/ruan2311/onix-gamehub/releases) (o arquivo "Onix GameHub para PC").
-2. Extraia a pasta e abra o **Onix GameHub.exe**.
+1. Baixe o `Onix-GameHub-win64.zip` nas [Releases](https://github.com/ruan2311/onix-gamehub/releases) (o arquivo "Cobalt GameHub para PC").
+2. Extraia a pasta e abra o **Cobalt GameHub.exe** (ou **Onix GameHub.exe** nas versões anteriores).
 3. Se o Windows mostrar *"O Windows protegeu o computador"*, clique em **Mais informações → Executar assim mesmo** (o app ainda não tem assinatura digital).
 
 ### Adicionar jogos
@@ -212,4 +212,4 @@ O código do GameHub está sob a [GPL-3.0](LICENSE). O GameHub é gratuito e nun
 
 ---
 
-🇪🇸 **Onix GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** (experimental) se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** está en prueba, con juegos agregados desde una carpeta, teclado o control y más ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente). Ningún juego viene incluido.
+🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** (experimental) se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** está en prueba, con juegos agregados desde una carpeta, teclado o control y más ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente). Ningún juego viene incluido.

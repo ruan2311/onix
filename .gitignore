@@ -30,6 +30,7 @@ onix-controle.apk
 # Saída do build do Onix Game Hub (gamehub/build.sh e gamehub/cores.sh)
 gamehub/build/
 onix-gamehub.apk
+onix-gamehub-android.apk
 
 # Instruções locais de agentes
 AGENTS.md
