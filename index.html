@@ -1392,7 +1392,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '16.4.0'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '16.4.1'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -2018,6 +2018,8 @@ const ES = Object.freeze({
   "· as mais recentes da Adrenaline e Eurogamer.pt · OK abre o resumo e o QR code": "· las más recientes de Adrenaline y Eurogamer.pt, en portugués · OK abre el resumen y el código QR",
   "Desinstalar o GameHub": "Desinstalar GameHub",
   "Não deu para abrir o GameHub": "No se pudo abrir GameHub",
+  // Onix 16.4.1
+  "*Atualizador do Cobalt GameHub:* o Onix agora instala e atualiza o emulador diretamente do repositório oficial ruan2311/cobalt-gamehub com o pacote atualizado.": "*Actualizador de Cobalt GameHub:* Onix ahora instala y actualiza el emulador directamente desde el repositorio oficial ruan2311/cobalt-gamehub con el paquete actualizado.",
   // Onix 16.4.0
   "*Cobalt GameHub:* o emulador clássico do Onix agora se chama Cobalt GameHub, a mais nova gema oficial do Project Gems ao lado de Onix, Amethyst e Opala.": "*Cobalt GameHub:* el emulador clásico de Onix ahora se llama Cobalt GameHub, la gema más nueva de Project Gems junto a Onix, Amethyst y Opala.",
   "*Onix Controle renovado:* o app de controle pelo celular teve um rebrand para integrar com o Cobalt GameHub, com novo ícone do Saturno cósmico e conexão direta para jogar os clássicos na TV.": "*Onix Controle renovado:* la app de control desde el celular tuvo un rebrand para integrarse con Cobalt GameHub, con nuevo ícono del Saturno cósmico y conexión directa para jugar a los clásicos en la TV.",
@@ -4326,6 +4328,9 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '16.4.1', date: 'outubro de 2026', items: [
+    ['fix', '*Atualizador do Cobalt GameHub:* o Onix agora instala e atualiza o emulador diretamente do repositório oficial ruan2311/cobalt-gamehub com o pacote atualizado.'],
+  ] },
   { version: '16.4.0', date: 'outubro de 2026', items: [
     ['new', '*Cobalt GameHub:* o emulador clássico do Onix agora se chama Cobalt GameHub, a mais nova gema oficial do Project Gems ao lado de Onix, Amethyst e Opala.'],
     ['new', '*Onix Controle renovado:* o app de controle pelo celular teve um rebrand para integrar com o Cobalt GameHub, com novo ícone do Saturno cósmico e conexão direta para jogar os clássicos na TV.'],

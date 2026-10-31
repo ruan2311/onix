@@ -29,20 +29,19 @@ import java.util.regex.Pattern;
 import javax.net.ssl.HttpsURLConnection;
 
 /**
- * Atualizações do Onix GameHub pela página de Releases do GitHub (ruan2311/onix-gamehub).
- * Cada versão é uma release com tag gamehub-vX.Y.Z e o arquivo onix-gamehub.apk (até a 1.1.1
- * elas saíam no repositório do Onix, ruan2311/onix; a 1.1.1 saiu nos dois para levar todos junto).
+ * Atualizações do Cobalt GameHub pela página de Releases do GitHub (ruan2311/cobalt-gamehub).
+ * Cada versão é uma release com tag gamehub-vX.Y.Z e o arquivo cobalt-gamehub.apk.
  * Confere o SHA-256 publicado pelo GitHub e o pacote, e instala pelo instalador do sistema
  * (o Android sempre pede confirmação e só aceita a APK assinada com a mesma chave).
  */
 final class Updater {
 
-    private static final String API = "https://api.github.com/repos/ruan2311/onix-gamehub/releases?per_page=40";
+    private static final String API = "https://api.github.com/repos/ruan2311/cobalt-gamehub/releases?per_page=40";
     private static final Pattern TAG = Pattern.compile("^gamehub-v(\\d{1,4})\\.(\\d{1,4})\\.(\\d{1,4})$");
     private static final Pattern VERSION = Pattern.compile("^(\\d{1,4})\\.(\\d{1,4})\\.(\\d{1,4})");
     private static final Pattern DIGEST = Pattern.compile("^sha256:([0-9a-f]{64})$");
     private static final Pattern DOWNLOAD = Pattern.compile(
-            "^https://github\\.com/ruan2311/onix-gamehub/releases/download/gamehub-v[0-9.]{5,14}/onix-gamehub\\.apk$");
+            "^https://github\\.com/ruan2311/(cobalt|onix)-gamehub/releases/download/gamehub-v[0-9.]{5,14}/(cobalt|onix)-gamehub\\.apk$");
     private static final Pattern DOWNLOAD_HOST = Pattern.compile("^(github\\.com|(release-assets|objects)\\.githubusercontent\\.com)$");
     private static final long CHECK_MS = 6 * 60 * 60 * 1000L;
     private static final int MAX_JSON = 1024 * 1024, MAX_APK = 60 * 1024 * 1024;
@@ -162,12 +161,21 @@ final class Updater {
                 Matcher t = TAG.matcher(rel.optString("tag_name"));
                 if (!t.matches()) continue;
                 JSONArray assets = rel.getJSONArray("assets");
+                JSONObject targetAsset = null;
                 for (int j = 0; j < assets.length(); j++) {
                     JSONObject a = assets.getJSONObject(j);
-                    if (!"onix-gamehub.apk".equals(a.optString("name"))) continue;
-                    Matcher d = DIGEST.matcher(a.optString("digest"));
+                    String name = a.optString("name");
+                    if ("cobalt-gamehub.apk".equals(name)) {
+                        targetAsset = a;
+                        break;
+                    } else if ("onix-gamehub.apk".equals(name) && targetAsset == null) {
+                        targetAsset = a;
+                    }
+                }
+                if (targetAsset != null) {
+                    Matcher d = DIGEST.matcher(targetAsset.optString("digest"));
                     version = t.group(1) + "." + t.group(2) + "." + t.group(3);
-                    link = a.optString("browser_download_url");
+                    link = targetAsset.optString("browser_download_url");
                     digest = d.matches() ? d.group(1) : null;
                 }
             }
@@ -270,7 +278,7 @@ final class Updater {
             params.setAppPackageName(ctx.getPackageName());
             int id = installer.createSession(params);
             session = installer.openSession(id);
-            OutputStream o = session.openWrite("onix-gamehub.apk", 0, apk.length());
+            OutputStream o = session.openWrite("cobalt-gamehub.apk", 0, apk.length());
             InputStream in = new FileInputStream(apk);
             try {
                 byte[] buf = new byte[32 * 1024];

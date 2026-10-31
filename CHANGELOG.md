@@ -2,6 +2,10 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 16.4.1 (outubro de 2026)
+
+- **Atualizador do Cobalt GameHub:** o Onix agora instala e atualiza o emulador diretamente do repositório oficial [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) com o pacote `cobalt-gamehub.apk`.
+
 ## 16.4.0 (outubro de 2026)
 
 - **Cobalt GameHub:** o emulador clássico do Onix agora se chama Cobalt GameHub, a mais nova gema oficial do Project Gems ao lado de Onix, Amethyst e Opala.
