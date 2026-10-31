@@ -1,7 +1,7 @@
-// Monta o Onix GameHub para Windows (x64) sem precisar de Windows nem Wine, como o Amethyst:
+// Monta o Cobalt GameHub para Windows (x64) sem precisar de Windows nem Wine, como o Amethyst:
 // baixa o Electron oficial, troca o nome e o ícone do .exe e põe o app dentro.
 // Uso: node gamehub/pc/build-win.js     (antes: bash gamehub/pc/cores.sh, para os núcleos)
-// Sai em gamehub/pc/dist/Onix-GameHub/ e gamehub/pc/dist/Onix-GameHub-win64.zip.
+// Sai em gamehub/pc/dist/Cobalt-GameHub/ e gamehub/pc/dist/Cobalt-GameHub-win64.zip.
 'use strict';
 const path = require('path');
 const fs = require('fs');
@@ -14,8 +14,8 @@ const root = __dirname;
 const pkg = require(path.join(root, 'package.json'));
 const electronVersion = require(path.join(root, 'node_modules', 'electron', 'package.json')).version;
 const dist = path.join(root, 'dist');
-const out = path.join(dist, 'Onix-GameHub');
-const EXE = 'Onix GameHub.exe';
+const out = path.join(dist, 'Cobalt-GameHub');
+const EXE = 'Cobalt GameHub.exe';
 
 function copyDir(src, dst, skip) {
   fs.mkdirSync(dst, { recursive: true });
@@ -31,7 +31,7 @@ function copyDir(src, dst, skip) {
   for (const c of ['fceumm', 'snes9x', 'mgba', 'gpgx']) {
     if (!fs.existsSync(path.join(cores, c + '.wasm'))) throw new Error('Falta o núcleo ' + c + ': rode bash gamehub/pc/cores.sh');
   }
-  console.log(`Onix GameHub ${pkg.version} · Electron ${electronVersion} → ${out}`);
+  console.log(`Cobalt GameHub ${pkg.version} · Electron ${electronVersion} → ${out}`);
   const zip = await downloadArtifact({ version: electronVersion, platform: 'win32', arch: 'x64', artifactName: 'electron' });
 
   const tmp = path.join(dist, '.stage');
@@ -69,8 +69,8 @@ function copyDir(src, dst, skip) {
   vi.setFileVersion(a, b, c, 0, 1033);
   vi.setProductVersion(a, b, c, 0, 1033);
   vi.setStringValues({ lang: 1033, codepage: 1200 }, {
-    FileDescription: 'Onix GameHub', ProductName: 'Onix GameHub', CompanyName: 'Onix',
-    OriginalFilename: EXE, InternalName: 'Onix GameHub', LegalCopyright: 'GPL-3.0',
+    FileDescription: 'Cobalt GameHub', ProductName: 'Cobalt GameHub', CompanyName: 'Project Gems',
+    OriginalFilename: EXE, InternalName: 'Cobalt GameHub', LegalCopyright: 'GPL-3.0',
     FileVersion: pkg.version, ProductVersion: pkg.version,
   });
   vi.outputToResourceEntries(res.entries);
@@ -81,9 +81,11 @@ function copyDir(src, dst, skip) {
   copyDir(tmp, out);
   fs.rmSync(tmp, { recursive: true, force: true });
 
-  // .zip para a release: a pasta Onix-GameHub dentro.
-  const zipOut = path.join(dist, 'Onix-GameHub-win64.zip');
-  fs.rmSync(zipOut, { force: true });
+  // .zip para a release: a pasta Cobalt-GameHub dentro.
+  const zipCobalt = path.join(dist, 'Cobalt-GameHub-win64.zip');
+  const zipOnix = path.join(dist, 'Onix-GameHub-win64.zip');
+  fs.rmSync(zipCobalt, { force: true });
+  fs.rmSync(zipOnix, { force: true });
   execFileSync('python3', ['-c', `
 import os, sys, zipfile
 src, dst = sys.argv[1], sys.argv[2]
@@ -92,7 +94,8 @@ with zipfile.ZipFile(dst, 'w', zipfile.ZIP_DEFLATED, compresslevel=9) as z:
         for f in files:
             p = os.path.join(base, f)
             z.write(p, os.path.relpath(p, os.path.dirname(src)))
-`, out, zipOut]);
+`, out, zipCobalt]);
+  fs.copyFileSync(zipCobalt, zipOnix);
   console.log('Pronto: ' + path.join(out, EXE));
-  console.log('Zip: ' + zipOut + ' (' + (fs.statSync(zipOut).size / 1048576).toFixed(1) + ' MB)');
+  console.log('Zip: ' + zipCobalt + ' (' + (fs.statSync(zipCobalt).size / 1048576).toFixed(1) + ' MB)');
 })().catch(e => { console.error(e); process.exit(1); });

@@ -72,5 +72,8 @@ echo "[8/8] apksigner (a mesma chave do Onix)"
 apksigner sign --ks "$KEYSTORE" --ks-pass pass:android --key-pass pass:android \
   --ks-key-alias androiddebugkey --out "$APK" "$OUT/aligned.apk"
 rm -f "$APK.idsig"
+cp "$APK" "$ROOT/onix-gamehub-android.apk"
+cp "$APK" "$ROOT/cobalt-gamehub.apk"
+cp "$APK" "$ROOT/cobalt-gamehub-android.apk"
 apksigner verify --verbose "$APK" | grep -E "Verified|v[123] scheme"
 ls -l "$APK"

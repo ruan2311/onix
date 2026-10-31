@@ -299,8 +299,13 @@ function createWindow() {
 }
 
 app.whenReady().then(() => {
-  store.init(app.getPath('userData'), ASSETS);
-  logFile = path.join(app.getPath('userData'), 'gamehub.log');
+  const userData = app.getPath('userData');
+  const oldUserData = path.join(path.dirname(userData), 'Onix GameHub');
+  if (!fs.existsSync(path.join(userData, 'library.json')) && fs.existsSync(path.join(oldUserData, 'library.json'))) {
+    try { fs.cpSync(oldUserData, userData, { recursive: true }); } catch (_) { }
+  }
+  store.init(userData, ASSETS);
+  logFile = path.join(userData, 'gamehub.log');
   protocol.handle('app', serve);
 
   ipcMain.on('onix:hub', (e, name, args) => {

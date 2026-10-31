@@ -1,8 +1,8 @@
-ONIX GAMEHUB @VERSION@ PARA PC (WINDOWS) - jogos clássicos no visual do Onix
-==========================================================================
+COBALT GAMEHUB @VERSION@ PARA PC (WINDOWS) - jogos clássicos no visual do Onix
+=============================================================================
 
 COMO ABRIR
-  Dê dois cliques em "Onix GameHub.exe" (dica: botão direito > Fixar na barra de tarefas).
+  Dê dois cliques em "Cobalt GameHub.exe" (dica: botão direito > Fixar na barra de tarefas).
   Se o Windows mostrar "O Windows protegeu o computador", clique em "Mais informações" >
   "Executar assim mesmo" (aparece porque o programa ainda não tem assinatura digital).
 
