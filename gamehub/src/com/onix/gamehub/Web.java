@@ -1,6 +1,10 @@
 package com.onix.gamehub;
 
 import android.content.Context;
+import android.os.Build;
+import android.util.Log;
+import android.webkit.ConsoleMessage;
+import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
@@ -25,7 +29,7 @@ import java.util.regex.Pattern;
 final class Web {
 
     static final String BASE = "https://hub.local/";
-    private static final Pattern ASSET = Pattern.compile("^/(hub\\.html|menu\\.html|common\\.js|common\\.css|licenses/[a-z0-9_]{1,40}\\.txt)$");
+    private static final Pattern ASSET = Pattern.compile("^/(hub\\.html|menu\\.html|gamepad\\.html|upload\\.html|common\\.js|common\\.css|touch\\.js|licenses/[a-z0-9_]{1,40}\\.txt)$");
     private static final Pattern COVER = Pattern.compile("^/cover/([0-9a-f]{16})\\.jpg$");
     private static final Pattern SHOT = Pattern.compile("^/shot/([A-Za-z0-9_-]{1,40})/([0-9a-f]{16})/(auto|[1-4])\\.jpg$");
     private static final Map<String, String> TYPES = new HashMap<String, String>();
@@ -44,19 +48,44 @@ final class Web {
         WebSettings s = w.getSettings();
         s.setJavaScriptEnabled(true);
         s.setDomStorageEnabled(true);
+        s.setDatabaseEnabled(true);
         s.setAllowFileAccess(false);
         s.setAllowContentAccess(false);
         s.setMediaPlaybackRequiresUserGesture(false);
         s.setTextZoom(100);
+        if (Build.VERSION.SDK_INT >= 21) {
+            s.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        }
+        w.setWebChromeClient(new WebChromeClient() {
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage msg) {
+                Log.println(
+                    msg.messageLevel() == ConsoleMessage.MessageLevel.ERROR ? Log.ERROR : Log.DEBUG,
+                    "GameHubWeb",
+                    msg.message() + " (" + msg.sourceId() + ":" + msg.lineNumber() + ")"
+                );
+                return true;
+            }
+        });
         w.setWebViewClient(new WebViewClient() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest req) {
                 return serve(c, req.getUrl().toString());
             }
 
+            @SuppressWarnings("deprecation")
+            @Override
+            public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
+                return serve(c, url);
+            }
+
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, String url) {
                 return !url.startsWith(BASE);
+            }
+
+            public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest req) {
+                return !req.getUrl().toString().startsWith(BASE);
             }
         });
     }
@@ -80,14 +109,18 @@ final class Web {
         } catch (Exception ignored) {
         }
         WebResourceResponse r = new WebResourceResponse("text/plain", "utf-8", null);
-        r.setStatusCodeAndReasonPhrase(404, "Not Found");
+        if (Build.VERSION.SDK_INT >= 21) {
+            r.setStatusCodeAndReasonPhrase(404, "Not Found");
+        }
         return r;
     }
 
     private static WebResourceResponse file(File f) throws Exception {
         if (!f.isFile()) {
             WebResourceResponse r = new WebResourceResponse("image/jpeg", null, null);
-            r.setStatusCodeAndReasonPhrase(404, "Not Found");
+            if (Build.VERSION.SDK_INT >= 21) {
+                r.setStatusCodeAndReasonPhrase(404, "Not Found");
+            }
             return r;
         }
         return response("image/jpeg", new FileInputStream(f));
@@ -95,9 +128,11 @@ final class Web {
 
     private static WebResourceResponse response(String type, InputStream in) {
         WebResourceResponse r = new WebResourceResponse(type, type.startsWith("image") ? null : "utf-8", in);
-        Map<String, String> headers = new HashMap<String, String>();
-        headers.put("Cache-Control", type.startsWith("image") ? "no-cache" : "no-store");
-        r.setResponseHeaders(headers);
+        if (Build.VERSION.SDK_INT >= 21) {
+            Map<String, String> headers = new HashMap<String, String>();
+            headers.put("Cache-Control", type.startsWith("image") ? "no-cache" : "no-store");
+            r.setResponseHeaders(headers);
+        }
         return r;
     }
 

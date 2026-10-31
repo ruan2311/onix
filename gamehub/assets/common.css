@@ -15,7 +15,7 @@ html.pc *{scrollbar-width:none}   /* PC: rola com a roda do mouse, sem a barra c
 button{font:inherit;color:inherit;background:none;border:0;outline:0;cursor:pointer;text-align:left}
 input{font:inherit;color:inherit;outline:0}
 svg{display:block}
-.bg{position:fixed;inset:0;z-index:-1;background:radial-gradient(120% 90% at 18% 0%,var(--bg1) 0%,#0d0722 45%,var(--bg2) 100%)}
+.bg{position:fixed;top:0;right:0;bottom:0;left:0;z-index:-1;background:radial-gradient(120% 90% at 18% 0%,var(--bg1) 0%,#0d0722 45%,var(--bg2) 100%)}
 .bg::after{content:"";position:absolute;left:-20%;right:-20%;bottom:0;height:34%;
   background:repeating-linear-gradient(90deg,rgba(61,225,255,.09) 0 1px,transparent 1px 5.5rem),
              repeating-linear-gradient(0deg,rgba(61,225,255,.08) 0 1px,transparent 1px 2.6rem);
@@ -35,7 +35,7 @@ svg{display:block}
 .f{position:relative;transition:transform .1s ease;scroll-margin:1.2rem}
 .f.focus{transform:scale(1.045);z-index:2}
 .item.f.focus,.tab.f.focus{transform:none}
-.f.focus::before{content:"";position:absolute;inset:-.32rem;border-radius:calc(var(--r) + .32rem);padding:.22rem;
+.f.focus::before{content:"";position:absolute;top:-.32rem;right:-.32rem;bottom:-.32rem;left:-.32rem;border-radius:calc(var(--r) + .32rem);padding:.22rem;
   background:var(--grad);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;box-shadow:0 0 2.4rem rgba(255,61,154,.35);pointer-events:none}
 .f.pill.focus::before,.btn.focus::before{border-radius:999rem}
@@ -57,8 +57,8 @@ svg{display:block}
 
 /* Capas */
 .cover{position:relative;border-radius:var(--r);overflow:hidden;background:#140c2c;aspect-ratio:3/4;width:100%;flex:none}
-.cover img{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#0e0820}
-.cover .ph{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:1.2rem;
+.cover img{position:absolute;top:0;right:0;bottom:0;left:0;width:100%;height:100%;object-fit:contain;background:#0e0820}
+.cover .ph{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1rem;padding:1.2rem;
   font-weight:700;font-size:1.25rem;line-height:1.2;text-align:center}
 .cover .ph svg{width:55%;height:auto;opacity:.85}
 .cover .ph small{font-size:1rem;opacity:.75;font-weight:700;letter-spacing:.16em;text-transform:uppercase}
@@ -67,7 +67,7 @@ svg{display:block}
 .cover .fav{position:absolute;right:.7rem;top:.7rem;width:2rem;height:2rem;color:#ffd27a}
 
 /* Painéis (camadas sobre a tela) */
-.layer{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;
+.layer{position:fixed;top:0;right:0;bottom:0;left:0;z-index:50;display:flex;align-items:center;justify-content:center;
   background:rgba(4,2,10,.72);animation:fade .18s ease}
 .layer.side{justify-content:flex-end;align-items:stretch}
 .sheet{background:var(--panel);border:1px solid var(--line);border-radius:1.8rem;padding:3rem;
@@ -103,7 +103,7 @@ svg{display:block}
 html.no-motion :not(.boot):not(.boot *),html.no-motion :not(.boot *)::before,html.no-motion :not(.boot *)::after{transition:none!important;animation:none!important}
 
 /* Celular (html.mobile): tamanho pela menor medida da tela, toque e rolagem com o dedo. */
-html.mobile{font-size:calc(min(100vw, 100vh) / 26)}
+html.mobile{font-size:calc(100vw / 26);font-size:calc(min(100vw, 100vh) / 26)}
 html.mobile .f.focus{transform:none}
 html.mobile:not(.keys) .f.focus::before{display:none}
 html.mobile .scroll{overflow-y:auto;-webkit-overflow-scrolling:touch}
@@ -122,6 +122,15 @@ html.mobile .chip{height:2.1rem;font-size:.85rem;padding:0 .8rem}
 html.mobile .chip svg{width:1.1rem;height:1.1rem}
 html.mobile .toast{font-size:1rem;bottom:1.6rem;max-width:92vw;padding:.8rem 1.4rem;text-align:center}
 html.mobile .bar{height:.6rem}
+
+/* ---------- Navegador antigo (WebView de TV box) ----------
+   Sem aspect-ratio (Chrome < 88): a altura das capas vem do padding. */
+@supports not (aspect-ratio:1/1){
+  .cover{height:0;padding-top:133.33%}
+  .hero .poster{width:12.75rem}
+  .hero .where{width:17.68rem}
+  .slot .pic{height:0;padding-top:75%}
+}
 
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes rise{from{opacity:0;transform:translate(-50%,1rem)}to{opacity:1;transform:translate(-50%,0)}}

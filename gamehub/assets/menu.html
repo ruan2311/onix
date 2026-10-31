@@ -7,7 +7,7 @@
 <link rel="stylesheet" href="common.css">
 <style>
 html,body{background:transparent}
-.shade{position:fixed;inset:0;background:linear-gradient(90deg,rgba(4,2,10,.94) 0,rgba(4,2,10,.82) 40rem,rgba(4,2,10,.35) 100%)}
+.shade{position:fixed;top:0;right:0;bottom:0;left:0;background:linear-gradient(90deg,rgba(4,2,10,.94) 0,rgba(4,2,10,.82) 40rem,rgba(4,2,10,.35) 100%)}
 .panel{position:fixed;left:0;top:0;bottom:0;width:42rem;padding:3.2rem 3rem;display:flex;flex-direction:column;gap:1.4rem}
 .head{display:flex;align-items:center;gap:1rem}
 .head svg{width:3.2rem;height:3.2rem;flex:none}
@@ -28,7 +28,7 @@ html,body{background:transparent}
 .hide{display:none}
 /* Celular: o menu ocupa a tela (em pé) ou a metade esquerda (deitado). */
 html.mobile .shade{background:rgba(4,2,10,.9)}
-html.mobile .panel{width:min(100%, 30rem);padding:1.2rem 1rem;gap:1rem}
+html.mobile .panel{width:100%;max-width:30rem;padding:1.2rem 1rem;gap:1rem}
 html.mobile .head svg{width:2.2rem;height:2.2rem}
 html.mobile .head .t b{font-size:1.15rem;max-height:2.8rem}
 html.mobile .head .t small{font-size:.72rem}

@@ -2,10 +2,137 @@
 /* Código comum do GameHub (hub.html e menu.html): traduções, elementos, navegação pelo
    controle remoto, camadas, avisos, consoles e o gerador de QR. */
 
+/* ---------------- Compatibilidade e Polyfills (TVs e TV boxes com Chrome < 88) ---------------- */
+if (typeof globalThis === 'undefined') {
+  window.globalThis = window;
+}
+
+if (!Element.prototype.append) {
+  Element.prototype.append = function (...nodes) {
+    for (const n of nodes) {
+      this.appendChild(n instanceof Node ? n : document.createTextNode(String(n)));
+    }
+  };
+}
+
+if (!Element.prototype.prepend) {
+  Element.prototype.prepend = function (...nodes) {
+    for (let i = nodes.length - 1; i >= 0; i--) {
+      const n = nodes[i];
+      this.insertBefore(n instanceof Node ? n : document.createTextNode(String(n)), this.firstChild);
+    }
+  };
+}
+
+if (!Element.prototype.replaceChildren) {
+  Element.prototype.replaceChildren = function (...nodes) {
+    this.textContent = '';
+    this.append(...nodes);
+  };
+}
+
+if (!Element.prototype.replaceWith) {
+  Element.prototype.replaceWith = function (...nodes) {
+    if (this.parentNode) {
+      const p = this.parentNode;
+      const first = nodes[0] instanceof Node ? nodes[0] : document.createTextNode(String(nodes[0]));
+      p.replaceChild(first, this);
+      for (let i = 1; i < nodes.length; i++) {
+        const next = nodes[i] instanceof Node ? nodes[i] : document.createTextNode(String(nodes[i]));
+        p.insertBefore(next, first.nextSibling);
+      }
+    }
+  };
+}
+
+if (!Array.prototype.at) {
+  Object.defineProperty(Array.prototype, 'at', {
+    value(i) {
+      i = Math.trunc(i) || 0;
+      return this[i < 0 ? this.length + i : i];
+    },
+    configurable: true,
+    writable: true
+  });
+}
+
+if (!Array.prototype.flat) {
+  Array.prototype.flat = function (depth) {
+    const d = depth === undefined ? 1 : Math.floor(depth);
+    if (d < 1) return Array.prototype.slice.call(this);
+    return (function flatten(arr, curDepth) {
+      let res = [];
+      for (let i = 0; i < arr.length; i++) {
+        if (i in arr) {
+          const val = arr[i];
+          if (Array.isArray(val) && curDepth < d) {
+            res = res.concat(flatten(val, curDepth + 1));
+          } else {
+            res.push(val);
+          }
+        }
+      }
+      return res;
+    })(this, 0);
+  };
+}
+
+if (!Object.fromEntries) {
+  Object.fromEntries = function (entries) {
+    const o = {};
+    for (const [k, v] of entries) o[k] = v;
+    return o;
+  };
+}
+
+/* Navegador antigo (WebView de TV box, Chrome < 84): sem "gap" no flexbox, os itens grudam.
+   Testa o recurso e, se faltar, gera margens equivalentes para cada regra flex que usa gap.
+   No grid o gap funciona desde o Chrome 66, então essas regras ficam como estão. */
+function flexGapShim() {
+  const t = document.createElement('div');
+  t.style.cssText = 'display:flex;flex-direction:column;row-gap:1px;position:absolute;visibility:hidden';
+  t.appendChild(document.createElement('div')); t.appendChild(document.createElement('div'));
+  document.documentElement.appendChild(t);
+  const ok = t.scrollHeight === 1;
+  t.remove();
+  if (ok) return;
+  document.documentElement.classList.add('no-flexgap');
+  const out = [];
+  const walk = (rules, media) => {
+    for (const r of Array.from(rules)) {
+      if (r.cssRules && r.media) { walk(r.cssRules, r.media.mediaText); continue; }
+      if (!r.style || !r.selectorText) continue;
+      const st = r.style, row = st.getPropertyValue('row-gap'), col = st.getPropertyValue('column-gap');
+      if (!row && !col) continue;
+      if (/grid/.test(st.display) || st.gridTemplateColumns || /\.grid\b/.test(r.selectorText)) continue;
+      const column = /column/.test(st.flexDirection);
+      const wrap = /wrap/.test(st.flexWrap);
+      const sels = r.selectorText.split(',').map(x => x.trim());
+      const each = suffix => sels.map(x => x + suffix).join(',');
+      let css = column ? each('>*+*') + '{margin-top:' + (row || col) + ';margin-left:0}'
+                       : each('>*+*') + '{margin-left:' + (col || row) + '}';
+      if (wrap) css += each('>*') + '{margin-bottom:' + (row || col) + '}';
+      out.push(media ? '@media ' + media + '{' + css + '}' : css);
+    }
+  };
+  for (const sheet of Array.from(document.styleSheets)) {
+    try { walk(sheet.cssRules, ''); } catch (_) {}
+  }
+  const style = document.createElement('style');
+  style.textContent = out.join('\n');
+  document.head.appendChild(style);
+}
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', flexGapShim);
+} else {
+  flexGapShim();
+}
+
 /* ---------------- Idioma ----------------
    Os textos são escritos em português; t() devolve a tradução do ES quando o idioma é espanhol. */
 let LANG = 'pt';
 const ES = {
+  'Navegador da TV': 'Navegador de la TV',
   'Início': 'Inicio', 'Adicionar jogos': 'Agregar juegos', 'Configurações': 'Configuración',
   'Continuar jogando': 'Seguir jugando', 'Continuar': 'Continuar', 'Jogar': 'Jugar', 'Jogar do começo': 'Jugar desde el inicio',
   'Consoles': 'Consolas', 'Favoritos': 'Favoritos', 'Adicionados recentemente': 'Agregados recientemente',

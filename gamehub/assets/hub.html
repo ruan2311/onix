@@ -6,7 +6,7 @@
 <title>Cobalt GameHub</title>
 <link rel="stylesheet" href="common.css">
 <style>
-.app{position:fixed;inset:0;display:flex;flex-direction:column;padding:3rem 4.4rem 0}
+.app{position:fixed;top:0;right:0;bottom:0;left:0;display:flex;flex-direction:column;padding:3rem 4.4rem 0}
 header{display:flex;align-items:center;justify-content:space-between;gap:1.4rem;flex:none;height:4.6rem}
 nav{display:flex;gap:.5rem;flex:none;margin:1rem 0 0 -.4rem}
 nav .tab{height:3.4rem;padding:0 .9rem;border-radius:999rem;font-size:1.25rem;white-space:nowrap;font-weight:600;color:var(--dim);display:flex;align-items:center;gap:.6rem}
@@ -24,7 +24,7 @@ nav .tab.focus{background:rgba(255,255,255,.14);color:var(--ink)}
 .clock{font-size:1.4rem;font-weight:600;color:var(--dim);text-align:right}
 .right{flex:none}
 main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
-.page{position:absolute;inset:0;overflow:hidden;padding:1rem .8rem 4rem}
+.page{position:absolute;top:0;right:0;bottom:0;left:0;overflow:hidden;padding:1rem .8rem 4rem}
 .page[hidden]{display:none}
 .row-title{font-size:1.45rem;font-weight:700;margin:2.2rem 0 1.1rem .2rem;display:flex;align-items:baseline;gap:1rem}
 .row-title small{font-size:1.05rem;color:var(--mute);font-weight:500}
@@ -38,9 +38,9 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .hero{position:relative;overflow:hidden;display:flex;gap:2.8rem;align-items:center;padding:2rem 2.6rem;border-radius:1.8rem;height:21rem;
   background:linear-gradient(110deg,rgba(255,61,154,.14),rgba(61,225,255,.06) 60%,rgba(255,255,255,.03));border:1px solid var(--line)}
 /* Fundo com as cores da própria capa, bem desfocadas */
-.hero .ambient{position:absolute;inset:-25%;width:150%;height:150%;object-fit:cover;filter:blur(3.5rem) saturate(1.3);opacity:.42;z-index:0;pointer-events:none}
+.hero .ambient{position:absolute;top:-25%;right:-25%;bottom:-25%;left:-25%;width:150%;height:150%;object-fit:cover;filter:blur(3.5rem) saturate(1.3);opacity:.42;z-index:0;pointer-events:none}
 .hero .poster{flex:none;height:100%;aspect-ratio:3/4;position:relative;z-index:1;box-shadow:0 1.2rem 3rem rgba(0,0,0,.55);border-radius:1.1rem}
-.hero .poster .cover{position:absolute;inset:0;aspect-ratio:auto;border-radius:1.1rem}
+.hero .poster .cover{position:absolute;top:0;right:0;bottom:0;left:0;aspect-ratio:auto;border-radius:1.1rem}
 .hero .where{flex:none;margin-left:auto;height:78%;aspect-ratio:4/3;position:relative;z-index:1;display:flex;flex-direction:column;gap:.6rem}
 .hero .where img{flex:1;min-height:0;width:100%;object-fit:cover;border-radius:1rem;image-rendering:pixelated;background:#000;box-shadow:0 1rem 2.4rem rgba(0,0,0,.5)}
 .hero .where small{font-size:1rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:700}
@@ -114,9 +114,9 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 /* Abertura (2,4 s): uma linha de luz cruza a tela e "liga" a imagem como numa TV antiga, a marca
    surge girando com um anel de energia, as letras sobem uma a uma, um traço neon passa embaixo e
    tudo se abre para o hub. Só transform e opacity: leve até em TV lenta. */
-.boot{position:fixed;inset:0;z-index:100;background:#000;display:flex;align-items:center;justify-content:center;pointer-events:none;
+.boot{position:fixed;top:0;right:0;bottom:0;left:0;z-index:100;background:#000;display:flex;align-items:center;justify-content:center;pointer-events:none;
   overflow:hidden;animation:bootout .5s cubic-bezier(.4,0,.2,1) 1.9s forwards}
-.boot .glow{position:absolute;inset:0;opacity:0;background:radial-gradient(48% 42% at 50% 50%,rgba(139,108,240,.34),rgba(255,61,154,.08) 50%,transparent 76%);
+.boot .glow{position:absolute;top:0;right:0;bottom:0;left:0;opacity:0;background:radial-gradient(48% 42% at 50% 50%,rgba(139,108,240,.34),rgba(255,61,154,.08) 50%,transparent 76%);
   animation:bootglow 1.3s ease .45s forwards}
 .boot .line{position:absolute;left:12%;right:12%;top:50%;height:.25rem;margin-top:-.125rem;background:var(--grad);transform:scaleX(0);
   box-shadow:0 0 1.6rem rgba(255,61,154,.7),0 0 3rem rgba(61,225,255,.45);
@@ -128,7 +128,7 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 @keyframes bootbrandout{to{opacity:0;transform:scale(1.12)}}
 .boot .mk{position:relative;flex:none;display:block}
 .boot .mk svg{width:6rem;height:6rem;opacity:0;transform:scale(.4) rotate(-20deg);animation:bootmark .75s cubic-bezier(.2,1.5,.4,1) .55s forwards}
-.boot .mk .ring{position:absolute;inset:-45%;border-radius:50%;border:.2rem solid rgba(61,225,255,.85);opacity:0;transform:scale(.3);
+.boot .mk .ring{position:absolute;top:-45%;right:-45%;bottom:-45%;left:-45%;border-radius:50%;border:.2rem solid rgba(61,225,255,.85);opacity:0;transform:scale(.3);
   box-shadow:0 0 1.4rem rgba(61,225,255,.5),inset 0 0 1.4rem rgba(255,61,154,.35);animation:bootring .9s cubic-bezier(.1,.6,.3,1) .62s forwards}
 .boot .brand>span{position:relative}
 .boot .brand b{font-size:2.4rem}
@@ -159,7 +159,7 @@ html.booting.pc body::before,html.booting .page,html.booting .row .tile{animatio
    Mais movimento que na TV: as páginas entram deslizando, os cartões sobem com o mouse, as capas
    ganham um brilho que passa, o fundo tem uma aurora lenta e as janelas surgem com um leve
    impulso. "Animações" desligado (html.no-motion) desliga tudo, como na TV. */
-html.pc body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none;
+html.pc body::before{content:"";position:fixed;top:-20%;right:-20%;bottom:-20%;left:-20%;z-index:-1;pointer-events:none;
   background:radial-gradient(40% 35% at 20% 25%,rgba(255,111,181,.13),transparent 70%),radial-gradient(45% 40% at 80% 70%,rgba(90,216,255,.11),transparent 70%);
   animation:pcAurora 26s ease-in-out infinite alternate}
 @keyframes pcAurora{0%{transform:translate(0,0) rotate(0)}50%{transform:translate(4%,-3%) rotate(3deg)}100%{transform:translate(-3%,4%) rotate(-2deg)}}
@@ -172,7 +172,7 @@ html.pc .tile,html.pc .ctile,html.pc .btn,html.pc .tab{transition:transform .3s 
 html.pc .tile:hover{transform:translateY(-.4rem) scale(1.03);z-index:2}
 html.pc .ctile:hover{transform:translateY(-.3rem) scale(1.02)}
 html.pc .btn:hover,html.pc .tab:hover{transform:translateY(-.12rem)}
-html.pc .tile .cover::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.22) 50%,transparent 65%);
+html.pc .tile .cover::after{content:"";position:absolute;top:0;right:0;bottom:0;left:0;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.22) 50%,transparent 65%);
   transform:translateX(-120%);pointer-events:none}
 html.pc .tile.focus .cover::after,html.pc .tile:hover .cover::after{animation:pcShine .9s ease}
 @keyframes pcShine{to{transform:translateX(120%)}}
@@ -213,7 +213,7 @@ html.mobile nav::-webkit-scrollbar{display:none}
 html.mobile nav .tab{height:2.6rem;font-size:1rem;flex:none;padding:0 .8rem}
 html.mobile nav .tab svg{width:1.3rem;height:1.3rem}
 html.mobile main{overflow-y:auto;margin-top:.5rem;-webkit-overflow-scrolling:touch}
-html.mobile .page{position:relative;inset:auto;overflow:visible;padding:.3rem 0 3rem}
+html.mobile .page{position:relative;top:auto;right:auto;bottom:auto;left:auto;overflow:visible;padding:.3rem 0 3rem}
 html.mobile .row-title{font-size:1.1rem;margin:1.4rem 0 .6rem}
 html.mobile .row{overflow-x:auto;margin:0 -.9rem;padding:.3rem .9rem;gap:.8rem;scrollbar-width:none}
 html.mobile .row::-webkit-scrollbar{display:none}
@@ -1060,8 +1060,10 @@ function aboutBody() {
   const up = json(call('update'), {});
   const wrap = h('div');
   const status = { none: t('Em dia'), checking: t('Procurando…'), downloading: t('Baixando…'), installing: t('Instalando…'), error: t('Sem conexão com o GitHub') }[up.state] || '';
+  const engine = (m => m ? 'Chrome ' + m[1] : 'desconhecido')(/Chrome\/(\d+)/.exec(navigator.userAgent));
   const list = h('div', { class: 'list' },
     h('div', { class: 'item' }, h('span', { style: { width: '3.4rem' } }, svg(MARK)), h('span', { class: 'grow' }, 'Cobalt GameHub', h('span', { class: 'sub', text: t('Versão {v}', { v: INFO.version || '' }) + (status ? ' · ' + status : '') }))),
+    h('div', { class: 'item' }, icon('info'), h('span', { class: 'grow' }, t('Navegador da TV'), h('span', { class: 'sub', text: engine }))),
     up.latest && (up.state === 'available' || up.state === 'ready' || up.state === 'error')
       ? h('button', { class: 'f item', act: () => { call('installUpdate'); toast(t('Baixando…')); } }, icon('load'), h('span', { class: 'grow', text: t('Instalar atualização {v}', { v: up.latest }) }))
       : h('button', { class: 'f item', act: () => { call('checkUpdate'); toast(t('Procurando…')); } }, icon('reset'), h('span', { class: 'grow', text: t('Procurar atualizações') })),
@@ -1223,7 +1225,10 @@ function playBoot() {
     started = true;
     n.classList.add('go');
     // As animações do hub começam junto com o fim da abertura (1,9 s depois do "go").
-    setTimeout(() => root.classList.remove('booting'), 1900);
+    setTimeout(() => {
+      root.classList.remove('booting');
+      try { if (n && n.parentNode) n.remove(); } catch (_) {}
+    }, 2400);
   };
   requestAnimationFrame(() => requestAnimationFrame(go));
   setTimeout(go, 700);   // sem quadros (página escondida): nunca deixa a tela presa no preto
