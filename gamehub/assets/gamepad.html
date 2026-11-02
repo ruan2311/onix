@@ -161,6 +161,25 @@ html, body {
 <script src="touch.js"></script>
 <script>
 'use strict';
+/* Espanhol: se o celular estiver em espanhol, troca os textos da página (a chave é o texto em português). */
+const ES = /^es\b/i.test(navigator.language || '') ? {
+  'Conectando…': 'Conectando…', 'Reconectando…': 'Reconectando…', 'Toque em TV e digite o IP': 'Toca TV y escribe la IP',
+  'Turbo (Avanço rápido)': 'Turbo (avance rápido)', 'Menu na TV': 'Menú en la TV', 'Menu': 'Menú', 'Vibração': 'Vibración',
+  'Personalizar botões': 'Personalizar botones', 'Editar': 'Editar', 'Tela cheia': 'Pantalla completa', 'Configurar TV': 'Configurar TV',
+  'Conectar à TV': 'Conectar a la TV', 'Digite o IP que aparece no Cobalt GameHub da sua TV:': 'Escribe la IP que aparece en Cobalt GameHub de tu TV:',
+  'Cancelar': 'Cancelar', 'Conectar': 'Conectar', 'Dica iPhone:': 'Consejo para iPhone:',
+  ' toque em Compartilhar e "Adicionar à Tela de Início"': ' toca Compartir y "Agregar a pantalla de inicio"'
+} : null;
+const T = s => (ES && ES[s]) || s;
+if (ES) {
+  document.documentElement.lang = 'es';
+  const walk = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  for (let n; (n = walk.nextNode());) {
+    const v = n.nodeValue, k = ES[v] ? v : v.trim();
+    if (ES[k]) n.nodeValue = v.replace(k, ES[k]);
+  }
+  document.querySelectorAll('[title]').forEach(e => { if (ES[e.title]) e.title = ES[e.title]; });
+}
 (function () {
   const canvas = document.getElementById('pad');
   const topBar = document.getElementById('topBar');
@@ -336,7 +355,7 @@ html, body {
     if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
 
     statusDot.className = 'dot connecting';
-    gameTitle.textContent = 'Conectando…';
+    gameTitle.textContent = T('Conectando…');
 
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
     let host = localStorage.getItem('gamehub_tv_host') || location.host;
@@ -344,7 +363,7 @@ html, body {
       // Sem endereço da TV (página aberta fora da TV): pede o IP em vez de chutar um.
       connecting = false;
       statusDot.className = 'dot';
-      gameTitle.textContent = 'Toque em TV e digite o IP';
+      gameTitle.textContent = T('Toque em TV e digite o IP');
       const modal = document.getElementById('tvModal');
       if (modal) modal.style.display = 'flex';
       return;
@@ -406,7 +425,7 @@ html, body {
     connecting = false;
     statusDot.className = 'dot';
     pingLabel.textContent = '';
-    gameTitle.textContent = 'Reconectando…';
+    gameTitle.textContent = T('Reconectando…');
     stopPing();
     connectFails++;
     if (connectFails >= 4) {
