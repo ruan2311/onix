@@ -325,8 +325,8 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
         <svg viewBox="0 0 48 48" width="30" height="30" fill="none" stroke="#a78bfa" stroke-width="2.5" stroke-linecap="round"><circle cx="24" cy="24" r="10"/><ellipse cx="24" cy="24" rx="21" ry="6" transform="rotate(-20 24 24)"/></svg>
       </div>
       <div class="gp-notice-body">
-        <b>Onix GameHub</b>
-        <span id="gpNoticeText">Abra um jogo no Onix GameHub na TV para começar!</span>
+        <b>Cobalt GameHub</b>
+        <span id="gpNoticeText">Abra um jogo no Cobalt GameHub na TV para começar!</span>
       </div>
       <button class="cta" id="gpLaunchBtn">
         <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
@@ -421,7 +421,9 @@ const T = {
   'Abrir GameHub na TV': 'Abrir GameHub en la TV', 'Sem TV selecionada': 'Sin TV seleccionada',
   'Conecte a uma TV primeiro para usar o Gamepad.': 'Conecta a una TV primero para usar el Gamepad.',
   'Conectando ao GameHub…': 'Conectando a GameHub…', 'Aguardando jogo na TV…': 'Esperando juego en la TV…',
-  'Abra um jogo no Onix GameHub na TV para começar!': '¡Abre un juego en Onix GameHub en la TV para empezar!',
+  'Abra um jogo no Cobalt GameHub na TV para começar!': '¡Abre un juego en Cobalt GameHub en la TV para empezar!',
+  'Abrindo Cobalt GameHub na TV…': 'Abriendo Cobalt GameHub en la TV…', 'Comando enviado! Conecte à TV se necessário.': '¡Comando enviado! Conéctate a la TV si es necesario.',
+  'Menu do jogo na TV': 'Menú del juego en la TV',
 };
 const t = s => (ES && T[s]) || s;
 if (ES) {
@@ -780,7 +782,7 @@ $('gpLaunchBtn').onclick = () => {
     if (O.openApp) O.openApp('com.onix.gamehub');
   }
   if (conn.s === 'connected') {
-    toast(t('Abrindo Onix GameHub na TV…'));
+    toast(t('Abrindo Cobalt GameHub na TV…'));
   } else {
     toast(t('Comando enviado! Conecte à TV se necessário.'));
   }
@@ -890,7 +892,7 @@ function connectGpWs() {
     gpConnecting = false;
     $('gpDot').className = 'dot on';
     $('gpDot').style.background = '#10b981';
-    $('gpTitle').textContent = gpTitle || 'Onix GameHub';
+    $('gpTitle').textContent = gpTitle || 'Cobalt GameHub';
     $('gpNotice').style.display = 'none';
     startGpPing();
     acquireGpWakeLock();
@@ -930,7 +932,7 @@ function onGpWsClosed() {
   $('gpDot').style.background = '#ef4444';
   $('gpPing').textContent = '';
   $('gpTitle').textContent = t('Aguardando jogo na TV…');
-  $('gpNoticeText').textContent = t('Abra um jogo no Onix GameHub na TV para começar!');
+  $('gpNoticeText').textContent = t('Abra um jogo no Cobalt GameHub na TV para começar!');
   $('gpNotice').style.display = 'flex';
   stopGpPing();
   if (view === 'gamepad' && !gpReconnectT) {

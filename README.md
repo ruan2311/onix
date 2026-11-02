@@ -72,7 +72,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 **Novedades de la 15.0.0:** dos estilos nuevos de pantalla de inicio en **Configuración → Inicio** (*Clean Glass*, minimalista, y *Onix Cosmos*, artístico), cuatro sonidos de navegación nuevos (*Crystal*, *Sharpness*, *Velvet* y *Pulse*), un **Modo Infantil** con estilo propio y el gatito de Onix, y sonidos del menú con menos retraso.
 
-**Onix Controle (app para Android e iPhone/iPad):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. Ahora cuenta con **gamepad virtual** integrado para los juegos de Cobalt GameHub. Disponible como app para Android (**[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk)**) y como Web App instalable para iPhone y iPad (**[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**). Funciona con Google TV y Android TV. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
+**Onix Controle (app para Android e iPhone/iPad):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. Ahora cuenta con **gamepad virtual** integrado para los juegos de Cobalt GameHub. Disponible como app para Android (**[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.4/onix-controle.apk)**) y como Web App instalable para iPhone y iPad (**[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**). Funciona con Google TV y Android TV. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
 
 ---
 
@@ -625,7 +625,7 @@ Transforma o celular no **controle remoto da TV inteira** e em **gamepad para jo
 
 **No Android:**
 1. No celular, abra este link no navegador e baixe o arquivo (ou, na TV, vá em **Configurações → Controle pelo celular → Baixar o Onix Controle** e aponte a câmera do celular para o QR code):
-   **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.3/onix-controle.apk)**
+   **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.4/onix-controle.apk)**
 2. Toque no arquivo baixado. Se o Android pedir, permita **instalar apps desta fonte** para o navegador (ou para o app de arquivos) e volte.
 3. Toque em **Instalar**. Se o **Play Protect** avisar que o app é desconhecido, toque em **Mais detalhes → Instalar mesmo assim** (o aviso aparece porque o app não vem da Play Store; o código está todo neste GitHub).
 
