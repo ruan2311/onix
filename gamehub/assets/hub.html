@@ -593,7 +593,7 @@ function openPhonePadTutorialSheet(onDone) {
 
   const clients = INFO.gamepadClients || 0;
   const statusMsg = clients > 0
-    ? (clients === 1 ? '🎮 1 celular conectado jogando!' : `🎮 ${clients} celulares conectados!`)
+    ? (clients === 1 ? t('🎮 1 celular conectado jogando!') : t('🎮 {n} celulares conectados!', { n: clients }))
     : (url ? t('Aponte a câmera do celular para o QR code ou digite o link no navegador.') : t('Aponte a câmera do celular para baixar o APK no celular Android.'));
 
   const steps = h('div', { style: { display: 'flex', flexDirection: 'column', gap: '1rem', flex: '1', minWidth: '0' } },
@@ -1136,7 +1136,7 @@ handlers.gamepadClients = r => {
     renderChips();
     const st = $('#phonePadStatus');
     if (st) {
-      st.textContent = o.count > 0 ? (o.count === 1 ? '🎮 1 celular conectado jogando!' : `🎮 ${o.count} celulares conectados!`) : t('Aponte a câmera do celular para o QR code ou digite o link no navegador.');
+      st.textContent = o.count > 0 ? (o.count === 1 ? t('🎮 1 celular conectado jogando!') : t('🎮 {n} celulares conectados!', { n: o.count })) : t('Aponte a câmera do celular para o QR code ou digite o link no navegador.');
       st.style.color = o.count > 0 ? '#4ade80' : 'var(--dim)';
     }
   } catch (_) {}
@@ -1201,7 +1201,7 @@ function applyOpen() {
 }
 
 /* ---------------- Início ---------------- */
-INFO = json(call('init'), { profile: 'default', lang: 'pt', gamepads: [], gamepadUrl: 'http://192.168.1.75:8772/', gamepadClients: 0 });
+INFO = json(call('init'), { profile: 'default', lang: 'pt', gamepads: [], gamepadUrl: '', gamepadClients: 0 });
 /* PC: mais filtros e ajustes de imagem (feitos na placa de vídeo), tela cheia, e som e animações
    sem o "Igual ao Onix" (não há Onix no PC). */
 if (INFO.pc || INFO.web) {

@@ -64,9 +64,25 @@ final class RemoteGamepadServer {
             @Override
             public void run() {
                 try {
-                    ServerSocket s = new ServerSocket();
-                    s.setReuseAddress(true);
-                    s.bind(new InetSocketAddress(PORT));
+                    // O hub e o jogo usam a mesma porta: ao sair do jogo, o hub volta antes de o
+                    // jogo soltar a porta (onDestroy vem depois do onResume do hub). Tenta por ~5 s.
+                    ServerSocket s = null;
+                    for (int i = 0; running && s == null; i++) {
+                        try {
+                            ServerSocket t = new ServerSocket();
+                            t.setReuseAddress(true);
+                            t.bind(new InetSocketAddress(PORT));
+                            s = t;
+                        } catch (Exception e) {
+                            if (i >= 20) throw e;
+                            Thread.sleep(250);
+                        }
+                    }
+                    if (s == null) return;
+                    if (!running) {
+                        s.close();
+                        return;
+                    }
                     serverSocket = s;
 
                     while (running && !s.isClosed()) {

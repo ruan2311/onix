@@ -142,7 +142,7 @@ html, body {
   <div style="background:#151128;border:1px solid rgba(255,255,255,.2);border-radius:18px;max-width:340px;width:100%;padding:20px;text-align:center;box-shadow:0 12px 36px rgba(0,0,0,.8);">
     <h3 style="margin-bottom:8px;font-size:17px;font-weight:700;">Conectar à TV</h3>
     <p style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.4;margin-bottom:14px;">Digite o IP que aparece no Cobalt GameHub da sua TV:</p>
-    <input id="tvIpInput" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;padding:10px 14px;font-size:15px;margin-bottom:14px;outline:none;" placeholder="Ex: 192.168.1.75">
+    <input id="tvIpInput" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;padding:10px 14px;font-size:15px;margin-bottom:14px;outline:none;" placeholder="Ex: 192.168.0.10">
     <div style="display:flex;gap:8px;">
       <button class="btn" id="tvModalCancel" style="flex:1;height:38px;font-size:13px;">Cancelar</button>
       <button class="btn" id="tvModalSave" style="flex:1;height:38px;background:var(--cyan,#38bdf8);color:#04020a;font-weight:700;font-size:13px;">Conectar</button>
@@ -341,7 +341,13 @@ html, body {
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
     let host = localStorage.getItem('gamehub_tv_host') || location.host;
     if (!host || host === 'null' || host.startsWith('file')) {
-      host = '192.168.1.75:8772';
+      // Sem endereço da TV (página aberta fora da TV): pede o IP em vez de chutar um.
+      connecting = false;
+      statusDot.className = 'dot';
+      gameTitle.textContent = 'Toque em TV e digite o IP';
+      const modal = document.getElementById('tvModal');
+      if (modal) modal.style.display = 'flex';
+      return;
     }
     const cleanHost = host.replace(/\/.*$/, '');
     const url = proto + '//' + cleanHost + '/ws';

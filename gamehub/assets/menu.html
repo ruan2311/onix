@@ -294,7 +294,7 @@ function phonePadView() {
     box.append(h('div', { style: { fontSize: '1.5rem', fontWeight: '800', color: '#3de1ff', letterSpacing: '.04em' }, text: url }));
     const clients = INFO.gamepadClients || 0;
     const statusText = clients > 0
-      ? (clients === 1 ? '🎮 1 celular conectado jogando!' : `🎮 ${clients} celulares conectados!`)
+      ? (clients === 1 ? t('🎮 1 celular conectado jogando!') : t('🎮 {n} celulares conectados!', { n: clients }))
       : t('Aponte a câmera do celular para o QR code ou digite o link no navegador.');
     box.append(h('p', { class: 'hint', style: { maxWidth: '34rem', fontSize: '1.2rem', color: clients > 0 ? '#4ade80' : 'var(--dim)' }, text: statusText }));
   } else {
