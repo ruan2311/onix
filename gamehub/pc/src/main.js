@@ -9,6 +9,7 @@ const fs = require('fs');
 const store = require('./store');
 const covers = require('./covers');
 const updater = require('./updater');
+const retroarch = require('./retroarch');
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } },
@@ -82,7 +83,7 @@ const HUB = {
     consoles: store.CONSOLES.map(c => c.id),
   }),
   library: () => JSON.stringify(store.list()),
-  states: id => JSON.stringify(ok(id) ? store.states(id) : []),
+  states: id => JSON.stringify(ok(id) ? statesOf(id) : []),
   play: (id, mode) => ok(id) && /^(resume|new|[1-4])$/.test(mode) && openGame(id, mode),
   setFavorite: (id, fav) => ok(id) && store.setFavorite(id, !!fav),
   rename: (id, name) => {
@@ -128,6 +129,7 @@ const HUB = {
   installUpdate: () => { updater.open(); return true; },
   fullscreen: () => { if (win) win.setFullScreen(!win.isFullScreen()); return true; },
   refreshCovers: () => covers.refreshAll(),
+  openBios: c => { const x = store.consoleById(c); if (x && x.bios) retroarch.openBios(x); return !!(x && x.bios); },
   exit: () => false,   // no PC, sair é fechar a janela
 };
 
@@ -151,7 +153,7 @@ let importing = false;
 async function pickGames(folder) {
   const r = await dialog.showOpenDialog(win, folder
     ? { title: 'Pasta dos jogos', properties: ['openDirectory'] }
-    : { title: 'Jogos', properties: ['openFile', 'multiSelections'], filters: [{ name: 'Jogos', extensions: ['nes', 'sfc', 'smc', 'gba', 'gbc', 'gb', 'md', 'gen', 'bin', 'smd', 'zip', 'fds', 'unf', 'swc', 'fig', 'cue', 'chd', 'pbp'] }] });
+    : { title: 'Jogos', properties: ['openFile', 'multiSelections'], filters: [{ name: 'Jogos', extensions: ['nes', 'sfc', 'smc', 'gba', 'gbc', 'gb', 'md', 'z64', 'n64', 'v64', 'nds', 'iso', 'cso', 'gcm', 'gcz', 'ciso', 'rvz', 'wia', 'wbfs', 'gen', 'bin', 'smd', 'zip', 'fds', 'unf', 'swc', 'fig', 'cue', 'chd', 'pbp'] }] });
   if (r.canceled || !r.filePaths.length) return;
   if (folder) {
     const dir = store.addFolder(r.filePaths[0]);
@@ -186,8 +188,27 @@ async function importFiles(files, quiet) {
 /* ---------------- Jogo ----------------
    Uma camada (WebContentsView) por partida: o núcleo começa limpo a cada jogo, como o processo
    ":game" da TV. */
+/* Jogos dos consoles do RetroArch: o "onde parou" é o estado automático dele. */
+const isRA = g => !!(g && store.consoleById(g.console) && store.consoleById(g.console).engine === 'retroarch');
+const statesOf = id => { const g = store.game(id); return isRA(g) ? retroarch.states(store.romPath(g)) : store.states(id); };
+function openRetroArch(g, mode) {
+  const c = store.consoleById(g.console), started = Date.now();
+  return retroarch.launch(c, store.romPath(g), mode === 'resume' ? 'resume' : 'new', lang(), {
+    progress: (stage, pct) => emit('engine', { stage, pct, console: c.id }),
+    open: () => emit('engine', { stage: 'open', console: c.id }),
+    error: msg => { log('[retroarch]', msg); emit('engine', { stage: 'error', console: c.id, msg }); },
+    done: (secs, code) => {
+      if (code) log('[retroarch] saiu com o código', code, 'depois de', secs, 's');
+      if (secs > 5) store.recordPlay(g.id, secs);
+      emit('engine', { stage: 'closed', console: c.id, quick: Date.now() - started < 8000 && code !== 0 });
+      emit('library');
+      if (win) { win.show(); win.focus(); }
+    },
+  });
+}
 function openGame(id, mode) {
   if (game || !store.game(id)) return false;
+  if (isRA(store.game(id))) return openRetroArch(store.game(id), mode);
   game = new WebContentsView({ webPreferences: { preload: path.join(__dirname, 'preload.js'), contextIsolation: true, sandbox: true, backgroundThrottling: false } });
   game.setBackgroundColor('#000000');
   win.contentView.addChildView(game);
@@ -349,6 +370,7 @@ app.whenReady().then(() => {
     try { fs.cpSync(oldUserData, userData, { recursive: true }); } catch (_) { }
   }
   store.init(userData, ASSETS);
+  retroarch.init(userData);
   logFile = path.join(userData, 'gamehub.log');
   protocol.handle('app', serve);
 

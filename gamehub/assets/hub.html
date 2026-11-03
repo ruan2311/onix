@@ -307,7 +307,7 @@ function loadLibrary() { LIB = json(call('library'), []); }
 /* ---------------- Topo ---------------- */
 const TABS = () => [
   { id: 'home', label: t('Início') },
-  ...CONSOLES.map(c => ({ id: 'console:' + c.id, label: c.id === 'md' ? 'Mega Drive' : c.short, color: c.color })),
+  ...CONSOLES.map(c => ({ id: 'console:' + c.id, label: c.id === 'md' && CONSOLES.length <= 8 ? 'Mega Drive' : c.short, color: c.color })),
   ...(INFO.kids ? [] : [{ id: 'add', label: t('Adicionar jogos'), icon: 'plus' }, { id: 'settings', label: t('Configurações'), icon: 'gear' }]),
 ];
 function renderNav() {
@@ -421,7 +421,7 @@ function homePage() {
       h('div', { class: 'kicker', text: t('Continuar jogando') }),
       h('h1', { text: g.name }),
       h('div', { class: 'meta' }, h('span', { style: { color: c.color }, text: t(c.name) }), ' · ', ago(g.last), ' · ', t('Jogado por {t}', { t: fmtTime(g.time) })),
-      h('div', { class: 'acts' }, play, h('button', { class: 'f btn', act: () => openGame(g), text: t('Estados salvos') }))), where));
+      h('div', { class: 'acts' }, play, consoleOf(g.console).ra ? null : h('button', { class: 'f btn', act: () => openGame(g), text: t('Estados salvos') }))), where));
     if (rec.length > 1) page.append(h('div', { class: 'row-title', text: t('Jogados recentemente') }), h('div', { class: 'row' }, rec.slice(1, 9).map(x => tile(x))));
   }
   const favs = LIB.filter(g => g.fav);
@@ -433,13 +433,17 @@ function homePage() {
 }
 
 /* Os formatos aceitos (o PC também abre discos de PS1). */
-const formatsText = () => (CONSOLES.some(c => c.id === 'ps1')
+const formatsText = () => (CONSOLES.some(c => c.ra)
+  ? t('Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp; N64: .z64, .n64 e .v64; DS: .nds; PSP: .iso e .cso; GameCube e Wii: .iso, .rvz, .gcz, .wbfs e .gcm; PS2: .iso e .chd')
+  : CONSOLES.some(c => c.id === 'ps1')
   ? t('Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp')
   : t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip'));
 
 function consoleTiles() {
   // Mais de 4 consoles (PC, com o PS1): todos numa linha só.
-  return h('div', { class: 'consoles', style: CONSOLES.length > 4 ? { gridTemplateColumns: 'repeat(' + CONSOLES.length + ',1fr)' } : null }, CONSOLES.map(c => {
+  // Com mais de 6 (PC com os consoles do RetroArch): 6 por linha.
+  const cols = CONSOLES.length > 6 ? 6 : CONSOLES.length;
+  return h('div', { class: 'consoles', style: CONSOLES.length > 4 ? { gridTemplateColumns: 'repeat(' + cols + ',1fr)' } : null }, CONSOLES.map(c => {
     const n = LIB.filter(g => g.console === c.id).length;
     const b = h('button', { class: 'f ctile', style: { background: 'linear-gradient(150deg,' + c.color + '2e,rgba(255,255,255,.03) 70%)' } },
       h('span', { style: { color: c.color } }, svg(CONSOLE_ART[c.id])),
@@ -496,7 +500,7 @@ function openGame(g) {
   const fav = h('button', { class: 'f item' }, icon(g.fav ? 'star' : 'starOff'), h('span', { class: 'grow', text: g.fav ? t('Tirar dos favoritos') : t('Favorito') }));
   fav._act = () => { call('setFavorite', g.id, !g.fav); loadLibrary(); closeLayer(); show(PAGE, true); openGame(g); };
   list.append(fav);
-  if (!INFO.kids) {
+  if (!INFO.kids && !consoleOf(g.console).ra) {
     list.append(h('button', { class: 'f item', act: () => cheatsSheet(g) }, icon('code'), h('span', { class: 'grow', text: t('Trapaças') }), icon('chev')));
     list.append(h('button', { class: 'f item', act: () => scopeSheet('game:' + g.id, g.name, g.console) }, icon('sliders'), h('span', { class: 'grow', text: t('Configurações do jogo') }), icon('chev')));
     const kid = h('button', { class: 'f item' + (g.kids ? ' on' : '') }, icon('kid'), h('span', { class: 'grow', text: t('Liberar no Modo Infantil') }), h('span', { class: 'val', text: g.kids ? t('Liberado') : t('Bloqueado') }));
@@ -906,7 +910,7 @@ function settingsPage() {
   const page = h('section', { class: 'page set' });
   const sections = [
     ['image', t('Imagem'), 'img'], ['sound', t('Som'), 'sound'], ['game', t('Jogo'), 'play'], ['pads', t('Controles'), 'pad'], ['ui', t('Interface'), 'sliders'],
-    ...CONSOLES.map(c => ['console:' + c.id, t(c.name), null, c.color]),
+    ...CONSOLES.filter(c => !c.ra).map(c => ['console:' + c.id, t(c.name), null, c.color]),
     ['storage', t('Armazenamento'), 'disk'], ['about', t('Sobre'), 'info'],
   ];
   const menu = h('div', { class: 'menu' });
@@ -939,7 +943,7 @@ function settingsPage() {
             h('span', { class: 'grow' }, t('Controles na tela'), h('span', { class: 'sub', text: t('Posição, tamanho e transparência dos botões de toque.') })), icon('chev'))));
         inner.append(playersList());
         list.append(h('div', { class: 'sep', text: t('Trocar botões') }));
-        for (const c of CONSOLES) list.append(h('button', { class: 'f item', act: () => remapSheet(c.id) }, h('span', { class: 'dot', style: { background: c.color } }), h('span', { class: 'grow', text: t(c.name) }), icon('chev')));
+        for (const c of CONSOLES.filter(c => !c.ra)) list.append(h('button', { class: 'f item', act: () => remapSheet(c.id) }, h('span', { class: 'dot', style: { background: c.color } }), h('span', { class: 'grow', text: t(c.name) }), icon('chev')));
       }
       if (sec === 'game') list.append(h('button', { class: 'f item', act: refreshCovers }, icon('img'),
         h('span', { class: 'grow' }, t('Atualizar capas'), h('span', { class: 'sub', text: t('Baixa de novo a capa de todos os jogos da biblioteca, inclusive as que faltam.') })), icon('reset')));
@@ -1127,7 +1131,8 @@ function aboutBody() {
     h('div', { class: 'sep', text: t('Créditos e licenças') }),
     h('p', { class: 'credits', text: t('Emuladores de código aberto do projeto libretro:') }),
     ...[['FCEUmm (NES)', 'fceumm', 'GPL-2.0'], ['Snes9x (SNES)', 'snes9x', 'Snes9x, não comercial'], [CONSOLES.some(c => c.id === 'gbc') ? 'mGBA (GBA e Game Boy Color)' : 'mGBA (GBA)', 'mgba', 'MPL-2.0'], ['Genesis Plus GX (Mega Drive)', 'genesis_plus_gx', 'não comercial'],
-      ...(CONSOLES.some(c => c.id === 'ps1') ? [['PCSX ReARMed (PlayStation)', 'pcsx_rearmed', 'GPL-2.0']] : [])]
+      ...(CONSOLES.some(c => c.id === 'ps1') ? [['PCSX ReARMed (PlayStation)', 'pcsx_rearmed', 'GPL-2.0']] : []),
+      ...(CONSOLES.some(c => c.ra) ? [['RetroArch e emuladores de N64, DS, PSP, GameCube, Wii e PS2', 'retroarch', 'GPL']] : [])]
       .map(([name, file, lic]) => h('button', { class: 'f item', act: () => licenseSheet(name, file) }, h('span', { class: 'grow' }, name, h('span', { class: 'sub', text: lic })), h('span', { class: 'val', text: t('Abrir licença') }))),
     h('button', { class: 'f item', act: () => licenseSheet('libretro-database', 'libretro_database') }, h('span', { class: 'grow' }, t('Nomes dos jogos: libretro-database (No-Intro), CC BY-SA 4.0. Capas: libretro-thumbnails.')), h('span', { class: 'val', text: t('Abrir licença') })),
     h('p', { class: 'credits', text: t('O GameHub é gratuito e de código aberto (GPL-3.0). Nunca terá anúncios nem será vendido.') }),
@@ -1206,6 +1211,18 @@ handlers.covers = r => {
   loadLibrary();
   if (!layers.length && PAGE !== 'add' && PAGE !== 'settings') show(PAGE, true);
   toast(r && r.updated ? t('{n} de {t} capas atualizadas', { n: r.updated, t: r.total }) : t('Nenhuma capa baixada. Confira a internet.'));
+};
+/* Consoles do RetroArch: o download do emulador na primeira vez, a abertura e os erros. */
+handlers.engine = e => {
+  const c = consoleOf(e.console);
+  if (e.stage === 'motor') toast(t('Preparando o RetroArch, só na primeira vez… {n}%', { n: e.pct }));
+  else if (e.stage === 'core') toast(t('Baixando o emulador de {c}, só na primeira vez… {n}%', { c: t(c.name), n: e.pct }));
+  else if (e.stage === 'open') toast(t('Abrindo no RetroArch. Select + Start abre o menu do jogo; Esc volta ao GameHub.'));
+  else if (e.stage === 'closed' && e.quick) toast(t('O RetroArch fechou logo ao abrir. O arquivo pode não ser deste console.'));
+  else if (e.stage === 'error' && e.msg === 'bios') ask(t('Falta o BIOS do {c}', { c: t(c.name) }),
+    t('Para jogar {c}, copie o BIOS do seu próprio console para a pasta que abriu e tente de novo. O GameHub não traz BIOS.', { c: t(c.name) }),
+    [[t('Abrir a pasta de novo'), () => call('openBios', c.id)], [t('Fechar')]]);
+  else if (e.stage === 'error') toast(t('Não deu para abrir no RetroArch. Confira a internet e tente de novo.'));
 };
 handlers.library = () => { loadLibrary(); if (!layers.length) show(PAGE, true); };
 handlers.resume = () => { renderChips(); };

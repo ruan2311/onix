@@ -34,10 +34,44 @@ const CONSOLES = [
   { id: 'md', name: 'Mega Drive', core: 'gpgx', thumbs: 'Sega - Mega Drive - Genesis', ext: ['md', 'gen', 'smd', 'bin'], buttons: [B, A, Y, X, L, R, START, SELECT], maxBytes: 10 * MB },
   // Só no PC. Disco: o jogo fica onde está e o núcleo lê os pedaços que precisa (discRead).
   { id: 'ps1', name: 'PlayStation', core: 'pcsx_rearmed', thumbs: 'Sony - PlayStation', ext: ['cue', 'chd', 'pbp'], buttons: [B, A, Y, X, L, R, L2, R2, SELECT, START], maxBytes: 2 * GB, disc: true },
+  // Só no PC, pelo RetroArch (retroarch.js): emuladores que desenham pela placa de vídeo. O emulador é
+  // baixado na primeira vez. "disc": o jogo fica onde está (são arquivos de vários GB).
+  { id: 'n64', name: 'Nintendo 64', core: 'mupen64plus_next', engine: 'retroarch', thumbs: 'Nintendo - Nintendo 64', ext: ['z64', 'n64', 'v64'], maxBytes: 64 * MB },
+  { id: 'ds', name: 'Nintendo DS', core: 'melondsds', engine: 'retroarch', thumbs: 'Nintendo - Nintendo DS', ext: ['nds'], maxBytes: 512 * MB },
+  { id: 'psp', name: 'PSP', core: 'ppsspp', engine: 'retroarch', thumbs: 'Sony - PlayStation Portable', ext: ['cso', 'iso'], maxBytes: 4 * GB, disc: true },
+  { id: 'gc', name: 'GameCube', core: 'dolphin', engine: 'retroarch', thumbs: 'Nintendo - GameCube', ext: ['gcm', 'gcz', 'ciso', 'rvz', 'wia', 'iso'], maxBytes: 4 * GB, disc: true },
+  { id: 'wii', name: 'Wii', core: 'dolphin', engine: 'retroarch', thumbs: 'Nintendo - Wii', ext: ['wbfs', 'rvz', 'wia', 'gcz', 'iso'], maxBytes: 10 * GB, disc: true },
+  { id: 'ps2', name: 'PlayStation 2', core: 'pcsx2', engine: 'retroarch', bios: 'pcsx2/bios', thumbs: 'Sony - PlayStation 2', ext: ['iso', 'chd'], maxBytes: 10 * GB, disc: true },
 ];
 const extension = f => { const d = String(f || '').lastIndexOf('.'); return d < 0 ? '' : f.slice(d + 1).toLowerCase(); };
 const consoleById = id => CONSOLES.find(c => c.id === id) || null;
 const consoleByExt = f => { const e = extension(f); return CONSOLES.find(c => c.ext.includes(e)) || null; };
+/* Extensões de mais de um console: o começo do arquivo diz de qual é. "src" é o caminho do arquivo
+   ou o próprio conteúdo (o que saiu de um .zip). */
+function peek(src, at, len) {
+  if (Buffer.isBuffer(src)) return src.subarray(at, at + len);
+  const b = Buffer.alloc(len);
+  let fd;
+  try { fd = fs.openSync(src, 'r'); const n = fs.readSync(fd, b, 0, len, at); return b.subarray(0, n); } catch { return Buffer.alloc(0); } finally { if (fd !== undefined) fs.closeSync(fd); }
+}
+const sizeOf = src => Buffer.isBuffer(src) ? src.length : (() => { try { return fs.statSync(src).size; } catch { return 0; } })();
+function consoleOfFile(name, src) {
+  const e = extension(name), by = id => consoleById(id);
+  if (e === 'iso') {
+    const h = peek(src, 0, 0x20), pvd = peek(src, 0x8000, 0x28);
+    if (h.length >= 0x20 && h.readUInt32BE(0x18) === 0x5D1C9EA3) return by('wii');
+    if (h.length >= 0x20 && h.readUInt32BE(0x1C) === 0xC2339F3D) return by('gc');
+    const sys = pvd.length >= 0x28 && pvd.toString('latin1', 1, 6) === 'CD001' ? pvd.toString('latin1', 8, 40).trim() : '';
+    if (sys.startsWith('PSP GAME')) return by('psp');
+    if (sys.startsWith('PLAYSTATION')) return by('ps2');
+    return null;
+  }
+  if (e === 'rvz' || e === 'wia') { const h = peek(src, 0x48, 4); return h.length === 4 ? (h.readUInt32BE(0) === 2 ? by('wii') : by('gc')) : null; }
+  if (e === 'gcz') { const h = peek(src, 4, 4); return h.length === 4 && h.readUInt32LE(0) === 1 ? by('wii') : by('gc'); }
+  // CHD: disco de PS1 cabe num CD (até ~800 MB); maior que isso é DVD de PS2.
+  if (e === 'chd') return sizeOf(src) > 900 * MB ? by('ps2') : by('ps1');
+  return consoleByExt(name);
+}
 
 /* ---------------- Arquivos (Files.java) ---------------- */
 let root = '', dbDir = '';
@@ -306,7 +340,7 @@ function addFile(file) {
       data = best.data;
       fromZip = true;
     }
-    const c = consoleByExt(name);
+    const c = consoleOfFile(name, fromZip ? data : file);
     if (!c) return Object.assign(r, { ok: false, error: 'Esse tipo de arquivo não é de nenhum console do GameHub.' });
     if (c.disc) return fromZip ? Object.assign(r, { ok: false, error: 'O arquivo não parece um jogo desse console.' }) : addDisc(file, c, r);
     const st = fromZip ? null : fs.statSync(file);
@@ -439,7 +473,7 @@ function newFiles(dirs, withRemoved) {
 
 module.exports = {
   ID, SLOT, CONSOLES, consoleById, init, p, statesDir, sramFile, cheatsFile, coverFile, read, readJson, write, writeJson,
-  games, game, romPath, update, remove, recordPlay, setFavorite, list, states,
+  consoleOfFile, games, game, romPath, update, remove, recordPlay, setFavorite, list, states,
   DEFAULTS, config, setConfig, effective, players, setPlayer, clearPlayer, storage,
   addFile, pcData, addFolder, removeFolder, newFiles, discFiles,
 };

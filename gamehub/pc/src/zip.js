@@ -49,4 +49,4 @@ function largest(buf, limit) {
   return data && data.length === best.usize ? { name: best.name, data } : null;
 }
 
-module.exports = { entries, largest };
+module.exports = { entries, extract, largest };

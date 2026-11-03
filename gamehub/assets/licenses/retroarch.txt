@@ -1,0 +1,22 @@
+RetroArch e emuladores dos consoles pesados (só no PC)
+
+Os jogos de Nintendo 64, Nintendo DS, PSP, GameCube, Wii e PlayStation 2 abrem pelo RetroArch,
+com estes emuladores. O GameHub baixa cada um só na primeira vez que alguém abre um jogo daquele
+console, da release "motor-retroarch-1" do Cobalt GameHub:
+https://github.com/ruan2311/cobalt-gamehub/releases/tag/motor-retroarch-1
+
+- RetroArch 1.22.2 (versão enxuta para Windows, sem banco de dados, shaders e overlays)
+  GPL-3.0 · https://github.com/libretro/RetroArch (tag v1.22.2)
+- Mupen64Plus-Next (Nintendo 64) · GPL-2.0 · https://github.com/libretro/mupen64plus-libretro-nx
+- melonDS DS (Nintendo DS) · GPL-3.0 · https://github.com/JesseTG/melonds-ds
+- PPSSPP (PSP) · GPL-2.0 ou posterior · https://github.com/hrydgard/ppsspp
+- Dolphin (GameCube e Wii) · GPL-2.0 ou posterior · https://github.com/libretro/dolphin
+- PCSX2 / LRPS2 (PlayStation 2) · GPL-3.0 · https://github.com/libretro/ps2
+
+Os emuladores são as compilações para Windows (x86_64) do buildbot do libretro
+(https://buildbot.libretro.com/nightly/windows/x86_64/latest/) de 3 de novembro de 2026, e os
+arquivos de sistema do Dolphin e do PPSSPP vêm de https://buildbot.libretro.com/assets/system/.
+O código-fonte de cada um está nos endereços acima.
+
+Nenhum jogo nem BIOS vem com o GameHub. O PlayStation 2 precisa do BIOS do console da própria
+pessoa, copiado para a pasta que o GameHub abre (retroarch\system\pcsx2\bios).

@@ -270,6 +270,15 @@ const ES = {
   'O arquivo não parece um jogo desse console.': 'El archivo no parece un juego de esa consola.',
   'Esse tipo de arquivo não é de nenhum console do GameHub.': 'Ese tipo de archivo no es de ninguna consola de GameHub.',
   'O .cue não está certo ou falta um arquivo do disco.': 'El .cue no está bien o falta un archivo del disco.',
+  'Preparando o RetroArch, só na primeira vez… {n}%': 'Preparando RetroArch, solo la primera vez… {n}%',
+  'Baixando o emulador de {c}, só na primeira vez… {n}%': 'Descargando el emulador de {c}, solo la primera vez… {n}%',
+  'Abrindo no RetroArch. Select + Start abre o menu do jogo; Esc volta ao GameHub.': 'Abriendo en RetroArch. Select + Start abre el menú del juego; Esc vuelve a GameHub.',
+  'O RetroArch fechou logo ao abrir. O arquivo pode não ser deste console.': 'RetroArch se cerró al abrir. El archivo puede no ser de esta consola.',
+  'Falta o BIOS do {c}': 'Falta el BIOS de {c}',
+  'Para jogar {c}, copie o BIOS do seu próprio console para a pasta que abriu e tente de novo. O GameHub não traz BIOS.': 'Para jugar {c}, copia el BIOS de tu propia consola a la carpeta que se abrió e inténtalo de nuevo. GameHub no trae BIOS.',
+  'Abrir a pasta de novo': 'Abrir la carpeta de nuevo',
+  'Não deu para abrir no RetroArch. Confira a internet e tente de novo.': 'No se pudo abrir en RetroArch. Revisa la conexión a internet e inténtalo de nuevo.',
+  'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp; N64: .z64, .n64 e .v64; DS: .nds; PSP: .iso e .cso; GameCube e Wii: .iso, .rvz, .gcz, .wbfs e .gcm; PS2: .iso e .chd': 'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin y .zip; PlayStation: .cue (con los .bin), .chd y .pbp; N64: .z64, .n64 y .v64; DS: .nds; PSP: .iso y .cso; GameCube y Wii: .iso, .rvz, .gcz, .wbfs y .gcm; PS2: .iso y .chd',
   'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp': 'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin y .zip; PlayStation: .cue (con los .bin), .chd y .pbp',
   'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp': 'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin y .zip; PlayStation: .cue (con los .bin), .chd y .pbp',
   'Sem espaço seguro no aparelho para esse jogo.': 'No hay espacio seguro en el dispositivo para ese juego.',
@@ -409,6 +418,13 @@ const CONSOLES = [
   { id: 'gbc', name: 'Game Boy Color', short: 'GBC', color: '#c084fc' },   // só no PC
   { id: 'md', name: 'Mega Drive', short: 'MD', color: '#fbbf24' },
   { id: 'ps1', name: 'PlayStation', short: 'PS1', color: '#34d399' },   // só no PC
+  // Só no PC, pelo RetroArch (ra): sem filtros, trapaças nem troca de botões do GameHub.
+  { id: 'n64', name: 'Nintendo 64', short: 'N64', color: '#f97316', ra: true },
+  { id: 'ds', name: 'Nintendo DS', short: 'DS', color: '#f472b6', ra: true },
+  { id: 'psp', name: 'PSP', short: 'PSP', color: '#2dd4bf', ra: true },
+  { id: 'gc', name: 'GameCube', short: 'GC', color: '#818cf8', ra: true },
+  { id: 'wii', name: 'Wii', short: 'Wii', color: '#e5e7eb', ra: true },
+  { id: 'ps2', name: 'PlayStation 2', short: 'PS2', color: '#3b82f6', ra: true },
 ];
 const consoleOf = id => CONSOLES.find(c => c.id === id) || CONSOLES[0];
 /* Deixa só os consoles que este aparelho roda: o PC manda a lista no init; a TV e o iPhone não
@@ -432,6 +448,12 @@ const CONSOLE_ART = {
   snes: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 12h48a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6v-6a6 6 0 0 1 6-6z"/><rect x="18" y="5" width="28" height="9" rx="2"/><circle cx="48" cy="21" r="2.2"/><circle cx="54" cy="21" r="2.2"/><path d="M10 21h8M14 17v8"/></svg>',
   gba: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 6h40a10 10 0 0 1 10 10v8a10 10 0 0 1-10 10H12A10 10 0 0 1 2 24v-8A10 10 0 0 1 12 6z"/><rect x="20" y="11" width="24" height="18" rx="2"/><path d="M7 20h7M10.5 16.5v7"/><circle cx="52" cy="18" r="2"/><circle cx="56" cy="22" r="2"/></svg>',
   gbc: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="20" y="2" width="24" height="36" rx="3"/><rect x="24" y="6" width="16" height="13" rx="1"/><path d="M25.5 28h5M28 25.5v5"/><circle cx="36" cy="29" r="1.6"/><circle cx="39.5" cy="26" r="1.6"/><path d="M29 34.5h2.5M33 34.5h2.5"/></svg>',
+  n64: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M6 17h52l-4 15H10z"/><rect x="22" y="9" width="20" height="8" rx="1"/><circle cx="16" cy="24" r="2"/><circle cx="48" cy="24" r="2"/><path d="M28 24h8"/></svg>',
+  ds: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="17" y="2" width="30" height="17" rx="2"/><rect x="22" y="5" width="20" height="11"/><rect x="17" y="21" width="30" height="17" rx="2"/><rect x="26" y="23.5" width="12" height="9"/><path d="M19.5 29h4M21.5 27v4"/><circle cx="43" cy="27" r="1"/><circle cx="43" cy="31" r="1"/></svg>',
+  psp: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M13 10h38a10 10 0 0 1 0 20H13a10 10 0 0 1 0-20z"/><rect x="21" y="13" width="22" height="14" rx="1"/><path d="M8.5 20h6M11.5 17v6"/><circle cx="52.5" cy="16.5" r="1.4"/><circle cx="56" cy="20" r="1.4"/><circle cx="52.5" cy="23.5" r="1.4"/><circle cx="49" cy="20" r="1.4"/></svg>',
+  gc: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="17" y="9" width="30" height="27" rx="3"/><circle cx="32" cy="22" r="7"/><path d="M21 9V5h22v4"/><path d="M22 31h4"/></svg>',
+  wii: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><rect x="16" y="4" width="12" height="32" rx="2"/><path d="M19 9h6M19 31h6"/><rect x="37" y="7" width="9" height="29" rx="4.5"/><circle cx="41.5" cy="13" r="1.8"/><path d="M41.5 20v4"/></svg>',
+  ps2: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M6 12h52v17H6z"/><path d="M6 19h52"/><path d="M11 24h12"/><circle cx="50" cy="24" r="1.6"/><path d="M58 12l-3 17"/></svg>',
   md: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 14l6-6h44l6 6v18H4z"/><circle cx="24" cy="21" r="7"/><path d="M38 18h16M38 24h16M10 28h6"/></svg>',
   ps1: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="6" width="56" height="28" rx="3"/><circle cx="25" cy="20" r="10"/><circle cx="25" cy="20" r="2.5"/><path d="M43 13h11M43 19h11M8 30h8M47 28h7"/></svg>',
 };
