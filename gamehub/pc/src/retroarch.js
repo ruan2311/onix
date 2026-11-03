@@ -24,7 +24,9 @@ const exe = () => dir('app', 'retroarch.exe');
 function init(userData) { root = path.join(userData, 'retroarch'); }
 
 async function download(name, onPct) {
-  // Versão de teste: o motor numa pasta do PC (COBALT_ENGINE_BASE=file:///C:/...).
+  // Motor que já veio junto com o GameHub (pasta motor-retroarch-N ao lado do .exe): sem internet.
+  const local = path.join(path.dirname(process.execPath), ENGINE, name);
+  if (fs.existsSync(local)) { onPct(100); return fs.readFileSync(local); }
   if (BASE.startsWith('file:')) { onPct(100); return fs.readFileSync(require('url').fileURLToPath(BASE + name)); }
   const r = await net.fetch(BASE + name);
   if (r.status !== 200) throw new Error('download ' + name + ': ' + r.status);
