@@ -29,6 +29,8 @@ const CONSOLES = [
   { id: 'nes', name: 'Nintendinho', core: 'fceumm', thumbs: 'Nintendo - Nintendo Entertainment System', ext: ['nes', 'unf', 'unif', 'fds'], buttons: [A, B, SELECT, START], maxBytes: 4 * MB },
   { id: 'snes', name: 'Super Nintendo', core: 'snes9x', thumbs: 'Nintendo - Super Nintendo Entertainment System', ext: ['sfc', 'smc', 'swc', 'fig'], buttons: [A, B, X, Y, L, R, SELECT, START], maxBytes: 12 * MB },
   { id: 'gba', name: 'Game Boy Advance', core: 'mgba', thumbs: 'Nintendo - Game Boy Advance', ext: ['gba'], buttons: [A, B, L, R, SELECT, START], maxBytes: 33 * MB },
+  // Só no PC. O mGBA também roda Game Boy e Game Boy Color; os .gb pegam a capa da pasta do Game Boy.
+  { id: 'gbc', name: 'Game Boy Color', core: 'mgba', thumbs: 'Nintendo - Game Boy Color', thumbsGb: 'Nintendo - Game Boy', ext: ['gbc', 'gb'], buttons: [A, B, SELECT, START], maxBytes: 8 * MB },
   { id: 'md', name: 'Mega Drive', core: 'gpgx', thumbs: 'Sega - Mega Drive - Genesis', ext: ['md', 'gen', 'smd', 'bin'], buttons: [B, A, Y, X, L, R, START, SELECT], maxBytes: 10 * MB },
   // Só no PC. Disco: o jogo fica onde está e o núcleo lê os pedaços que precisa (discRead).
   { id: 'ps1', name: 'PlayStation', core: 'pcsx_rearmed', thumbs: 'Sony - PlayStation', ext: ['cue', 'chd', 'pbp'], buttons: [B, A, Y, X, L, R, L2, R2, SELECT, START], maxBytes: 2 * GB, disc: true },

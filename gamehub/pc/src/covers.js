@@ -122,6 +122,8 @@ function fit34(png) {
 
 /** Baixa a caixa do jogo (pelo nome exato ou, sem ela, pelo nome parecido), monta na moldura e grava. */
 async function grab(g, c) {
+  // Game Boy (.gb) dentro do console Game Boy Color: as capas ficam na pasta do Game Boy.
+  if (c.thumbsGb && /\.gb$/i.test(g.file || g.path || g.src || '')) c = Object.assign({}, c, { id: c.id + '-gb', thumbs: c.thumbsGb });
   try {
     const dir = HOST + encodeURIComponent(c.thumbs) + '/Named_Boxarts/';
     let png = await download(dir + encodeURIComponent(safe(g.title)) + '.png');

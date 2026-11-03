@@ -19,7 +19,7 @@ let started = Date.now(), playedMs = 0;
 /* RetroPad (libretro.h) */
 const RB = { B: 0, Y: 1, SELECT: 2, START: 3, UP: 4, DOWN: 5, LEFT: 6, RIGHT: 7, A: 8, X: 9, L: 10, R: 11, L2: 12, R2: 13, L3: 14, R3: 15 };
 const CONSOLE_BUTTONS = { nes: [RB.A, RB.B, RB.SELECT, RB.START], snes: [RB.A, RB.B, RB.X, RB.Y, RB.L, RB.R, RB.SELECT, RB.START],
-  gba: [RB.A, RB.B, RB.L, RB.R, RB.SELECT, RB.START], md: [RB.B, RB.A, RB.Y, RB.X, RB.L, RB.R, RB.START, RB.SELECT],
+  gba: [RB.A, RB.B, RB.L, RB.R, RB.SELECT, RB.START], gbc: [RB.A, RB.B, RB.SELECT, RB.START], md: [RB.B, RB.A, RB.Y, RB.X, RB.L, RB.R, RB.START, RB.SELECT],
   ps1: [RB.B, RB.A, RB.Y, RB.X, RB.L, RB.R, RB.L2, RB.R2, RB.SELECT, RB.START] };
 
 /* ---------------- Avisos ---------------- */

@@ -270,6 +270,7 @@ const ES = {
   'O arquivo não parece um jogo desse console.': 'El archivo no parece un juego de esa consola.',
   'Esse tipo de arquivo não é de nenhum console do GameHub.': 'Ese tipo de archivo no es de ninguna consola de GameHub.',
   'O .cue não está certo ou falta um arquivo do disco.': 'El .cue no está bien o falta un archivo del disco.',
+  'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp': 'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin y .zip; PlayStation: .cue (con los .bin), .chd y .pbp',
   'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp': 'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin y .zip; PlayStation: .cue (con los .bin), .chd y .pbp',
   'Sem espaço seguro no aparelho para esse jogo.': 'No hay espacio seguro en el dispositivo para ese juego.',
   'Não deu para guardar o jogo.': 'No se pudo guardar el juego.', 'Não deu para ler esse arquivo.': 'No se pudo leer ese archivo.',
@@ -405,6 +406,7 @@ const CONSOLES = [
   { id: 'nes', name: 'Nintendinho', short: 'NES', color: '#ff5a6e' },
   { id: 'snes', name: 'Super Nintendo', short: 'SNES', color: '#a78bfa' },
   { id: 'gba', name: 'Game Boy Advance', short: 'GBA', color: '#38bdf8' },
+  { id: 'gbc', name: 'Game Boy Color', short: 'GBC', color: '#c084fc' },   // só no PC
   { id: 'md', name: 'Mega Drive', short: 'MD', color: '#fbbf24' },
   { id: 'ps1', name: 'PlayStation', short: 'PS1', color: '#34d399' },   // só no PC
 ];
@@ -420,6 +422,7 @@ const BUTTONS = {
   nes: [[8, 'A'], [0, 'B'], [2, 'Select'], [3, 'Start']],
   snes: [[8, 'A'], [0, 'B'], [9, 'X'], [1, 'Y'], [10, 'L'], [11, 'R'], [2, 'Select'], [3, 'Start']],
   gba: [[8, 'A'], [0, 'B'], [10, 'L'], [11, 'R'], [2, 'Select'], [3, 'Start']],
+  gbc: [[8, 'A'], [0, 'B'], [2, 'Select'], [3, 'Start']],
   md: [[1, 'A'], [0, 'B'], [8, 'C'], [10, 'X'], [9, 'Y'], [11, 'Z'], [3, 'Start'], [2, 'Mode']],
   ps1: [[0, '✕'], [8, '○'], [1, '□'], [9, '△'], [10, 'L1'], [11, 'R1'], [12, 'L2'], [13, 'R2'], [2, 'Select'], [3, 'Start']],
 };
@@ -428,6 +431,7 @@ const CONSOLE_ART = {
   nes: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="8" width="56" height="26" rx="3"/><path d="M4 18h56M10 26h12M40 24h6M50 24h4"/><rect x="12" y="11" width="22" height="4" rx="1"/></svg>',
   snes: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 12h48a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6v-6a6 6 0 0 1 6-6z"/><rect x="18" y="5" width="28" height="9" rx="2"/><circle cx="48" cy="21" r="2.2"/><circle cx="54" cy="21" r="2.2"/><path d="M10 21h8M14 17v8"/></svg>',
   gba: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 6h40a10 10 0 0 1 10 10v8a10 10 0 0 1-10 10H12A10 10 0 0 1 2 24v-8A10 10 0 0 1 12 6z"/><rect x="20" y="11" width="24" height="18" rx="2"/><path d="M7 20h7M10.5 16.5v7"/><circle cx="52" cy="18" r="2"/><circle cx="56" cy="22" r="2"/></svg>',
+  gbc: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="20" y="2" width="24" height="36" rx="3"/><rect x="24" y="6" width="16" height="13" rx="1"/><path d="M25.5 28h5M28 25.5v5"/><circle cx="36" cy="29" r="1.6"/><circle cx="39.5" cy="26" r="1.6"/><path d="M29 34.5h2.5M33 34.5h2.5"/></svg>',
   md: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 14l6-6h44l6 6v18H4z"/><circle cx="24" cy="21" r="7"/><path d="M38 18h16M38 24h16M10 28h6"/></svg>',
   ps1: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="6" width="56" height="28" rx="3"/><circle cx="25" cy="20" r="10"/><circle cx="25" cy="20" r="2.5"/><path d="M43 13h11M43 19h11M8 30h8M47 28h7"/></svg>',
 };

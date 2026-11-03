@@ -151,7 +151,7 @@ let importing = false;
 async function pickGames(folder) {
   const r = await dialog.showOpenDialog(win, folder
     ? { title: 'Pasta dos jogos', properties: ['openDirectory'] }
-    : { title: 'Jogos', properties: ['openFile', 'multiSelections'], filters: [{ name: 'Jogos', extensions: ['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'smd', 'zip', 'fds', 'unf', 'swc', 'fig', 'cue', 'chd', 'pbp'] }] });
+    : { title: 'Jogos', properties: ['openFile', 'multiSelections'], filters: [{ name: 'Jogos', extensions: ['nes', 'sfc', 'smc', 'gba', 'gbc', 'gb', 'md', 'gen', 'bin', 'smd', 'zip', 'fds', 'unf', 'swc', 'fig', 'cue', 'chd', 'pbp'] }] });
   if (r.canceled || !r.filePaths.length) return;
   if (folder) {
     const dir = store.addFolder(r.filePaths[0]);

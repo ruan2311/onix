@@ -434,7 +434,7 @@ function homePage() {
 
 /* Os formatos aceitos (o PC também abre discos de PS1). */
 const formatsText = () => (CONSOLES.some(c => c.id === 'ps1')
-  ? t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp')
+  ? t('Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp')
   : t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip'));
 
 function consoleTiles() {
@@ -1126,7 +1126,7 @@ function aboutBody() {
       : h('button', { class: 'f item', act: () => { call('checkUpdate'); toast(t('Procurando…')); } }, icon('reset'), h('span', { class: 'grow', text: t('Procurar atualizações') })),
     h('div', { class: 'sep', text: t('Créditos e licenças') }),
     h('p', { class: 'credits', text: t('Emuladores de código aberto do projeto libretro:') }),
-    ...[['FCEUmm (NES)', 'fceumm', 'GPL-2.0'], ['Snes9x (SNES)', 'snes9x', 'Snes9x, não comercial'], ['mGBA (GBA)', 'mgba', 'MPL-2.0'], ['Genesis Plus GX (Mega Drive)', 'genesis_plus_gx', 'não comercial'],
+    ...[['FCEUmm (NES)', 'fceumm', 'GPL-2.0'], ['Snes9x (SNES)', 'snes9x', 'Snes9x, não comercial'], [CONSOLES.some(c => c.id === 'gbc') ? 'mGBA (GBA e Game Boy Color)' : 'mGBA (GBA)', 'mgba', 'MPL-2.0'], ['Genesis Plus GX (Mega Drive)', 'genesis_plus_gx', 'não comercial'],
       ...(CONSOLES.some(c => c.id === 'ps1') ? [['PCSX ReARMed (PlayStation)', 'pcsx_rearmed', 'GPL-2.0']] : [])]
       .map(([name, file, lic]) => h('button', { class: 'f item', act: () => licenseSheet(name, file) }, h('span', { class: 'grow' }, name, h('span', { class: 'sub', text: lic })), h('span', { class: 'val', text: t('Abrir licença') }))),
     h('button', { class: 'f item', act: () => licenseSheet('libretro-database', 'libretro_database') }, h('span', { class: 'grow' }, t('Nomes dos jogos: libretro-database (No-Intro), CC BY-SA 4.0. Capas: libretro-thumbnails.')), h('span', { class: 'val', text: t('Abrir licença') })),
