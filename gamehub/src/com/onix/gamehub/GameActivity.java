@@ -394,7 +394,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
                 Native.setOption(k, core.optString(k));
             }
         }
-        String lib = getApplicationInfo().nativeLibraryDir + "/lib" + console.core + ".so";
+        String lib = getApplicationInfo().nativeLibraryDir + "/lib" + console.coreFor(rom.getName()) + ".so";
         boolean ok = rom.isFile() && Native.load(lib, rom.getPath(), Files.system(this).getPath(), saveDir.getPath(),
                 "es".equals(lang) ? Native.LANG_ES : Native.LANG_PT_BR);
         if (!ok) {

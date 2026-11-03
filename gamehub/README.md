@@ -2,16 +2,18 @@
 
 <img src="res/drawable-xxxhdpi/icon.png" alt="Ícone do Cobalt GameHub" width="96" align="right">
 
-Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advance** e **Mega Drive** num lugar só, no visual do [Onix](https://github.com/ruan2311/onix). Ele guarda o ponto onde você parou e tem estados salvos, avançar rápido, rebobinar, filtros de imagem, trapaças e botões configuráveis por jogo.
+Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advance**, **Game Boy Color**, **Mega Drive**, **PlayStation**, **Atari** e **fliperama** num lugar só, no visual do [Onix](https://github.com/ruan2311/onix). Ele guarda o ponto onde você parou e tem estados salvos, avançar rápido, rebobinar, filtros de imagem, trapaças e botões configuráveis por jogo.
 
 | Plataforma | Situação | Como os jogos entram |
 |---|---|---|
-| 📺 **Google TV e Android TV** | ✅ Disponível | Pelo celular, com um QR code |
-| 📱 **Celular Android** (5.0 ou mais novo) | ✅ Disponível | Escolhendo uma pasta do próprio celular |
+| 📺 **Google TV e Android TV** | ✅ Disponível (1.5.0: 8 consoles) | Pelo celular, com um QR code |
+| 📱 **Celular Android** (5.0 ou mais novo) | ✅ Disponível (1.5.0: 8 consoles) | Escolhendo uma pasta do próprio celular |
 | 🖥️ **PC (Windows)** | ✅ Disponível (1.4.0: com 7 consoles a mais) | Escolhendo a pasta dos jogos |
 | 🍎 **iPhone e iPad** (iOS 16.4 ou mais novo) | ✅ Disponível | Web app instalável em [projectgems.github.io/gamehub/app](https://projectgems.github.io/gamehub/app/) |
 
 O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde está e muda a interface.
+
+> 📺📱 **Novo na TV e no celular (1.5.0):** chegaram **Game Boy Color**, **PlayStation (PS1)**, **Atari 2600 e 7800** e **Fliperama** (jogos de arcade, como os do MAME, pelo FinalBurn Neo). Veja [Consoles novos da TV e do celular](#️-consoles-novos-da-tv-e-do-celular-150). O Armazenamento agora mostra o que ocupa espaço e limpa as sobras de envios que caíram.
 
 > 🖥️ **Novo no PC (1.4.0):** além dos quatro consoles, o Cobalt GameHub para Windows abre **PlayStation, Game Boy Color, Nintendo 64, Nintendo DS, PSP, GameCube, Wii e PlayStation 2**, com resolução e controles por console. O RetroArch já vem dentro do `.zip` (sem internet). Veja [PC (Windows)](#️-pc-windows).
 
@@ -25,6 +27,7 @@ O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde
 ## Sumário
 - [📺 Google TV e Android TV](#-google-tv-e-android-tv)
 - [📱 Celular Android](#-celular-android)
+- [🕹️ Consoles novos da TV e do celular (1.5.0)](#️-consoles-novos-da-tv-e-do-celular-150)
 - [🖥️ PC (Windows)](#️-pc-windows)
 - [🍎 iPhone e iPad](#-iphone-e-ipad)
 - [Funciona em todos](#funciona-em-todos)
@@ -39,7 +42,7 @@ O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde
 ### Instalar
 1. No Onix, abra a aba **Jogos** e clique em **Instalar o GameHub**.
 2. Na primeira vez, o Android pede para o **Onix** poder instalar apps: ative e volte. Depois, confirme em **Instalar**.
-3. Pronto: o cartão **Cobalt GameHub** aparece na aba **Jogos**, com **Abrir o GameHub** e os quatro consoles.
+3. Pronto: o cartão **Cobalt GameHub** aparece na aba **Jogos**, com **Abrir o GameHub** e os consoles.
 
 Sem o Onix: no app **Downloader**, use o link **`github.com/ruan2311/onix-gamehub/releases/latest/download/onix-gamehub.apk`**.
 
@@ -78,13 +81,39 @@ O controle remoto da TV também joga, mas só com poucos botões.
 2. Abra o arquivo e confirme em **Instalar**. Se o Android pedir, deixe o navegador ou o gerenciador de arquivos instalar apps.
 
 ### Adicionar jogos
-Em **Adicionar jogos**, toque em **Escolher pasta** e escolha a pasta onde estão os seus jogos. O GameHub procura também nas subpastas e copia os de NES, Super Nintendo, Game Boy Advance e Mega Drive.
+Em **Adicionar jogos**, toque em **Escolher pasta** e escolha a pasta onde estão os seus jogos. O GameHub procura também nas subpastas e copia os de todos os consoles dele, até os discos de PlayStation (`.cue` com os `.bin`) e os `.zip` de fliperama.
 
 ### Jogar
 - Os menus ficam **em pé**. O jogo pode ser jogado **em pé ou deitado**.
 - Cada console tem os **próprios controles na tela**, no visual do Onix. Com um controle Bluetooth conectado, eles somem.
-- **Editor dos controles:** cada botão se arrasta sozinho (o direcional, A, B, X, Y, L, R, SELECT, START, menu e avançar). Toque num botão para mudar o tamanho e a transparência só dele; sem nenhum escolhido, a mudança vale para todos. As posições ficam guardadas separadas para em pé e deitado. Fica no menu do jogo e em **Configurações → Controles**.
+- **Editor dos controles:** cada botão se arrasta sozinho (o direcional, A, B, X, Y, L, R, SELECT, START, menu e avançar). Toque num botão para mudar o tamanho e a transparência só dele; sem nenhum escolhido, a mudança vale para todos. As posições ficam guardadas separadas para em pé e deitado. No editor, **Usar analógico** troca a cruz por um analógico (e **Usar cruz** volta). Fica no menu do jogo e em **Configurações → Controles**.
 - A tela cheia só liga durante o jogo.
+
+---
+
+## 🕹️ Consoles novos da TV e do celular (1.5.0)
+
+Valem para a TV e para o celular Android (o mesmo APK).
+
+### Game Boy Color
+- **Formatos:** `.gbc` e `.gb` (também dentro de `.zip`). Usa o mesmo emulador do GBA (mGBA).
+
+### PlayStation (PS1)
+- **Formatos:** `.chd`, `.pbp` ou `.cue` com os `.bin` do disco, até 1,2 GB por arquivo. Pode mandar o `.cue` e os `.bin` juntos, em qualquer ordem: o disco espera até chegarem todos os arquivos e só então entra na biblioteca. Um disco que fica pela metade sai sozinho depois de um dia.
+- **BIOS:** não precisa; o PCSX ReARMed traz uma livre.
+- **Controle:** △ ○ ✕ □, L1/R1 e L2/R2 (no controle na tela: △ ○ ✕ □ e L1/R1).
+- **Espaço:** um disco tem de 300 a 700 MB. Em TVs com pouca memória, cabe um ou dois.
+
+### Atari 2600 e 7800
+- **Formatos:** `.a26` (2600, pelo Stella 2014) e `.a78` (7800, pelo ProSystem), na mesma aba **Atari**.
+
+### Fliperama
+- **Formatos:** o `.zip` do jogo com o **nome original** do romset, como `sf2.zip` ou `mslug.zip` (não descompacte nem renomeie). Usa o **FinalBurn Neo**, com mais de 8 mil jogos (Capcom, Neo Geo, Konami, Sega…).
+- **Clones e Neo Geo:** um clone precisa também do `.zip` do jogo principal, e os de Neo Geo precisam do `neogeo.zip` (a BIOS). Mande os dois: a BIOS fica guardada sem aparecer na biblioteca.
+- **Controle:** botões 1 a 6, **FICHA** (o Select, para pôr crédito) e Start. Jogos de tela em pé, como Galaga e Pac-Man, aparecem em pé.
+
+### Armazenamento
+Em **Configurações → Armazenamento**, o GameHub mostra quanto ocupam os jogos, os saves e estados, as capas e as **sobras de envios** (um envio que caiu no meio, um disco de PS1 que ficou esperando). As sobras saem sozinhas ao abrir o GameHub e depois de apagar um jogo, e o botão **Limpar sobras** apaga na hora. O espaço livre do topo atualiza logo depois de apagar um jogo.
 
 ---
 
@@ -199,8 +228,8 @@ Na engrenagem do topo:
 - **Imagem, Som e Jogo**: valem para todos os consoles. **Mostrar FPS**, **Atraso do som** (se o som estalar, teste 96 ms), **Run-ahead** (menos atraso nos botões, mas mais peso no aparelho), velocidade do avançar e do turbo.
 - **Controles → Controle 1 e Controle 2**: clique em **Definir** e aperte um botão no controle escolhido. Também dá para **trocar botões** de cada console.
 - **Interface**: **Som de navegação** e **Animações**: *Igual ao Onix* (padrão), *Ligado* ou *Desligado*.
-- **Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive**: imagem, turbo e as opções do emulador daquele console.
-- **Armazenamento**: quanto os jogos ocupam e quanto ainda cabe.
+- **Um item por console** (Nintendinho, Super Nintendo, Game Boy Advance, Game Boy Color, Mega Drive, PlayStation, Atari e Fliperama): imagem, turbo e as opções do emulador daquele console.
+- **Armazenamento**: quanto ocupam os jogos, os saves, as capas e as sobras, quanto ainda cabe e o botão **Limpar sobras**.
 
 <p align="center">
   <img src="docs/screenshots/gamehub-controles.jpg" alt="Controle 1 e Controle 2" width="49%">
@@ -221,13 +250,13 @@ As versões saem nas [Releases deste repositório](https://github.com/ruan2311/o
 - **Desinstalar (TV):** no mesmo cartão da aba **Jogos**. Os jogos e os saves saem junto com o app.
 
 ## Formatos de jogo
-`.nes`, `.sfc`, `.smc`, `.gba`, `.md`, `.gen`, `.bin` e `.zip` (com o jogo dentro), até 64 MB por arquivo. No PC, também PlayStation: `.cue` + `.bin`, `.chd` e `.pbp`. Arquivos que não são jogo, como uma foto, são recusados com aviso.
+`.nes`, `.sfc`, `.smc`, `.gba`, `.gbc`, `.gb`, `.md`, `.gen`, `.bin` e `.zip` (com o jogo dentro), até 64 MB por arquivo. PlayStation: `.cue` + `.bin`, `.chd` e `.pbp`. Atari: `.a26` e `.a78`. Fliperama: o `.zip` com o nome do romset (como `sf2.zip`). Arquivos que não são jogo, como uma foto, são recusados com aviso.
 
 ## Créditos e licenças
-Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): **FCEUmm** (NES, GPL-2.0), **Snes9x** (SNES, licença não comercial), **mGBA** (GBA, MPL-2.0) e **Genesis Plus GX** (Mega Drive, licença não comercial) e, no PC, **PCSX ReARMed** (PlayStation, GPL-2.0) e o **RetroArch** com **Mupen64Plus-Next** (N64), **melonDS DS** (DS), **PPSSPP** (PSP), **Dolphin** (GameCube e Wii) e **PCSX2/LRPS2** (PS2), todos GPL. Nomes dos jogos: libretro-database (No-Intro, CC BY-SA 4.0); capas: libretro-thumbnails. As licenças completas estão em **Configurações → Sobre** e em [`assets/licenses`](assets/licenses).
+Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): **FCEUmm** (NES, GPL-2.0), **Snes9x** (SNES, licença não comercial), **mGBA** (GBA, MPL-2.0) e **Genesis Plus GX** (Mega Drive, licença não comercial), **PCSX ReARMed** (PlayStation, GPL-2.0), **Stella 2014** (Atari 2600, GPL-2.0), **ProSystem** (Atari 7800, GPL-2.0), **FinalBurn Neo** (fliperama, licença não comercial) e, no PC, e o **RetroArch** com **Mupen64Plus-Next** (N64), **melonDS DS** (DS), **PPSSPP** (PSP), **Dolphin** (GameCube e Wii) e **PCSX2/LRPS2** (PS2), todos GPL. Nomes dos jogos: libretro-database (No-Intro, CC BY-SA 4.0); capas: libretro-thumbnails. As licenças completas estão em **Configurações → Sobre** e em [`assets/licenses`](assets/licenses).
 
 O código do GameHub está sob a [GPL-3.0](LICENSE). O GameHub é gratuito e nunca terá anúncios.
 
 ---
 
-🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente), además de **PlayStation (PS1)**, **Game Boy Color** y, por RetroArch incluido (sin internet), **Nintendo 64, DS, PSP, GameCube, Wii y PS2** solo en PC, con resolución automática según la PC y controles por teclado o control; y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido.
+🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance, Game Boy Color, Mega Drive, PlayStation, Atari y arcade con el estilo de Onix. **Novedades de la 1.5.0 (TV y celular Android):** Game Boy Color, PlayStation (.chd, .pbp o .cue con los .bin), Atari 2600 y 7800 y Arcade con FinalBurn Neo (el .zip con el nombre original del juego, como sf2.zip); el Almacenamiento muestra qué ocupa espacio y limpia los restos de envíos; en los controles táctiles se puede cambiar la cruceta por un analógico. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente), además de **PlayStation (PS1)**, **Game Boy Color** y, por RetroArch incluido (sin internet), **Nintendo 64, DS, PSP, GameCube, Wii y PS2** solo en PC, con resolución automática según la PC y controles por teclado o control; y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido.

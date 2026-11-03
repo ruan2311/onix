@@ -50,7 +50,7 @@ final class TouchPad extends View {
      * (o 1 era o conjunto todo na versão 1 e não é mais usado). */
     private static final int G_DPAD = 0, G_L = 2, G_R = 3, G_SELECT = 4, G_START = 5, G_MENU = 6, G_FAST = 7, G_FACE = 8;
     /* Barra do editor. */
-    private static final int T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17;
+    private static final int T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17, T_STICK = -18;
 
     private static final class Btn {
         String label;
@@ -98,6 +98,8 @@ final class TouchPad extends View {
     private final Path path = new Path();
     private final RectF rect = new RectF(), box = new RectF();
     private float dpadX, dpadY, dpadR;
+    private int stickPtr = -1;   // o dedo que está no analógico (segue mesmo saindo do círculo)
+    private float knobX, knobY;
     private boolean landscape;
     private Paint backdrop;
 
@@ -138,6 +140,34 @@ final class TouchPad extends View {
             face.add(new Btn("A", Native.A, gba, ROUND, G_FACE, 0.62f, -0.38f, 1.12f));
             shoulders.add(new Btn("L", Native.L, gba, PILL, G_L, -1, 0, 1));
             shoulders.add(new Btn("R", Native.R, gba, PILL, G_R, 1, 0, 1));
+        } else if ("ps1".equals(console)) {
+            accent = 0xFF34D399;
+            // △ ○ ✕ □ nas posições do controle do PlayStation
+            face.add(new Btn("△", Native.X, 0xFF34D399, ROUND, G_FACE, 0, -1.35f, 1));
+            face.add(new Btn("○", Native.A, 0xFFFF5A6E, ROUND, G_FACE, 1.35f, 0, 1));
+            face.add(new Btn("✕", Native.B, 0xFF38BDF8, ROUND, G_FACE, 0, 1.35f, 1));
+            face.add(new Btn("□", Native.Y, 0xFFF472B6, ROUND, G_FACE, -1.35f, 0, 1));
+            shoulders.add(new Btn("L1", Native.L, 0xFF34D399, PILL, G_L, -1, 0, 1));
+            shoulders.add(new Btn("R1", Native.R, 0xFF34D399, PILL, G_R, 1, 0, 1));
+        } else if ("arcade".equals(console)) {
+            accent = 0xFFE879F9;
+            // Quatro botões em losango e o 5 e o 6 em cima; Select é a ficha.
+            face.add(new Btn("4", Native.X, 0xFFE879F9, ROUND, G_FACE, 0, -1.35f, 1));
+            face.add(new Btn("2", Native.A, 0xFFE879F9, ROUND, G_FACE, 1.35f, 0, 1));
+            face.add(new Btn("1", Native.B, 0xFFE879F9, ROUND, G_FACE, 0, 1.35f, 1));
+            face.add(new Btn("3", Native.Y, 0xFFE879F9, ROUND, G_FACE, -1.35f, 0, 1));
+            shoulders.add(new Btn("5", Native.L, 0xFFE879F9, PILL, G_L, -1, 0, 1));
+            shoulders.add(new Btn("6", Native.R, 0xFFE879F9, PILL, G_R, 1, 0, 1));
+            sel = "FICHA";
+        } else if ("atari".equals(console)) {
+            accent = 0xFFF97316;
+            face.add(new Btn("2", Native.A, 0xFFF97316, ROUND, G_FACE, 0.62f, -0.38f, 0.9f));
+            face.add(new Btn("●", Native.B, 0xFFF97316, ROUND, G_FACE, -0.62f, 0.38f, 1.25f));
+            sel = "SELECT";
+        } else if ("gbc".equals(console)) {
+            accent = 0xFFC084FC;
+            face.add(new Btn("B", Native.B, 0xFFC084FC, ROUND, G_FACE, -0.62f, 0.38f, 1.12f));
+            face.add(new Btn("A", Native.A, 0xFFC084FC, ROUND, G_FACE, 0.62f, -0.38f, 1.12f));
         } else if (six) {
             accent = md;
             // A, B e C embaixo; X, Y e Z menores em cima (o controle de 6 botões).
@@ -171,7 +201,8 @@ final class TouchPad extends View {
         tools.add(new Btn("", T_ALPHA, t, PILL, -1, 4, 0, 1.6f));
         tools.add(new Btn("+", T_MORE, t, PILL, -1, 5, 0, 0.6f));
         tools.add(new Btn("", T_RESET, t, PILL, -1, 6, 1, 2.2f));
-        tools.add(new Btn("", T_DONE, cyan, PILL, -1, 7, 1, 1.3f));
+        tools.add(new Btn("", T_STICK, t, PILL, -1, 7, 1, 2.2f));
+        tools.add(new Btn("", T_DONE, cyan, PILL, -1, 8, 1, 1.3f));
 
         line.setStyle(Paint.Style.STROKE);
         line.setStrokeJoin(Paint.Join.ROUND);
@@ -437,6 +468,15 @@ final class TouchPad extends View {
     }
 
     private void tool(int id) {
+        if (id == T_STICK) {
+            layout.stick = !layout.stick;
+            stickPtr = -1;
+            knobX = knobY = 0;
+            layout.save(getContext());
+            invalidate();
+            performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY);
+            return;
+        }
         float step = id == T_BIGGER || id == T_MORE ? 0.1f : -0.1f;
         if (selected >= 0 && id != T_DONE) {
             // Só o botão escolhido.
@@ -561,7 +601,7 @@ final class TouchPad extends View {
 
     /** Nome curto do botão escolhido, para a barra do editor. */
     private String name(int g) {
-        if (g == G_DPAD) return es ? "Cruceta" : "Direcional";
+        if (g == G_DPAD) return layout.stick ? "Analógico" : es ? "Cruceta" : "Direcional";
         if (g == G_MENU) return "Menu";
         for (Btn b : all) if (b.group == g) return b.label;
         return "";
@@ -586,12 +626,13 @@ final class TouchPad extends View {
             else if (b.bit == T_ALPHA) b.label = (es ? "Opacidad " : "Opacidade ") + Math.round((one ? layout.opacity(key(selected)) : layout.opacity) * 100) + "%";
             else if (b.bit == T_RESET) b.label = one ? (es ? "Restaurar " : "Restaurar ") + name(selected) : "Restaurar";
             else if (b.bit == T_DONE) b.label = es ? "Listo" : "Concluir";
+            else if (b.bit == T_STICK) b.label = layout.stick ? (es ? "Usar cruceta" : "Usar cruz") : "Usar analógico";
             rect.set(b.cx - b.w / 2, b.cy - b.h / 2, b.cx + b.w / 2, b.cy + b.h / 2);
             fill.setColor(0xE60E0820);
             c.drawRoundRect(rect, b.h / 2, b.h / 2, fill);
             boolean info = b.bit == T_SIZE || b.bit == T_ALPHA;
             // Com um botão escolhido, a barra fica ciano: vale só para ele.
-            int col = one && b.bit != T_DONE ? 0xFF3DE1FF : b.color;
+            int col = one && b.bit != T_DONE && b.bit != T_STICK ? 0xFF3DE1FF : b.color;
             stroke(col, info ? (one ? 160 : 70) : 220, 1.6f * dp);
             c.drawRoundRect(rect, b.h / 2, b.h / 2, line);
             text.setColor(col);
@@ -610,7 +651,50 @@ final class TouchPad extends View {
         line.setShadowLayer(7 * dp, 0, 0, withAlpha(color, alpha * 3 / 5));
     }
 
+    /** Analógico: base redonda e a bolinha que segue o dedo; manda as mesmas 8 direções da cruz. */
+    private void drawStick(Canvas c, int base) {
+        float r = dpadR;
+        boolean on = stickPtr != -1;
+        fill.setColor(withAlpha(0xFFFFFFFF, 15));
+        c.drawCircle(dpadX, dpadY, r, fill);
+        stroke(accent, base, 2.4f * dp);
+        c.drawCircle(dpadX, dpadY, r, line);
+        float t = r * 0.12f, o = r * 0.82f;
+        int[][] dirs = {{0, -1, Native.UP}, {0, 1, Native.DOWN}, {-1, 0, Native.LEFT}, {1, 0, Native.RIGHT}};
+        for (int[] d : dirs) {
+            fill.setColor((dpadBits & 1 << d[2]) != 0 ? 0xFFFFFFFF : withAlpha(accent, base * 7 / 10));
+            arrow(c, dpadX + d[0] * o, dpadY + d[1] * o, d[0], d[1], t);
+        }
+        float kx = dpadX + knobX, ky = dpadY + knobY, kr = r * 0.44f;
+        fill.setColor(withAlpha(accent, on ? 128 : 56));
+        c.drawCircle(kx, ky, kr, fill);
+        stroke(accent, on ? 255 : base, 2.2f * dp);
+        c.drawCircle(kx, ky, kr, line);
+        stroke(accent, base / 2, 1.6f * dp);
+        c.drawCircle(kx, ky, kr * 0.6f, line);
+    }
+
+    private static final int[][] STICK_DIRS = {{Native.RIGHT}, {Native.RIGHT, Native.DOWN}, {Native.DOWN}, {Native.DOWN, Native.LEFT},
+            {Native.LEFT}, {Native.LEFT, Native.UP}, {Native.UP}, {Native.UP, Native.RIGHT}};
+
+    /** Direção do analógico: zona morta no meio e 8 fatias de 45°, como a cruz. */
+    private int stickAt(float x, float y) {
+        float dx = x - dpadX, dy = y - dpadY, dist = (float) Math.sqrt(dx * dx + dy * dy), max = dpadR * 0.56f;
+        float k = dist > max ? max / dist : 1;
+        knobX = dx * k;
+        knobY = dy * k;
+        invalidate();
+        if (dist < dpadR * 0.22f) return 0;
+        int sector = ((int) Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) + 8) % 8, out = 0;
+        for (int bit : STICK_DIRS[sector]) out |= 1 << bit;
+        return out | 1 << 30;
+    }
+
     private void drawDpad(Canvas c, int base) {
+        if (layout.stick) {
+            drawStick(c, base);
+            return;
+        }
         float r = dpadR, a = r * 0.34f;   // meia largura do braço
         path.reset();
         path.moveTo(dpadX - a, dpadY - r);
@@ -691,14 +775,25 @@ final class TouchPad extends View {
         int action = e.getActionMasked();
         if (action == MotionEvent.ACTION_CANCEL) {
             pointers.clear();
+            releaseStick();
         } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP) {
             int id = e.getPointerId(e.getActionIndex());
+            if (id == stickPtr) releaseStick();
             if (pointers.get(id, 0) == -1 && hitMenu(e.getX(e.getActionIndex()), e.getY(e.getActionIndex()))) listener.padMenu();
             pointers.delete(id);
         } else {
+            boolean down = action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN;
+            int downId = down ? e.getPointerId(e.getActionIndex()) : -1;
             for (int i = 0; i < e.getPointerCount(); i++) {
                 int id = e.getPointerId(i);
-                int t = target(e.getX(i), e.getY(i));
+                float x = e.getX(i), y = e.getY(i);
+                if (layout.stick && (id == stickPtr || (id == downId && stickPtr == -1
+                        && Math.hypot(x - dpadX, y - dpadY) <= dpadR * 1.25f))) {
+                    stickPtr = id;
+                    pointers.put(id, stickAt(x, y));
+                    continue;
+                }
+                int t = target(x, y);
                 // O menu só conta para o dedo que começou nele (arrastar não abre o menu).
                 if (t == -1 && action == MotionEvent.ACTION_MOVE && pointers.get(id, 0) != -1) t = 0;
                 pointers.put(id, t);
@@ -727,7 +822,7 @@ final class TouchPad extends View {
             }
         }
         // A folga do direcional só vale onde não há botão: perto dele, o botão vizinho ganha.
-        if (dist <= dpadR || (best == null && dist <= dpadR * 1.35f)) {
+        if (!layout.stick && (dist <= dpadR || (best == null && dist <= dpadR * 1.35f))) {
             if (dist < dpadR * 0.16f) return 0;
             int out = 0;
             if (dy < -0.38f * dist) out |= 1 << Native.UP;
@@ -765,7 +860,14 @@ final class TouchPad extends View {
     }
 
     /** Solta tudo (menu aberto, controle conectado). */
+    private void releaseStick() {
+        stickPtr = -1;
+        knobX = knobY = 0;
+        invalidate();
+    }
+
     void release() {
+        releaseStick();
         pointers.clear();
         update();
     }

@@ -94,6 +94,9 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .xfer .ok{color:#7ef0b0}.xfer .err{color:#ff8aa5}
 .store{padding:1.4rem 1.6rem;border-radius:1.2rem;background:var(--glass);display:flex;flex-direction:column;gap:.8rem}
 .store .legend{display:flex;gap:1.8rem;font-size:1.1rem;color:var(--dim);flex-wrap:wrap}
+.store .parts{display:flex;gap:1.4rem;font-size:1.05rem;color:var(--mute);flex-wrap:wrap}
+.store .parts b{color:var(--text,#fff);font-weight:600}
+.store .btn{align-self:flex-start}
 .store .legend i{display:inline-block;width:.9rem;height:.9rem;border-radius:.3rem;margin-right:.5rem;vertical-align:-.05rem}
 
 /* Configurações */
@@ -307,7 +310,7 @@ function loadLibrary() { LIB = json(call('library'), []); }
 /* ---------------- Topo ---------------- */
 const TABS = () => [
   { id: 'home', label: t('Início') },
-  ...CONSOLES.map(c => ({ id: 'console:' + c.id, label: c.id === 'md' && CONSOLES.length <= 8 ? 'Mega Drive' : c.short, color: c.color })),
+  ...CONSOLES.map(c => ({ id: 'console:' + c.id, label: c.id === 'md' && CONSOLES.length <= 8 ? 'Mega Drive' : t(c.short), color: c.color })),
   ...(INFO.kids ? [] : [{ id: 'add', label: t('Adicionar jogos'), icon: 'plus' }, { id: 'settings', label: t('Configurações'), icon: 'gear' }]),
 ];
 function renderNav() {
@@ -364,6 +367,7 @@ function show(id, keepFocus) {
   if (PAGE === 'add' && id !== 'add') call('uploadStop');
   PAGE = id;
   renderNav();
+  renderStore();   // o espaço livre do topo acompanha o que saiu ou entrou (apagar um jogo, por exemplo)
   const main = $('#main');
   let page;
   if (id === 'home') page = homePage();
@@ -432,8 +436,10 @@ function homePage() {
   return page;
 }
 
-/* Os formatos aceitos (o PC também abre discos de PS1). */
-const formatsText = () => (CONSOLES.some(c => c.ra)
+/* Os formatos aceitos (o PC também abre discos de PS1; a TV, Atari e fliperama). */
+const formatsText = () => (CONSOLES.some(c => c.id === 'arcade')
+  ? t('Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .chd, .pbp ou .cue (com os .bin); Atari: .a26 e .a78; Fliperama: o .zip com o nome do jogo (como sf2.zip)')
+  : CONSOLES.some(c => c.ra)
   ? t('Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp; N64: .z64, .n64 e .v64; DS: .nds; PSP: .iso e .cso; GameCube e Wii: .iso, .rvz, .gcz, .wbfs e .gcm; PS2: .iso e .chd')
   : CONSOLES.some(c => c.id === 'ps1')
   ? t('Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp')
@@ -441,9 +447,10 @@ const formatsText = () => (CONSOLES.some(c => c.ra)
 
 function consoleTiles() {
   // Mais de 4 consoles (PC, com o PS1): todos numa linha só.
-  // Com mais de 6 (PC com os consoles do RetroArch): 6 por linha.
-  const cols = CONSOLES.length > 6 ? 6 : CONSOLES.length;
-  return h('div', { class: 'consoles', style: CONSOLES.length > 4 ? { gridTemplateColumns: 'repeat(' + cols + ',1fr)' } : null }, CONSOLES.map(c => {
+  // Com 8 (TV): 4 por linha; com mais (PC com os consoles do RetroArch): 6 por linha.
+  const cols = CONSOLES.length === 8 ? 4 : CONSOLES.length > 6 ? 6 : CONSOLES.length;
+  // No celular, sempre 2 por linha (o CSS do html.mobile cuida).
+  return h('div', { class: 'consoles', style: CONSOLES.length > 4 && !INFO.mobile ? { gridTemplateColumns: 'repeat(' + cols + ',1fr)' } : null }, CONSOLES.map(c => {
     const n = LIB.filter(g => g.console === c.id).length;
     const b = h('button', { class: 'f ctile', style: { background: 'linear-gradient(150deg,' + c.color + '2e,rgba(255,255,255,.03) 70%)' } },
       h('span', { style: { color: c.color } }, svg(CONSOLE_ART[c.id])),
@@ -737,7 +744,7 @@ function addPage() {
     // Celular: os jogos vêm de uma pasta do próprio aparelho (o GameHub procura nas subpastas).
     page.append(h('div', { class: 'addm' },
       h('h1', { text: t('Adicionar jogos') }),
-      h('p', { text: t('Escolha a pasta onde estão os seus jogos. O GameHub procura também nas subpastas e copia os de NES, Super Nintendo, Game Boy Advance e Mega Drive.') }),
+      h('p', { text: t('Escolha a pasta onde estão os seus jogos. O GameHub procura também nas subpastas e copia os de todos os consoles dele, até os discos de PlayStation (.cue com os .bin) e os .zip de fliperama.') }),
       h('div', { class: 'acts' },
         h('button', { class: 'f btn primary', act: () => call('pickGames', true) }, icon('plus'), t('Escolher pasta')),
         h('button', { class: 'f btn', text: t('Escolher arquivos'), act: () => call('pickGames', false) })),
@@ -800,15 +807,25 @@ function drawStore() {
   const total = s.total || 1;
   const pct = v => Math.max(0, Math.min(100, v / total * 100)) + '%';
   const other = Math.max(0, total - s.free - s.used);
+  // Na TV e no celular, o que o GameHub ocupa vem separado: jogos, saves, capas e sobras de envios.
+  const parts = s.saves == null ? null : [[t('Jogos'), s.games], [t('Saves e estados'), s.saves], [t('Capas'), s.covers], [t('Sobras de envios'), s.temp]]
+    .filter(([, v], i) => i === 0 || v >= 1048576);
+  const clean = Hub && typeof Hub.cleanStorage === 'function' && !INFO.kids;
   el.replaceChildren(
     h('div', { style: { fontSize: '1.3rem', fontWeight: 700 }, text: t('Armazenamento') }),
     h('div', { class: 'bar' }, h('span', { class: 'r', style: { width: pct(other) } }), h('span', { class: 'g', style: { width: pct(s.used || 0) } }),
       h('span', { class: 'u', style: { width: pct(s.reserve || 0) } })),
     h('div', { class: 'legend' },
-      h('span', null, h('i', { style: { background: 'var(--grad)' } }), t('Jogos') + ' ' + fmtBytes(s.used || 0)),
+      h('span', null, h('i', { style: { background: 'var(--grad)' } }), t(parts ? 'Usado pelo GameHub' : 'Jogos') + ' ' + fmtBytes(s.used || 0)),
       h('span', null, h('i', { style: { background: 'rgba(255,255,255,.12)' } }), t('Livre para jogos') + ' ' + fmtBytes(s.available || 0)),
       INFO.web ? null : h('span', null, h('i', { style: { background: '#7c6fb3' } }), t(INFO.mobile || INFO.pc ? 'Reservado para o sistema' : 'Reservado para a TV') + ' ' + fmtBytes(s.reserve || 0))),
     h('div', { style: { fontSize: '1.05rem', color: 'var(--mute)' }, text: t(INFO.web ? 'O espaço é o que o iPhone libera para o GameHub. Faça backup dos saves de vez em quando.' : INFO.pc ? 'O GameHub sempre deixa livre para o sistema 10% do disco (no mínimo 768 MB e no máximo 2 GB).' : INFO.mobile ? 'O GameHub sempre deixa livre para o sistema 10% da memória do aparelho (no mínimo 768 MB e no máximo 2 GB).' : 'O GameHub sempre deixa livre para o sistema 10% da memória desta TV (no mínimo 768 MB e no máximo 2 GB).') }));
+  if (parts) el.insertBefore(h('div', { class: 'parts' }, ...parts.map(([k, v]) => h('span', null, k + ' ', h('b', { text: fmtBytes(v || 0) })))), el.lastChild);
+  if (clean) el.append(h('button', { class: 'f btn', act: () => {
+    const freed = Number(call('cleanStorage')) || 0;
+    toast(freed >= 1048576 ? t('{n} liberados', { n: fmtBytes(freed) }) : t('Não havia nada sobrando para limpar'));
+    drawStore(); renderStore();
+  } }, icon('reset'), t('Limpar sobras')));
 }
 function drawXfers() {
   const el = $('#xfers');
@@ -827,16 +844,19 @@ handlers.upload = e => {
   // Errou o código 5 vezes no celular: a TV mostra o código novo.
   if (e.type === 'code') { const el = $('#upCode'); if (el) el.textContent = e.code; return; }
   // Celular, pasta escolhida: quantos achou e, no fim, quantos entraram.
-  if (e.type === 'scan') { importCount = 0; toast(e.count ? t('{n} arquivos de jogo encontrados', { n: e.count }) : t('Nenhum jogo de NES, SNES, GBA ou Mega Drive nessa pasta.')); return; }
+  if (e.type === 'scan') { importCount = 0; toast(e.count ? t('{n} arquivos de jogo encontrados', { n: e.count }) : t(CONSOLES.length > 4 ? 'Nenhum jogo nessa pasta.' : 'Nenhum jogo de NES, SNES, GBA ou Mega Drive nessa pasta.')); return; }
   if (e.type === 'finished') { if (e.count) toast(t('{n} jogos novos na biblioteca', { n: importCount })); drawStore(); renderStore(); return; }
-  if (e.type === 'done' && e.ok && !e.dup) importCount++;
+  if (e.type === 'done' && e.ok && !e.dup && !e.wait && !e.bios) importCount++;
   const k = e.file || e.name;
   const x = uploading[k] || (uploading[k] = { name: k });
   if (e.type === 'start') Object.assign(x, { size: e.size, sent: 0, done: false });
   if (e.type === 'progress') x.sent = e.sent;
   if (e.type === 'done') {
     Object.assign(x, { done: true, ok: e.ok, dup: e.dup, error: e.error, title: e.ok ? e.name : x.name });
-    if (e.ok && !e.dup) { loadLibrary(); toast(t('Pronto') + ': ' + e.name); }
+    // .bin antes do disco completo e BIOS do fliperama: guardados, mas ainda sem jogo novo.
+    if (e.ok && e.wait) toast(t('Esperando os .bin do disco') + ': ' + e.name);
+    else if (e.ok && e.bios) toast(t('BIOS guardada para os jogos que precisam dela') + ': ' + e.name);
+    else if (e.ok && !e.dup) { loadLibrary(); toast(t('Pronto') + ': ' + e.name); }
     drawStore();
     renderStore();
   }
@@ -1273,6 +1293,8 @@ function aboutBody() {
     h('p', { class: 'credits', text: t('Emuladores de código aberto do projeto libretro:') }),
     ...[['FCEUmm (NES)', 'fceumm', 'GPL-2.0'], ['Snes9x (SNES)', 'snes9x', 'Snes9x, não comercial'], [CONSOLES.some(c => c.id === 'gbc') ? 'mGBA (GBA e Game Boy Color)' : 'mGBA (GBA)', 'mgba', 'MPL-2.0'], ['Genesis Plus GX (Mega Drive)', 'genesis_plus_gx', 'não comercial'],
       ...(CONSOLES.some(c => c.id === 'ps1') ? [['PCSX ReARMed (PlayStation)', 'pcsx_rearmed', 'GPL-2.0']] : []),
+      ...(CONSOLES.some(c => c.id === 'atari') ? [['Stella 2014 (Atari 2600)', 'stella2014', 'GPL-2.0'], ['ProSystem (Atari 7800)', 'prosystem', 'GPL-2.0']] : []),
+      ...(CONSOLES.some(c => c.id === 'arcade') ? [['FinalBurn Neo (Fliperama)', 'fbneo', 'FBNeo, não comercial']] : []),
       ...(CONSOLES.some(c => c.ra) ? [['Emuladores de N64, DS, PSP, GameCube, Wii e PS2 (RetroArch)', 'retroarch', 'GPL']] : [])]
       .map(([name, file, lic]) => h('button', { class: 'f item', act: () => licenseSheet(name, file) }, h('span', { class: 'grow' }, name, h('span', { class: 'sub', text: lic })), h('span', { class: 'val', text: t('Abrir licença') }))),
     h('button', { class: 'f item', act: () => licenseSheet('libretro-database', 'libretro_database') }, h('span', { class: 'grow' }, t('Nomes dos jogos: libretro-database (No-Intro), CC BY-SA 4.0. Capas: libretro-thumbnails.')), h('span', { class: 'val', text: t('Abrir licença') })),

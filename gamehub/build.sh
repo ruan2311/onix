@@ -5,7 +5,9 @@
 # Os núcleos vêm de gamehub/build/cores (bash gamehub/cores.sh compila a partir do código-fonte).
 # Só compila neste PC: precisa do NDK e da mesma chave das releases do Onix.
 # Sem NDK (no celular), quando só o Java/HTML mudou: NATIVE_FROM=<apk anterior> reaproveita as
-# bibliotecas nativas (frontend e núcleos) daquela APK em vez de compilar o jni/.
+# bibliotecas nativas (frontend e núcleos) daquela APK em vez de compilar o jni/. Os núcleos que
+# faltarem nela vêm de build/cores (bash gamehub/cores.sh baixa os prontos). Com SEM_NDK=1, o
+# frontend é compilado de novo pelo jni/build-sem-ndk.sh (clang do Termux + sysroot do NDK).
 set -euo pipefail
 cd "$(dirname "$0")"
 ROOT=$(cd .. && pwd)
@@ -15,7 +17,7 @@ OUT=build/apk
 KEYSTORE="$HOME/.android/debug.keystore"
 APK="$ROOT/onix-gamehub.apk"
 ABIS="arm64-v8a armeabi-v7a"
-CORES="fceumm snes9x mgba gpgx"
+CORES="fceumm snes9x mgba gpgx pcsx_rearmed stella2014 prosystem fbneo"
 
 rm -rf "$OUT"; mkdir -p "$OUT/classes" "$OUT/assets" "$OUT/native"
 
@@ -36,8 +38,15 @@ echo "[4/8] Frontend nativo (NDK)"
 if [ -n "${NATIVE_FROM:-}" ]; then
   echo "    reaproveitando as bibliotecas de $NATIVE_FROM"
   unzip -q "$NATIVE_FROM" 'lib/*' -d "$OUT/native"
+  if [ -n "${SEM_NDK:-}" ]; then
+    echo "    frontend compilado sem o NDK (jni/build-sem-ndk.sh)"
+    bash jni/build-sem-ndk.sh >/dev/null
+    for abi in $ABIS; do cp build/ndk-libs/$abi/libonixretro.so "$OUT/native/lib/$abi/"; done
+  fi
   for abi in $ABIS; do for c in onixretro $CORES; do
-    [ -f "$OUT/native/lib/$abi/lib$c.so" ] || { echo "Falta lib/$abi/lib$c.so em $NATIVE_FROM" >&2; exit 1; }
+    f=$OUT/native/lib/$abi/lib$c.so
+    [ -f "$f" ] || [ ! -f "build/cores/$abi/lib$c.so" ] || cp "build/cores/$abi/lib$c.so" "$f"
+    [ -f "$f" ] || { echo "Falta lib/$abi/lib$c.so em $NATIVE_FROM e em build/cores" >&2; exit 1; }
   done; done
 else
 [ -x "$NDK/ndk-build" ] || { echo "NDK não encontrado em $NDK" >&2; exit 1; }

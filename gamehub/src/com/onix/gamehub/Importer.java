@@ -27,6 +27,9 @@ import java.util.zip.ZipFile;
  * .zip -> tira a ROM de dentro; descobre o console pela extensão; identifica o jogo pelo CRC
  * no banco No-Intro (assets/db, sem internet); confere o espaço; guarda em roms/<id>.<ext>.
  * O id é o começo do SHA-1 do conteúdo, então o mesmo jogo enviado duas vezes não duplica.
+ * Fliperama: o .zip com o nome do romset fica como veio em roms/arcade (o FBNeo acha o jogo e o
+ * principal das variações pelo nome). PS1 em .cue: o .cue e os .bin dele chegam um por um e
+ * esperam em ps1-pending até o disco ficar completo, que vai para roms/<id>/.
  */
 final class Importer {
 
@@ -43,15 +46,22 @@ final class Importer {
         File rom = null;
         try {
             String name = fileName;
-            if ("zip".equals(Consoles.extension(name))) {
+            String ext0 = Consoles.extension(name);
+            if ("zip".equals(ext0) && arcadeInfo(c, romset(name)) != null) return arcade(c, upload, name, r);
+            if ("cue".equals(ext0)) return cue(c, upload, name, r);
+            if ("bin".equals(ext0)) {
+                JSONObject d = disc(c, upload, name, r);
+                if (d != null) return d;
+            }
+            if ("zip".equals(ext0)) {
                 rom = new File(upload.getPath() + ".rom");
                 name = unzip(upload, rom);
-                if (name == null) return fail(r, "O .zip não tem nenhum jogo de NES, SNES, GBA ou Mega Drive.");
+                if (name == null) return fail(r, "O .zip não tem nenhum jogo que o GameHub conheça. No fliperama, o nome do .zip tem que ser o do jogo, como sf2.zip.");
             } else {
                 rom = upload;
             }
             Consoles.Console console = Consoles.byExtension(name);
-            if (console == null) return fail(r, "Esse tipo de arquivo não é de NES, SNES, GBA ou Mega Drive.");
+            if (console == null) return fail(r, "Esse tipo de arquivo não é de nenhum console do GameHub.");
             long size = rom.length();
             if (size < 512 || size > console.maxBytes) return fail(r, "O arquivo não parece um jogo desse console.");
 
@@ -66,7 +76,9 @@ final class Importer {
             int skip = 0;
             if ("nes".equals(console.id) && got >= 4 && head[0] == 'N' && head[1] == 'E' && head[2] == 'S' && head[3] == 0x1A) skip = 16;
             if ("snes".equals(console.id) && size % 1024 == 512) skip = 512;
-            String[] sums = sums(rom, skip);
+            if ("atari".equals(console.id) && got >= 10 && new String(head, 1, 9, "ISO-8859-1").equals("ATARI7800")) skip = 128;
+            // Discos grandes: o id sai do começo, do fim e do tamanho (ler 700 MB demora na TV).
+            String[] sums = size > 64L * 1024 * 1024 ? quickSums(rom) : sums(rom, skip);
             String id = sums[0].substring(0, 16);
 
             r.put("console", console.id);
@@ -112,6 +124,237 @@ final class Importer {
             if (rom != null && rom != upload) rom.delete();
             upload.delete();
         }
+    }
+
+    /* ---------------- Fliperama ---------------- */
+
+    /** "Street Fighter II (World 910522).zip" não; "sf2.zip" -> "sf2". */
+    private static String romset(String fileName) {
+        String b = new File(fileName).getName().toLowerCase(Locale.ROOT);
+        return b.endsWith(".zip") ? b.substring(0, b.length() - 4) : b;
+    }
+
+    /** Nome do jogo no banco do FBNeo (assets/db/arcade.tsv: romset, nome e "bios" nas BIOS). */
+    private static String arcadeInfo(Context c, String set) {
+        return set.isEmpty() ? null : lookup(c, "arcade", set);
+    }
+
+    /** BIOS do fliperama (neogeo.zip…): fica na pasta mesmo sem jogo na biblioteca. */
+    static boolean isArcadeBios(Context c, String fileName) {
+        String info = arcadeInfo(c, romset(fileName));
+        return info != null && info.endsWith("\tbios");
+    }
+
+    private static JSONObject arcade(Context c, File upload, String fileName, JSONObject r) throws Exception {
+        String set = romset(fileName);
+        String info = arcadeInfo(c, set);
+        boolean bios = info.endsWith("\tbios");
+        String title = bios ? info.substring(0, info.length() - 5) : info;
+        File dir = new File(Files.roms(c), "arcade");
+        if (!dir.isDirectory()) dir.mkdirs();
+        File dest = new File(dir, set + ".zip");
+        String id = sha1("arcade:" + set).substring(0, 16);
+        r.put("console", "arcade");
+        JSONObject existing = Library.game(c, id);
+        if (existing != null && dest.isFile()) {
+            r.put("ok", true).put("dup", true).put("name", existing.optString("name")).put("id", id);
+            return r;
+        }
+        long size = upload.length();
+        if (!Storage.fits(c, size)) return fail(r, "Sem espaço seguro no aparelho para esse jogo.");
+        dest.delete();
+        if (!move(upload, dest)) return fail(r, "Não deu para guardar o jogo.");
+        // A BIOS (neogeo.zip, pgm.zip…) só fica na pasta, para os jogos que precisam dela.
+        if (bios) return r.put("ok", true).put("bios", true).put("name", title);
+        JSONObject game = newGame(id, "arcade", title, true, "arcade/" + dest.getName(), size, "");
+        Library.add(c, game);
+        Covers.fetchLater(c, id);
+        return r.put("ok", true).put("name", game.getString("name")).put("id", id);
+    }
+
+    /* ---------------- PS1 em .cue + .bin ---------------- */
+
+    private static final Pattern CUE_FILE = Pattern.compile("(?im)^\\s*FILE\\s+(?:\"([^\"]+)\"|(\\S+))");
+    private static final long DAY = 24L * 60 * 60 * 1000;
+
+    /** Os .bin que o .cue pede (só o nome do arquivo, como vieram do PC). */
+    private static java.util.List<String> cueFiles(File cue) throws Exception {
+        java.util.List<String> out = new java.util.ArrayList<String>();
+        if (cue.length() > 64 * 1024) return out;
+        Matcher m = CUE_FILE.matcher(new String(read(cue), "ISO-8859-1"));
+        while (m.find()) {
+            String n = m.group(1) != null ? m.group(1) : m.group(2);
+            n = new File(n.replace('\\', '/')).getName();
+            if (!n.isEmpty() && !out.contains(n)) out.add(n);
+        }
+        return out;
+    }
+
+    private static JSONObject cue(Context c, File upload, String fileName, JSONObject r) throws Exception {
+        r.put("console", "ps1");
+        java.util.List<String> need = cueFiles(upload);
+        if (need.isEmpty()) return fail(r, "Esse .cue não diz quais arquivos .bin são do disco.");
+        String id = sha1Hex(read(upload)).substring(0, 16);
+        JSONObject existing = Library.game(c, id);
+        if (existing != null) return r.put("ok", true).put("dup", true).put("name", existing.optString("name")).put("id", id);
+        cleanPending(c);
+        File dir = new File(Files.dir(c, "ps1-pending"), id);
+        if (!dir.isDirectory()) dir.mkdirs();
+        String name = new File(fileName).getName();
+        move(upload, new File(dir, name));
+        // Os .bin que chegaram antes do .cue esperam soltos.
+        File loose = Files.dir(c, "ps1-loose");
+        for (String n : need) {
+            File f = findIgnoreCase(loose, n);
+            if (f != null) move(f, new File(dir, n));
+        }
+        return complete(c, dir, r);
+    }
+
+    /** Um .bin: entra no disco que o espera; os grandes sem .cue ainda esperam soltos. Null = Mega Drive. */
+    private static JSONObject disc(Context c, File upload, String fileName, JSONObject r) throws Exception {
+        String name = new File(fileName).getName();
+        String done = discFileOf(c, name, upload.length());
+        if (done != null) {
+            JSONObject g = Library.game(c, done);
+            return r.put("console", "ps1").put("ok", true).put("dup", true).put("name", g != null ? g.optString("name") : name).put("id", done);
+        }
+        File[] dirs = Files.dir(c, "ps1-pending").listFiles();
+        if (dirs != null) for (File dir : dirs) {
+            File cue = cueIn(dir);
+            if (cue == null) continue;
+            for (String n : cueFiles(cue)) {
+                if (!n.equalsIgnoreCase(name) || new File(dir, n).isFile()) continue;
+                r.put("console", "ps1");
+                if (!Storage.fits(c, upload.length())) return fail(r, "Sem espaço seguro no aparelho para esse jogo.");
+                move(upload, new File(dir, n));
+                return complete(c, dir, r);
+            }
+        }
+        if (upload.length() <= Consoles.MD_MAX) return null;
+        r.put("console", "ps1");
+        if (!Storage.fits(c, upload.length())) return fail(r, "Sem espaço seguro no aparelho para esse jogo.");
+        cleanPending(c);
+        move(upload, new File(Files.dir(c, "ps1-loose"), name));
+        return r.put("ok", true).put("wait", true).put("name", name);
+    }
+
+    /** Com todos os .bin, o disco vai para roms/<id>/ e entra na biblioteca. */
+    private static JSONObject complete(Context c, File dir, JSONObject r) throws Exception {
+        File cue = cueIn(dir);
+        java.util.List<String> need = cueFiles(cue);
+        int missing = 0;
+        long size = 0;
+        for (String n : need) {
+            File f = new File(dir, n);
+            if (f.isFile()) size += f.length();
+            else missing++;
+        }
+        String title = cue.getName().substring(0, cue.getName().length() - 4);
+        if (missing > 0) return r.put("ok", true).put("wait", true).put("missing", missing).put("name", displayName(title));
+        String id = dir.getName();
+        File dest = new File(Files.roms(c), id);
+        Files.delete(dest);
+        if (!dir.renameTo(dest)) return fail(r, "Não deu para guardar o jogo.");
+        JSONObject game = newGame(id, "ps1", title, false, id + "/" + cue.getName(), size, "");
+        Library.add(c, game);
+        Covers.fetchLater(c, id);
+        return r.put("ok", true).put("name", game.getString("name")).put("id", id);
+    }
+
+    /** O id do disco já guardado que tem esse .bin (mesmo nome e tamanho), ou null. */
+    static String discFileOf(Context c, String name, long size) {
+        File[] dirs = Files.roms(c).listFiles();
+        if (dirs != null) for (File d : dirs) {
+            if (!d.isDirectory() || d.getName().equals("arcade")) continue;
+            File f = findIgnoreCase(d, name);
+            if (f != null && f.length() == size) return d.getName();
+        }
+        return null;
+    }
+
+    private static File cueIn(File dir) {
+        File[] fs = dir.listFiles();
+        if (fs != null) for (File f : fs) if ("cue".equals(Consoles.extension(f.getName()))) return f;
+        return null;
+    }
+
+    private static File findIgnoreCase(File dir, String name) {
+        File[] fs = dir.listFiles();
+        if (fs != null) for (File f : fs) if (f.getName().equalsIgnoreCase(name)) return f;
+        return null;
+    }
+
+    /** Disco que ficou pela metade por mais de um dia sai, para não ocupar espaço. */
+    private static void cleanPending(Context c) {
+        long old = System.currentTimeMillis() - DAY;
+        for (String d : new String[]{"ps1-pending", "ps1-loose"}) {
+            File[] fs = Files.dir(c, d).listFiles();
+            if (fs != null) for (File f : fs) if (f.lastModified() < old) Files.delete(f);
+        }
+    }
+
+    private static JSONObject newGame(String id, String console, String title, boolean known, String file, long size, String crc) throws Exception {
+        JSONObject game = new JSONObject();
+        game.put("id", id);
+        game.put("console", console);
+        game.put("name", displayName(title));
+        game.put("title", title);
+        game.put("known", known);
+        game.put("file", file);
+        game.put("size", size);
+        game.put("crc", crc);
+        game.put("added", System.currentTimeMillis());
+        game.put("cover", false);
+        game.put("kids", false);
+        return game;
+    }
+
+    private static byte[] read(File f) throws Exception {
+        java.io.ByteArrayOutputStream b = new java.io.ByteArrayOutputStream();
+        InputStream in = new FileInputStream(f);
+        try {
+            byte[] buf = new byte[64 * 1024];
+            int n;
+            while ((n = in.read(buf)) > 0) b.write(buf, 0, n);
+        } finally {
+            in.close();
+        }
+        return b.toByteArray();
+    }
+
+    private static String sha1(String s) throws Exception {
+        return sha1Hex(s.getBytes("UTF-8"));
+    }
+
+    private static String sha1Hex(byte[] data) throws Exception {
+        StringBuilder sb = new StringBuilder();
+        for (byte b : MessageDigest.getInstance("SHA-1").digest(data)) sb.append(String.format(Locale.ROOT, "%02x", b & 0xff));
+        return sb.toString();
+    }
+
+    /** SHA-1 dos primeiros e dos últimos 4 MB e do tamanho (o CRC não serve: o banco é por faixa). */
+    private static String[] quickSums(File f) throws Exception {
+        MessageDigest sha = MessageDigest.getInstance("SHA-1");
+        java.io.RandomAccessFile raf = new java.io.RandomAccessFile(f, "r");
+        try {
+            long len = raf.length(), part = 4L * 1024 * 1024;
+            byte[] buf = new byte[(int) part];
+            raf.readFully(buf, 0, (int) Math.min(part, len));
+            sha.update(buf, 0, (int) Math.min(part, len));
+            if (len > part) {
+                raf.seek(Math.max(part, len - part));
+                int n = (int) (len - Math.max(part, len - part));
+                raf.readFully(buf, 0, n);
+                sha.update(buf, 0, n);
+            }
+            sha.update(Long.toString(len).getBytes("UTF-8"));
+        } finally {
+            raf.close();
+        }
+        StringBuilder sb = new StringBuilder();
+        for (byte b : sha.digest()) sb.append(String.format(Locale.ROOT, "%02x", b & 0xff));
+        return new String[]{sb.toString(), "", ""};
     }
 
     private static JSONObject fail(JSONObject r, String msg) {
@@ -192,7 +435,7 @@ final class Importer {
                     String line;
                     while ((line = r.readLine()) != null) {
                         int tab = line.indexOf('\t');
-                        if (tab == 8) db.put(line.substring(0, 8), line.substring(9));
+                        if (tab > 0) db.put(line.substring(0, tab), line.substring(tab + 1));
                     }
                 } finally {
                     r.close();
@@ -214,7 +457,7 @@ final class Importer {
         return s.length() > 80 ? s.substring(0, 80).trim() : s;
     }
 
-    private static boolean move(File from, File to) {
+    static boolean move(File from, File to) {
         if (from.renameTo(to)) return true;
         try {
             InputStream in = new FileInputStream(from);

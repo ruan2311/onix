@@ -21,6 +21,7 @@ final class TouchLayout {
     static final float MIN_SCALE = 0.7f, MAX_SCALE = 1.5f, MIN_OPACITY = 0.3f, MIN_SIZE = 0.5f, MAX_SIZE = 2f;
 
     float scale = 1f, opacity = 0.85f;
+    boolean stick;   // analógico no lugar da cruz
     private JSONObject pos = new JSONObject();
     /* Ajuste de um botão só ("snes.B", "0" o direcional…): {"s": tamanho, "o": opacidade}. */
     private JSONObject each = new JSONObject();
@@ -37,6 +38,7 @@ final class TouchLayout {
                 JSONObject o = new JSONObject(s);
                 t.scale = clamp((float) o.optDouble("scale", 1), MIN_SCALE, MAX_SCALE);
                 t.opacity = clamp((float) o.optDouble("opacity", 0.85), MIN_OPACITY, 1);
+                t.stick = o.optBoolean("stick");
                 JSONObject p = o.optJSONObject("pos");
                 if (p != null) t.pos = p;
                 JSONObject e = o.optJSONObject("each");
@@ -56,7 +58,7 @@ final class TouchLayout {
 
     void save(Context c) {
         try {
-            Files.write(file(c), new JSONObject().put("v", 2).put("scale", scale).put("opacity", opacity).put("pos", pos).put("each", each).toString().getBytes("UTF-8"));
+            Files.write(file(c), new JSONObject().put("v", 2).put("scale", scale).put("opacity", opacity).put("stick", stick).put("pos", pos).put("each", each).toString().getBytes("UTF-8"));
         } catch (Exception ignored) {
         }
     }

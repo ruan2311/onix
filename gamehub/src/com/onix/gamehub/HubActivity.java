@@ -94,6 +94,12 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         new Thread(new Runnable() {
             @Override
             public void run() {
+                Storage.clean(HubActivity.this, false);
+            }
+        }, "gamehub-clean").start();
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
                 Updater.get(HubActivity.this).check(false);
             }
         }, "gamehub-update").start();

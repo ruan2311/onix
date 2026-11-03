@@ -46,7 +46,7 @@ input[type=file]{display:none}
     <div class="coderow"><input id="code" inputmode="numeric" autocomplete="one-time-code" maxlength="6" pattern="[0-9]{6}"><button id="codeGo"></button></div>
     <span class="bad" id="codeErr"></span></form>
   <label class="pick" for="files" id="pickLabel"></label>
-  <input type="file" id="files" multiple accept=".nes,.unf,.unif,.fds,.sfc,.smc,.swc,.fig,.gba,.md,.gen,.smd,.bin,.zip">
+  <input type="file" id="files" multiple accept=".nes,.unf,.unif,.fds,.sfc,.smc,.swc,.fig,.gba,.gbc,.gb,.md,.gen,.smd,.bin,.zip,.chd,.pbp,.cue,.a26,.a78">
   <div class="list" id="list"></div>
   <div class="card small" id="store"></div>
   <p class="small" id="formats"></p>
@@ -57,7 +57,8 @@ input[type=file]{display:none}
 const ES = /^es\b/i.test(navigator.language || '');
 const T = ES ? {
   title: 'Manda juegos a la TV', lead: 'Elige uno o varios archivos. Llegan directo a GameHub en la TV.',
-  pick: 'Elegir archivos', formats: 'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin y .zip (NES, Super Nintendo, Game Boy Advance y Mega Drive).',
+  pick: 'Elegir archivos', formats: 'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin y .zip; PlayStation: .chd, .pbp o .cue con sus .bin (elígelos juntos); Atari: .a26 y .a78; Arcade: el .zip con el nombre del juego (como sf2.zip).',
+  waitbin: 'En la TV, esperando los .bin del disco', bios: 'BIOS guardado en la TV',
   legal: 'Usa solo juegos que tengas derecho a usar. Ningún juego viene con GameHub.',
   wait: 'En la fila', send: 'Enviando', done: 'Listo en la TV', dup: 'Ya estaba en la biblioteca', fail: 'No se pudo enviar',
   key: 'Este enlace ya no vale. En la TV, abre Agregar juegos de nuevo y lee el código QR nuevo.',
@@ -65,7 +66,8 @@ const T = ES ? {
   store: 'Libre para juegos en la TV: {a}', net: 'Se perdió la conexión con la TV. ¿El celular sigue en el mismo Wi-Fi?',
 } : {
   title: 'Mande jogos para a TV', lead: 'Escolha um ou vários arquivos. Eles vão direto para o GameHub na TV.',
-  pick: 'Escolher arquivos', formats: 'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip (NES, Super Nintendo, Game Boy Advance e Mega Drive).',
+  pick: 'Escolher arquivos', formats: 'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .chd, .pbp ou .cue com os .bin dele (escolha juntos); Atari: .a26 e .a78; Fliperama: o .zip com o nome do jogo (como sf2.zip).',
+  waitbin: 'Na TV, esperando os .bin do disco', bios: 'BIOS guardada na TV',
   legal: 'Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.',
   wait: 'Na fila', send: 'Enviando', done: 'Pronto na TV', dup: 'Já estava na biblioteca', fail: 'Não deu para enviar',
   key: 'Este link não vale mais. Na TV, abra Adicionar jogos de novo e leia o QR code novo.',
@@ -75,6 +77,9 @@ const T = ES ? {
 // Mensagens que vêm da TV (em português) e a tradução para o espanhol.
 const ERR_ES = {
   'Esse tipo de arquivo não é de NES, SNES, GBA ou Mega Drive.': 'Ese tipo de archivo no es de NES, SNES, GBA o Mega Drive.',
+  'Esse tipo de arquivo não é de nenhum console do GameHub.': 'Ese tipo de archivo no es de ninguna consola de GameHub.',
+  'O .zip não tem nenhum jogo que o GameHub conheça. No fliperama, o nome do .zip tem que ser o do jogo, como sf2.zip.': 'El .zip no tiene ningún juego que GameHub conozca. En arcade, el nombre del .zip tiene que ser el del juego, como sf2.zip.',
+  'Esse .cue não diz quais arquivos .bin são do disco.': 'Ese .cue no dice qué archivos .bin son del disco.',
   'O .zip não tem nenhum jogo de NES, SNES, GBA, GBC, Mega Drive, N64 ou DS.': 'El .zip no tiene ningún juego de NES, SNES, GBA, GBC, Mega Drive, N64 o DS.',
   'O arquivo não parece um jogo desse console.': 'El archivo no parece un juego de esa consola.',
   'Sem espaço seguro no aparelho para esse jogo.': 'No hay espacio seguro en el dispositivo para ese juego.',
@@ -123,7 +128,9 @@ if (KEY) info(); else askCode();
 const queue = [];
 let busy = false;
 $('#files').addEventListener('change', e => {
-  for (const f of e.target.files) queue.push(row(f));
+  // O .cue antes dos .bin: o .bin pequeno de um disco não vira jogo de Mega Drive na TV.
+  const files = [...e.target.files].sort((a, b) => /\.cue$/i.test(b.name) - /\.cue$/i.test(a.name));
+  for (const f of files) queue.push(row(f));
   e.target.value = '';
   next();
 });
@@ -150,7 +157,7 @@ function next() {
     let r = {};
     try { r = JSON.parse(x.responseText); } catch (_) { }
     if (x.status === 403) { st.className = 'err'; st.textContent = T.key; }
-    else if (r.ok) { st.className = 'ok'; st.textContent = r.dup ? T.dup : T.done; el.querySelector('b').textContent = r.name || f.name; bar.style.width = '100%'; }
+    else if (r.ok) { st.className = 'ok'; st.textContent = r.dup ? T.dup : r.wait ? T.waitbin : r.bios ? T.bios : T.done; el.querySelector('b').textContent = r.name || f.name; bar.style.width = '100%'; }
     else { st.className = 'err'; st.textContent = err(r.error) || T.fail; }
     el.querySelector('.bar').style.display = r.ok ? 'none' : '';
     busy = false; info(); next();

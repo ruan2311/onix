@@ -43,6 +43,9 @@ final class HubBridge {
             o.put("mobile", Device.mobile(a));
             o.put("gamepadUrl", a.gamepadUrl());
             o.put("gamepadClients", a.gamepadClients());
+            org.json.JSONArray consoles = new org.json.JSONArray();
+            for (Consoles.Console c : Consoles.ALL) consoles.put(c.id);
+            o.put("consoles", consoles);
             return o.toString();
         } catch (Exception e) {
             return "{}";
@@ -124,7 +127,14 @@ final class HubBridge {
 
     @JavascriptInterface
     public boolean remove(String id) {
-        return !a.kids && id(id) && Library.remove(a, id);
+        if (a.kids || !id(id) || !Library.remove(a, id)) return false;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Storage.clean(a, false);
+            }
+        }, "gamehub-clean").start();
+        return true;
     }
 
     @JavascriptInterface
@@ -204,6 +214,12 @@ final class HubBridge {
     @JavascriptInterface
     public String storage() {
         return Storage.info(a).toString();
+    }
+
+    /** Botão do Armazenamento: apaga as sobras (também os discos .cue à espera) e diz quanto liberou. */
+    @JavascriptInterface
+    public long cleanStorage() {
+        return a.kids ? 0 : Storage.clean(a, true);
     }
 
     @JavascriptInterface

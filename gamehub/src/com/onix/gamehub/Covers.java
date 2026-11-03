@@ -174,10 +174,11 @@ final class Covers {
 
     /** A caixa do jogo pelo nome exato ou, sem ela, pelo nome parecido (findByName). */
     private static byte[] boxart(Consoles.Console console, JSONObject game) throws Exception {
-        String dir = HOST + enc(console.thumbs) + "/Named_Boxarts/";
+        String thumbs = console.thumbsFor(game.optString("file"));
+        String dir = HOST + enc(thumbs) + "/Named_Boxarts/";
         byte[] png = download(dir + enc(safe(game.optString("title"))) + ".png");
         if (png != null) return png;
-        String other = findByName(console, game);
+        String other = findByName(thumbs, game);
         return other == null ? null : download(dir + enc(other) + ".png");
     }
 
@@ -194,10 +195,10 @@ final class Covers {
     private static final Pattern REGION = Pattern.compile("\\(([^)]*)\\)");
     private static final String[] REGIONS = {"usa", "world", "europe", "brazil", "japan"};
 
-    private static List<String> listOf(Consoles.Console console) throws Exception {
-        List<String> names = LISTS.get(console.id);
+    private static List<String> listOf(String thumbs) throws Exception {
+        List<String> names = LISTS.get(thumbs);
         if (names != null) return names;
-        byte[] html = download(HOST + enc(console.thumbs) + "/Named_Boxarts/", LIST_BYTES);
+        byte[] html = download(HOST + enc(thumbs) + "/Named_Boxarts/", LIST_BYTES);
         if (html == null) return null;
         names = new ArrayList<String>();
         Matcher m = HREF.matcher(new String(html, "UTF-8"));
@@ -208,7 +209,7 @@ final class Covers {
             } catch (Exception ignored) {
             }
         }
-        LISTS.put(console.id, names);
+        LISTS.put(thumbs, names);
         return names;
     }
 
@@ -224,8 +225,8 @@ final class Covers {
     }
 
     /** A melhor capa com o mesmo nome: a mesma região do jogo, depois EUA, Mundo, Europa, Brasil, Japão. */
-    private static String findByName(Consoles.Console console, JSONObject game) throws Exception {
-        List<String> names = listOf(console);
+    private static String findByName(String thumbs, JSONObject game) throws Exception {
+        List<String> names = listOf(thumbs);
         if (names == null) return null;
         String title = game.optString("title");
         Set<String> keys = new HashSet<String>();

@@ -5,7 +5,7 @@ window.OnixPad = (function () {
   const RB = { B: 0, Y: 1, SELECT: 2, START: 3, UP: 4, DOWN: 5, LEFT: 6, RIGHT: 7, A: 8, X: 9, L: 10, R: 11 };
   const ROUND = 0, PILL = 1, MENU = 2, FAST = 3;
   const G_DPAD = 0, G_L = 1, G_R = 2, G_SELECT = 3, G_START = 4, G_MENU = 5, G_FAST = 6, G_FACE = 7;
-  const T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17;
+  const T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17, T_STICK = -18;
   const MIN_SCALE = 0.7, MAX_SCALE = 1.5, MIN_OPACITY = 0.25, MIN_SIZE = 0.6, MAX_SIZE = 1.8;
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
   const round1 = v => Math.round(v * 10) / 10;
@@ -39,6 +39,7 @@ window.OnixPad = (function () {
     try { o = JSON.parse(text || '{}') || {}; } catch (_) { o = {}; }
     this.port = defaultSide();
     this.land = defaultSide();
+    this.stick = o.stick === true;   // analógico no lugar da cruz (vale para retrato e paisagem)
 
     if (o.v === 4 && (o.portrait || o.landscape)) {
       if (o.portrait) {
@@ -64,6 +65,7 @@ window.OnixPad = (function () {
     text() {
       return JSON.stringify({
         v: 4,
+        stick: this.stick,
         portrait: this.port,
         landscape: this.land
       });
@@ -159,6 +161,9 @@ window.OnixPad = (function () {
       this.dpadX = 0;
       this.dpadY = 0;
       this.dpadR = 0;
+      this.stickPtr = -1;   // o dedo que está no analógico (segue mesmo saindo do círculo)
+      this.knobX = 0;
+      this.knobY = 0;
       this.landscape = false;
       this.raf = 0;
 
@@ -181,6 +186,22 @@ window.OnixPad = (function () {
         add(this.face, 'A', RB.A, gba, 1, ROUND, G_FACE + 1,  0.80, -0.40, 1.15);
         add(this.shoulders, 'L', RB.L, gba, 1, PILL, G_L, -1, 0, 1);
         add(this.shoulders, 'R', RB.R, gba, 1, PILL, G_R,  1, 0, 1);
+      } else if (this.console === 'ps1' || this.console === 'arcade') {
+        // PS1: △ ○ ✕ □ e L1/R1; fliperama: botões 1 a 4 em losango, 5 e 6 em cima e a ficha no Select
+        const ps = this.console === 'ps1', c = ps ? 0x34D399 : 0xE879F9;
+        this.accent = c;
+        add(this.face, ps ? '△' : '4', RB.X, ps ? 0x34D399 : c, 1, ROUND, G_FACE + 0,  0.00, -1.05, 1.0);
+        add(this.face, ps ? '○' : '2', RB.A, ps ? 0xFF5A6E : c, 1, ROUND, G_FACE + 1,  1.05,  0.00, 1.0);
+        add(this.face, ps ? '✕' : '1', RB.B, ps ? 0x38BDF8 : c, 1, ROUND, G_FACE + 2,  0.00,  1.05, 1.0);
+        add(this.face, ps ? '□' : '3', RB.Y, ps ? 0xF472B6 : c, 1, ROUND, G_FACE + 3, -1.05,  0.00, 1.0);
+        add(this.shoulders, ps ? 'L1' : '5', RB.L, c, 1, PILL, G_L, -1, 0, 1);
+        add(this.shoulders, ps ? 'R1' : '6', RB.R, c, 1, PILL, G_R,  1, 0, 1);
+        if (!ps) sel = 'FICHA';
+      } else if (this.console === 'atari' || this.console === 'gbc') {
+        const c = this.console === 'atari' ? 0xF97316 : 0xC084FC;
+        this.accent = c;
+        add(this.face, this.console === 'atari' ? '●' : 'B', RB.B, c, 1, ROUND, G_FACE + 0, -0.95, 0.00, 1.15);
+        add(this.face, this.console === 'atari' ? '2' : 'A', RB.A, c, 1, ROUND, G_FACE + 1,  0.95, 0.00, 1.15);
       } else if (this.six) {
         this.accent = md;
         // Mega Drive: grade 2x3 limpa e alinhada (X, Y, Z acima de A, B, C)
@@ -214,7 +235,8 @@ window.OnixPad = (function () {
       add(this.tools, '', T_ALPHA, t, 1, PILL, -1, 4, 0, 1.6);
       add(this.tools, '+', T_MORE, t, 1, PILL, -1, 5, 0, 0.6);
       add(this.tools, '', T_RESET, t, 1, PILL, -1, 6, 1, 2.2);
-      add(this.tools, '', T_DONE, cyan, 1, PILL, -1, 7, 1, 1.4);
+      add(this.tools, '', T_STICK, t, 1, PILL, -1, 7, 1, 2.2);
+      add(this.tools, '', T_DONE, cyan, 1, PILL, -1, 8, 1, 1.4);
 
       this.destroyed = false;
       this._boundPointer = ev => this.onPointer(ev);
@@ -457,12 +479,20 @@ window.OnixPad = (function () {
     /* ---------------- Editor ---------------- */
     setEditing(on) {
       this.editing = on; this.dragGroup = -1; this.selected = -1;
+      this.stickPtr = -1; this.knobX = this.knobY = 0;
       this.pointers.clear();
       this.update();
       this.invalidate();
     }
 
     tool(id) {
+      if (id === T_STICK) {
+        this.layout.stick = !this.layout.stick;
+        this.stickPtr = -1; this.knobX = this.knobY = 0;
+        this.save();
+        this.invalidate();
+        return;
+      }
       const step = id === T_BIGGER || id === T_MORE ? 0.1 : -0.1, L = this.layout, land = this.landscape;
       if (this.selected >= 0 && id !== T_DONE) {
         const k = this.key(this.selected);
@@ -574,7 +604,7 @@ window.OnixPad = (function () {
     }
 
     name(group) {
-      if (group === G_DPAD) return this.es ? 'Cruceta' : 'Direcional';
+      if (group === G_DPAD) return this.layout.stick ? (this.es ? 'Analógico' : 'Analógico') : this.es ? 'Cruceta' : 'Direcional';
       if (group === G_MENU) return 'Menu';
       const b = this.all.find(x => x.group === group);
       return b ? b.label : '';
@@ -613,13 +643,14 @@ window.OnixPad = (function () {
         else if (b.bit === T_ALPHA) b.label = (this.es ? 'Opacidad ' : 'Opacidade ') + Math.round((one ? L.opacityOf(land, k) : L.opacity(land)) * 100) + '%';
         else if (b.bit === T_RESET) b.label = one ? 'Restaurar ' + this.name(this.selected) : 'Restaurar';
         else if (b.bit === T_DONE) b.label = this.es ? 'Listo' : 'Concluir';
+        else if (b.bit === T_STICK) b.label = this.layout.stick ? (this.es ? 'Usar cruceta' : 'Usar cruz') : (this.es ? 'Usar analógico' : 'Usar analógico');
 
         const x = b.cx - b.w / 2, y = b.cy - b.h / 2, info = b.bit === T_SIZE || b.bit === T_ALPHA;
         g.fillStyle = 'rgba(14,8,32,.92)';
         drawRoundRect(g, x, y, b.w, b.h, b.h / 2);
         g.fill();
 
-        const col = one && b.bit !== T_DONE ? 0x3DE1FF : b.color;
+        const col = one && b.bit !== T_DONE && b.bit !== T_STICK ? 0x3DE1FF : b.color;
         this.stroke(col, info ? (one ? 0.65 : 0.3) : 0.85, 1.6);
         g.stroke();
 
@@ -632,7 +663,49 @@ window.OnixPad = (function () {
       }
     }
 
+    /* Analógico: base redonda e a bolinha que segue o dedo. Manda as mesmas 8 direções da cruz. */
+    drawStick(base) {
+      const g = this.g, r = this.dpadR, X = this.dpadX, Y = this.dpadY, ac = this.accent, on = this.stickPtr !== -1;
+      g.beginPath();
+      g.arc(X, Y, r, 0, Math.PI * 2);
+      g.fillStyle = 'rgba(255,255,255,0.06)';
+      g.fill();
+      this.stroke(ac, base, 2.4);
+      g.stroke();
+      // Marcas das 4 direções, acesas na direção apertada
+      const t = r * 0.12, o = r * 0.82;
+      for (const [dx, dy, bit] of [[0, -1, RB.UP], [0, 1, RB.DOWN], [-1, 0, RB.LEFT], [1, 0, RB.RIGHT]]) {
+        g.fillStyle = this.dpadBits & (1 << bit) ? '#FFFFFF' : hexA(ac, base * 0.7);
+        this.arrow(X + dx * o, Y + dy * o, dx, dy, t);
+      }
+      const kx = X + this.knobX, ky = Y + this.knobY, kr = r * 0.44;
+      g.beginPath();
+      g.arc(kx, ky, kr, 0, Math.PI * 2);
+      g.fillStyle = hexA(ac, on ? 0.5 : 0.22);
+      g.fill();
+      this.stroke(ac, on ? 1 : base, 2.2);
+      g.stroke();
+      this.stroke(ac, base * 0.45, 1.6);
+      g.beginPath();
+      g.arc(kx, ky, kr * 0.6, 0, Math.PI * 2);
+      g.stroke();
+    }
+
+    /* Direção do analógico: zona morta no meio e 8 fatias de 45°, como a cruz. */
+    stickAt(x, y) {
+      const R = this.dpadR, dx = x - this.dpadX, dy = y - this.dpadY, dist = Math.hypot(dx, dy), max = R * 0.56;
+      const k = dist > max ? max / dist : 1;
+      this.knobX = dx * k; this.knobY = dy * k;
+      this.invalidate();
+      if (dist < R * 0.22) return 0;
+      const DIRS = [[RB.RIGHT], [RB.RIGHT, RB.DOWN], [RB.DOWN], [RB.DOWN, RB.LEFT], [RB.LEFT], [RB.LEFT, RB.UP], [RB.UP], [RB.UP, RB.RIGHT]];
+      let out = 0;
+      for (const bit of DIRS[(Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) + 8) % 8]) out |= 1 << bit;
+      return out | (1 << 30);
+    }
+
     drawDpad(base) {
+      if (this.layout.stick) { this.drawStick(base); return; }
       const g = this.g, r = this.dpadR, a = r * 0.34, X = this.dpadX, Y = this.dpadY, ac = this.accent;
 
       // 1. Caminho em cruz do direcional
@@ -744,6 +817,10 @@ window.OnixPad = (function () {
       if (this.editing) { this.editPointer(e, x, y); return; }
 
       const id = e.pointerId;
+      if ((e.type === 'pointercancel' || e.type === 'pointerup') && id === this.stickPtr) {
+        this.stickPtr = -1; this.knobX = this.knobY = 0;
+        this.invalidate();
+      }
       if (e.type === 'pointercancel') {
         this.pointers.delete(id);
       } else if (e.type === 'pointerup') {
@@ -751,6 +828,13 @@ window.OnixPad = (function () {
         this.pointers.delete(id);
       } else {
         if (e.type === 'pointermove' && !this.pointers.has(id) && e.pointerType === 'mouse') return;
+        if (this.layout.stick && (id === this.stickPtr ||
+            (e.type === 'pointerdown' && this.stickPtr === -1 && Math.hypot(x - this.dpadX, y - this.dpadY) <= this.dpadR * 1.25))) {
+          this.stickPtr = id;
+          this.pointers.set(id, this.stickAt(x, y));
+          this.update();
+          return;
+        }
         let t = this.target(x, y);
         if (t === -1 && e.type === 'pointermove' && this.pointers.get(id) !== -1) t = 0;
         this.pointers.set(id, t);
@@ -773,7 +857,7 @@ window.OnixPad = (function () {
         if (d < bestD) { bestD = d; best = b; }
       }
 
-      if (dist <= R || (!best && dist <= R * 1.35)) {
+      if (!this.layout.stick && (dist <= R || (!best && dist <= R * 1.35))) {
         if (dist < R * 0.16) return 0;
         let out = 0;
         if (dy < -0.38 * dist) out |= 1 << RB.UP;
@@ -805,6 +889,7 @@ window.OnixPad = (function () {
     }
 
     release() {
+      this.stickPtr = -1; this.knobX = this.knobY = 0;
       this.pointers.clear();
       this.update();
     }

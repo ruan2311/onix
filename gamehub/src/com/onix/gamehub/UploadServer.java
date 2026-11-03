@@ -40,7 +40,19 @@ final class UploadServer {
     }
 
     private static final int PORT = 8770, MAX_CONN = 4, MAX_HEADER = 8 * 1024;
-    private static final long MAX_UPLOAD = 64L * 1024 * 1024;
+    /** Um disco de PS1 (.bin ou .chd) ou um fliperama grande cabe; o Storage confere o espaço. */
+    static final long MAX_UPLOAD = 1200L * 1024 * 1024;
+
+    /** O .cue antes dos .bin, para o .bin pequeno de um disco não virar jogo de Mega Drive. */
+    static void cueFirst(java.util.List<Object[]> files) {
+        java.util.Collections.sort(files, new java.util.Comparator<Object[]>() {
+            @Override
+            public int compare(Object[] a, Object[] b) {
+                boolean ca = "cue".equals(Consoles.extension((String) a[1])), cb = "cue".equals(Consoles.extension((String) b[1]));
+                return ca == cb ? 0 : ca ? -1 : 1;
+            }
+        });
+    }
 
     private final Context ctx;
     private final Host host;
@@ -221,7 +233,7 @@ final class UploadServer {
         }
         boolean zip = "zip".equals(Consoles.extension(name));
         if (!zip && Consoles.byExtension(name) == null) {
-            json(c, 415, new JSONObject().put("ok", false).put("name", name).put("error", "Esse tipo de arquivo não é de NES, SNES, GBA ou Mega Drive.").toString());
+            json(c, 415, new JSONObject().put("ok", false).put("name", name).put("error", "Esse tipo de arquivo não é de nenhum console do GameHub.").toString());
             return;
         }
         if (length <= 0 || length > MAX_UPLOAD) {
@@ -236,6 +248,7 @@ final class UploadServer {
         File tmp = new File(Files.dir(ctx, "incoming"), Long.toHexString(random.nextLong()) + ".part");
         OutputStream o = new FileOutputStream(tmp);
         long got = 0, lastEvent = 0;
+        boolean done = false;
         try {
             byte[] buf = new byte[64 * 1024];
             while (got < length) {
@@ -249,8 +262,11 @@ final class UploadServer {
                     host.event(new JSONObject().put("type", "progress").put("name", name).put("size", length).put("sent", got));
                 }
             }
+            done = true;
         } finally {
             o.close();
+            // A conexão caiu (a tela do celular apagou, o Wi-Fi oscilou): o pedaço recebido não fica.
+            if (!done) tmp.delete();
         }
         if (got != length) {
             tmp.delete();

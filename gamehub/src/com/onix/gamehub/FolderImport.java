@@ -25,7 +25,7 @@ import java.util.List;
 final class FolderImport {
 
     private static final int MAX_DEPTH = 4, MAX_FILES = 500;
-    private static final long MAX_SIZE = 64L * 1024 * 1024;
+    private static final long MAX_SIZE = UploadServer.MAX_UPLOAD;
 
     private FolderImport() {
     }
@@ -99,6 +99,7 @@ final class FolderImport {
     }
 
     private static void importAll(Context ctx, List<Object[]> files, UploadServer.Host host) {
+        UploadServer.cueFirst(files);
         emit(host, new JSONObjectBuilder().put("type", "scan").put("count", files.size()).o);
         for (Object[] f : files) {
             Uri uri = (Uri) f[0];
@@ -109,7 +110,9 @@ final class FolderImport {
             File tmp = new File(ctx.getCacheDir(), "import-" + System.nanoTime());
             try {
                 if (!supported(name)) {
-                    r = new JSONObject().put("ok", false).put("error", "Esse tipo de arquivo não é de NES, SNES, GBA ou Mega Drive.");
+                    r = new JSONObject().put("ok", false).put("error", "Esse tipo de arquivo não é de nenhum console do GameHub.");
+                } else if ("bin".equals(Consoles.extension(name)) && size > Consoles.MD_MAX && Importer.discFileOf(ctx, name, size) != null) {
+                    r = new JSONObject().put("ok", true).put("dup", true).put("console", "ps1");   // faixa de um disco que já está aqui: não copia de novo
                 } else if (size > MAX_SIZE) {
                     r = new JSONObject().put("ok", false).put("error", "Arquivo grande demais.");
                 } else if (!copy(ctx, uri, tmp)) {

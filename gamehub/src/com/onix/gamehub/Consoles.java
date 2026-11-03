@@ -2,7 +2,7 @@ package com.onix.gamehub;
 
 import java.util.Locale;
 
-/** Os 4 consoles do GameHub: núcleo, extensões, banco de nomes e pasta das capas do libretro. */
+/** Os consoles do GameHub: núcleo, extensões, banco de nomes e pasta das capas do libretro. */
 final class Consoles {
 
     static final class Console {
@@ -13,6 +13,9 @@ final class Consoles {
         /** Tamanho máximo de uma ROM desse console. */
         final long maxBytes;
 
+        /** Núcleo e pasta das capas próprios de uma extensão (o Atari 7800 no console Atari). */
+        String altExt, altCore, altThumbs;
+
         Console(String id, String name, String core, String thumbs, String[] ext, int[] buttons, long maxBytes) {
             this.id = id;
             this.name = name;
@@ -21,6 +24,21 @@ final class Consoles {
             this.ext = ext;
             this.buttons = buttons;
             this.maxBytes = maxBytes;
+        }
+
+        Console alt(String ext, String core, String thumbs) {
+            altExt = ext;
+            altCore = core;
+            altThumbs = thumbs;
+            return this;
+        }
+
+        String coreFor(String file) {
+            return altExt != null && altExt.equals(extension(file)) ? altCore : core;
+        }
+
+        String thumbsFor(String file) {
+            return altExt != null && altExt.equals(extension(file)) ? altThumbs : thumbs;
         }
     }
 
@@ -39,7 +57,25 @@ final class Consoles {
             new Console("md", "Mega Drive", "gpgx", "Sega - Mega Drive - Genesis",
                     new String[]{"md", "gen", "smd", "bin"},
                     new int[]{Native.B, Native.A, Native.Y, Native.X, Native.L, Native.R, Native.START, Native.SELECT}, 10 * MB),
+            new Console("gbc", "Game Boy Color", "mgba", "Nintendo - Game Boy Color",
+                    new String[]{"gbc", "gb"},
+                    new int[]{Native.A, Native.B, Native.SELECT, Native.START}, 9 * MB),
+            // Discos: .chd e .pbp num arquivo só, ou o .cue com os .bin dele (Importer.cue).
+            new Console("ps1", "PlayStation", "pcsx_rearmed", "Sony - PlayStation",
+                    new String[]{"chd", "pbp", "cue"},
+                    new int[]{Native.B, Native.A, Native.Y, Native.X, Native.L, Native.R, Native.L2, Native.R2, Native.SELECT, Native.START}, 1024 * MB),
+            new Console("atari", "Atari", "stella2014", "Atari - 2600",
+                    new String[]{"a26", "a78"},
+                    new int[]{Native.B, Native.A, Native.SELECT, Native.START}, 1 * MB)
+                    .alt("a78", "prosystem", "Atari - 7800"),
+            // .zip com o nome do romset (sf2.zip), guardado como veio em roms/arcade (Importer.arcade).
+            new Console("arcade", "Fliperama", "fbneo", "FBNeo - Arcade Games",
+                    new String[]{},
+                    new int[]{Native.B, Native.A, Native.Y, Native.X, Native.L, Native.R, Native.SELECT, Native.START}, 1024 * MB),
     };
+
+    /** Um .bin pequeno é do Mega Drive; os maiores são faixas de um disco de PS1 (com o .cue). */
+    static final long MD_MAX = 10 * MB;
 
     private Consoles() {
     }

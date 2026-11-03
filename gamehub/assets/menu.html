@@ -64,7 +64,7 @@ function header() {
 
 function message() {
   if (reason === 'disconnected') return h('div', { class: 'msg' }, h('b', { text: t('O controle desconectou') }), h('span', { text: t('Reconecte o controle ou continue com outro.') }));
-  if (reason === 'error' || INFO.failed) return h('div', { class: 'msg' }, h('b', { text: t('Não deu para abrir este jogo') }), h('span', { text: t('O arquivo pode estar corrompido ou ser de outra versão do console.') }));
+  if (reason === 'error' || INFO.failed) return h('div', { class: 'msg' }, h('b', { text: t('Não deu para abrir este jogo') }), h('span', { text: INFO.console === 'arcade' ? t('Ele pode precisar de outro .zip na mesma pasta: o do jogo principal (nas variações) ou o da BIOS, como neogeo.zip. Mande esse arquivo também.') : t('O arquivo pode estar corrompido ou ser de outra versão do console.') }));
   return null;
 }
 

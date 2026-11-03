@@ -428,6 +428,7 @@ static void core_log(enum retro_log_level level, const char *fmt, ...) {
 }
 
 static bool fast_forwarding;
+static unsigned rotation;   /* em passos de 90° no sentido anti-horário (RETRO_ENVIRONMENT_SET_ROTATION) */
 
 static bool environment(unsigned cmd, void *data) {
     switch (cmd) {
@@ -515,7 +516,10 @@ static bool environment(unsigned cmd, void *data) {
         case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
         case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS:
         case RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE:
+            return true;
         case RETRO_ENVIRONMENT_SET_ROTATION:
+            /* Fliperamas de tela em pé (FBNeo): gira a imagem ao desenhar */
+            rotation = *(const unsigned *)data & 3;
             return true;
         case RETRO_ENVIRONMENT_SET_MESSAGE: {
             const struct retro_message *m = data;
@@ -798,14 +802,17 @@ static void draw(void) {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-    /* Proporção da imagem */
+    /* Proporção da imagem; girada, a largura da tela vira a altura do quadro */
+    bool turned = rotation & 1;
+    unsigned fw = turned ? frame_h : frame_w, fh = turned ? frame_w : frame_h;
     double aspect;
     switch (aspect_mode) {
         case 1: aspect = 4.0 / 3.0; break;
-        case 2: aspect = (double)frame_w / frame_h; break;
+        case 2: aspect = (double)fw / fh; break;
         case 3: aspect = 16.0 / 9.0; break;
         default: aspect = av.geometry.aspect_ratio > 0 ? av.geometry.aspect_ratio : (double)frame_w / frame_h;
     }
+    if (turned && aspect > 1) aspect = 1 / aspect;   /* monitor em pé: 3:4 */
     double w, h;
     if (scale_mode == 2) {
         w = view_w; h = view_h;
@@ -815,13 +822,16 @@ static void draw(void) {
         if (w > view_w) { w = view_w; h = w / aspect; }
         if (scale_mode == 1) {
             /* Inteiro na altura (a largura segue a proporção) */
-            int k = (int)(h / frame_h);
-            if (k >= 1) { h = k * (double)frame_h; w = h * aspect; }
+            int k = (int)(h / fh);
+            if (k >= 1) { h = k * (double)fh; w = h * aspect; }
             if (w > view_w) { w = view_w; h = w / aspect; }
         }
     }
     float x = (float)(w / view_w), y = (float)(h / view_h);
-    float quad[] = {-x, -y, 0, 1,  x, -y, 1, 1,  -x, y, 0, 0,  x, y, 1, 0};
+    /* Cantos da tela (baixo-esq., baixo-dir., cima-dir., cima-esq.) e o canto da imagem em cada um */
+    static const float uv[4][2] = {{0, 1}, {1, 1}, {1, 0}, {0, 0}};
+    const float *bl = uv[(4 - rotation) & 3], *br = uv[(5 - rotation) & 3], *tr = uv[(6 - rotation) & 3], *tl = uv[(7 - rotation) & 3];
+    float quad[] = {-x, -y, bl[0], bl[1],  x, -y, br[0], br[1],  -x, y, tl[0], tl[1],  x, y, tr[0], tr[1]};
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STREAM_DRAW);
 
@@ -831,7 +841,10 @@ static void draw(void) {
     GLint loc = glGetUniformLocation(p, "uTexSize");
     if (loc >= 0) glUniform2f(loc, (float)frame_w, (float)frame_h);
     loc = glGetUniformLocation(p, "uScale");
-    if (loc >= 0) glUniform2f(loc, fmaxf(1.0f, floorf((float)(w / frame_w))), fmaxf(1.0f, floorf((float)(h / frame_h))));
+    if (loc >= 0) {
+        double sw = turned ? h : w, sh = turned ? w : h;   /* tamanho na tela de cada eixo do quadro */
+        glUniform2f(loc, fmaxf(1.0f, floorf((float)(sw / frame_w))), fmaxf(1.0f, floorf((float)(sh / frame_h))));
+    }
     loc = glGetUniformLocation(p, "uOut");
     if (loc >= 0) glUniform2f(loc, (float)w, (float)h);
     glEnableVertexAttribArray(0);
@@ -950,6 +963,7 @@ JNI(jboolean, load)(JNIEnv *env, jclass c, jstring jcore, jstring jrom, jstring 
     if (loaded) return JNI_FALSE;
     char *path = jstr(env, jcore), *rom = jstr(env, jrom), *sys = jstr(env, jsys), *sav = jstr(env, jsave);
     snprintf(system_dir, sizeof(system_dir), "%s", sys);
+    rotation = 0;
     snprintf(save_dir, sizeof(save_dir), "%s", sav);
     language = (unsigned)lang;
     bool ok = false;

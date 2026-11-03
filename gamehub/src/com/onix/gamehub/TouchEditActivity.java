@@ -18,8 +18,8 @@ import android.widget.TextView;
  */
 public class TouchEditActivity extends Activity {
 
-    private static final String[] CONSOLES = {"nes", "snes", "gba", "md"};
-    private static final String[] NAMES = {"NES", "SNES", "GBA", "Mega Drive"};
+    private static final String[] CONSOLES = {"nes", "snes", "gba", "gbc", "md", "ps1", "atari", "arcade"};
+    private static final String[] NAMES = {"NES", "SNES", "GBA", "Game Boy Color", "Mega Drive", "PlayStation", "Atari", "Fliperama"};
     private static final int[] COLORS = {0xFFFF5A6E, 0xFFA78BFA, 0xFF38BDF8, 0xFFFBBF24};
 
     private FrameLayout root;

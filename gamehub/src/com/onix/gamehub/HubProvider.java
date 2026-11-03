@@ -26,6 +26,7 @@ public class HubProvider extends ContentProvider {
 
     static final String PERMISSION = "com.onix.gamehub.permission.HUB";
     private static final int THUMB_W = 240;
+    private static final java.util.List<String> FIRST = java.util.Arrays.asList("nes", "snes", "gba", "md");
 
     @Override
     public boolean onCreate() {
@@ -41,11 +42,16 @@ public class HubProvider extends ContentProvider {
         try {
             String profile = Files.profile(arg);
             boolean kids = extras != null && extras.getBoolean("kids");
+            // O Onix 16.4.2 e mais velhos só conhecem os 4 primeiros consoles e quebram a aba Jogos com um
+            // jogo de PS1 nos recentes. O Onix novo pede todos.
+            boolean allConsoles = extras != null && extras.getBoolean("allConsoles");
             JSONObject o = new JSONObject();
             o.put("version", getContext().getPackageManager().getPackageInfo(getContext().getPackageName(), 0).versionName);
             JSONArray recent = new JSONArray();
-            List<JSONObject> list = Library.recent(getContext(), profile, kids, 6);
+            List<JSONObject> list = Library.recent(getContext(), profile, kids, allConsoles ? 6 : 40);
             for (JSONObject g : list) {
+                if (!allConsoles && !FIRST.contains(g.optString("console"))) continue;
+                if (recent.length() == 6) break;
                 String id = g.optString("id");
                 JSONObject r = new JSONObject();
                 r.put("id", id);
