@@ -2,6 +2,10 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 16.4.2 (novembro de 2026)
+
+- **Controle pelo iPhone:** no iPhone e iPad, o Onix Controle funciona só como controle do Cobalt GameHub (o Safari não deixa um site controlar a TV). Os textos em **Configurações → Controle pelo celular** e na aba **Jogos** agora explicam o caminho certo, e o endereço embaixo do QR code do controle mostra para onde ele leva de verdade.
+
 ## 16.4.1 (outubro de 2026)
 
 - **Atualizador do Cobalt GameHub:** o Onix agora instala e atualiza o emulador diretamente do repositório oficial [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) com o pacote `cobalt-gamehub.apk`.

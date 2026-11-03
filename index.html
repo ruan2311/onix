@@ -1392,7 +1392,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '16.4.1'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '16.4.2'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1642,6 +1642,7 @@ const ES = Object.freeze({
   "Correção": "Ajuste",
   "Bug": "Error",
   "outubro de 2026": "octubre de 2026",
+  "novembro de 2026": "noviembre de 2026",
   "Flutuar": "Flotar",
   "Esmaecer": "Desvanecer",
   "desconhecido": "desconocido",
@@ -1912,11 +1913,12 @@ const ES = Object.freeze({
   "para fechar": "para cerrar",
   "Aponte a câmera do celular para o código QR para baixar o Onix Controle.": "Apunta la cámara del celular al código QR para descargar Onix Controle.",
   "Jogue seus clássicos no Onix GameHub usando o celular como controle 100% personalizável, ou jogue pelo navegador sem instalar nada durante a partida.": "Juega a tus clásicos en Onix GameHub usando el celular como control 100% personalizable, o juega desde el navegador sin instalar nada durante la partida.",
-  "Tem iPhone ou iPad? Acesse projectgems.github.io/onix/controle e adicione à Tela de Início.": "¿Tienes iPhone o iPad? Accede a projectgems.github.io/onix/controle y agrégalo a la pantalla de inicio.",
-  "Aponte a câmera do celular (Android) para o código para baixar o app, ou acesse no iPhone: projectgems.github.io/onix/controle": "Apunta la cámara del celular (Android) al código para descargar la app, o accede en iPhone a: projectgems.github.io/onix/controle",
-  "No iPhone ou iPad: acesse projectgems.github.io/onix/controle no Safari e adicione à Tela de Início.": "En iPhone o iPad: accede a projectgems.github.io/onix/controle en Safari y agrégalo a la pantalla de inicio.",
-  "No Android: app para celular. No iPhone ou iPad: acesse projectgems.github.io/onix/controle no Safari e adicione à Tela de Início.": "En Android: app para celular. En iPhone o iPad: accede a projectgems.github.io/onix/controle en Safari y agrégalo a la pantalla de inicio.",
-  "Mostra o QR code para baixar no celular o app que controla a TV inteira. No iPhone e iPad, acesse projectgems.github.io/onix/controle.": "Muestra el código QR para descargar en el celular la app que controla toda la TV. En iPhone y iPad, accede a projectgems.github.io/onix/controle.",
+  "*Controle pelo iPhone:* no iPhone e iPad, o Onix Controle funciona só como controle do Cobalt GameHub (o Safari não deixa um site controlar a TV). Os textos em *Configurações → Controle pelo celular* e na aba *Jogos* agora explicam o caminho certo, e o endereço embaixo do QR code do controle mostra para onde ele leva de verdade.": "*Control por iPhone:* en iPhone y iPad, Onix Controle funciona solo como control de Cobalt GameHub (Safari no deja que un sitio controle la TV). Los textos en *Configuración → Control por celular* y en la pestaña *Juegos* ahora explican el camino correcto, y la dirección debajo del código QR del control muestra a dónde lleva de verdad.",
+  "Tem iPhone ou iPad? No Cobalt GameHub, abra Usar celular como controle e leia o QR code com a câmera.": "¿Tienes iPhone o iPad? En Cobalt GameHub, abre Usar celular como control y lee el código QR con la cámara.",
+  "Aponte a câmera do celular (Android) para o código para baixar o app.": "Apunta la cámara del celular (Android) al código para descargar la app.",
+  "No iPhone ou iPad: no Cobalt GameHub, abra Usar celular como controle e leia o QR code, ou digite o endereço da TV em projectgems.github.io/onix/controle.": "En iPhone o iPad: en Cobalt GameHub, abre Usar celular como control y lee el código QR, o escribe la dirección de la TV en projectgems.github.io/onix/controle.",
+  "Funciona só em Google TV, com celular Android 6 ou mais novo. No iPhone e iPad, dá para usar só como controle do Cobalt GameHub.": "Funciona solo en Google TV, con celular Android 6 o más nuevo. En iPhone y iPad, solo se puede usar como control de Cobalt GameHub.",
+  "Mostra o QR code para baixar no celular Android o app que controla a TV inteira. No iPhone e iPad, dá para usar só como controle do Cobalt GameHub.": "Muestra el código QR para descargar en el celular Android la app que controla toda la TV. En iPhone y iPad, solo se puede usar como control de Cobalt GameHub.",
   "Controle web": "Control web",
   "Ligue o Controle web em Configurações": "Activa el Control web en Configuración",
   "Baixar o Onix Controle": "Descargar Onix Controle",
@@ -4286,7 +4288,7 @@ const OPTIONS = [
   { key: 'remote', phone: true, name: 'Controle web', desc: 'O celular vira controle e teclado, sem instalar nada. Funciona com o Onix na tela, no mesmo Wi-Fi.' },
   { key: 'remoteQr', phone: true, name: 'QR code na tela de descanso', desc: 'Quando nenhum celular está conectado, a tela de descanso mostra o QR code, em tom escuro, para conectar sem usar o controle da TV.' },
   { act: 'remoteForget', phone: true, name: 'Desconectar os celulares', desc: 'Cada celular precisa ler o QR code de novo para voltar.' },
-  { act: 'controleApp', phone: true, name: 'Baixar o Onix Controle', desc: 'Mostra o QR code para baixar no celular o app que controla a TV inteira. No iPhone e iPad, acesse projectgems.github.io/onix/controle.' },
+  { act: 'controleApp', phone: true, name: 'Baixar o Onix Controle', desc: 'Mostra o QR code para baixar no celular Android o app que controla a TV inteira. No iPhone e iPad, dá para usar só como controle do Cobalt GameHub.' },
   { group: 'Idioma' },
   { key: 'lang',   name: 'Idioma',                desc: 'Português ou espanhol. Automático segue o idioma da TV. OK troca.' },
   { group: 'Desempenho' },
@@ -4333,6 +4335,9 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '16.4.2', date: 'novembro de 2026', items: [
+    ['fix', '*Controle pelo iPhone:* no iPhone e iPad, o Onix Controle funciona só como controle do Cobalt GameHub (o Safari não deixa um site controlar a TV). Os textos em *Configurações → Controle pelo celular* e na aba *Jogos* agora explicam o caminho certo, e o endereço embaixo do QR code do controle mostra para onde ele leva de verdade.'],
+  ] },
   { version: '16.4.1', date: 'outubro de 2026', items: [
     ['fix', '*Atualizador do Cobalt GameHub:* o Onix agora instala e atualiza o emulador diretamente do repositório oficial ruan2311/cobalt-gamehub com o pacote atualizado.'],
   ] },
@@ -4843,13 +4848,13 @@ function openGamepadCard(from) {
           h('h2', { style: 'margin:0', text: t('Controle para celular') })),
         h('p', { text: t('Aponte a câmera do celular para o código QR para baixar o Onix Controle.') }),
         h('p', { text: t('100% personalizável: mova os botões na tela, altere o tamanho e a transparência e jogue sem atraso na rede local.') }),
-        h('p', { class: 'sp-thanks', text: t('Tem iPhone ou iPad? Acesse projectgems.github.io/onix/controle e adicione à Tela de Início.') }),
+        h('p', { class: 'sp-thanks', text: t('Tem iPhone ou iPad? No Cobalt GameHub, abra Usar celular como controle e leia o QR code com a câmera.') }),
         h('p', { class: 'sp-thanks', style: 'margin-top:.4rem;opacity:.8;', text: t('Não tem controle Bluetooth? Você pode jogar pelo app no celular ou abrir direto pelo navegador durante a partida!') })),
       h('div', { class: 'sp-qr' }, qr || '',
         h('div', { style: 'display:flex;align-items:center;gap:.5rem;' },
           controleIcon('width:1.4rem;height:1.4rem;flex:none;'),
           h('b', { text: 'Onix Controle' })),
-        h('span', { class: 'sp-key', text: 'projectgems.github.io/onix/controle' }))),
+        h('span', { class: 'sp-key', text: 'github.com/ruan2311/onix' }))),
     h('div', { class: 'sp-hint' }, h('b', { text: 'OK' }), h('span', { text: t('para fechar') })));
   $('#gamepadModal').hidden = false;
   sfx('select');
@@ -5854,10 +5859,10 @@ function renderPhonePane() {
     $('#ppTitle').textContent = t(phoneMode === 'gamepad' ? 'Controle para celular' : 'Onix Controle');
     $('#ppText').textContent = t(phoneMode === 'gamepad'
       ? 'Aponte a câmera do celular para o código QR para baixar o Onix Controle.'
-      : 'Aponte a câmera do celular (Android) para o código para baixar o app, ou acesse no iPhone: projectgems.github.io/onix/controle');
+      : 'Aponte a câmera do celular (Android) para o código para baixar o app.');
     $('#ppNote').textContent = t(phoneMode === 'gamepad'
-      ? 'No iPhone ou iPad: acesse projectgems.github.io/onix/controle no Safari e adicione à Tela de Início.'
-      : 'No Android: app para celular. No iPhone ou iPad: acesse projectgems.github.io/onix/controle no Safari e adicione à Tela de Início.');
+      ? 'No iPhone ou iPad: no Cobalt GameHub, abra Usar celular como controle e leia o QR code, ou digite o endereço da TV em projectgems.github.io/onix/controle.'
+      : 'Funciona só em Google TV, com celular Android 6 ou mais novo. No iPhone e iPad, dá para usar só como controle do Cobalt GameHub.');
     $('#ppWait').hidden = true;
     return;
   }
