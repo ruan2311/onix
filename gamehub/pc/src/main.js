@@ -10,6 +10,7 @@ const store = require('./store');
 const covers = require('./covers');
 const updater = require('./updater');
 const retroarch = require('./retroarch');
+const hardware = require('./hardware');
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } },
@@ -130,6 +131,13 @@ const HUB = {
   fullscreen: () => { if (win) win.setFullScreen(!win.isFullScreen()); return true; },
   refreshCovers: () => covers.refreshAll(),
   openBios: c => { const x = store.consoleById(c); if (x && x.bios) retroarch.openBios(x); return !!(x && x.bios); },
+  // Consoles do RetroArch: o PC detectado e o que o automático escolhe para o console.
+  raInfo: c => {
+    const x = store.consoleById(c);
+    if (!x || x.engine !== 'retroarch') return '{}';
+    const hw = hardware.get(), auto = retroarch.resolve(x, {}, hw.tier);
+    return JSON.stringify({ hw, auto: { res: auto.res, renderer: auto.renderer }, vulkan: retroarch.VULKAN.has(x.id) });
+  },
   exit: () => false,   // no PC, sair é fechar a janela
 };
 
@@ -191,16 +199,24 @@ async function importFiles(files, quiet) {
 /* Jogos dos consoles do RetroArch: o "onde parou" é o estado automático dele. */
 const isRA = g => !!(g && store.consoleById(g.console) && store.consoleById(g.console).engine === 'retroarch');
 const statesOf = id => { const g = store.game(id); return isRA(g) ? retroarch.states(store.romPath(g)) : store.states(id); };
-function openRetroArch(g, mode) {
+function openRetroArch(g, mode, retry) {
   const c = store.consoleById(g.console), started = Date.now();
-  return retroarch.launch(c, store.romPath(g), mode === 'resume' ? 'resume' : 'new', lang(), {
+  const o = retroarch.resolve(c, store.effective(c.id, g.id), hardware.get().tier);
+  return retroarch.launch(c, store.romPath(g), mode === 'resume' ? 'resume' : 'new', lang(), o, {
     progress: (stage, pct) => emit('engine', { stage, pct, console: c.id }),
     open: () => emit('engine', { stage: 'open', console: c.id }),
     error: msg => { log('[retroarch]', msg); emit('engine', { stage: 'error', console: c.id, msg }); },
     done: (secs, code) => {
-      if (code) log('[retroarch] saiu com o código', code, 'depois de', secs, 's');
+      if (code) log('[retroarch] saiu com o código', code, 'depois de', secs, 's', o.renderer);
       if (secs > 5) store.recordPlay(g.id, secs);
-      emit('engine', { stage: 'closed', console: c.id, quick: Date.now() - started < 8000 && code !== 0 });
+      const quick = Date.now() - started < 8000 && code !== 0;
+      // Vulkan escolhido no automático que não abriu neste PC: marca e abre de novo no OpenGL.
+      if (quick && o.renderer === 'vulkan' && o.rendererAuto && !retry) {
+        log('[retroarch] Vulkan não abriu; tentando OpenGL');
+        retroarch.markVulkanBad();
+        if (openRetroArch(g, mode, true)) return;
+      }
+      emit('engine', { stage: 'closed', console: c.id, quick });
       emit('library');
       if (win) { win.show(); win.focus(); }
     },
@@ -371,6 +387,7 @@ app.whenReady().then(() => {
   }
   store.init(userData, ASSETS);
   retroarch.init(userData);
+  hardware.detect().then(h => log('[pc]', h.gpu || 'placa de vídeo desconhecida', '·', h.threads, 'threads ·', h.ramGB, 'GB · faixa', h.tier)).catch(() => { });
   logFile = path.join(userData, 'gamehub.log');
   protocol.handle('app', serve);
 

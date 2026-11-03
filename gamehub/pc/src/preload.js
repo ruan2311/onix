@@ -52,7 +52,7 @@ if (!isGame) {
   const Hub = {};
   for (const name of ['library', 'states', 'play', 'setFavorite', 'rename', 'setKids', 'remove', 'deleteState', 'config', 'effective', 'setConfig',
     'coreOptions', 'cheats', 'setCheats', 'storage', 'uploadStart', 'uploadStop', 'editTouch', 'pickGames', 'folders', 'removeFolder', 'rescan',
-    'clearPad', 'openBluetooth', 'refreshCovers', 'openBios', 'update', 'checkUpdate', 'installUpdate', 'fullscreen', 'exit']) {
+    'clearPad', 'openBluetooth', 'refreshCovers', 'openBios', 'raInfo', 'update', 'checkUpdate', 'installUpdate', 'fullscreen', 'exit']) {
     Hub[name] = (...args) => hub(name, ...args);
   }
   Hub.init = () => JSON.stringify(Object.assign(JSON.parse(hub('init')), { gamepads: padList() }));
@@ -63,7 +63,8 @@ if (!isGame) {
     return JSON.stringify(out);
   };
   Hub.capturePad = player => { capturePlayer = player >= 1 && player <= 2 ? player : 0; };
-  Hub.captureKey = on => { captureKey = !!on; };
+  // 'ra': captura para os consoles do RetroArch (aceita qualquer tecla e diz qual botão do controle foi).
+  Hub.captureKey = on => { captureKey = on === 'ra' ? 'ra' : !!on; };
   // Com outro nome: o que o contextBridge cria não pode ser redeclarado pela página (const Hub).
   contextBridge.exposeInMainWorld('OnixHub', Hub);
 
@@ -71,11 +72,11 @@ if (!isGame) {
   window.addEventListener('keydown', e => {
     if (!captureKey || e.repeat) return;
     const code = keyCode(e.code);
-    if (!code || e.code === 'Escape') return;
+    if ((!code && captureKey !== 'ra') || e.code === 'Escape') return;
     e.preventDefault();
     e.stopImmediatePropagation();
     captureKey = false;
-    emit('key', { code, name: keyName(e.code, e.key) });
+    emit('key', { code, name: keyName(e.code, e.key), key: e.code });
   }, true);
 
   /* Controle no hub: A/Start confirmam, B volta, LB/RB trocam de aba, direcional e analógico
@@ -105,7 +106,7 @@ if (!isGame) {
             emit('padSet', { player: p, name: padName(g), ok: okSet });
             return;
           }
-          if (captureKey && PAD_CODES[i]) { captureKey = false; emit('key', { code: PAD_CODES[i], name: PAD_NAMES[i] }); return; }
+          if (captureKey && PAD_CODES[i]) { captureKey = false; emit('key', { code: PAD_CODES[i], name: PAD_NAMES[i], pad: i }); return; }
           if (NAV[i] && document.hasFocus()) key(NAV[i], false);
         } else if (down && held[k] && /^Arrow/.test(NAV[i] || '') && now >= held[k].next) {
           held[k].next = now + 110;

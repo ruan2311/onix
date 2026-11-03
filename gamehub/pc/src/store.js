@@ -211,6 +211,10 @@ range('saturation', 100, 0, 150);
 range('scanStrength', 40, 10, 80);
 range('curvature', 2, 0, 4);
 flag('vignette', false);
+// Só no PC, consoles do RetroArch (retroarch.js): "auto" segue a faixa do PC (hardware.js).
+choice('raRes', 'auto', 'auto', '1', '2', '3', '4');
+choice('raRenderer', 'auto', 'auto', 'gl', 'vulkan');
+flag('raWide', false);
 flag('frameBlend', false);
 choice('backdrop', 'ambient', 'ambient', 'black', 'glass');
 flag('fullscreen', false);
@@ -234,7 +238,8 @@ function valid(key, v) {
   if (typeof def === 'number') return Number.isInteger(v) && v >= RANGES[key][0] && v <= RANGES[key][1];
   return typeof v === 'string' && (CHOICES[key] || []).includes(v);
 }
-/** key = nome, "core.<opção>", "remap.<tecla>" ou "turbo"; value = JSON do valor, ou null. */
+/** key = nome, "core.<opção>", "remap.<tecla>", "pad.<botão>" (troca de botões do RetroArch) ou "turbo";
+    value = JSON do valor, ou null. */
 function setConfig(scope, key, value) {
   if (typeof scope !== 'string' || typeof key !== 'string') return false;
   let v = null;
@@ -249,7 +254,24 @@ function setConfig(scope, key, value) {
     else if (core && typeof v === 'string' && v.length <= 120) map[sub] = v;
     else if (!core && Number.isInteger(v) && v >= -1 && v <= 15) map[sub] = v;
     else return false;
-  } else if ((key === 'remap' || key === 'core') && v === null) {
+  } else if (key.startsWith('kbd.') || key.startsWith('joy.')) {
+    // Teclado e botão do controle de cada botão do console (RetroArch): tecla no nome do RetroArch,
+    // botão no XInput ("0"-"9", direcional "h0up"…, gatilho "+4"/"+5").
+    const kind = key.slice(0, 3), sub = key.slice(4);
+    if (!/^(\d{1,2}|l[xy][+-])$/.test(sub) || (/^\d/.test(sub) && Number(sub) > 15)) return false;
+    const map = lv[kind] || (lv[kind] = {});
+    if (v === null) delete map[sub];
+    else if (kind === 'kbd' && typeof v === 'string' && /^[a-z0-9_]{1,14}$/.test(v) && v !== 'tab' && v !== 'escape') map[sub] = v;
+    else if (kind === 'joy' && typeof v === 'string' && /^(\d|h0(up|down|left|right)|\+[45])$/.test(v)) map[sub] = v;
+    else return false;
+  } else if (key.startsWith('pad.')) {
+    const sub = key.slice(4);
+    if (!/^\d{1,2}$/.test(sub) || Number(sub) > 15) return false;
+    const map = lv.pad || (lv.pad = {});
+    if (v === null) delete map[sub];
+    else if (Number.isInteger(v) && v >= -1 && v <= 15) map[sub] = v;
+    else return false;
+  } else if (['remap', 'core', 'pad', 'kbd', 'joy'].includes(key) && v === null) {
     delete lv[key];
   } else if (key === 'turbo') {
     if (v === null) delete lv.turbo;
@@ -266,18 +288,24 @@ function setConfig(scope, key, value) {
 }
 /** As configurações que valem para um jogo: padrão < global < console < jogo. */
 function effective(consoleId, id) {
-  const out = Object.assign({}, DEFAULTS, { turbo: 0 }), core = {}, remap = {};
+  const out = Object.assign({}, DEFAULTS, { turbo: 0 }), core = {}, remap = {}, pad = {}, kbd = {}, joy = {};
   const all = config();
   for (const lv of [level(all, 'global'), level(all, 'console:' + consoleId), id ? level(all, 'game:' + id) : null]) {
     if (!lv) continue;
     for (const k of Object.keys(lv)) {
       if (k === 'core') Object.assign(core, lv.core);
       else if (k === 'remap') Object.assign(remap, lv.remap);
+      else if (k === 'pad') Object.assign(pad, lv.pad);
+      else if (k === 'kbd') Object.assign(kbd, lv.kbd);
+      else if (k === 'joy') Object.assign(joy, lv.joy);
       else out[k] = lv[k];
     }
   }
   out.core = core;
   out.remap = remap;
+  out.pad = pad;
+  out.kbd = kbd;
+  out.joy = joy;
   return out;
 }
 function removeGameConfig(id) {
@@ -335,7 +363,7 @@ function addFile(file) {
     let name = path.basename(file), data, fromZip = false;
     if (extension(name) === 'zip') {
       const best = zip.largest(fs.readFileSync(file), n => { const c = consoleByExt(n); return c ? c.maxBytes : 0; });
-      if (!best) return Object.assign(r, { ok: false, error: 'O .zip não tem nenhum jogo de NES, SNES, GBA ou Mega Drive.' });
+      if (!best) return Object.assign(r, { ok: false, error: 'O .zip não tem nenhum jogo de NES, SNES, GBA, GBC, Mega Drive, N64 ou DS.' });
       name = path.basename(best.name);
       data = best.data;
       fromZip = true;

@@ -50,6 +50,11 @@ function copyDir(src, dst, skip) {
   copyDir(path.join(root, 'web'), path.join(app, 'web'));
   copyDir(path.join(root, '..', 'assets'), path.join(app, 'assets'), n => n === 'upload.html');
   copyDir(cores, path.join(app, 'cores'));
+  // O motor dos consoles do RetroArch ao lado do .exe (retroarch.js instala dele, sem internet).
+  // Pasta montada com build-motor.js + os núcleos da release motor-retroarch-N.
+  const motor = path.join(root, 'build', 'motor-retroarch-1');
+  if (fs.existsSync(path.join(motor, 'retroarch-win64.zip'))) copyDir(motor, path.join(tmp, 'motor-retroarch-1'));
+  else console.log('Aviso: sem build/motor-retroarch-1, o motor será baixado na primeira vez.');
   fs.copyFileSync(path.join(root, 'icon.png'), path.join(app, 'icon.png'));
   const { devDependencies, scripts, ...runtimePkg } = pkg;
   fs.writeFileSync(path.join(app, 'package.json'), JSON.stringify(runtimePkg, null, 2));

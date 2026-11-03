@@ -90,7 +90,7 @@ Em **Adicionar jogos**, toque em **Escolher pasta** e escolha a pasta onde estã
 
 > 🖥️ Windows 10 ou 11, 64 bits.
 
-As mesmas telas da TV, com **mais animações** (páginas que deslizam, cartões que sobem com o mouse, brilho nas capas e uma aurora lenta no fundo) e os mesmos 4 emuladores, rodando dentro do app. Só no PC, tem também o **PlayStation (PS1)**.
+As mesmas telas da TV, com **mais animações** (páginas que deslizam, cartões que sobem com o mouse, brilho nas capas e uma aurora lenta no fundo) e os mesmos 4 emuladores, rodando dentro do app. Só no PC, tem também o **PlayStation (PS1)**, o **Game Boy Color** e, pelo RetroArch, **Nintendo 64, Nintendo DS, PSP, GameCube, Wii e PlayStation 2**.
 
 ### Instalar
 1. Baixe o `Cobalt-GameHub-win64.zip` nas [Releases](https://github.com/ruan2311/cobalt-gamehub/releases) (o arquivo "Cobalt GameHub para PC").
@@ -108,6 +108,13 @@ Apagar um jogo no GameHub tira ele da biblioteca, com os saves e os estados salv
 - **Controle:** ✕, ○, □ e △ ficam nos botões de baixo, da direita, da esquerda e de cima do controle; L1, R1, L2 e R2 nos gatilhos. No teclado: Z = ✕, X = ○, A = □, S = △, Q/W = L1/R1, Enter = Start. Como L2 e R2 são do jogo, **Avançar rápido** fica no menu.
 - O cartão de memória é salvo junto com os saves, e os estados salvos funcionam como nos outros consoles.
 - Ainda não: jogos de vários discos (`.m3u`) e o controle analógico (DualShock).
+
+### Nintendo 64, DS, PSP, GameCube, Wii e PS2 (só no PC)
+- Abrem pelo **RetroArch**, que já vem dentro do `.zip` (pasta `motor-retroarch-1`): nada é baixado, funciona sem internet. O jogo abre em tela cheia; **Tab** (teclado) ou **Select + Start** (controle) abre o menu do emulador, e **Esc** volta ao GameHub.
+- **Formatos:** N64 `.z64`, `.n64`, `.v64`; DS `.nds`; PSP `.iso`, `.cso`; GameCube `.iso`, `.gcm`, `.gcz`, `.ciso`, `.rvz`, `.wia`; Wii `.iso`, `.wbfs`, `.rvz`, `.wia`, `.gcz`; PS2 `.iso`, `.chd`. O GameHub lê o começo do arquivo para saber de qual console é um `.iso`.
+- **Configurações** (em Configurações, na página de cada console, ou na tela do jogo): resolução, renderizador (OpenGL ou Vulkan) e widescreen. No **Automático**, o GameHub olha a placa de vídeo, o processador e a memória do PC e escolhe sozinho.
+- **Controles:** escolha o botão do console (com os nomes dele, como o B do Wii) e aperte a tecla do teclado ou o botão do controle (padrão Xbox) que vai fazer ele.
+- **BIOS:** só o PS2 precisa, a do seu próprio console. O GameHub abre a pasta certa e explica.
 
 ### Controles e teclado
 - Controles de Xbox, PlayStation, 8BitDo… funcionam direto: aperte um botão para o GameHub ver o controle. Nos menus, A confirma, B volta e LB/RB trocam de aba.
@@ -215,10 +222,10 @@ As versões saem nas [Releases deste repositório](https://github.com/ruan2311/o
 `.nes`, `.sfc`, `.smc`, `.gba`, `.md`, `.gen`, `.bin` e `.zip` (com o jogo dentro), até 64 MB por arquivo. No PC, também PlayStation: `.cue` + `.bin`, `.chd` e `.pbp`. Arquivos que não são jogo, como uma foto, são recusados com aviso.
 
 ## Créditos e licenças
-Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): **FCEUmm** (NES, GPL-2.0), **Snes9x** (SNES, licença não comercial), **mGBA** (GBA, MPL-2.0) e **Genesis Plus GX** (Mega Drive, licença não comercial) e, no PC, **PCSX ReARMed** (PlayStation, GPL-2.0). Nomes dos jogos: libretro-database (No-Intro, CC BY-SA 4.0); capas: libretro-thumbnails. As licenças completas estão em **Configurações → Sobre** e em [`assets/licenses`](assets/licenses).
+Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): **FCEUmm** (NES, GPL-2.0), **Snes9x** (SNES, licença não comercial), **mGBA** (GBA, MPL-2.0) e **Genesis Plus GX** (Mega Drive, licença não comercial) e, no PC, **PCSX ReARMed** (PlayStation, GPL-2.0) e o **RetroArch** com **Mupen64Plus-Next** (N64), **melonDS DS** (DS), **PPSSPP** (PSP), **Dolphin** (GameCube e Wii) e **PCSX2/LRPS2** (PS2), todos GPL. Nomes dos jogos: libretro-database (No-Intro, CC BY-SA 4.0); capas: libretro-thumbnails. As licenças completas estão em **Configurações → Sobre** e em [`assets/licenses`](assets/licenses).
 
 O código do GameHub está sob a [GPL-3.0](LICENSE). O GameHub é gratuito e nunca terá anúncios.
 
 ---
 
-🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente), además de **PlayStation (PS1)** solo en PC (`.cue` + `.bin`, `.chd` y `.pbp`, sin necesidad de BIOS); y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido.
+🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente), además de **PlayStation (PS1)**, **Game Boy Color** y, por RetroArch incluido (sin internet), **Nintendo 64, DS, PSP, GameCube, Wii y PS2** solo en PC, con resolución automática según la PC y controles por teclado o control; y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido.
