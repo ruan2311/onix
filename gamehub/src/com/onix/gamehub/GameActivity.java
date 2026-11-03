@@ -201,6 +201,19 @@ public class GameActivity extends Activity implements Gamepads.Listener {
             }
 
             @Override
+            public boolean portTaken(int port) {
+                // Controles já ligados ficam com a vaga deles antes do celular, mesmo sem ter
+                // apertado nada ainda (o PS4 continua Jogador 1 e o celular vira o 2).
+                synchronized (ports) {
+                    for (int id : InputDevice.getDeviceIds()) {
+                        InputDevice d = InputDevice.getDevice(id);
+                        if (Gamepads.isGamepad(d) && portFor(d) == port) return true;
+                    }
+                    return false;
+                }
+            }
+
+            @Override
             public void onFastForward(final boolean on) {
                 ui.post(new Runnable() {
                     @Override
@@ -657,8 +670,12 @@ public class GameActivity extends Activity implements Gamepads.Listener {
             toast(tr("Controle conectado: ", "Control conectado: ") + (d != null ? Gamepads.name(d) : ""));
             if (menuOpen) Web.emit(menu, "gamepads", Gamepads.list(this).toString());
         }
-        if (removed >= 0 && ports.indexOfKey(removed) >= 0) {
-            ports.delete(removed);
+        boolean had;
+        synchronized (ports) {
+            had = removed >= 0 && ports.indexOfKey(removed) >= 0;
+            if (had) ports.delete(removed);
+        }
+        if (had) {
             if (!menuOpen) openMenu("disconnected");
             else Web.emit(menu, "gamepads", Gamepads.list(this).toString());
         }
@@ -666,11 +683,20 @@ public class GameActivity extends Activity implements Gamepads.Listener {
 
     private int portFor(InputDevice d) {
         if (d == null || !Gamepads.isGamepad(d)) return 0;
+        synchronized (ports) {
+            return portForLocked(d);
+        }
+    }
+
+    private int portForLocked(InputDevice d) {
         int dev = d.getId();
         int p = ports.get(dev, -1);
         if (p >= 0) return p;
         boolean[] used = new boolean[4];
         for (int i = 0; i < ports.size(); i++) used[ports.valueAt(i)] = true;
+        // Celulares conectados como controle também ocupam vaga
+        RemoteGamepadServer srv = gamepadServer;
+        if (srv != null) for (int i = 0; i < 4; i++) if (srv.hasClient(i)) used[i] = true;
         // Definido nas Configurações: sempre a mesma vaga. Quem não foi definido não pega a vaga
         // de um controle definido que está ligado.
         int fixed = Players.portOf(players, d);

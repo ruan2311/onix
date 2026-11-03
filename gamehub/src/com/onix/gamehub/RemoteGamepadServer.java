@@ -35,6 +35,8 @@ final class RemoteGamepadServer {
         void onMenu();
         void onFastForward(boolean on);
         void onClientsChanged(int count);
+        /** Vaga já usada por um controle físico (PS4, Xbox...) ligado na TV. */
+        boolean portTaken(int port);
     }
 
     static final int PORT = 8772;
@@ -121,6 +123,11 @@ final class RemoteGamepadServer {
 
     int clientCount() {
         return clients.size();
+    }
+
+    /** Vaga usada por um celular conectado. */
+    boolean hasClient(int port) {
+        return clients.containsKey(port);
     }
 
     void updateState(String consoleId, String gameTitle) {
@@ -307,9 +314,11 @@ final class RemoteGamepadServer {
             out.write(handshake.getBytes("UTF-8"));
             out.flush();
 
-            // Atribui porta do jogador (0 para P1, 1 para P2)
-            playerPort = allocatePort();
-            clients.put(playerPort, this);
+            // Atribui a vaga do jogador, pulando as dos controles físicos e dos outros celulares
+            synchronized (clients) {
+                playerPort = allocatePort();
+                clients.put(playerPort, this);
+            }
             try { listener.onClientsChanged(clients.size()); } catch (Exception ignored) {}
 
             // Manda estado inicial
@@ -452,6 +461,9 @@ final class RemoteGamepadServer {
     }
 
     private int allocatePort() {
+        for (int p = 0; p < 4; p++) {
+            if (!clients.containsKey(p) && !listener.portTaken(p)) return p;
+        }
         for (int p = 0; p < 4; p++) {
             if (!clients.containsKey(p)) return p;
         }

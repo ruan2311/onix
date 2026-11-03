@@ -213,6 +213,11 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
                     }
                 });
             }
+
+            @Override
+            public boolean portTaken(int port) {
+                return false; // no menu os controles físicos ainda não têm vaga
+            }
         }, "snes", "Cobalt GameHub");
         gamepadServer.start();
     }
