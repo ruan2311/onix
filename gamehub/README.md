@@ -62,6 +62,7 @@ O GameHub nunca enche a memória da TV: ele sempre deixa livre para o sistema 10
 Use um **controle Bluetooth** (Xbox, PlayStation, 8BitDo…) ou use seu **celular como controle**:
 - **Android:** use o aplicativo [Onix Controle](https://github.com/ruan2311/onix#onix-controle-para-celular) conectado via Wi-Fi.
 - **iPhone:** aponte a câmera para o QR Code em **Celular como controle** no GameHub da TV. A página abre direto no Safari no Wi-Fi local, pode ser salva na Tela de Início como app de tela cheia, e permite navegar pelos menus da TV e jogar em qualquer console com resposta instantânea.
+Controle Bluetooth e celular podem jogar juntos: cada um vira um jogador (quem já estava ligado é o Jogador 1, o outro é o Jogador 2).
 O controle remoto da TV também joga, mas só com poucos botões.
 
 ---
