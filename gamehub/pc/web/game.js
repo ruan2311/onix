@@ -19,7 +19,8 @@ let started = Date.now(), playedMs = 0;
 /* RetroPad (libretro.h) */
 const RB = { B: 0, Y: 1, SELECT: 2, START: 3, UP: 4, DOWN: 5, LEFT: 6, RIGHT: 7, A: 8, X: 9, L: 10, R: 11, L2: 12, R2: 13, L3: 14, R3: 15 };
 const CONSOLE_BUTTONS = { nes: [RB.A, RB.B, RB.SELECT, RB.START], snes: [RB.A, RB.B, RB.X, RB.Y, RB.L, RB.R, RB.SELECT, RB.START],
-  gba: [RB.A, RB.B, RB.L, RB.R, RB.SELECT, RB.START], md: [RB.B, RB.A, RB.Y, RB.X, RB.L, RB.R, RB.START, RB.SELECT] };
+  gba: [RB.A, RB.B, RB.L, RB.R, RB.SELECT, RB.START], md: [RB.B, RB.A, RB.Y, RB.X, RB.L, RB.R, RB.START, RB.SELECT],
+  ps1: [RB.B, RB.A, RB.Y, RB.X, RB.L, RB.R, RB.L2, RB.R2, RB.SELECT, RB.START] };
 
 /* ---------------- Avisos ---------------- */
 let toastTimer = 0;
@@ -283,7 +284,8 @@ function audioPump() {
 /* ---------------- Controles ----------------
    Teclado = jogador 1. Cada controle vira um jogador: o definido em Configurações → Controles
    fica sempre na mesma vaga; os outros entram na primeira livre. R2 segurado acelera e L2
-   rebobina (nenhum dos 4 consoles usa esses dois). Select + Start ou o botão do meio: menu. */
+   rebobina nos consoles que não usam esses dois (no PS1 eles são do jogo; acelerar fica no menu).
+   Select + Start ou o botão do meio: menu. */
 const PAD_DEFAULT = [RB.B, RB.A, RB.Y, RB.X, RB.L, RB.R, RB.L2, RB.R2, RB.SELECT, RB.START, RB.L3, RB.R3, RB.UP, RB.DOWN, RB.LEFT, RB.RIGHT];
 const KEY_DEFAULT = { ArrowUp: RB.UP, ArrowDown: RB.DOWN, ArrowLeft: RB.LEFT, ArrowRight: RB.RIGHT, KeyX: RB.A, KeyZ: RB.B, KeyS: RB.X, KeyA: RB.Y,
   KeyQ: RB.L, KeyW: RB.R, Enter: RB.START, ShiftRight: RB.SELECT, Space: RB.SELECT, Tab: RB.R2, Backspace: RB.L2 };
@@ -521,6 +523,48 @@ function reloadSettings() {
 }
 
 /* ---------------- Carregar ---------------- */
+/* ---------------- Disco (PS1) ----------------
+   O disco (centenas de MB) não vai para a memória: cada arquivo vira um arquivo "virtual" no
+   sistema de arquivos do núcleo, que pede ao app (discRead) os pedaços de 256 KB que lê. Os
+   últimos 96 pedaços (24 MB) ficam guardados. */
+const DISC_CHUNK = 256 * 1024, DISC_KEEP = 96;
+function mountDisc(list) {
+  const cache = new Map();
+  const chunk = (n, i) => {
+    const k = n + ':' + i;
+    let c = cache.get(k);
+    if (c) { cache.delete(k); cache.set(k, c); return c; }
+    c = PC.call('discRead', ID, n, i * DISC_CHUNK, DISC_CHUNK);
+    if (!c) throw new M.FS.ErrnoError(29);   // EIO: o arquivo sumiu ou não abre
+    cache.set(k, c);
+    if (cache.size > DISC_KEEP) cache.delete(cache.keys().next().value);
+    return c;
+  };
+  M.FS.mkdir('/disc');
+  list.forEach((f, n) => {
+    const parts = f.name.split('/');
+    let dir = '/disc';
+    for (const d of parts.slice(0, -1)) { dir += '/' + d; try { M.FS.mkdir(dir); } catch (_) { /* já existe */ } }
+    const node = M.FS.createFile(dir, parts[parts.length - 1], {}, true, false);
+    Object.defineProperty(node, 'usedBytes', { get: () => f.size });
+    const ops = Object.assign({}, node.stream_ops);
+    ops.read = (stream, buffer, offset, length, position) => {
+      const end = Math.min(f.size, position + length);
+      let done = 0;
+      while (position + done < end) {
+        const at = position + done, i = Math.floor(at / DISC_CHUNK), c = chunk(n, i), o = at - i * DISC_CHUNK;
+        const take = Math.min(c.length - o, end - at);
+        if (take <= 0) break;
+        new Uint8Array(buffer.buffer, buffer.byteOffset + offset + done, take).set(c.subarray(o, o + take));
+        done += take;
+      }
+      return done;
+    };
+    node.stream_ops = ops;
+  });
+  return '/disc/' + list[0].name;
+}
+
 async function start() {
   if (!INFO) { PC.call('quit', ID, 0); return; }
   $('#loadName').textContent = INFO.name;
@@ -531,11 +575,18 @@ async function start() {
     try { glWarmup(); } catch (e) { PC.log('aquecer: ' + e); }
     await new Promise((ok, fail) => { const s = document.createElement('script'); s.src = 'cores/' + INFO.core + '.js'; s.onload = ok; s.onerror = fail; document.head.append(s); });
     M = await window.OnixCore({ locateFile: f => 'cores/' + f, print: () => { }, printErr: m => PC.log(INFO.core + ': ' + m) });
-    const rom = await PC.async('rom', ID);
-    if (!rom) throw new Error('jogo não encontrado');
     for (const d of ['/system', '/saves']) M.FS.mkdir(d);
-    const file = '/game.' + (INFO.ext || 'bin');
-    M.FS.writeFile(file, new Uint8Array(rom));
+    let file;
+    if (INFO.disc) {
+      if (!INFO.disc.length || INFO.disc.some(f => !f.size)) throw new Error('falta um arquivo do disco');
+      for (const b of await PC.async('bios') || []) M.FS.writeFile('/system/' + b.name, new Uint8Array(b.data));
+      file = mountDisc(INFO.disc);
+    } else {
+      const rom = await PC.async('rom', ID);
+      if (!rom) throw new Error('jogo não encontrado');
+      file = '/game.' + (INFO.ext || 'bin');
+      M.FS.writeFile(file, new Uint8Array(rom));
+    }
     for (const [k, v] of Object.entries(S.core || {})) setOption(k, v);
     const p = M.stringToNewUTF8(file);
     const okLoad = M._ox_load(p, ES ? 3 : 7);
@@ -550,7 +601,9 @@ async function start() {
     await audioStart();
     loaded = true;
     $('#loading').classList.add('gone');
-    if (!pads().length && MODE !== 'resume' && !PC.mobile) toast(tr('Teclado: setas, X = A, Z = B, Enter = Start. Esc abre o menu.', 'Teclado: flechas, X = A, Z = B, Enter = Start. Esc abre el menú.'));
+    if (!pads().length && MODE !== 'resume' && !PC.mobile) toast(INFO.console === 'ps1'
+      ? tr('Teclado: setas, Z = ✕, X = ○, A = □, S = △, Q/W = L1/R1, Enter = Start. Esc abre o menu.', 'Teclado: flechas, Z = ✕, X = ○, A = □, S = △, Q/W = L1/R1, Enter = Start. Esc abre el menú.')
+      : tr('Teclado: setas, X = A, Z = B, Enter = Start. Esc abre o menu.', 'Teclado: flechas, X = A, Z = B, Enter = Start. Esc abre el menú.'));
   } catch (e) {
     PC.log('carregar: ' + (e && e.stack || e));
     failed = true;

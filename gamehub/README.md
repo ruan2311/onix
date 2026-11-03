@@ -89,10 +89,10 @@ Em **Adicionar jogos**, toque em **Escolher pasta** e escolha a pasta onde estã
 
 > 🖥️ Windows 10 ou 11, 64 bits.
 
-As mesmas telas da TV, com **mais animações** (páginas que deslizam, cartões que sobem com o mouse, brilho nas capas e uma aurora lenta no fundo) e os mesmos 4 emuladores, rodando dentro do app.
+As mesmas telas da TV, com **mais animações** (páginas que deslizam, cartões que sobem com o mouse, brilho nas capas e uma aurora lenta no fundo) e os mesmos 4 emuladores, rodando dentro do app. Só no PC, tem também o **PlayStation (PS1)**.
 
 ### Instalar
-1. Baixe o `Onix-GameHub-win64.zip` nas [Releases](https://github.com/ruan2311/onix-gamehub/releases) (o arquivo "Cobalt GameHub para PC").
+1. Baixe o `Cobalt-GameHub-win64.zip` nas [Releases](https://github.com/ruan2311/cobalt-gamehub/releases) (o arquivo "Cobalt GameHub para PC").
 2. Extraia a pasta e abra o **Cobalt GameHub.exe** (ou **Onix GameHub.exe** nas versões anteriores).
 3. Se o Windows mostrar *"O Windows protegeu o computador"*, clique em **Mais informações → Executar assim mesmo** (o app ainda não tem assinatura digital).
 
@@ -100,6 +100,13 @@ As mesmas telas da TV, com **mais animações** (páginas que deslizam, cartões
 Em **Adicionar jogos** (o **+** no topo), clique em **Escolher pasta**. O GameHub procura também nas subpastas, e a pasta fica guardada: a cada abertura, ele traz os jogos novos que aparecerem nela. Os arquivos **continuam onde estão** (só os de `.zip` são copiados para a pasta do GameHub). Também dá para **Escolher arquivos** soltos.
 
 Apagar um jogo no GameHub tira ele da biblioteca, com os saves e os estados salvos, mas o arquivo continua na sua pasta.
+
+### PlayStation (PS1, só no PC)
+- **Formatos:** `.cue` (com os `.bin` do disco na mesma pasta), `.chd` e `.pbp`. O disco não é copiado nem carregado inteiro na memória: o GameHub lê só o pedaço que o jogo precisa.
+- **BIOS:** não precisa. O emulador traz uma BIOS livre que abre a maioria dos jogos. Para mais compatibilidade, dá para pôr a BIOS do seu próprio console (por exemplo `scph1001.bin`) na pasta `system` dos dados do GameHub.
+- **Controle:** ✕, ○, □ e △ ficam nos botões de baixo, da direita, da esquerda e de cima do controle; L1, R1, L2 e R2 nos gatilhos. No teclado: Z = ✕, X = ○, A = □, S = △, Q/W = L1/R1, Enter = Start. Como L2 e R2 são do jogo, **Avançar rápido** fica no menu.
+- O cartão de memória é salvo junto com os saves, e os estados salvos funcionam como nos outros consoles.
+- Ainda não: jogos de vários discos (`.m3u`) e o controle analógico (DualShock).
 
 ### Controles e teclado
 - Controles de Xbox, PlayStation, 8BitDo… funcionam direto: aperte um botão para o GameHub ver o controle. Nos menus, A confirma, B volta e LB/RB trocam de aba.
@@ -204,13 +211,13 @@ As versões saem nas [Releases deste repositório](https://github.com/ruan2311/o
 - **Desinstalar (TV):** no mesmo cartão da aba **Jogos**. Os jogos e os saves saem junto com o app.
 
 ## Formatos de jogo
-`.nes`, `.sfc`, `.smc`, `.gba`, `.md`, `.gen`, `.bin` e `.zip` (com o jogo dentro), até 64 MB por arquivo. Arquivos que não são jogo, como uma foto, são recusados com aviso.
+`.nes`, `.sfc`, `.smc`, `.gba`, `.md`, `.gen`, `.bin` e `.zip` (com o jogo dentro), até 64 MB por arquivo. No PC, também PlayStation: `.cue` + `.bin`, `.chd` e `.pbp`. Arquivos que não são jogo, como uma foto, são recusados com aviso.
 
 ## Créditos e licenças
-Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): **FCEUmm** (NES, GPL-2.0), **Snes9x** (SNES, licença não comercial), **mGBA** (GBA, MPL-2.0) e **Genesis Plus GX** (Mega Drive, licença não comercial). Nomes dos jogos: libretro-database (No-Intro, CC BY-SA 4.0); capas: libretro-thumbnails. As licenças completas estão em **Configurações → Sobre** e em [`assets/licenses`](assets/licenses).
+Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): **FCEUmm** (NES, GPL-2.0), **Snes9x** (SNES, licença não comercial), **mGBA** (GBA, MPL-2.0) e **Genesis Plus GX** (Mega Drive, licença não comercial) e, no PC, **PCSX ReARMed** (PlayStation, GPL-2.0). Nomes dos jogos: libretro-database (No-Intro, CC BY-SA 4.0); capas: libretro-thumbnails. As licenças completas estão em **Configurações → Sobre** e em [`assets/licenses`](assets/licenses).
 
 O código do GameHub está sob a [GPL-3.0](LICENSE). O GameHub é gratuito e nunca terá anúncios.
 
 ---
 
-🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente); y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido.
+🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance y Mega Drive con el estilo de Onix. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente), además de **PlayStation (PS1)** solo en PC (`.cue` + `.bin`, `.chd` y `.pbp`, sin necesidad de BIOS); y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido.

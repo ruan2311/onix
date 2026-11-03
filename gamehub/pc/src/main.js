@@ -54,7 +54,7 @@ const TYPES = { html: 'text/html', js: 'text/javascript', css: 'text/css', txt: 
 const ROUTES = [
   [/^\/(hub\.html|menu\.html|common\.js|common\.css|licenses\/[a-z0-9_]{1,40}\.txt)$/, m => path.join(ASSETS, m[1])],
   [/^\/(game\.html|game\.js|audio\.js|pc\.css)$/, m => path.join(WEB, m[1])],
-  [/^\/cores\/(fceumm|snes9x|mgba|gpgx)\.(js|wasm)$/, m => path.join(CORES, m[1] + '.' + m[2])],
+  [/^\/cores\/(fceumm|snes9x|mgba|gpgx|pcsx_rearmed)\.(js|wasm)$/, m => path.join(CORES, m[1] + '.' + m[2])],
   [/^\/cover\/([0-9a-f]{16})\.jpg$/, m => store.coverFile(m[1])],
   [/^\/shot\/default\/([0-9a-f]{16})\/(auto|[1-4])\.jpg$/, m => path.join(store.statesDir(m[1]), m[2] + '.jpg')],
 ];
@@ -79,6 +79,7 @@ const HUB = {
   init: () => JSON.stringify({
     profile: 'default', profileName: '', kids: false, lang: lang(), open: '', fromOnix: false, version: VERSION,
     onix: false, onixSound: true, onixMotion: true, mobile: false, pc: true, folders: store.pcData().folders,
+    consoles: store.CONSOLES.map(c => c.id),
   }),
   library: () => JSON.stringify(store.list()),
   states: id => JSON.stringify(ok(id) ? store.states(id) : []),
@@ -150,7 +151,7 @@ let importing = false;
 async function pickGames(folder) {
   const r = await dialog.showOpenDialog(win, folder
     ? { title: 'Pasta dos jogos', properties: ['openDirectory'] }
-    : { title: 'Jogos', properties: ['openFile', 'multiSelections'], filters: [{ name: 'Jogos', extensions: ['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'smd', 'zip', 'fds', 'unf', 'swc', 'fig'] }] });
+    : { title: 'Jogos', properties: ['openFile', 'multiSelections'], filters: [{ name: 'Jogos', extensions: ['nes', 'sfc', 'smc', 'gba', 'md', 'gen', 'bin', 'smd', 'zip', 'fds', 'unf', 'swc', 'fig', 'cue', 'chd', 'pbp'] }] });
   if (r.canceled || !r.filePaths.length) return;
   if (folder) {
     const dir = store.addFolder(r.filePaths[0]);
@@ -208,6 +209,7 @@ function leaveGameFullscreen() {
   gameMadeFull = false;
 }
 function closeGame() {
+  discClose();
   if (!game) return;
   const g = game;
   game = null;
@@ -232,8 +234,10 @@ const GAME = {
     return JSON.stringify({
       id, name: g.name, console: c.id, core: c.core, lang: lang(), profile: 'default', kids: false, sounds: true, motion: true,
       settings: store.effective(c.id, id), cover: fs.existsSync(store.coverFile(id)), ext: path.extname(store.romPath(g)).slice(1).toLowerCase(),
+      disc: c.disc ? discList(g) : null,
     });
   },
+  discRead: (id, n, offset, len) => discRead(id, n, offset, len),
   effective: id => { const g = ok(id) && store.game(id); return g ? JSON.stringify(store.effective(g.console, id)) : '{}'; },
   states: id => JSON.stringify(ok(id) ? store.states(id) : []),
   setConfig: (id, scope, key, value) => {
@@ -254,9 +258,49 @@ const GAME = {
   },
   quit: (id, seconds) => { if (ok(id) && seconds > 5) store.recordPlay(id, seconds); setImmediate(closeGame); return true; },
 };
+/* Disco (PS1): o jogo não cabe na memória da página; ela pede só os pedaços que o núcleo lê. Os
+   arquivos ficam abertos enquanto o jogo está aberto. */
+const discFds = new Map();
+function discList(g) {
+  const files = store.discFiles(g);
+  return files.map((f, i) => {
+    let size = 0;
+    try { size = fs.statSync(f).size; } catch { /* faltando: o núcleo avisa */ }
+    return { name: i ? g.files[i - 1].split(path.sep).join('/') : path.basename(f), size };
+  });
+}
+function discRead(id, n, offset, len) {
+  const g = ok(id) && store.game(id), c = g && store.consoleById(g.console);
+  if (!c || !c.disc || !Number.isInteger(n) || !Number.isInteger(offset) || !Number.isInteger(len) || n < 0 || offset < 0 || len <= 0 || len > 4 * 1024 * 1024) return null;
+  const files = store.discFiles(g);
+  if (n >= files.length) return null;
+  try {
+    const key = id + ':' + n;
+    let fd = discFds.get(key);
+    if (fd === undefined) { fd = fs.openSync(files[n], 'r'); discFds.set(key, fd); }
+    const buf = Buffer.alloc(len);
+    const got = fs.readSync(fd, buf, 0, len, offset);
+    return got === len ? buf : buf.subarray(0, got);
+  } catch { return null; }
+}
+function discClose() {
+  for (const fd of discFds.values()) { try { fs.closeSync(fd); } catch { /* já fechado */ } }
+  discFds.clear();
+}
+
 // Bytes (ROM, estados, memória do cartucho): pedidos assíncronos.
 const GAME_ASYNC = {
-  rom: async id => { const g = ok(id) && store.game(id); return g ? fs.promises.readFile(store.romPath(g)) : null; },
+  rom: async id => { const g = ok(id) && store.game(id); return g && !store.consoleById(g.console).disc ? fs.promises.readFile(store.romPath(g)) : null; },
+  // BIOS que a pessoa pôs na pasta "system" (opcional: sem ela, o PS1 usa a BIOS livre do núcleo).
+  bios: async () => {
+    const dir = store.p('system'), out = [];
+    for (const name of await fs.promises.readdir(dir).catch(() => [])) {
+      if (!/^[A-Za-z0-9_.-]{1,40}\.bin$/i.test(name)) continue;
+      const f = path.join(dir, name), st = await fs.promises.stat(f).catch(() => null);
+      if (st && st.isFile() && st.size <= 4 * 1024 * 1024) out.push({ name, data: await fs.promises.readFile(f) });
+    }
+    return out;
+  },
   readState: async (id, slot) => (ok(id) && store.SLOT.test(slot) ? fs.promises.readFile(path.join(store.statesDir(id), slot + '.state')).catch(() => null) : null),
   writeState: async (id, slot, data, shot) => {
     if (!ok(id) || !store.SLOT.test(slot) || !(data instanceof Uint8Array)) return false;

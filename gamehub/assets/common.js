@@ -257,6 +257,9 @@ const ES = {
   'Esse tipo de arquivo não é de NES, SNES, GBA ou Mega Drive.': 'Ese tipo de archivo no es de NES, SNES, GBA o Mega Drive.',
   'O .zip não tem nenhum jogo de NES, SNES, GBA ou Mega Drive.': 'El .zip no tiene ningún juego de NES, SNES, GBA o Mega Drive.',
   'O arquivo não parece um jogo desse console.': 'El archivo no parece un juego de esa consola.',
+  'Esse tipo de arquivo não é de nenhum console do GameHub.': 'Ese tipo de archivo no es de ninguna consola de GameHub.',
+  'O .cue não está certo ou falta um arquivo do disco.': 'El .cue no está bien o falta un archivo del disco.',
+  'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp': 'Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin y .zip; PlayStation: .cue (con los .bin), .chd y .pbp',
   'Sem espaço seguro no aparelho para esse jogo.': 'No hay espacio seguro en el dispositivo para ese juego.',
   'Não deu para guardar o jogo.': 'No se pudo guardar el juego.', 'Não deu para ler esse arquivo.': 'No se pudo leer ese archivo.',
   'Arquivo grande demais.': 'Archivo demasiado grande.', 'O envio parou no meio.': 'El envío se detuvo a la mitad.', 'Arquivo sem nome.': 'Archivo sin nombre.',
@@ -268,6 +271,7 @@ const ES = {
   'Não deu para salvar o estado.': 'No se pudo guardar el estado.', 'Não deu para carregar o estado.': 'No se pudo cargar el estado.',
   'O controle desconectou': 'El control se desconectó', 'Reconecte o controle ou continue com outro.': 'Vuelve a conectar el control o sigue con otro.',
   'Não deu para abrir este jogo': 'No se pudo abrir este juego', 'O arquivo pode estar corrompido ou ser de outra versão do console.': 'El archivo puede estar dañado o ser de otra versión de la consola.',
+  'Select + Start: este menu': 'Select + Start: este menú',
   'Atalhos': 'Atajos', 'Segure R2: acelera · Segure L2: rebobina · Select + Start: este menu': 'Mantén R2: acelera · Mantén L2: rebobina · Select + Start: este menú',
   'Ligar': 'Encender', 'Desligar': 'Apagar',
   'Interface': 'Interfaz', 'Som de navegação': 'Sonido de navegación', 'Os toques ao andar pelos menus.': 'Los toques al moverte por los menús.',
@@ -391,14 +395,22 @@ const CONSOLES = [
   { id: 'snes', name: 'Super Nintendo', short: 'SNES', color: '#a78bfa' },
   { id: 'gba', name: 'Game Boy Advance', short: 'GBA', color: '#38bdf8' },
   { id: 'md', name: 'Mega Drive', short: 'MD', color: '#fbbf24' },
+  { id: 'ps1', name: 'PlayStation', short: 'PS1', color: '#34d399' },   // só no PC
 ];
 const consoleOf = id => CONSOLES.find(c => c.id === id) || CONSOLES[0];
+/* Deixa só os consoles que este aparelho roda: o PC manda a lista no init; a TV e o iPhone não
+   mandam e ficam com os 4 de sempre. */
+function limitConsoles(ids) {
+  const have = Array.isArray(ids) && ids.length ? ids : ['nes', 'snes', 'gba', 'md'];
+  for (let i = CONSOLES.length - 1; i >= 0; i--) if (!have.includes(CONSOLES[i].id)) CONSOLES.splice(i, 1);
+}
 // Botões de cada console, na ordem da tela de trocar botões: [botão do RetroPad, nome no console].
 const BUTTONS = {
   nes: [[8, 'A'], [0, 'B'], [2, 'Select'], [3, 'Start']],
   snes: [[8, 'A'], [0, 'B'], [9, 'X'], [1, 'Y'], [10, 'L'], [11, 'R'], [2, 'Select'], [3, 'Start']],
   gba: [[8, 'A'], [0, 'B'], [10, 'L'], [11, 'R'], [2, 'Select'], [3, 'Start']],
   md: [[1, 'A'], [0, 'B'], [8, 'C'], [10, 'X'], [9, 'Y'], [11, 'Z'], [3, 'Start'], [2, 'Mode']],
+  ps1: [[0, '✕'], [8, '○'], [1, '□'], [9, '△'], [10, 'L1'], [11, 'R1'], [12, 'L2'], [13, 'R2'], [2, 'Select'], [3, 'Start']],
 };
 // Desenho simples de cada console (traço), para os cartões.
 const CONSOLE_ART = {
@@ -406,6 +418,7 @@ const CONSOLE_ART = {
   snes: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 12h48a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6v-6a6 6 0 0 1 6-6z"/><rect x="18" y="5" width="28" height="9" rx="2"/><circle cx="48" cy="21" r="2.2"/><circle cx="54" cy="21" r="2.2"/><path d="M10 21h8M14 17v8"/></svg>',
   gba: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 6h40a10 10 0 0 1 10 10v8a10 10 0 0 1-10 10H12A10 10 0 0 1 2 24v-8A10 10 0 0 1 12 6z"/><rect x="20" y="11" width="24" height="18" rx="2"/><path d="M7 20h7M10.5 16.5v7"/><circle cx="52" cy="18" r="2"/><circle cx="56" cy="22" r="2"/></svg>',
   md: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 14l6-6h44l6 6v18H4z"/><circle cx="24" cy="21" r="7"/><path d="M38 18h16M38 24h16M10 28h6"/></svg>',
+  ps1: '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="6" width="56" height="28" rx="3"/><circle cx="25" cy="20" r="10"/><circle cx="25" cy="20" r="2.5"/><path d="M43 13h11M43 19h11M8 30h8M47 28h7"/></svg>',
 };
 
 /* Rótulo de um valor das opções do núcleo: alguns vêm só como "enabled"/"disabled". */

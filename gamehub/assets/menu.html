@@ -119,7 +119,7 @@ function mainList() {
   list.append(item('reset', t('Reiniciar o jogo'), () => ask(t('Reiniciar o jogo') + '?', t('O que não foi salvo no jogo desde o último save se perde.'),
     [[t('Reiniciar'), () => call('reset'), 'danger'], [t('Cancelar')]])));
   list.append(item('exit', t('Sair do jogo'), () => call('quit')));
-  list.append(h('p', { class: 'hint', style: { marginTop: '1rem' }, text: t('Segure R2: acelera · Segure L2: rebobina · Select + Start: este menu') }));
+  list.append(h('p', { class: 'hint', style: { marginTop: '1rem' }, text: INFO.console === 'ps1' ? t('Select + Start: este menu') : t('Segure R2: acelera · Segure L2: rebobina · Select + Start: este menu') }));
   return list;
 }
 

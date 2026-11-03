@@ -432,8 +432,14 @@ function homePage() {
   return page;
 }
 
+/* Os formatos aceitos (o PC também abre discos de PS1). */
+const formatsText = () => (CONSOLES.some(c => c.id === 'ps1')
+  ? t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp')
+  : t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip'));
+
 function consoleTiles() {
-  return h('div', { class: 'consoles' }, CONSOLES.map(c => {
+  // Mais de 4 consoles (PC, com o PS1): todos numa linha só.
+  return h('div', { class: 'consoles', style: CONSOLES.length > 4 ? { gridTemplateColumns: 'repeat(' + CONSOLES.length + ',1fr)' } : null }, CONSOLES.map(c => {
     const n = LIB.filter(g => g.console === c.id).length;
     const b = h('button', { class: 'f ctile', style: { background: 'linear-gradient(150deg,' + c.color + '2e,rgba(255,255,255,.03) 70%)' } },
       h('span', { style: { color: c.color } }, svg(CONSOLE_ART[c.id])),
@@ -671,7 +677,7 @@ function addPage() {
       h('h1', { text: t('Adicionar jogos') }),
       h('p', { text: t('Escolha os arquivos dos seus jogos no app Arquivos. O GameHub guarda uma cópia aqui e pega a capa e o nome sozinho.') }),
       h('div', { class: 'acts' }, h('button', { class: 'f btn primary', act: () => call('pickGames', false) }, icon('plus'), t('Escolher arquivos'))),
-      h('p', { text: t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip') }),
+      h('p', { text: formatsText() }),
       h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }),
       h('div', { class: 'xfers', id: 'xfers' }), h('div', { class: 'store', id: 'store' })));
     setTimeout(() => { drawStore(); drawXfers(); }, 0);
@@ -685,7 +691,7 @@ function addPage() {
       h('div', { class: 'acts' },
         h('button', { class: 'f btn primary', act: () => call('pickGames', true) }, icon('plus'), t('Escolher pasta')),
         h('button', { class: 'f btn', text: t('Escolher arquivos'), act: () => call('pickGames', false) })),
-      h('p', { text: t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip') }),
+      h('p', { text: formatsText() }),
       h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }),
       h('div', { class: 'xfers', id: 'xfers' }), h('div', { class: 'store', id: 'store' })));
     setTimeout(() => { drawStore(); drawXfers(); }, 0);
@@ -703,7 +709,7 @@ function addPage() {
       h('p', { text: t('O celular precisa estar no mesmo Wi-Fi da TV.') }),
       uploadInfo.ip ? h('p', { class: 'url', text: t('Ou digite no navegador: {u}', { u: 'http://' + uploadInfo.ip }) }) : null,
       uploadInfo.ip && uploadInfo.code ? h('p', null, t('Código para quem digitar o endereço:') + ' ', h('b', { class: 'code', id: 'upCode', text: uploadInfo.code })) : null,
-      h('p', { text: t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip') }),
+      h('p', { text: formatsText() }),
       h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }),
       store, xfers)));
   // Foco em algo da página (o QR não é focável): a aba fica selecionada.
@@ -731,7 +737,7 @@ function pcAddPage(page) {
         h('button', { class: 'f btn', text: t('Escolher arquivos'), act: () => call('pickGames', false) }),
         h('button', { class: 'f btn', act: () => { call('rescan'); toast(t('Procurando jogos novos…')); } }, icon('reset'), t('Procurar de novo'))),
       h('div', { class: 'sep', text: t('Pastas de jogos') }), folders,
-      h('p', { text: t('Formatos: .nes, .sfc, .smc, .gba, .md, .gen, .bin e .zip') }),
+      h('p', { text: formatsText() }),
       h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') })),
     h('div', { class: 'col' }, h('div', { class: 'xfers', id: 'xfers' }), h('div', { class: 'store', id: 'store' }))));
   setTimeout(() => { drawFolders(); drawStore(); drawXfers(); }, 0);
@@ -1080,7 +1086,8 @@ function aboutBody() {
       : h('button', { class: 'f item', act: () => { call('checkUpdate'); toast(t('Procurando…')); } }, icon('reset'), h('span', { class: 'grow', text: t('Procurar atualizações') })),
     h('div', { class: 'sep', text: t('Créditos e licenças') }),
     h('p', { class: 'credits', text: t('Emuladores de código aberto do projeto libretro:') }),
-    ...[['FCEUmm (NES)', 'fceumm', 'GPL-2.0'], ['Snes9x (SNES)', 'snes9x', 'Snes9x, não comercial'], ['mGBA (GBA)', 'mgba', 'MPL-2.0'], ['Genesis Plus GX (Mega Drive)', 'genesis_plus_gx', 'não comercial']]
+    ...[['FCEUmm (NES)', 'fceumm', 'GPL-2.0'], ['Snes9x (SNES)', 'snes9x', 'Snes9x, não comercial'], ['mGBA (GBA)', 'mgba', 'MPL-2.0'], ['Genesis Plus GX (Mega Drive)', 'genesis_plus_gx', 'não comercial'],
+      ...(CONSOLES.some(c => c.id === 'ps1') ? [['PCSX ReARMed (PlayStation)', 'pcsx_rearmed', 'GPL-2.0']] : [])]
       .map(([name, file, lic]) => h('button', { class: 'f item', act: () => licenseSheet(name, file) }, h('span', { class: 'grow' }, name, h('span', { class: 'sub', text: lic })), h('span', { class: 'val', text: t('Abrir licença') }))),
     h('button', { class: 'f item', act: () => licenseSheet('libretro-database', 'libretro_database') }, h('span', { class: 'grow' }, t('Nomes dos jogos: libretro-database (No-Intro), CC BY-SA 4.0. Capas: libretro-thumbnails.')), h('span', { class: 'val', text: t('Abrir licença') })),
     h('p', { class: 'credits', text: t('O GameHub é gratuito e de código aberto (GPL-3.0). Nunca terá anúncios nem será vendido.') }),
@@ -1202,6 +1209,7 @@ function applyOpen() {
 
 /* ---------------- Início ---------------- */
 INFO = json(call('init'), { profile: 'default', lang: 'pt', gamepads: [], gamepadUrl: '', gamepadClients: 0 });
+limitConsoles(INFO.consoles);
 /* PC: mais filtros e ajustes de imagem (feitos na placa de vídeo), tela cheia, e som e animações
    sem o "Igual ao Onix" (não há Onix no PC). */
 if (INFO.pc || INFO.web) {

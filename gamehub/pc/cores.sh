@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
-# Compila os 4 núcleos libretro do GameHub para WebAssembly, já ligados ao frontend (core/web.c):
-# um módulo por console em pc/build/cores/<núcleo>.js + .wasm. As versões são as mesmas da TV
-# (a lista CORES do ../cores.sh), e o código-fonte é o mesmo (CORES_SRC, padrão ~/sdk/cores-src).
+# Compila os núcleos libretro do GameHub para WebAssembly, já ligados ao frontend (core/web.c):
+# um módulo por console em pc/build/cores/<núcleo>.js + .wasm. Os 4 da TV têm as mesmas versões
+# (a lista CORES do ../cores.sh); os que só existem no PC ficam em PC_CORES, logo abaixo. O
+# código-fonte fica em CORES_SRC (padrão ~/sdk/cores-src).
 #   bash gamehub/pc/cores.sh            # todos
 #   bash gamehub/pc/cores.sh snes9x     # só um
 #   LINK_ONLY=1 bash gamehub/pc/cores.sh # só liga de novo (mudou só o core/web.c)
@@ -19,6 +20,11 @@ LOG=$HERE/build/logs
 mkdir -p "$SRC" "$OUT" "$LIB" "$LOG"
 
 CORES=$(sed -n '/^CORES="/,/^"$/p' ../cores.sh | sed '1d;$d')
+# Só no PC (a TV não tem estes consoles).
+PC_CORES="
+pcsx_rearmed https://github.com/libretro/pcsx_rearmed.git 7b0e8f8fadfbce3d170d195b9d9eecaabfa08c8e
+"
+CORES=$(printf '%s\n%s' "$CORES" "$PC_CORES")
 ONLY=${1:-}
 
 checkout() { # nome repo commit -> pasta
@@ -26,6 +32,7 @@ checkout() { # nome repo commit -> pasta
   [ -d "$dir/.git" ] || git clone -q "$2" "$dir"
   git -C "$dir" fetch -q --depth 1 origin "$3" 2>/dev/null || true
   git -C "$dir" checkout -q "$3"
+  git -C "$dir" submodule update --init --depth 1 -q 2>/dev/null || true
   echo "$dir"
 }
 
@@ -40,8 +47,11 @@ emmake_core() { # nome pasta-do-makefile makefile pasta-do-repositório (os .o p
 }
 
 link_core() { # nome
+  local extra=''
+  case $1 in pcsx_rearmed) extra='-sUSE_ZLIB=1' ;; esac
   emcc -O3 -std=gnu11 -I../jni -c core/web.c -o "$LIB/web.o"
-  em++ -O3 "$LIB/web.o" "$LIB/lib$1.a" -o "$OUT/$1.js" \
+  # shellcheck disable=SC2086
+  em++ -O3 "$LIB/web.o" "$LIB/lib$1.a" $extra -o "$OUT/$1.js" \
     -sMODULARIZE=1 -sEXPORT_NAME=OnixCore -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=67108864 -sSTACK_SIZE=1048576 \
     -sENVIRONMENT=web -sFORCE_FILESYSTEM=1 -sEXPORTED_FUNCTIONS=_malloc,_free \
     -sEXPORTED_RUNTIME_METHODS=FS,UTF8ToString,stringToNewUTF8,HEAPU8,HEAPU16,HEAP16 \
@@ -59,6 +69,7 @@ echo "$CORES" | while read -r name repo commit; do
     fceumm) emmake_core fceumm "$dir" Makefile.libretro "$dir" ;;
     snes9x) emmake_core snes9x "$dir/libretro" Makefile "$dir" ;;
     gpgx)   emmake_core gpgx "$dir" Makefile.libretro "$dir" ;;
+    pcsx_rearmed) emmake_core pcsx_rearmed "$dir" Makefile.libretro "$dir" ;;
     mgba)
       b=$dir/build-web
       rm -rf "$b"

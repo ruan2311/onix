@@ -28,7 +28,7 @@ function copyDir(src, dst, skip) {
 
 (async () => {
   const cores = path.join(root, 'build', 'cores');
-  for (const c of ['fceumm', 'snes9x', 'mgba', 'gpgx']) {
+  for (const c of ['fceumm', 'snes9x', 'mgba', 'gpgx', 'pcsx_rearmed']) {
     if (!fs.existsSync(path.join(cores, c + '.wasm'))) throw new Error('Falta o núcleo ' + c + ': rode bash gamehub/pc/cores.sh');
   }
   console.log(`Cobalt GameHub ${pkg.version} · Electron ${electronVersion} → ${out}`);

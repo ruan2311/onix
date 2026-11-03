@@ -24,12 +24,14 @@ const SLOT = /^(auto|[1-4])$/;
 const MB = 1024 * 1024, GB = 1024 * MB;
 
 /* ---------------- Consoles (Consoles.java) ---------------- */
-const B = 0, Y = 1, SELECT = 2, START = 3, A = 8, X = 9, L = 10, R = 11;
+const B = 0, Y = 1, SELECT = 2, START = 3, A = 8, X = 9, L = 10, R = 11, L2 = 12, R2 = 13;
 const CONSOLES = [
   { id: 'nes', name: 'Nintendinho', core: 'fceumm', thumbs: 'Nintendo - Nintendo Entertainment System', ext: ['nes', 'unf', 'unif', 'fds'], buttons: [A, B, SELECT, START], maxBytes: 4 * MB },
   { id: 'snes', name: 'Super Nintendo', core: 'snes9x', thumbs: 'Nintendo - Super Nintendo Entertainment System', ext: ['sfc', 'smc', 'swc', 'fig'], buttons: [A, B, X, Y, L, R, SELECT, START], maxBytes: 12 * MB },
   { id: 'gba', name: 'Game Boy Advance', core: 'mgba', thumbs: 'Nintendo - Game Boy Advance', ext: ['gba'], buttons: [A, B, L, R, SELECT, START], maxBytes: 33 * MB },
   { id: 'md', name: 'Mega Drive', core: 'gpgx', thumbs: 'Sega - Mega Drive - Genesis', ext: ['md', 'gen', 'smd', 'bin'], buttons: [B, A, Y, X, L, R, START, SELECT], maxBytes: 10 * MB },
+  // Só no PC. Disco: o jogo fica onde está e o núcleo lê os pedaços que precisa (discRead).
+  { id: 'ps1', name: 'PlayStation', core: 'pcsx_rearmed', thumbs: 'Sony - PlayStation', ext: ['cue', 'chd', 'pbp'], buttons: [B, A, Y, X, L, R, L2, R2, SELECT, START], maxBytes: 2 * GB, disc: true },
 ];
 const extension = f => { const d = String(f || '').lastIndexOf('.'); return d < 0 ? '' : f.slice(d + 1).toLowerCase(); };
 const consoleById = id => CONSOLES.find(c => c.id === id) || null;
@@ -129,6 +131,7 @@ function list() {
     x.missing = !fs.existsSync(romPath(g));
     delete x.path;   // a página não precisa dos caminhos no disco
     delete x.src;
+    delete x.files;
     return x;
   });
 }
@@ -302,7 +305,8 @@ function addFile(file) {
       fromZip = true;
     }
     const c = consoleByExt(name);
-    if (!c) return Object.assign(r, { ok: false, error: 'Esse tipo de arquivo não é de NES, SNES, GBA ou Mega Drive.' });
+    if (!c) return Object.assign(r, { ok: false, error: 'Esse tipo de arquivo não é de nenhum console do GameHub.' });
+    if (c.disc) return fromZip ? Object.assign(r, { ok: false, error: 'O arquivo não parece um jogo desse console.' }) : addDisc(file, c, r);
     const st = fromZip ? null : fs.statSync(file);
     const bytes = fromZip ? data.length : st.size;
     if (bytes < 512 || bytes > c.maxBytes) return Object.assign(r, { ok: false, error: 'O arquivo não parece um jogo desse console.' });
@@ -340,6 +344,53 @@ function addFile(file) {
   }
 }
 
+/* ---------------- Discos (PS1) ----------------
+   O .cue lista os arquivos do disco (os .bin, na mesma pasta); .chd e .pbp são um arquivo só. */
+const CUE_FILE = /^\s*FILE\s+(?:"([^"]+)"|(\S+))/gim;
+/** Arquivos que o .cue usa, relativos à pasta dele (null se algum for inválido). */
+function cueFiles(cue) {
+  let text;
+  try { if (fs.statSync(cue).size > 64 * 1024) return null; text = fs.readFileSync(cue, 'latin1'); } catch { return null; }
+  const out = [];
+  for (const m of text.matchAll(CUE_FILE)) {
+    const f = path.normalize((m[1] || m[2]).replace(/\\/g, '/'));
+    if (path.isAbsolute(f) || f.split(path.sep).includes('..') || out.includes(f)) return null;
+    out.push(f);
+  }
+  return out.length && out.length <= 99 ? out : null;
+}
+/** Os arquivos do disco de um jogo: o principal e, no .cue, os que ele usa. */
+function discFiles(g) {
+  const main = romPath(g), dir = path.dirname(main);
+  return [main].concat((g.files || []).map(f => path.join(dir, f)));
+}
+function addDisc(file, c, r) {
+  const abs = path.resolve(file), files = extension(abs) === 'cue' ? cueFiles(abs) : [];
+  if (!files) return Object.assign(r, { ok: false, error: 'O .cue não está certo ou falta um arquivo do disco.' });
+  const parts = [abs].concat(files.map(f => path.join(path.dirname(abs), f)));
+  let bytes = 0;
+  try { for (const f of parts) bytes += fs.statSync(f).size; } catch { return Object.assign(r, { ok: false, error: 'O .cue não está certo ou falta um arquivo do disco.' }); }
+  const data = parts[parts.length - 1];
+  if (bytes < 64 * 1024 || bytes > c.maxBytes) return Object.assign(r, { ok: false, error: 'O arquivo não parece um jogo desse console.' });
+  // O começo do disco (sistema de arquivos e nome do volume) e o tamanho: ler o disco todo demoraria.
+  const head = Buffer.alloc(Math.min(4 * MB, fs.statSync(data).size));
+  const fd = fs.openSync(data, 'r');
+  try { fs.readSync(fd, head, 0, head.length, 0); } finally { fs.closeSync(fd); }
+  const id = crypto.createHash('sha1').update(head).update(String(bytes)).digest('hex').slice(0, 16);
+  r.console = c.id;
+  const existing = game(id);
+  if (existing) return Object.assign(r, { ok: true, dup: true, id, name: existing.name });
+  const title = path.basename(abs).replace(/\.[^.]+$/, '');
+  const g = { id, console: c.id, name: displayName(title), title, known: false, size: bytes, crc: '', added: Date.now(), cover: false, kids: false, path: abs };
+  if (files.length) g.files = files;
+  const all = games();
+  all.push(g);
+  saveGames(all);
+  const pc = pcData();
+  if (pc.removed.includes(abs)) { pc.removed = pc.removed.filter(x => x !== abs); savePc(pc); }
+  return Object.assign(r, { ok: true, id, name: g.name });
+}
+
 /* ---------------- Pastas de jogos (só no PC) ----------------
    As pastas escolhidas ficam guardadas: ao abrir, o GameHub procura nelas os jogos novos. */
 const pcData = () => Object.assign({ folders: [], removed: [] }, readJson(p('pc.json'), {}));
@@ -375,7 +426,12 @@ function removeFolder(dir) {
 function newFiles(dirs, withRemoved) {
   const known = new Set(games().flatMap(g => [g.path, g.src]).filter(Boolean).concat(withRemoved ? [] : pcData().removed));
   const out = [];
-  for (const d of dirs) for (const f of scan(d)) if (!known.has(path.resolve(f))) out.push(f);
+  for (const d of dirs) {
+    const found = scan(d);
+    // Os .bin de um .cue são parte do disco, não jogos de Mega Drive.
+    for (const f of found) if (extension(f) === 'cue') for (const b of cueFiles(f) || []) known.add(path.resolve(path.dirname(f), b));
+    for (const f of found) if (!known.has(path.resolve(f))) out.push(f);
+  }
   return out;
 }
 
@@ -383,5 +439,5 @@ module.exports = {
   ID, SLOT, CONSOLES, consoleById, init, p, statesDir, sramFile, cheatsFile, coverFile, read, readJson, write, writeJson,
   games, game, romPath, update, remove, recordPlay, setFavorite, list, states,
   DEFAULTS, config, setConfig, effective, players, setPlayer, clearPlayer, storage,
-  addFile, pcData, addFolder, removeFolder, newFiles,
+  addFile, pcData, addFolder, removeFolder, newFiles, discFiles,
 };
