@@ -24,6 +24,8 @@ const exe = () => dir('app', 'retroarch.exe');
 function init(userData) { root = path.join(userData, 'retroarch'); }
 
 async function download(name, onPct) {
+  // Versão de teste: o motor numa pasta do PC (COBALT_ENGINE_BASE=file:///C:/...).
+  if (BASE.startsWith('file:')) { onPct(100); return fs.readFileSync(require('url').fileURLToPath(BASE + name)); }
   const r = await net.fetch(BASE + name);
   if (r.status !== 200) throw new Error('download ' + name + ': ' + r.status);
   const total = Number(r.headers.get('content-length')) || 0;
