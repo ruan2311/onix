@@ -213,6 +213,7 @@ const ES = {
   'Celular conectado': 'Celular conectado',
   'Celular como controle': 'Celular como control',
   'No iPhone: aponte a câmera para o QR Code ao lado. A página abre direto no Safari, sem instalar nada.': 'En iPhone: apunta la cámara al código QR de al lado. La página se abre directo en Safari, sin instalar nada.',
+  'Sem câmera? No Safari, abra projectgems.github.io/onix/controle e digite {ip}.': '¿Sin cámara? En Safari, abre projectgems.github.io/onix/controle y escribe {ip}.',
   'Adicione à Tela de Início': 'Agrega a la pantalla de inicio',
   'Toque no botão Compartilhar do Safari e em "Adicionar à Tela de Início" para ter o app em tela cheia.': 'Toca el botón Compartir de Safari y en "Agregar a la pantalla de inicio" para tener la app en pantalla completa.',
   'Navegue e jogue': 'Navega y juega',

@@ -72,7 +72,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 **Novedades de la 15.0.0:** dos estilos nuevos de pantalla de inicio en **Configuración → Inicio** (*Clean Glass*, minimalista, y *Onix Cosmos*, artístico), cuatro sonidos de navegación nuevos (*Crystal*, *Sharpness*, *Velvet* y *Pulse*), un **Modo Infantil** con estilo propio y el gatito de Onix, y sonidos del menú con menos retraso.
 
-**Onix Controle (app para Android e iPhone/iPad):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. Ahora cuenta con **gamepad virtual** integrado para los juegos de Cobalt GameHub. Disponible como app para Android (**[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.4/onix-controle.apk)**) y como Web App instalable para iPhone y iPad (**[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**). Funciona con Google TV y Android TV. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
+**Onix Controle (app para Android e iPhone/iPad):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. Ahora cuenta con **gamepad virtual** integrado para los juegos de Cobalt GameHub. Disponible como app para Android (**[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.4/onix-controle.apk)**). En iPhone y iPad funciona solo como control de Cobalt GameHub (**[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**). Funciona con Google TV y Android TV. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
 
 ---
 
@@ -104,7 +104,7 @@ Na 15.0.0: **três estilos de tela inicial** (*Onix Glass*, *Clean Glass* e *Oni
 
 Na 14.0.0: **perfis** (*Quem está assistindo?*, com os apps, recentes, indicações, recordes e idioma de cada um; com um perfil só, o Onix entra direto), **foto de perfil pelo celular**, **boas-vindas** na primeira vez, **Modo Infantil** (só os apps liberados, PIN para sair e limite de tempo por dia), **controle pelo celular** pelo QR code, sem instalar nada, e **clima na tela inicial** (opcional, dados do Open-Meteo, só da cidade que você escolher).
 
-**Novo: [Onix Controle](#onix-controle-app-de-celular)**, o controle remoto da TV inteira pelo Wi-Fi de casa, com gamepad virtual integrado para emulação. Disponível para **Android** (APK nativo) e **iPhone/iPad** (Web App instalável em [projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)).
+**Novo: [Onix Controle](#onix-controle-app-de-celular)**, o controle remoto da TV inteira pelo Wi-Fi de casa, com gamepad virtual integrado para emulação. Disponível para **Android** (APK nativo). No **iPhone/iPad**, funciona só como controle do Cobalt GameHub ([projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)).
 
 Na 13.7.5: os jogos ganharam o visual do Onix e fases. Na 13.7.4: o Onix passou a falar **espanhol**.
 
@@ -608,7 +608,9 @@ Transforma o celular no **controle remoto da TV inteira** e em **gamepad para jo
 
 > 🧪 **Experimental:** pode apresentar falhas. Se algo não funcionar, [abra uma issue](https://github.com/ruan2311/onix/issues).
 
-**Funciona com:** TVs **Google TV** e **Android TV** (com ou sem o Onix), no mesmo Wi-Fi do celular. Celular **Android 6 ou mais novo** (app `.apk`) ou **iPhone e iPad com iOS 14+** (Web App instalável pelo navegador em [projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)). Não funciona em TVs Samsung e LG.
+**Funciona com:** TVs **Google TV** e **Android TV** (com ou sem o Onix), no mesmo Wi-Fi do celular. Celular **Android 6 ou mais novo** (app `.apk`). Não funciona em TVs Samsung e LG.
+
+> 📱 **iPhone e iPad:** o Safari não deixa um site controlar a TV pela rede de casa, por isso no iPhone ele funciona **só como controle do Cobalt GameHub** (veja [Instalar](#instalar)).
 
 ### O que ele faz
 - **Setas ou "Deslizar":** use o direcional ou deslize o dedo na tela (cada deslizada é um passo; um toque é **OK**). Segurar uma seta repete.
@@ -629,10 +631,11 @@ Transforma o celular no **controle remoto da TV inteira** e em **gamepad para jo
 2. Toque no arquivo baixado. Se o Android pedir, permita **instalar apps desta fonte** para o navegador (ou para o app de arquivos) e volte.
 3. Toque em **Instalar**. Se o **Play Protect** avisar que o app é desconhecido, toque em **Mais detalhes → Instalar mesmo assim** (o aviso aparece porque o app não vem da Play Store; o código está todo neste GitHub).
 
-**No iPhone e iPad (iOS):**
-1. No Safari do iPhone ou iPad, acesse **[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**.
-2. Toque no botão de **Compartilhar** do Safari e selecione **Adicionar à Tela de Início**.
-3. O Onix Controle será instalado na tela inicial como um app, com suporte a tela cheia.
+**No iPhone e iPad (só controle do Cobalt GameHub):**
+1. Na TV, abra o **Cobalt GameHub** e escolha **Usar celular como controle**.
+2. Aponte a câmera do iPhone para o QR code. O controle abre no Safari.
+   Sem câmera? Abra **[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)** e digite o endereço que aparece na TV (ele fica salvo para as próximas vezes).
+3. Para jogar em tela cheia, com o controle aberto, toque em **Compartilhar → Adicionar à Tela de Início**.
 
 ### Primeiro uso
 1. Abra o **Onix Controle**. Ele procura as TVs no Wi-Fi sozinho; toque na sua.
@@ -641,12 +644,12 @@ Transforma o celular no **controle remoto da TV inteira** e em **gamepad para jo
 3. Pronto. Das próximas vezes, ele conecta sozinho ao abrir.
 
 ### Atualizações
-Em **Configurações** (a engrenagem, no alto) → **Atualização**, toque em **Procurar atualização**. O app também procura sozinho, uma vez a cada 6 horas, e mostra um ponto verde na engrenagem quando há versão nova. Ele baixa daqui do GitHub, confere o arquivo e o Android pede a confirmação para instalar. No iPhone e iPad, o Web App atualiza automaticamente sempre que você abrir.
+Em **Configurações** (a engrenagem, no alto) → **Atualização**, toque em **Procurar atualização**. O app também procura sozinho, uma vez a cada 6 horas, e mostra um ponto verde na engrenagem quando há versão nova. Ele baixa daqui do GitHub, confere o arquivo e o Android pede a confirmação para instalar. No iPhone e iPad, o controle vem da própria TV e se atualiza junto com o Cobalt GameHub.
 
 ### E o QR code do Onix?
 São duas opções complementares:
 - **Controle web clássico** (o QR code rápido do Onix): não instala nada, abre no navegador e controla o Onix na tela.
-- **Onix Controle**: app para Android e Web App instalável para iOS ([projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)). Controla a **TV inteira**, dentro de qualquer app, e tem **gamepad virtual** para os jogos do Cobalt GameHub.
+- **Onix Controle**: app para Android. Controla a **TV inteira**, dentro de qualquer app, e tem **gamepad virtual** para os jogos do Cobalt GameHub. No iPhone e iPad, só o controle do Cobalt GameHub ([projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)).
 
 ---
 

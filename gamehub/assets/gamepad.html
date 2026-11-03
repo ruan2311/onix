@@ -141,7 +141,8 @@ html, body {
 <div id="tvModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:99;align-items:center;justify-content:center;padding:16px;">
   <div style="background:#151128;border:1px solid rgba(255,255,255,.2);border-radius:18px;max-width:340px;width:100%;padding:20px;text-align:center;box-shadow:0 12px 36px rgba(0,0,0,.8);">
     <h3 style="margin-bottom:8px;font-size:17px;font-weight:700;">Conectar à TV</h3>
-    <p style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.4;margin-bottom:14px;">Digite o IP que aparece no Cobalt GameHub da sua TV:</p>
+    <p style="font-size:13px;color:rgba(255,255,255,.7);line-height:1.4;margin-bottom:8px;">Digite o IP que aparece no Cobalt GameHub da sua TV:</p>
+    <p style="font-size:12px;color:rgba(255,255,255,.5);line-height:1.4;margin-bottom:14px;">Confira se o Cobalt GameHub está aberto na TV e no mesmo Wi-Fi.</p>
     <input id="tvIpInput" style="width:100%;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:10px;padding:10px 14px;font-size:15px;margin-bottom:14px;outline:none;" placeholder="Ex: 192.168.0.10">
     <div style="display:flex;gap:8px;">
       <button class="btn" id="tvModalCancel" style="flex:1;height:38px;font-size:13px;">Cancelar</button>
@@ -167,7 +168,8 @@ const ES = /^es\b/i.test(navigator.language || '') ? {
   'Turbo (Avanço rápido)': 'Turbo (avance rápido)', 'Menu na TV': 'Menú en la TV', 'Menu': 'Menú', 'Vibração': 'Vibración',
   'Personalizar botões': 'Personalizar botones', 'Editar': 'Editar', 'Tela cheia': 'Pantalla completa', 'Configurar TV': 'Configurar TV',
   'Conectar à TV': 'Conectar a la TV', 'Digite o IP que aparece no Cobalt GameHub da sua TV:': 'Escribe la IP que aparece en Cobalt GameHub de tu TV:',
-  'Cancelar': 'Cancelar', 'Conectar': 'Conectar', 'Dica iPhone:': 'Consejo para iPhone:',
+  'Cancelar': 'Cancelar', 'Conectar': 'Conectar',
+  'Confira se o Cobalt GameHub está aberto na TV e no mesmo Wi-Fi.': 'Verifica que Cobalt GameHub esté abierto en la TV y en el mismo Wi-Fi.', 'Dica iPhone:': 'Consejo para iPhone:',
   ' toque em Compartilhar e "Adicionar à Tela de Início"': ' toca Compartir y "Agregar a pantalla de inicio"'
 } : null;
 const T = s => (ES && ES[s]) || s;
@@ -217,6 +219,11 @@ if (ES) {
       }
     }
   } catch (_) {}
+
+  // O iPhone não vibra pelo navegador nem deixa a página em tela cheia: esconde esses botões
+  // (a tela cheia no iPhone vem de "Adicionar à Tela de Início").
+  if (!navigator.vibrate) { vibrateOn = false; btnVibe.style.display = 'none'; }
+  if (!document.documentElement.requestFullscreen && !document.documentElement.webkitRequestFullscreen) btnFull.style.display = 'none';
 
   function updateVibeBtn() {
     btnVibe.style.opacity = vibrateOn ? '1' : '0.4';
@@ -358,7 +365,8 @@ if (ES) {
     gameTitle.textContent = T('Conectando…');
 
     const proto = location.protocol === 'https:' ? 'wss:' : 'ws:';
-    let host = localStorage.getItem('gamehub_tv_host') || location.host;
+    // Página servida pela TV (porta 8772): conecta nela mesma. O IP salvo só vale fora da TV.
+    let host = location.port === '8772' ? location.host : (localStorage.getItem('gamehub_tv_host') || location.host);
     if (!host || host === 'null' || host.startsWith('file')) {
       // Sem endereço da TV (página aberta fora da TV): pede o IP em vez de chutar um.
       connecting = false;
@@ -499,6 +507,10 @@ if (ES) {
         if (!val.includes(':')) val += ':8772';
         localStorage.setItem('gamehub_tv_host', val);
         tvModal.style.display = 'none';
+        if (location.port === '8772' && val !== location.host) {
+          location.href = 'http://' + val + '/';
+          return;
+        }
         connectFails = 0;
         if (ws) { try { ws.close(); } catch (_) {} }
         connectWs();

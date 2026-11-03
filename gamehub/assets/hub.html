@@ -588,6 +588,9 @@ function openConnectPadSheet(onDone) {
       h('button', { class: 'f btn', text: t('Fechar'), act: closeLayer })))));
 }
 
+/* "http://192.168.1.75:8772/" -> "192.168.1.75" (o que se digita no site do controle do iPhone) */
+const tvIp = url => url.replace(/^https?:\/\//, '').replace(/[:/].*$/, '');
+
 function openPhonePadTutorialSheet(onDone) {
   const url = INFO.gamepadUrl || '';
   const qr = qrSvg(url || CONTROLE_APK_URL);
@@ -607,7 +610,8 @@ function openPhonePadTutorialSheet(onDone) {
       h('span', { style: { background: 'var(--cyan)', color: '#04020a', fontWeight: '800', width: '2.2rem', height: '2.2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', fontSize: '1.2rem' }, text: '1' }),
       h('div', null,
         h('b', { style: { display: 'block', fontSize: '1.3rem', color: '#fff', marginBottom: '.2rem' }, text: t('Aponte a câmera do celular') }),
-        h('span', { style: { fontSize: '1.15rem', color: 'var(--dim)', lineHeight: '1.4' }, text: t('No iPhone: aponte a câmera para o QR Code ao lado. A página abre direto no Safari, sem instalar nada.') }))),
+        h('span', { style: { fontSize: '1.15rem', color: 'var(--dim)', lineHeight: '1.4' }, text: t('No iPhone: aponte a câmera para o QR Code ao lado. A página abre direto no Safari, sem instalar nada.') }),
+        url ? h('span', { style: { display: 'block', marginTop: '.3rem', fontSize: '1.1rem', color: 'var(--dim)', lineHeight: '1.4' }, text: t('Sem câmera? No Safari, abra projectgems.github.io/onix/controle e digite {ip}.', { ip: tvIp(url) }) }) : null)),
     h('div', { style: { display: 'flex', gap: '.8rem', alignItems: 'flex-start' } },
       h('span', { style: { background: 'var(--cyan)', color: '#04020a', fontWeight: '800', width: '2.2rem', height: '2.2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', fontSize: '1.2rem' }, text: '2' }),
       h('div', null,
@@ -619,7 +623,7 @@ function openPhonePadTutorialSheet(onDone) {
         h('b', { style: { display: 'block', fontSize: '1.3rem', color: '#fff', marginBottom: '.2rem' }, text: t('Navegue e jogue') }),
         h('span', { style: { fontSize: '1.15rem', color: 'var(--dim)', lineHeight: '1.4' }, text: t('Use o direcional e botões para escolher o jogo na TV e jogar com resposta instantânea.') }))));
 
-  const qrBox = h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.6rem', flex: 'none', background: 'rgba(255,255,255,.05)', padding: '1.4rem', borderRadius: '1.4rem', border: '1px solid rgba(255,255,255,.1)' } },
+  const qrBox = h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.6rem', flex: 'none', maxWidth: '22rem', textAlign: 'center', background: 'rgba(255,255,255,.05)', padding: '1.4rem', borderRadius: '1.4rem', border: '1px solid rgba(255,255,255,.1)' } },
     h('div', { style: { background: '#fff', padding: '.8rem', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, qr),
     url ? h('span', { style: { fontSize: '1.2rem', color: 'var(--cyan)', fontWeight: '800', letterSpacing: '.03em' }, text: url.replace(/^http:\/\//, '').replace(/\/$/, '') }) : null,
     h('p', { id: 'phonePadStatus', style: { margin: 0, fontSize: '1.1rem', color: clients > 0 ? '#4ade80' : 'var(--dim)', fontWeight: '600' }, text: statusMsg }));

@@ -1,4 +1,4 @@
-// Service worker do Onix Controle no iPhone (PWA)
+// Service worker do Controle do Cobalt GameHub no iPhone (PWA)
 'use strict';
 const CACHE = 'onix-controle-__HASH__';
 const FILES = __FILES__;
