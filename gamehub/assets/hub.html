@@ -583,9 +583,45 @@ function openConnectPadSheet(onDone) {
         icon('pad'),
         h('span', { class: 'grow' }, t('Conectar controle de celular'),
           h('span', { class: 'sub', text: t('Use o aplicativo Onix Controle no seu smartphone como um controle completo via Wi-Fi.') })),
+        icon('chev')),
+      h('button', { class: 'f item', act: () => { closeLayer(); openDownloadControleSheet(onDone); } },
+        icon('phone'),
+        h('span', { class: 'grow' }, t('Baixar o Onix Controle'),
+          h('span', { class: 'sub', text: t('Ainda não tem o app? Aponte a câmera do celular para o QR code e instale.') })),
         icon('chev'))),
     h('div', { style: { display: 'flex', justifyContent: 'flex-end', marginTop: '.6rem' } },
       h('button', { class: 'f btn', text: t('Fechar'), act: closeLayer })))));
+}
+
+/* QR code para baixar o Onix Controle no Android (no iPhone ele abre pelo site, sem instalar). */
+function openDownloadControleSheet(onDone) {
+  const qr = qrSvg(CONTROLE_APK_URL);
+  if (qr) {
+    qr.setAttribute('width', '180');
+    qr.setAttribute('height', '180');
+    qr.style.display = 'block';
+  }
+  const passo = (n, titulo, texto) => h('div', { style: { display: 'flex', gap: '.8rem', alignItems: 'flex-start' } },
+    h('span', { style: { background: 'var(--cyan)', color: '#04020a', fontWeight: '800', width: '2.2rem', height: '2.2rem', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', flex: 'none', fontSize: '1.2rem' }, text: String(n) }),
+    h('div', null,
+      h('b', { style: { display: 'block', fontSize: '1.3rem', color: '#fff', marginBottom: '.2rem' }, text: titulo }),
+      h('span', { style: { fontSize: '1.15rem', color: 'var(--dim)', lineHeight: '1.4' }, text: texto })));
+  const steps = h('div', { style: { display: 'flex', flexDirection: 'column', gap: '1rem', flex: '1', minWidth: '0' } },
+    passo(1, t('Aponte a câmera do celular Android'), t('O QR code ao lado baixa o Onix Controle direto do GitHub.')),
+    passo(2, t('Instale o aplicativo'), t('Se o Android pedir, permita instalar apps desta fonte. É grátis e sem anúncios.')),
+    passo(3, t('Volte aqui e conecte'), t('Abra o Onix Controle no celular, na mesma rede Wi-Fi da TV, e escolha "Conectar controle de celular".')),
+    h('p', { style: { margin: '.2rem 0 0', fontSize: '1.1rem', color: 'var(--dim)', lineHeight: '1.4' }, text: t('No iPhone não precisa instalar nada: abra projectgems.github.io/onix/controle no Safari.') }));
+  const qrBox = h('div', { style: { display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '.6rem', flex: 'none', maxWidth: '22rem', textAlign: 'center', background: 'rgba(255,255,255,.05)', padding: '1.4rem', borderRadius: '1.4rem', border: '1px solid rgba(255,255,255,.1)' } },
+    h('div', { style: { background: '#fff', padding: '.8rem', borderRadius: '1rem', display: 'flex', alignItems: 'center', justifyContent: 'center' } }, qr),
+    h('span', { style: { fontSize: '1.1rem', color: 'var(--cyan)', fontWeight: '800' }, text: t('Onix Controle para Android') }));
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '66rem', maxWidth: '94vw' } },
+    h('div', { style: { display: 'flex', alignItems: 'center', gap: '1rem' } },
+      h('span', { style: { color: 'var(--cyan)', width: '3.2rem', height: '3.2rem', display: 'flex', alignItems: 'center' } }, icon('phone')),
+      h('h2', { text: t('Baixar o Onix Controle') })),
+    h('div', { style: { display: 'flex', gap: '2rem', alignItems: 'center', margin: '.6rem 0' } }, steps, qrBox),
+    h('div', { style: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '.8rem' } },
+      h('button', { class: 'f btn', text: '← ' + t('Voltar'), act: () => { closeLayer(); openConnectPadSheet(onDone); } }),
+      h('button', { class: 'f btn primary', text: t('Entendi'), act: () => { closeLayer(); if (onDone) onDone(); } })))));
 }
 
 /* "http://192.168.1.75:8772/" -> "192.168.1.75" (o que se digita no site do controle do iPhone) */
