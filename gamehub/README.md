@@ -8,10 +8,12 @@ Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advanc
 |---|---|---|
 | 📺 **Google TV e Android TV** | ✅ Disponível | Pelo celular, com um QR code |
 | 📱 **Celular Android** (5.0 ou mais novo) | ✅ Disponível | Escolhendo uma pasta do próprio celular |
-| 🖥️ **PC (Windows)** | ✅ Disponível | Escolhendo a pasta dos jogos |
+| 🖥️ **PC (Windows)** | ✅ Disponível (1.4.0: com 7 consoles a mais) | Escolhendo a pasta dos jogos |
 | 🍎 **iPhone e iPad** (iOS 16.4 ou mais novo) | ✅ Disponível | Web app instalável em [projectgems.github.io/gamehub/app](https://projectgems.github.io/gamehub/app/) |
 
 O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde está e muda a interface.
+
+> 🖥️ **Novo no PC (1.4.0):** além dos quatro consoles, o Cobalt GameHub para Windows abre **PlayStation, Game Boy Color, Nintendo 64, Nintendo DS, PSP, GameCube, Wii e PlayStation 2**, com resolução e controles por console. O RetroArch já vem dentro do `.zip` (sem internet). Veja [PC (Windows)](#️-pc-windows).
 
 > ⚖️ **Nenhum jogo vem com o GameHub.** Use só jogos que você tem o direito de usar (por exemplo, cópias dos seus próprios cartuchos).
 
@@ -94,7 +96,7 @@ As mesmas telas da TV, com **mais animações** (páginas que deslizam, cartões
 
 ### Instalar
 1. Baixe o `Cobalt-GameHub-win64.zip` nas [Releases](https://github.com/ruan2311/cobalt-gamehub/releases) (o arquivo "Cobalt GameHub para PC").
-2. Extraia a pasta e abra o **Cobalt GameHub.exe** (ou **Onix GameHub.exe** nas versões anteriores).
+2. Extraia a pasta **inteira** (mantenha a `motor-retroarch-1` junto do `.exe`) e abra o **Cobalt GameHub.exe** (ou **Onix GameHub.exe** nas versões anteriores).
 3. Se o Windows mostrar *"O Windows protegeu o computador"*, clique em **Mais informações → Executar assim mesmo** (o app ainda não tem assinatura digital).
 
 ### Adicionar jogos
