@@ -231,6 +231,8 @@ html.on-games .top-right .chips{flex-direction:column;align-items:flex-end;gap:.
 .hub-play-text small{font-size:.75rem;color:var(--muted);font-weight:600;letter-spacing:.04em}
 .hub-actions .btn{padding:.6rem 1.1rem;font-size:.85rem}
 .hub-consoles{flex:1;min-width:0;display:grid;grid-template-columns:repeat(4,1fr);gap:.7rem}
+.hub-consoles.eight .hub-con{padding:.6rem .85rem;gap:.35rem}
+.hub-consoles.eight .hub-con svg{height:1.8rem}
 .hub-con{display:flex;flex-direction:column;align-items:flex-start;gap:.55rem;padding:.9rem .85rem;border-radius:calc(var(--radius) - .2rem);
   border:1px solid var(--glass-border);text-align:left}
 .hub-con svg{width:3.6rem;height:2.3rem}
@@ -1392,7 +1394,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '16.4.2'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '16.4.3'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1913,6 +1915,8 @@ const ES = Object.freeze({
   "para fechar": "para cerrar",
   "Aponte a câmera do celular para o código QR para baixar o Onix Controle.": "Apunta la cámara del celular al código QR para descargar Onix Controle.",
   "Jogue seus clássicos no Onix GameHub usando o celular como controle 100% personalizável, ou jogue pelo navegador sem instalar nada durante a partida.": "Juega a tus clásicos en Onix GameHub usando el celular como control 100% personalizable, o juega desde el navegador sin instalar nada durante la partida.",
+  "*Aba Jogos com os consoles novos:* o cartão do Cobalt GameHub mostra os 8 consoles da versão 1.5.0 (Game Boy Color, PlayStation, Atari e Fliperama, além dos 4 de antes), com a cor e o desenho de cada um. Com o GameHub antigo, continuam só os 4 de sempre.": "*Pestaña Juegos con las consolas nuevas:* la tarjeta de Cobalt GameHub muestra las 8 consolas de la versión 1.5.0 (Game Boy Color, PlayStation, Atari y Arcade, además de las 4 de antes), con el color y el dibujo de cada una. Con el GameHub antiguo, siguen solo las 4 de siempre.",
+  "*Onix Controle 1.0.5:* o app de controle pelo celular ganhou os botões dos consoles novos: △ ○ ✕ □ com L1 e R1 no PlayStation, seis botões e a ficha no Fliperama, e dois botões no Atari e no Game Boy Color. Quem preferir pode trocar a cruz por um analógico: toque em *Editar* e em *Usar analógico* (fica guardado para cada console). No iPhone, o controle que o GameHub abre já vem com tudo isso.": "*Onix Controle 1.0.5:* la app de control por el celular ganó los botones de las consolas nuevas: △ ○ ✕ □ con L1 y R1 en PlayStation, seis botones y la ficha en Arcade, y dos botones en Atari y Game Boy Color. Quien prefiera puede cambiar la cruceta por un analógico: toca *Editar* y *Usar analógico* (se guarda para cada consola). En el iPhone, el control que abre GameHub ya viene con todo esto.",
   "*Controle pelo iPhone:* no iPhone e iPad, o Onix Controle funciona só como controle do Cobalt GameHub (o Safari não deixa um site controlar a TV). Os textos em *Configurações → Controle pelo celular* e na aba *Jogos* agora explicam o caminho certo, e o endereço embaixo do QR code do controle mostra para onde ele leva de verdade.": "*Control por iPhone:* en iPhone y iPad, Onix Controle funciona solo como control de Cobalt GameHub (Safari no deja que un sitio controle la TV). Los textos en *Configuración → Control por celular* y en la pestaña *Juegos* ahora explican el camino correcto, y la dirección debajo del código QR del control muestra a dónde lleva de verdad.",
   "Tem iPhone ou iPad? No Cobalt GameHub, abra Usar celular como controle e leia o QR code com a câmera.": "¿Tienes iPhone o iPad? En Cobalt GameHub, abre Usar celular como control y lee el código QR con la cámara.",
   "Aponte a câmera do celular (Android) para o código para baixar o app.": "Apunta la cámara del celular (Android) al código para descargar la app.",
@@ -2004,7 +2008,7 @@ const ES = Object.freeze({
   "Baixando o Onix GameHub…": "Descargando Onix GameHub…",
   "O GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "GameHub todavía no fue publicado. Llega en una próxima actualización.",
   "Não deu para baixar o GameHub. Confira a internet e tente de novo.": "No se pudo descargar GameHub. Revisa internet e inténtalo de nuevo.",
-  "Um hub de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.": "Un hub de juegos para Onix: tus juegos de Nintendo (NES), Super Nintendo, Game Boy Advance y Mega Drive en un solo lugar, con portadas y tu progreso guardado por perfil. Es opcional y puedes desinstalarla cuando quieras.",
+  "Um hub de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance, Game Boy Color, Mega Drive, PlayStation, Atari e fliperama num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.": "Un hub de juegos para Onix: tus juegos de Nintendo (NES), Super Nintendo, Game Boy Advance, Game Boy Color, Mega Drive, PlayStation, Atari y arcade en un solo lugar, con portadas y tu progreso guardado por perfil. Es opcional y puedes desinstalarla cuando quieras.",
   "Continuar jogando": "Seguir jugando",
   "Jogar": "Jugar",
   "jogo": "juego",
@@ -2013,6 +2017,7 @@ const ES = Object.freeze({
   "Abrir o GameHub": "Abrir GameHub",
   "Versão {v}": "Versión {v}",
   "Nintendinho": "Nintendo (NES)",
+  "Fliperama": "Arcade",
   "· Seus jogos por console": "· Tus juegos por consola", "· Onix GameHub · OK volta de onde parou": "· Onix GameHub · OK vuelve donde lo dejaste", "Continuar": "Continuar",
   "Atualizar ({v})": "Actualizar ({v})", "Desinstalar": "Desinstalar",
   "Em destaque no Game Pass": "Destacados en Game Pass", "· os mais populares · OK abre o app do Xbox": "· los más populares · OK abre la app de Xbox",
@@ -2206,11 +2211,12 @@ const Bridge = (() => {
         const o = JSON.parse(b.gameHub(profile || '', !!kids));
         const ver = v => typeof v === 'string' && /^\d{1,4}\.\d{1,4}\.\d{1,4}$/.test(v) ? v : '';
         const img = v => typeof v === 'string' && v.length < 300000 && /^data:image\/jpeg;base64,[A-Za-z0-9+/=]+$/.test(v) ? v : null;
-        const CONS = ['nes', 'snes', 'gba', 'md'];
+        const CONS = ['nes', 'snes', 'gba', 'md', 'gbc', 'ps1', 'atari', 'arcade'];
         const recent = Array.isArray(o.recent) ? o.recent.slice(0, 6).filter(g => g && /^[0-9a-f]{16}$/.test(g.id) && CONS.indexOf(g.console) >= 0)
           .map(g => ({ id: g.id, name: cleanText(String(g.name || ''), 60), console: g.console, resume: g.resume === true, cover: img(g.cover), shot: img(g.shot) })) : [];
         const counts = {};
-        for (const c of CONS) counts[c] = o.counts && Number.isInteger(o.counts[c]) && o.counts[c] >= 0 ? o.counts[c] : 0;
+        // Só os consoles que o GameHub instalado manda (o 1.4.0 manda 4; o 1.5.0, 8).
+        for (const c of CONS) if (!o.counts || c in o.counts || CONS.indexOf(c) < 4) counts[c] = o.counts && Number.isInteger(o.counts[c]) && o.counts[c] >= 0 ? o.counts[c] : 0;
         const STATES = ['none', 'checking', 'downloading', 'ready', 'installing', 'error'];
         return {
           installed: o.installed === true, version: ver(o.version), latest: ver(o.latest),
@@ -3629,7 +3635,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) pause
 
 /* ---------------- Onix GameHub ----------------
    App opcional de emuladores (Google TV). Sem ele: um convite para instalar. Com ele: "Continuar
-   jogando" e os 4 consoles, que abrem o GameHub direto naquele ponto, além de atualizar e
+   jogando" e os consoles do GameHub, que abrem o GameHub direto naquele ponto, além de atualizar e
    desinstalar. No Modo Infantil só aparece se já estiver instalado, sem instalar/desinstalar. */
 const HUB_MARK = '<svg viewBox="0 0 32 32" shape-rendering="crispEdges"><path fill="#0a051a" d="M12 7h7v1h-7zM11 8h1v1h-1zM19 8h1v1h-1zM9 9h2v1h-2zM20 9h9v1h-9zM8 10h1v1h-1zM29 10h1v1h-1zM8 11h1v1h-1zM30 11h1v1h-1zM7 12h1v1h-1zM23 12h2v1h-2zM30 12h1v1h-1zM6 13h1v1h-1zM24 13h2v1h-2zM30 13h1v1h-1zM4 14h2v1h-2zM24 14h2v1h-2zM30 14h1v1h-1zM3 15h1v1h-1zM24 15h1v1h-1zM29 15h1v1h-1zM2 16h1v1h-1zM28 16h1v1h-1zM1 17h1v1h-1zM6 17h1v1h-1zM27 17h1v1h-1zM0 18h1v1h-1zM5 18h2v1h-2zM25 18h2v1h-2zM0 19h1v1h-1zM5 19h2v1h-2zM24 19h1v1h-1zM0 20h1v1h-1zM6 20h2v1h-2zM23 20h1v1h-1zM0 21h1v1h-1zM22 21h1v1h-1zM1 22h1v1h-1zM22 22h1v1h-1zM2 23h9v1h-9zM20 23h2v1h-2zM11 24h1v1h-1zM19 24h1v1h-1zM12 25h7v1h-7z"/><path fill="#d6c8ff" d="M12 8h1v1h-1zM14 8h1v1h-1zM11 9h3v1h-3zM10 10h5v1h-5zM16 10h1v1h-1zM9 11h3v1h-3zM13 11h3v1h-3zM8 12h7v1h-7zM16 12h1v1h-1zM7 13h7v1h-7zM15 13h1v1h-1zM7 14h6v1h-6zM7 15h1v1h-1zM9 15h1v1h-1zM8 16h1v1h-1z"/><path fill="#8b6cf0" d="M13 8h1v1h-1zM15 8h2v1h-2zM14 9h4v1h-4zM9 10h1v1h-1zM15 10h1v1h-1zM17 10h2v1h-2zM12 11h1v1h-1zM16 11h2v1h-2zM15 12h1v1h-1zM17 12h2v1h-2zM14 13h1v1h-1zM16 13h2v1h-2zM13 14h4v1h-4zM8 15h1v1h-1zM10 15h3v1h-3zM7 16h1v1h-1zM9 16h2v1h-2zM16 16h1v1h-1zM13 17h1v1h-1zM15 17h1v1h-1zM10 18h3v1h-3zM14 18h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1z"/><path fill="#5438c4" d="M17 8h2v1h-2zM18 9h2v1h-2zM19 10h2v1h-2zM18 11h2v1h-2zM19 12h2v1h-2zM18 13h2v1h-2zM13 15h1v1h-1zM15 15h1v1h-1zM11 16h5v1h-5zM17 16h2v1h-2zM7 17h3v1h-3zM11 17h2v1h-2zM14 17h1v1h-1zM16 17h2v1h-2zM8 18h2v1h-2zM13 18h1v1h-1zM15 18h2v1h-2zM18 18h1v1h-1zM7 19h2v1h-2zM10 19h1v1h-1zM12 19h4v1h-4zM8 20h7v1h-7z"/><path fill="#2d1a78" d="M21 10h1v1h-1zM20 11h2v1h-2zM21 12h1v1h-1zM17 14h2v1h-2zM14 15h1v1h-1zM16 15h2v1h-2zM19 15h3v1h-3zM23 15h1v1h-1zM19 16h2v1h-2zM22 16h1v1h-1zM10 17h1v1h-1zM18 17h2v1h-2zM21 17h1v1h-1zM7 18h1v1h-1zM17 18h1v1h-1zM19 18h2v1h-2zM16 19h2v1h-2zM15 20h1v1h-1zM21 21h1v1h-1zM18 22h1v1h-1zM20 22h1v1h-1zM15 23h1v1h-1zM19 23h1v1h-1zM12 24h1v1h-1zM14 24h1v1h-1zM16 24h1v1h-1zM18 24h1v1h-1z"/><path fill="#3f6e96" d="M22 10h5v1h-5zM22 11h5v1h-5zM25 12h2v1h-2z"/><path fill="#2a80a1" d="M27 10h2v1h-2zM27 11h3v1h-3zM27 12h2v1h-2z"/><path fill="#160c38" d="M22 12h1v1h-1zM20 13h4v1h-4zM19 14h5v1h-5zM18 15h1v1h-1zM22 15h1v1h-1zM21 16h1v1h-1zM23 16h1v1h-1zM20 17h1v1h-1zM22 17h1v1h-1zM18 19h1v1h-1zM23 19h1v1h-1zM21 20h2v1h-2zM18 21h3v1h-3zM15 22h3v1h-3zM19 22h1v1h-1zM21 22h1v1h-1zM11 23h4v1h-4zM16 23h3v1h-3zM13 24h1v1h-1zM15 24h1v1h-1zM17 24h1v1h-1z"/><path fill="#3de1ff" d="M29 12h1v1h-1zM27 13h3v1h-3zM28 14h2v1h-2zM28 15h1v1h-1z"/><path fill="#64c0eb" d="M26 13h1v1h-1zM26 14h2v1h-2zM25 15h3v1h-3zM24 16h4v1h-4zM23 17h4v1h-4zM22 18h3v1h-3z"/><path fill="#7f3874" d="M6 14h1v1h-1zM4 15h3v1h-3zM3 16h4v1h-4zM3 17h3v1h-3zM3 18h2v1h-2zM4 19h1v1h-1z"/><path fill="#942669" d="M2 17h1v1h-1zM1 18h2v1h-2zM1 19h3v1h-3zM1 20h1v1h-1z"/><path fill="#8b9fd7" d="M21 18h1v1h-1zM19 19h4v1h-4zM17 20h4v1h-4zM17 21h1v1h-1z"/><path fill="#3da0c8" d="M27 19h1v1h-1zM26 20h1v1h-1zM29 21h1v1h-1zM28 22h1v1h-1z"/><path fill="#ff3d9a" d="M2 20h2v1h-2zM1 21h3v1h-3zM2 22h2v1h-2z"/><path fill="#d85eae" d="M4 20h2v1h-2zM4 21h7v1h-7zM4 22h7v1h-7z"/><path fill="#b17fc2" d="M16 20h1v1h-1zM11 21h6v1h-6zM11 22h4v1h-4z"/><path fill="#ffffff" d="M27 20h2v1h-2zM27 21h1v1h-1z"/><path fill="#d2f5ff" d="M28 21h1v1h-1z"/></svg>';
 // No desenho do topo da aba Jogos, a logomarca do GameHub flutua no centro da órbita.
@@ -3641,6 +3647,10 @@ const HUB_CONSOLES = [
   ['snes', 'Super Nintendo', '#a78bfa', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M8 12h48a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H8a6 6 0 0 1-6-6v-6a6 6 0 0 1 6-6z"/><rect x="18" y="5" width="28" height="9" rx="2"/><circle cx="48" cy="21" r="2.2"/><circle cx="54" cy="21" r="2.2"/><path d="M10 21h8M14 17v8"/></svg>', 'SNES'],
   ['gba', 'Game Boy Advance', '#38bdf8', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M12 6h40a10 10 0 0 1 10 10v8a10 10 0 0 1-10 10H12A10 10 0 0 1 2 24v-8A10 10 0 0 1 12 6z"/><rect x="20" y="11" width="24" height="18" rx="2"/><path d="M7 20h7M10.5 16.5v7"/><circle cx="52" cy="18" r="2"/><circle cx="56" cy="22" r="2"/></svg>', 'GBA'],
   ['md', 'Mega Drive', '#fbbf24', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><path d="M4 14l6-6h44l6 6v18H4z"/><circle cx="24" cy="21" r="7"/><path d="M38 18h16M38 24h16M10 28h6"/></svg>', 'MD'],
+  ['gbc', 'Game Boy Color', '#c084fc', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="20" y="2" width="24" height="36" rx="3"/><rect x="24" y="6" width="16" height="13" rx="1"/><path d="M25.5 28h5M28 25.5v5"/><circle cx="36" cy="29" r="1.6"/><circle cx="39.5" cy="26" r="1.6"/><path d="M29 34.5h2.5M33 34.5h2.5"/></svg>', 'GBC'],
+  ['ps1', 'PlayStation', '#34d399', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"><rect x="4" y="6" width="56" height="28" rx="3"/><circle cx="25" cy="20" r="10"/><circle cx="25" cy="20" r="2.5"/><path d="M43 13h11M43 19h11M8 30h8M47 28h7"/></svg>', 'PS1'],
+  ['atari', 'Atari', '#f97316', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M14 22h36l4 12H10z"/><path d="M32 22V9"/><circle cx="32" cy="7" r="3.5"/><circle cx="20" cy="27" r="2.2"/><path d="M38 28h8"/></svg>', 'Atari'],
+  ['arcade', 'Fliperama', '#e879f9', '<svg viewBox="0 0 64 40" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><path d="M20 38V8l4-6h16l4 6v30z"/><rect x="24" y="9" width="16" height="12" rx="1"/><path d="M20 25h24"/><path d="M28 31v-4"/><circle cx="28" cy="26" r="1.6"/><circle cx="35" cy="30" r="1.4"/><circle cx="39" cy="28" r="1.4"/></svg>', 'Fliperama'],
 ];
 let hubChecked = false;
 function openHub(target) {
@@ -3670,7 +3680,7 @@ function renderHub() {
       : st.state === 'error' && st.error ? 'Não deu para baixar o Cobalt GameHub. Confira a internet e tente de novo.' : null;
     kids.push(h('div', { class: 'hub-promo' }, h('div', { class: 'hub-mark' }, svgFrom(HUB_MARK)),
       h('div', { class: 'hub-text' }, h('b', { text: 'Cobalt GameHub' }),
-        h('span', { text: 'Um hub de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.' }),
+        h('span', { text: 'Um hub de jogos para o Onix: seus jogos de Nintendinho, Super Nintendo, Game Boy Advance, Game Boy Color, Mega Drive, PlayStation, Atari e fliperama num lugar só, com capas e o seu progresso guardado por perfil. É opcional e dá para desinstalar quando quiser.' }),
         note ? h('span', { class: 'hub-note', text: note }) : null), btn));
   } else {
     // "Continuar jogando", acima do cartão: cartões deitados e baixos (capa pequena, nome e console),
@@ -3690,7 +3700,7 @@ function renderHub() {
       played.append(b);
     }
     if (st.recent.length) kids.push(h('div', { class: 'row-title' }, h('span', { text: 'Continuar jogando' }), h('span', { class: 'row-sub', text: '· Cobalt GameHub · OK volta de onde parou' })), played);
-    // Um cartão: abrir o GameHub, os 4 consoles e (fora do Modo Infantil) atualizar/desinstalar.
+    // Um cartão: abrir o GameHub, os consoles e (fora do Modo Infantil) atualizar/desinstalar.
     const total = HUB_CONSOLES.reduce((n, c) => n + (st.counts[c[0]] || 0), 0);
     const open = h('button', { class: 'f btn primary', tabindex: '-1' }, h('span', { text: 'Abrir o GameHub' }));
     open.dataset.key = 'open';
@@ -3712,7 +3722,10 @@ function renderHub() {
       actions.append(rm);
     }
     const consoles = h('div', { class: 'hub-consoles' });
-    for (const [id, name, color, art] of HUB_CONSOLES) {
+    // Só os consoles que o GameHub instalado tem (o 1.4.0 tem 4; o 1.5.0, 8).
+    const known = HUB_CONSOLES.filter(c => c[0] in st.counts);
+    if (known.length > 4) consoles.classList.add('eight');
+    for (const [id, name, color, art] of known) {
       const n = st.counts[id] || 0;
       const b = h('button', { class: 'f hub-con', tabindex: '-1', 'aria-label': name, style: 'background:linear-gradient(150deg,' + color + '2a,rgba(255,255,255,.02) 80%)' },
         h('span', { style: 'color:' + color }, svgFrom(art)), h('b', { text: name }),
@@ -4335,6 +4348,10 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '16.4.3', date: 'novembro de 2026', items: [
+    ['new', '*Aba Jogos com os consoles novos:* o cartão do Cobalt GameHub mostra os 8 consoles da versão 1.5.0 (Game Boy Color, PlayStation, Atari e Fliperama, além dos 4 de antes), com a cor e o desenho de cada um. Com o GameHub antigo, continuam só os 4 de sempre.'],
+    ['new', '*Onix Controle 1.0.5:* o app de controle pelo celular ganhou os botões dos consoles novos: △ ○ ✕ □ com L1 e R1 no PlayStation, seis botões e a ficha no Fliperama, e dois botões no Atari e no Game Boy Color. Quem preferir pode trocar a cruz por um analógico: toque em *Editar* e em *Usar analógico* (fica guardado para cada console). No iPhone, o controle que o GameHub abre já vem com tudo isso.'],
+  ] },
   { version: '16.4.2', date: 'novembro de 2026', items: [
     ['fix', '*Controle pelo iPhone:* no iPhone e iPad, o Onix Controle funciona só como controle do Cobalt GameHub (o Safari não deixa um site controlar a TV). Os textos em *Configurações → Controle pelo celular* e na aba *Jogos* agora explicam o caminho certo, e o endereço embaixo do QR code do controle mostra para onde ele leva de verdade.'],
   ] },

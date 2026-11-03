@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 16.4.3 (novembro de 2026)
+
+- **Aba Jogos com os consoles novos:** o cartão do Cobalt GameHub mostra os 8 consoles da versão 1.5.0 (Game Boy Color, PlayStation, Atari e Fliperama, além dos 4 de antes), com a cor e o desenho de cada um. Com o GameHub antigo, continuam só os 4 de sempre.
+- **Onix Controle 1.0.5:** o app de controle pelo celular ganhou os botões dos consoles novos: △ ○ ✕ □ com L1 e R1 no PlayStation, seis botões e a ficha no Fliperama, e dois botões no Atari e no Game Boy Color. Quem preferir pode trocar a cruz por um analógico: toque em **Editar** e em **Usar analógico** (fica guardado para cada console). No iPhone, o controle que o GameHub abre já vem com tudo isso.
+
 ## 16.4.2 (novembro de 2026)
 
 - **Controle pelo iPhone:** no iPhone e iPad, o Onix Controle funciona só como controle do Cobalt GameHub (o Safari não deixa um site controlar a TV). Os textos em **Configurações → Controle pelo celular** e na aba **Jogos** agora explicam o caminho certo, e o endereço embaixo do QR code do controle mostra para onde ele leva de verdade.

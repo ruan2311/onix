@@ -125,6 +125,7 @@ final class GameHub {
         try {
             Bundle extras = new Bundle();
             extras.putBoolean("kids", kids);
+            extras.putBoolean("allConsoles", true);
             Bundle b = ctx.getContentResolver().call(PROVIDER, "summary", PROFILE.matcher(profile == null ? "" : profile).matches() ? profile : "default", extras);
             String s = b == null ? null : b.getString("json");
             return s == null ? null : new JSONObject(s);
