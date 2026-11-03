@@ -360,6 +360,22 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
         <b style="color:#ff5a6e;font-size:15px;">Nintendinho</b>
         <small style="color:rgba(255,255,255,.65);font-size:11px;">NES • 2 botões (B e A)</small>
       </button>
+      <button class="ghost gp-opt" data-c="gbc" style="padding:14px;border-radius:14px;background:rgba(192,132,252,.12);border:1px solid rgba(192,132,252,.4);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;">
+        <b style="color:#c084fc;font-size:15px;">Game Boy Color</b>
+        <small style="color:rgba(255,255,255,.65);font-size:11px;">GBC • 2 botões (B e A)</small>
+      </button>
+      <button class="ghost gp-opt" data-c="ps1" style="padding:14px;border-radius:14px;background:rgba(52,211,153,.12);border:1px solid rgba(52,211,153,.4);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;">
+        <b style="color:#34d399;font-size:15px;">PlayStation</b>
+        <small style="color:rgba(255,255,255,.65);font-size:11px;">PS1 • △ ○ ✕ □ + L1/R1</small>
+      </button>
+      <button class="ghost gp-opt" data-c="atari" style="padding:14px;border-radius:14px;background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.4);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;">
+        <b style="color:#f97316;font-size:15px;">Atari</b>
+        <small style="color:rgba(255,255,255,.65);font-size:11px;">2600 e 7800 • 2 botões</small>
+      </button>
+      <button class="ghost gp-opt" data-c="arcade" style="padding:14px;border-radius:14px;background:rgba(232,121,249,.12);border:1px solid rgba(232,121,249,.4);display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer;">
+        <b style="color:#e879f9;font-size:15px;">Fliperama</b>
+        <small style="color:rgba(255,255,255,.65);font-size:11px;">6 botões + ficha</small>
+      </button>
     </div>
   </div>
 </div>
@@ -424,6 +440,10 @@ const T = {
   'Abra um jogo no Cobalt GameHub na TV para começar!': '¡Abre un juego en Cobalt GameHub en la TV para empezar!',
   'Abrindo Cobalt GameHub na TV…': 'Abriendo Cobalt GameHub en la TV…', 'Comando enviado! Conecte à TV se necessário.': '¡Comando enviado! Conéctate a la TV si es necesario.',
   'Menu do jogo na TV': 'Menú del juego en la TV',
+  'Escolha seu emulador': 'Elige tu emulador', '✕ Fechar': '✕ Cerrar', 'Emulador definido:': 'Emulador elegido:', 'Nintendinho': 'Nintendo (NES)',
+  'SNES • 4 botões + L/R': 'SNES • 4 botones + L/R', 'GBA • 2 botões + L/R': 'GBA • 2 botones + L/R', 'MD • 6 botões (2x3)': 'MD • 6 botones (2x3)',
+  'NES • 2 botões (B e A)': 'NES • 2 botones (B y A)', 'GBC • 2 botões (B e A)': 'GBC • 2 botones (B y A)', 'PS1 • △ ○ ✕ □ + L1/R1': 'PS1 • △ ○ ✕ □ + L1/R1',
+  'Atari': 'Atari', '2600 e 7800 • 2 botões': '2600 y 7800 • 2 botones', 'Fliperama': 'Arcade', '6 botões + ficha': '6 botones + ficha',
 };
 const t = s => (ES && T[s]) || s;
 if (ES) {
@@ -688,8 +708,8 @@ $('updCardBtn').onclick = () => {
 };
 
 // --- Gamepad para GameHub ---
-const CONSOLE_NAMES = { snes: 'SNES', gba: 'GBA', md: 'Mega Drive', nes: 'NES' };
-const CONSOLE_COLORS = { snes: '#a78bfa', gba: '#38bdf8', md: '#fbbf24', nes: '#ff5a6e' };
+const CONSOLE_NAMES = { snes: 'SNES', gba: 'GBA', md: 'Mega Drive', nes: 'NES', gbc: 'GBC', ps1: 'PS1', atari: 'Atari', arcade: t('Fliperama') };
+const CONSOLE_COLORS = { snes: '#a78bfa', gba: '#38bdf8', md: '#fbbf24', nes: '#ff5a6e', gbc: '#c084fc', ps1: '#34d399', atari: '#f97316', arcade: '#e879f9' };
 let gpPad = null, gpWs = null, gpConnecting = false, gpConsole = store.get('gp_console', 'snes'), gpTitle = '', gpPlayer = 0;
 let gpLastBits = 0, gpVibeOn = store.get('gp_vibe', true), gpPingT = 0, gpReconnectT = 0, gpWakeLock = null;
 
@@ -726,7 +746,7 @@ document.querySelectorAll('.gp-opt').forEach(btn => {
       $('gpConsoleSheet').hidden = true;
       updateConsoleBadge();
       initGamepad();
-      toast('Emulador definido: ' + (CONSOLE_NAMES[cid] || cid.toUpperCase()));
+      toast(t('Emulador definido:') + ' ' + (CONSOLE_NAMES[cid] || cid.toUpperCase()));
     }
   };
 });

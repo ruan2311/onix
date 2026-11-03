@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, o **Onix GameHub** de jogos clássicos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-16.4.1-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-16.4.3-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -62,6 +62,8 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 > Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
 
+**Novedades de la 16.4.3:** la pestaña **Juegos** muestra las 8 consolas de Cobalt GameHub 1.5.0 (Game Boy Color, PlayStation, Atari y Arcade además de las 4 de antes) y **Onix Controle 1.0.5** trae los botones de las consolas nuevas y la opción de cambiar la cruceta por un analógico.
+
 **Novedades de la 16.4.1:** actualizador oficial de **Cobalt GameHub** conectado directamente al repositorio [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) (`cobalt-gamehub.apk`).
 
 **Novedades de la 16.4.0:** llega **Cobalt GameHub** como gema oficial de Project Gems junto a Onix, Amethyst y Opala. **Onix Controle** renovado con nuevo icono cósmico, gamepad virtual integrado para emuladores en la TV y versión Web App instalable para iPhone y iPad ([projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)). La Trayectoria de Onix también se actualizó con la gema Cobalt GameHub.
@@ -72,12 +74,14 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 **Novedades de la 15.0.0:** dos estilos nuevos de pantalla de inicio en **Configuración → Inicio** (*Clean Glass*, minimalista, y *Onix Cosmos*, artístico), cuatro sonidos de navegación nuevos (*Crystal*, *Sharpness*, *Velvet* y *Pulse*), un **Modo Infantil** con estilo propio y el gatito de Onix, y sonidos del menú con menos retraso.
 
-**Onix Controle (app para Android e iPhone/iPad):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. Ahora cuenta con **gamepad virtual** integrado para los juegos de Cobalt GameHub. Disponible como app para Android (**[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.4/onix-controle.apk)**). En iPhone y iPad funciona solo como control de Cobalt GameHub (**[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**). Funciona con Google TV y Android TV. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
+**Onix Controle (app para Android e iPhone/iPad):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. Ahora cuenta con **gamepad virtual** integrado para los juegos de Cobalt GameHub. Disponible como app para Android (**[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.5/onix-controle.apk)**). En iPhone y iPad funciona solo como control de Cobalt GameHub (**[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**). Funciona con Google TV y Android TV. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
 
 ---
 
 ## Novidades da 16.4
 
+- **16.4.3 · Aba Jogos com os consoles novos:** o cartão do Cobalt GameHub mostra os 8 consoles da versão 1.5.0 (Game Boy Color, PlayStation, Atari e Fliperama, além dos 4 de antes), com a cor e o desenho de cada um.
+- **16.4.3 · Onix Controle 1.0.5:** botões dos consoles novos (△ ○ ✕ □ com L1 e R1 no PlayStation, seis botões e a ficha no Fliperama, dois botões no Atari e no Game Boy Color) e a opção de trocar a cruz por um analógico, em **Editar → Usar analógico**.
 - **16.4.1 · Atualizador do Cobalt GameHub:** o Onix agora instala e atualiza o emulador diretamente do repositório oficial [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) com o pacote `cobalt-gamehub.apk`.
 - **16.4.0 · Cobalt GameHub oficial:** o emulador clássico do Onix agora se chama Cobalt GameHub, a mais nova gema oficial do Project Gems ao lado de Onix, Amethyst e Opala.
 - **16.4.0 · Onix Controle renovado e no iPhone:** o app de controle pelo celular ganhou novo ícone do Saturno cósmico, integração com o Cobalt GameHub com **gamepad virtual** para jogar os clássicos na TV e versão Web App instalável para iPhone e iPad em **[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**.
@@ -627,7 +631,7 @@ Transforma o celular no **controle remoto da TV inteira** e em **gamepad para jo
 
 **No Android:**
 1. No celular, abra este link no navegador e baixe o arquivo (ou, na TV, vá em **Configurações → Controle pelo celular → Baixar o Onix Controle** e aponte a câmera do celular para o QR code):
-   **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.4/onix-controle.apk)**
+   **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.5/onix-controle.apk)**
 2. Toque no arquivo baixado. Se o Android pedir, permita **instalar apps desta fonte** para o navegador (ou para o app de arquivos) e volte.
 3. Toque em **Instalar**. Se o **Play Protect** avisar que o app é desconhecido, toque em **Mais detalhes → Instalar mesmo assim** (o aviso aparece porque o app não vem da Play Store; o código está todo neste GitHub).
 
