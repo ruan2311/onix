@@ -2,9 +2,9 @@
 // Compatível com todos os WebViews (Android e iOS), sem blur pesado, sem crashes.
 'use strict';
 window.OnixPad = (function () {
-  const RB = { B: 0, Y: 1, SELECT: 2, START: 3, UP: 4, DOWN: 5, LEFT: 6, RIGHT: 7, A: 8, X: 9, L: 10, R: 11 };
+  const RB = { B: 0, Y: 1, SELECT: 2, START: 3, UP: 4, DOWN: 5, LEFT: 6, RIGHT: 7, A: 8, X: 9, L: 10, R: 11, L2: 12, R2: 13 };
   const ROUND = 0, PILL = 1, MENU = 2, FAST = 3;
-  const G_DPAD = 0, G_L = 1, G_R = 2, G_SELECT = 3, G_START = 4, G_MENU = 5, G_FAST = 6, G_FACE = 7;
+  const G_DPAD = 0, G_L = 1, G_R = 2, G_SELECT = 3, G_START = 4, G_MENU = 5, G_FAST = 6, G_L2 = 7, G_R2 = 8, G_FACE = 9;
   const T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17, T_STICK = -18;
   const MIN_SCALE = 0.7, MAX_SCALE = 1.5, MIN_OPACITY = 0.25, MIN_SIZE = 0.6, MAX_SIZE = 1.8;
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
@@ -187,7 +187,7 @@ window.OnixPad = (function () {
         add(this.shoulders, 'L', RB.L, gba, 1, PILL, G_L, -1, 0, 1);
         add(this.shoulders, 'R', RB.R, gba, 1, PILL, G_R,  1, 0, 1);
       } else if (this.console === 'ps1' || this.console === 'arcade') {
-        // PS1: △ ○ ✕ □ e L1/R1; fliperama: botões 1 a 4 em losango, 5 e 6 em cima e a ficha no Select
+        // PS1: △ ○ ✕ □, L1/R1 e L2/R2 embaixo deles; fliperama: botões 1 a 4 em losango, 5 e 6 em cima e a ficha no Select
         const ps = this.console === 'ps1', c = ps ? 0x34D399 : 0xE879F9;
         this.accent = c;
         add(this.face, ps ? '△' : '4', RB.X, ps ? 0x34D399 : c, 1, ROUND, G_FACE + 0,  0.00, -1.05, 1.0);
@@ -196,6 +196,10 @@ window.OnixPad = (function () {
         add(this.face, ps ? '□' : '3', RB.Y, ps ? 0xF472B6 : c, 1, ROUND, G_FACE + 3, -1.05,  0.00, 1.0);
         add(this.shoulders, ps ? 'L1' : '5', RB.L, c, 1, PILL, G_L, -1, 0, 1);
         add(this.shoulders, ps ? 'R1' : '6', RB.R, c, 1, PILL, G_R,  1, 0, 1);
+        if (ps) {
+          add(this.shoulders, 'L2', RB.L2, c, 1, PILL, G_L2, -1, 1, 1);
+          add(this.shoulders, 'R2', RB.R2, c, 1, PILL, G_R2,  1, 1, 1);
+        }
         if (!ps) sel = 'FICHA';
       } else if (this.console === 'atari' || this.console === 'gbc') {
         const c = this.console === 'atari' ? 0xF97316 : 0xC084FC;
@@ -312,7 +316,7 @@ window.OnixPad = (function () {
 
         const shW = Math.max(68, this.dpadR * 1.3), shH = Math.max(30, this.dpadR * 0.44);
         const shY = topBarH + 16 + shH / 2;
-        this.placeShoulders(Math.max(edge + shW / 2, this.dpadX), shY, Math.min(w - edge - shW / 2, faceX), shW, shH);
+        this.placeShoulders(Math.max(edge + shW / 2, this.dpadX), shY, Math.min(w - edge - shW / 2, faceX), shW, shH, true);
 
         const sysH = Math.max(26, this.dpadR * 0.40);
         const sysW = sysH * 2.8;
@@ -335,7 +339,8 @@ window.OnixPad = (function () {
 
         // L e R logo acima do direcional e dos botões de ação (ao alcance natural dos polegares)
         const shW = Math.max(64, this.dpadR * 1.35), shH = Math.max(30, this.dpadR * 0.50);
-        const shY = cy - this.dpadR - shH / 2 - 28;
+        const rows = this.shoulders.some(b => b.ry > 0) ? shH + 10 : 0;   // PS1: L2/R2 na fileira de baixo
+        const shY = cy - this.dpadR - shH / 2 - 28 - rows;
         this.placeShoulders(this.dpadX, shY, faceX, shW, shH);
 
         const sysH = Math.max(26, this.dpadR * 0.44);
@@ -393,11 +398,12 @@ window.OnixPad = (function () {
       }
     }
 
-    placeShoulders(lx, y, rx, w, h) {
+    // L2/R2 (ry 1) ficam embaixo de L1/R1 ou, com beside (deitado, pouca altura), ao lado, para dentro.
+    placeShoulders(lx, y, rx, w, h, beside) {
       for (const b of this.shoulders) {
         b.w = w; b.h = h;
-        b.cx = b.rx < 0 ? lx : rx;
-        b.cy = y;
+        b.cx = (b.rx < 0 ? lx : rx) - (beside ? b.rx * b.ry * (w + 12) : 0);
+        b.cy = y + (beside ? 0 : b.ry * (h + 10));
       }
     }
 
