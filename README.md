@@ -5,9 +5,9 @@
 **Um launcher para Android TV, Google TV, TVs Samsung (Tizen) e TVs LG (webOS), feito para ser rápido no controle remoto.**
 
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
-notícias de games, jogos embutidos, o **Onix GameHub** de jogos clássicos, troca de entradas HDMI e uma tela de descanso espacial.
+notícias de games, minijogos, o **Cobalt GameHub** de jogos clássicos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-16.4.4-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-17.0.0-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -22,190 +22,54 @@ notícias de games, jogos embutidos, o **Onix GameHub** de jogos clássicos, tro
 
 ## Sumário
 
-- [🇪🇸 En español](#-en-español)
 - [Novidades da 17.0.0](#novidades-da-1700)
-- [Novidades da 16.4](#novidades-da-164)
-- [Novidades da 16.0.0](#novidades-da-1600)
 - [Recursos](#recursos)
-- [Capturas de tela](#capturas-de-tela)
 - [Instalação: qual é a sua TV?](#instalação)
-- [Android TV e Google TV](#android-tv-e-google-tv)
-- [TVs Samsung (Tizen) · experimental](#tvs-samsung-tizen)
-- [TVs LG (webOS) · experimental](#tvs-lg-webos)
-- [Usar como tela inicial (Onix Launcher)](#usar-como-tela-inicial-onix-launcher)
-- [Onix GameHub (jogos clássicos)](#onix-gamehub-jogos-clássicos)
-- [Onix Controle (app de celular)](#onix-controle-app-de-celular)
-- [Atualizações automáticas](#atualizações-automáticas)
-- [Ativar o botão "Desligar TV"](#ativar-o-botão-desligar-tv)
-- [Como desfazer tudo](#como-desfazer-tudo)
-- [Permissões e privacidade](#permissões-e-privacidade)
-- [Compilar a partir do código](#compilar-a-partir-do-código)
-- [Estrutura do projeto](#estrutura-do-projeto)
-- [Personalização](#personalização)
-- [Limitações conhecidas](#limitações-conhecidas)
-- [Créditos](#créditos)
-
----
-
-## 🇪🇸 En español
-
-Onix está en **español**: en **Configuración → Idioma**, elige *Português*, *Español* o *Automático* (sigue el idioma de la TV). Las noticias de videojuegos y las sinopsis de las recomendaciones vienen de sitios brasileños y siguen en portugués.
-
-**Instalar en Android TV / Google TV con la app Downloader:**
-
-1. En la TV, abre **Play Store**, busca **Downloader** (ícono naranja, de *AFTVnews*) e instálala.
-2. Abre **Downloader** y haz clic en la barra naranja de arriba (**"Click here to enter a URL…"**).
-3. Escribe el enlace y haz clic en **Load**:
-   - Onix App: **`github.com/ruan2311/onix/releases/latest/download/onix-app.apk`**
-   - Onix Launcher (puede ser la pantalla de inicio): **`github.com/ruan2311/onix/releases/latest/download/onix-launcher.apk`**
-4. Si la TV dice que Downloader no puede instalar apps, entra en **Configuración**, activa **Downloader** y pulsa **Volver**.
-5. Haz clic en **Instalar** y después en **Abrir**.
-
-> Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
-
-**Novedades de la 16.4.4:** los **minijuegos** de Onix vuelven a funcionar: la partida empieza con el primer OK, en vez de quedarse quieta y pausarse con el siguiente.
-
-**Novedades de la 16.4.3:** la pestaña **Juegos** muestra las 8 consolas de Cobalt GameHub 1.5.0 (Game Boy Color, PlayStation, Atari y Arcade además de las 4 de antes) y **Onix Controle 1.0.5** trae los botones de las consolas nuevas y la opción de cambiar la cruceta por un analógico.
-
-**Novedades de la 16.4.1:** actualizador oficial de **Cobalt GameHub** conectado directamente al repositorio [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) (`cobalt-gamehub.apk`).
-
-**Novedades de la 17.0.0:** nueva sección **Configuración → Apariencia** con **4 temas** que cambian todo el aspecto de Onix (*Onix Cobalt* en pixel art, *Onix Aurora* con la aurora boreal, *Onix Rubí Cine* con telón y proyector y el claro *Onix White*), **10 fuentes** (Bodoni Moda, Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand y Press Start 2P) y **8 estilos de reloj** (Fino, Negrita, Apilado, Analógico, Digital, Flip, En palabras y Neón).
-
-**Novedades de la 16.4.0:** llega **Cobalt GameHub** como gema oficial de Project Gems junto a Onix, Amethyst y Opala. **Onix Controle** renovado con nuevo icono cósmico, gamepad virtual integrado para emuladores en la TV y versión Web App instalable para iPhone y iPad ([projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)). La Trayectoria de Onix también se actualizó con la gema Cobalt GameHub.
-
-**Novedades de la 16.1.0:** nueva **Trayectoria de Onix** en **Configuración → Acerca de**: la historia de Onix y de su creador en siete diapositivas animadas (OK pasa a la siguiente). Onix GameHub ahora tiene página propia: [ruan2311/onix-gamehub](https://github.com/ruan2311/onix-gamehub).
-
-**Novedades de la 16.0.0:** llega **Onix GameHub**, una app opcional de juegos clásicos (NES, Super Nintendo, Game Boy Advance y Mega Drive) para Google TV y Android TV. Se instala desde la pestaña **Juegos** de Onix, los juegos llegan desde el celular por código QR y el progreso se guarda por perfil. La pestaña **Juegos** quedó más organizada y, en **Samsung y LG**, se volvió un hub de juegos en la nube con los destacados de **Game Pass** y las apps de cloud gaming. Detalles (en portugués) en [Onix GameHub](#onix-gamehub-jogos-clássicos).
-
-**Novedades de la 15.0.0:** dos estilos nuevos de pantalla de inicio en **Configuración → Inicio** (*Clean Glass*, minimalista, y *Onix Cosmos*, artístico), cuatro sonidos de navegación nuevos (*Crystal*, *Sharpness*, *Velvet* y *Pulse*), un **Modo Infantil** con estilo propio y el gatito de Onix, y sonidos del menú con menos retraso.
-
-**Onix Controle (app para Android e iPhone/iPad):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. Ahora cuenta con **gamepad virtual** integrado para los juegos de Cobalt GameHub. Disponible como app para Android (**[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.6/onix-controle.apk)**). En iPhone y iPad funciona solo como control de Cobalt GameHub (**[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**). Funciona con Google TV y Android TV. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
+  - [Android TV e Google TV](#android-tv-e-google-tv)
+  - [TVs Samsung (Tizen)](#tvs-samsung-tizen) · beta
+  - [TVs LG (webOS)](#tvs-lg-webos) · beta
+- [Usar como tela inicial](#usar-como-tela-inicial)
+- [Cobalt GameHub](#cobalt-gamehub-jogos-clássicos) · [Onix Controle](#onix-controle-app-de-celular)
+- [Atualizações](#atualizações) · [Desligar TV](#ativar-o-botão-desligar-tv) · [Desfazer tudo](#como-desfazer-tudo)
+- [Privacidade](#permissões-e-privacidade) · [Compilar](#compilar-a-partir-do-código) · [Limitações](#limitações-conhecidas)
+- [🇪🇸 En español](#-en-español)
 
 ---
 
 ## Novidades da 17.0.0
 
-- **Temas novos:** em **Configurações → Aparência → Tema**, 4 temas que mudam o visual inteiro (vidro, cores, foco, desenhos e tela de descanso): **Onix Cobalt** (pixel art, inspirado no Cobalt GameHub), **Onix Aurora** (aurora boreal sobre montanhas), **Onix Rubi Cinema** (cortina, lâmpadas e o feixe do projetor) e **Onix White** (claro sem cansar a vista). O Onix Escuro continua como o padrão.
-- **10 fontes novas:** Bodoni Moda, Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand e Press Start 2P. Mudam todas as palavras do Onix e funcionam sem internet.
-- **8 estilos de relógio:** Fino, Negrito, Empilhado, Analógico, Digital, Flip, Por extenso e Neon, na tela inicial e na tela de descanso.
+- **4 temas** em **Configurações → Aparência → Tema**, que mudam o visual inteiro: **Onix Cobalt** (pixel art), **Onix Aurora** (aurora boreal), **Onix Rubi Cinema** (cortina e projetor) e **Onix White** (claro). O Onix Escuro continua o padrão.
+- **10 fontes**, que funcionam sem internet: Bodoni Moda, Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand e Press Start 2P.
+- **8 estilos de relógio:** Fino, Negrito, Empilhado, Analógico, Digital, Flip, Por extenso e Neon.
+- **Samsung:** novo tutorial para [ligar a TV direto no Onix](docs/samsung-tela-inicial.md).
 
-## Novidades da 16.4
-
-- **16.4.4 · Minijogos voltaram a funcionar:** a partida começa no primeiro OK, em vez de ficar parada e pausar no OK seguinte.
-- **16.4.3 · Aba Jogos com os consoles novos:** o cartão do Cobalt GameHub mostra os 8 consoles da versão 1.5.0 (Game Boy Color, PlayStation, Atari e Fliperama, além dos 4 de antes), com a cor e o desenho de cada um.
-- **16.4.3 · Onix Controle 1.0.5:** botões dos consoles novos (△ ○ ✕ □ com L1 e R1 no PlayStation, seis botões e a ficha no Fliperama, dois botões no Atari e no Game Boy Color) e a opção de trocar a cruz por um analógico, em **Editar → Usar analógico**.
-- **16.4.1 · Atualizador do Cobalt GameHub:** o Onix agora instala e atualiza o emulador diretamente do repositório oficial [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) com o pacote `cobalt-gamehub.apk`.
-- **16.4.0 · Cobalt GameHub oficial:** o emulador clássico do Onix agora se chama Cobalt GameHub, a mais nova gema oficial do Project Gems ao lado de Onix, Amethyst e Opala.
-- **16.4.0 · Onix Controle renovado e no iPhone:** o app de controle pelo celular ganhou novo ícone do Saturno cósmico, integração com o Cobalt GameHub com **gamepad virtual** para jogar os clássicos na TV e versão Web App instalável para iPhone e iPad em **[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**.
-- **16.4.0 · Trajetória do Onix:** o slide das pedras preciosas atualizado com a gema Cobalt GameHub.
-- **16.3.3 · Avatares dos perfis:** os dez avatares ganharam traços em tons pastéis suaves e fundos com o visual de vidro escuro do Onix, substituindo o contraste excessivo por um acabamento mais elegante.
-- **16.3.2 · Fim da fase beta:** o Onix para Google TV e Android TV deixa de ser beta, a partir desta versão. Obrigado a todo mundo que testou! As versões para Samsung e LG continuam em beta.
-- **16.3.2 · Project Gems no Sobre:** o cartão **Sobre** mostra o endereço do site com todos os projetos: **[projectgems.github.io](https://projectgems.github.io)**. A aba **Jogos** ganhou a logomarca cósmica do Cobalt GameHub.
-- **16.3.0 · Posição do menu:** em **Configurações → Menu**, o menu pode ficar na **lateral** (o de sempre), **em cima** (barra de abas) ou **embaixo** (dock flutuante), cada um com o visual próprio e alinhado com as bordas do conteúdo.
-- **16.1.1 · Apoie o criador:** em **Configurações → Sobre**, um QR code Pix para quem quiser ajudar o projeto com qualquer valor. O Onix continua **gratuito e sem anúncios**: nada aparece sozinho, e o botão não aparece no Modo Infantil.
-- **16.1.0 · Trajetória do Onix:** a história do Onix e do criador, contada em sete slides animados: dos primeiros bots ao codinome Aurora, ao visual de vidro escuro e aos projetos com nome de pedra preciosa. Em **Configurações → Sobre**; OK passa para o próximo.
-
-## Novidades da 16.0.0
-
-- **Onix GameHub:** um app **opcional** de jogos clássicos para **Google TV e Android TV**, com **Nintendinho (NES), Super Nintendo, Game Boy Advance e Mega Drive** num lugar só. Instale pela aba **Jogos** do Onix. Os jogos chegam **pelo celular**, com um QR code, e aparecem com a capa e o nome certos. O progresso fica guardado **por perfil** do Onix. Tem "Continuar jogando" com a imagem de onde você parou, estados salvos, avançar rápido, rebobinar, filtros de imagem, trapaças, **Atribuir botões** por jogo e **Controle 1 e Controle 2**. Tudo explicado em [Onix GameHub](#onix-gamehub-jogos-clássicos).
-- **Aba Jogos reorganizada:** "Continuar jogando" em cartões baixos, o GameHub num cartão só com os quatro consoles, os minijogos e as notícias em uma fileira cada, e um desenho de controle em órbita no topo.
-- **Samsung e LG:** a aba **Jogos** virou um **hub de jogos na nuvem**, como o Gaming Hub da Samsung: os jogos mais populares do **Game Pass** em destaque e os apps de cloud gaming (Xbox Cloud Gaming, GeForce NOW, Boosteroid, Amazon Luna, Blacknut e Antstream Arcade).
-
-<p align="center">
-  <img src="docs/screenshots/gamehub-inicio.jpg" alt="Onix GameHub: Continuar jogando" width="49%">
-  <img src="docs/screenshots/jogos.png" alt="Aba Jogos do Onix com o GameHub" width="49%">
-</p>
-
-Na 15.0.0: **três estilos de tela inicial** (*Onix Glass*, *Clean Glass* e *Onix Cosmos*), **cinco sons de navegação**, **Modo Infantil com visual próprio** e sons do menu com menos atraso.
-
-Na 14.0.0: **perfis** (*Quem está assistindo?*, com os apps, recentes, indicações, recordes e idioma de cada um; com um perfil só, o Onix entra direto), **foto de perfil pelo celular**, **boas-vindas** na primeira vez, **Modo Infantil** (só os apps liberados, PIN para sair e limite de tempo por dia), **controle pelo celular** pelo QR code, sem instalar nada, e **clima na tela inicial** (opcional, dados do Open-Meteo, só da cidade que você escolher).
-
-**Novo: [Onix Controle](#onix-controle-app-de-celular)**, o controle remoto da TV inteira pelo Wi-Fi de casa, com gamepad virtual integrado para emulação. Disponível para **Android** (APK nativo). No **iPhone/iPad**, funciona só como controle do Cobalt GameHub ([projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)).
-
-Na 13.7.5: os jogos ganharam o visual do Onix e fases. Na 13.7.4: o Onix passou a falar **espanhol**.
-
-Na 13.6.0: atualizações pelo próprio Onix, escolha dos serviços das indicações, o aparelho no chip do topo e o "Conectado" que testa a internet de verdade.
-
-Na 13.7.0: versão para **TVs LG (webOS)**, em beta e ainda sem teste numa LG de verdade. Veja [TVs LG (webOS)](#tvs-lg-webos).
-
-Na 13.6.4: etiquetas **Novo**, **Correção** e **Bug** nas Novidades, e um segredo no cartão **Sobre**.
-
-Na 13.6.3: o Onix não some mais com os apps, as entradas e as indicações ao voltar de outro app; aviso "Parece que você está sem conexão" no lugar dos destaques de fachada; **Configurações da TV** ao lado do **Atualizar**; novos estilos de animação; e a aba **Apps** separada em **Recentes** e **Não usados**.
-
-Na 13.6.2: ícones oficiais do Disney+, da HBO Max e do Globoplay nos selos das indicações, e TV, PlayStation 5, Xbox e Nintendo Switch com o mesmo visual das HDMI em **Entradas**.
-
-Na 13.6.1: a entrada **TV** (antena e cabo) em **Entradas** e os pontinhos do destaque centralizados embaixo da capa.
-
-Na 13.5.0: indicações do Disney+, HBO Max e Globoplay pelo uso, a tela **Novidades** e a versão para TVs Samsung.
-
-O histórico completo está no [CHANGELOG.md](CHANGELOG.md) e na [página de Releases](https://github.com/ruan2311/onix/releases).
+As versões anteriores estão no [CHANGELOG.md](CHANGELOG.md) e na [página de Releases](https://github.com/ruan2311/onix/releases).
 
 ---
 
 ## Recursos
 
-### Início
-- **Três estilos**: **Onix Glass** (padrão), **Clean Glass** (minimalista) e **Onix Cosmos** (artístico), em **Configurações → Início**.
-- **Destaque rotativo** com as indicações da semana. O botão **Assistir na Netflix** abre o título direto na página dele no app da Netflix.
-- **Seus apps**: uma fileira com os seus apps favoritos. Dá para adicionar, remover e reordenar na tela **Organizar seus apps**.
-- **Indicações da semana**: títulos populares no Brasil (via JustWatch) dos serviços que você usa, complementados pelos filmes mais vistos da iTunes Store. A lista é renovada toda segunda-feira.
-  - A **Netflix** é o padrão e está sempre presente.
-  - **Disney+**, **HBO Max** e **Globoplay** entram quando você abre o app **mais de 3 vezes pelo Onix** (pela grade ou pelas indicações) e o app está instalado. As 8 vagas são divididas entre os serviços, e os mais abertos vêm primeiro.
-  - Uma **semana sem abrir** o app zera a contagem e ele sai das indicações.
-  - Prefere escolher? Em **Configurações → Indicações**, desligue **Pelo que você assiste** e marque os serviços que quiser (pelo menos um).
-  - Cada indicação tem o selo do serviço, e **Assistir no…** abre o título direto no app.
-- **Botão Atualizar**: baixa notícias, indicações e a lista de apps na hora, sem esperar o próximo ciclo automático.
-- **Botão Limpar memória**: fecha os apps parados em segundo plano (nunca o próprio Onix) e mostra quanto liberou. No Android 14 ou mais novo, o sistema não deixa um app fechar outros, e o botão só mostra a memória livre.
+| | |
+|---|---|
+| **Início** | Três estilos (**Onix Glass**, **Clean Glass** e **Onix Cosmos**), destaque rotativo com as indicações da semana, fileira com os seus apps favoritos, botões **Atualizar** e **Limpar memória** |
+| **Indicações da semana** | Títulos populares no Brasil (JustWatch + iTunes), renovados toda segunda. A **Netflix** é o padrão; **Disney+**, **HBO Max** e **Globoplay** entram quando você abre o app mais de 3 vezes pelo Onix (ou escolha em **Configurações → Indicações**). **Assistir no…** abre o título direto no app |
+| **Apps** | Grade com todos os apps instalados, separados em **Recentes** e **Não usados** |
+| **Jogos** | O cartão do [Cobalt GameHub](#cobalt-gamehub-jogos-clássicos) e quatro minijogos com fases e recorde: **Pong**, **Pinball**, **Tijolos** e **Cobrinha**. Na Samsung e na LG, um hub de jogos na nuvem (Game Pass e apps de cloud gaming) |
+| **Notícias dos games** | Adrenaline e Eurogamer.pt, a cada 3 horas. **OK** abre o resumo; um QR code leva à matéria no celular |
+| **Entradas** | TV (antena e cabo) e HDMI direto pelo launcher, com banners editáveis (PlayStation 5, Xbox, Switch, Computador…) |
+| **Tela de descanso** | Planetas e asteroides depois de 10 minutos parado, com o relógio mudando de lugar para não marcar telas OLED |
+| **Perfis e Modo Infantil** | Um perfil por pessoa; o infantil só mostra os apps liberados, tem PIN para sair e limite de tempo por dia |
+| **Aparência e sons** | 5 temas, 10 fontes, 8 relógios, posição do menu (lateral, em cima ou embaixo) e 5 sons de navegação |
+| **Outros** | **Desligar TV**, chip de conexão que testa a internet de verdade, clima opcional, atualizações pelo próprio app, português e español |
 
-### Apps
-- Grade com todos os apps instalados, com o banner oficial de TV de cada um quando existir.
-
-### Jogos
-- **Continuar jogando** e o cartão do **[Onix GameHub](#onix-gamehub-jogos-clássicos)** (Google TV e Android TV): abrir o GameHub, os quatro consoles com quantos jogos cada um tem, atualizar e desinstalar.
-- Na **Samsung e na LG**: destaques do **Game Pass** e os apps de **jogos na nuvem** (veja [O que muda na Samsung](#o-que-muda-na-samsung)).
-
-**Minijogos do Onix:** quatro jogos feitos para o controle remoto, no visual do Onix (traços coloridos sobre o vidro escuro), com fases, música chiptune e recorde salvo:
-
-| Jogo | Fases | Poderes e malefícios |
-|---|---|---|
-| **Pong** | 5 fases: quem fizer 5 pontos passa; a máquina fica mais rápida a cada uma | `+` raquete maior · `−` raquete menor · `»` turbo · `\|\|` congela o adversário |
-| **Pinball** | 5 metas (10.000 a 100.000 pontos); cada uma dá uma bola extra | Faixas que sobem o multiplicador, alvos e bumpers |
-| **Tijolos** | 8 fases, cada uma com um desenho de tijolos | Bons: **W** larga, **♥** vida, **S** lenta, **F** fogo · Ruins: **−** curta, **R** rápida |
-| **Cobrinha** | 5 fases de 10 maçãs, com muros novos em cada | Pedras surgem a cada 3 maçãs; a maçã dourada vale 50 |
-
-### Notícias dos games
-- As últimas notícias da **Adrenaline** e da **Eurogamer.pt**, atualizadas a cada 3 horas.
-- **OK** abre um resumo dentro do próprio Onix. No fim, um **QR code** leva à matéria completa no celular, já que a maioria das TVs não tem navegador.
-
-### Entradas (TV e HDMI)
-- **TV** (antena e cabo) como primeira entrada: abre os canais abertos no app de TV do aparelho, mesmo se ele estava numa HDMI. Só aparece em TVs com sintonizador.
-- Troca de entrada HDMI direto pelo launcher.
-- **Banners editáveis**: a canetinha embaixo de cada porta alterna entre PlayStation 5, Xbox, Nintendo Switch, Videogame, Computador ou HDMI genérico.
-- Atalho para os **ajustes de imagem** da TV.
-
-### Tela de descanso
-- Depois de 10 minutos sem usar o controle, planetas e asteroides passam devagar sobre um céu preto, com relógio e estrelas cadentes.
-- O relógio muda de posição a cada minuto, para não marcar telas OLED.
-
-### Outros
-- **Desligar TV** no menu: pede confirmação com um segundo OK e coloca a TV em standby.
-- **Aparelho e conexão no topo**: o chip da esquerda mostra o aparelho (*Google TV · Philips*, *Android TV*, *Celular Android*…) e o da direita fica vermelho com **Sem internet** quando a internet cai, mesmo com o Wi-Fi ligado (teste a cada 30 s).
-- **Atualizações**: o Onix avisa quando sai uma versão nova e se atualiza pelo próprio app. Veja [abaixo](#atualizações-automáticas).
-- **Português e español**: em **Configurações → Idioma**, escolha o idioma ou deixe no automático (segue o idioma da TV).
-- **Perfis e Modo Infantil**: um perfil para cada pessoa da casa e um perfil infantil com visual próprio, só os apps liberados, PIN para sair e limite de tempo por dia.
-- **Sons do menu**: cinco timbres (**Onix Chime**, **Crystal**, **Sharpness**, **Velvet** e **Pulse**), ou nenhum.
-- **Aparência**: em **Configurações → Aparência**, escolha o tema (Escuro, Cobalt, Aurora, Rubi Cinema ou White), a fonte (Sistema ou uma das 10) e o estilo do relógio (8 opções).
-- **Configurações do Onix**: desliga efeitos visuais para TVs mais fracas e controla relógio de 24 h, sons do menu e tela de descanso.
-
----
-
-## Capturas de tela
+<details>
+<summary><b>Capturas de tela</b></summary>
 
 | Onix Cosmos | Clean Glass |
 |---|---|
 | <img src="docs/screenshots/estilo-onix-cosmos.png" alt="Estilo Onix Cosmos"> | <img src="docs/screenshots/estilo-clean-glass.png" alt="Estilo Clean Glass"> |
 
-| Modo Infantil | Estilos e sons nas Configurações |
+| Modo Infantil | Configurações |
 |---|---|
 | <img src="docs/screenshots/modo-infantil.png" alt="Modo Infantil com o gatinho do Onix"> | <img src="docs/screenshots/configuracoes-inicio.png" alt="Estilo da tela inicial e Som da navegação"> |
 
@@ -217,399 +81,164 @@ O histórico completo está no [CHANGELOG.md](CHANGELOG.md) e na [página de Rel
 |---|---|
 | <img src="docs/screenshots/noticia.png" alt="Leitor de notícias com QR code"> | <img src="docs/screenshots/entradas.png" alt="Entradas TV e HDMI"> |
 
+</details>
+
 ---
 
 ## Instalação
 
-### Qual é a sua TV?
-
 | Sua TV | Como instalar |
 |---|---|
-| **Android TV ou Google TV** (Philips, Sony, TCL, Xiaomi, AOC, Chromecast, TV boxes…) | ✅ **Testado.** [Passo a passo abaixo](#android-tv-e-google-tv), só com o controle remoto, uns 5 minutos |
-| **Samsung** (2022 ou mais nova) | 🧪 **Experimental**, pode apresentar falhas. [Pelo celular, com o app Apps2Samsung](#tvs-samsung-tizen) |
-| **LG** (2022 ou mais nova) | 🧪 **Experimental**, pode apresentar falhas. [Pelo computador, uma vez](#tvs-lg-webos) |
+| **Android TV ou Google TV** (Philips, Sony, TCL, Xiaomi, Chromecast, TV boxes…) | ✅ **Testado.** [Pela própria TV](#android-tv-e-google-tv), uns 5 minutos |
+| **Samsung** (2022 ou mais nova) | 🧪 **Beta.** [Pelo celular, com o Apps2Samsung](#tvs-samsung-tizen) |
+| **LG** (2022 ou mais nova) | 🧪 **Beta.** [Pelo computador, uma vez](#tvs-lg-webos) |
 
-> **Não sabe qual é a sua?** Se a tela inicial da TV tem a **Play Store** (ou diz "Google TV"), ela é Android TV/Google TV. TVs Samsung e LG têm sistema próprio e **não** têm a Play Store.
+> **Não sabe qual é a sua?** Se a tela inicial tem a **Play Store** (ou diz "Google TV"), é Android TV/Google TV. Samsung e LG têm sistema próprio, sem a Play Store.
 
----
+### Android TV e Google TV
 
-## Android TV e Google TV
-
-### Qual baixar: Onix App ou Onix Launcher?
-
-O conteúdo é o mesmo; muda só se ele pode virar a tela inicial.
+Há dois arquivos com o mesmo conteúdo. Na dúvida, comece pelo **Onix App**; dá para instalar o Launcher por cima depois, sem perder nada.
 
 | | **Onix App** | **Onix Launcher** |
 |---|---|---|
 | Arquivo | [onix-app.apk](https://github.com/ruan2311/onix/releases/latest/download/onix-app.apk) | [onix-launcher.apk](https://github.com/ruan2311/onix/releases/latest/download/onix-launcher.apk) |
-| Aparece na lista de apps | ✅ | ✅ |
 | Pode virar a tela inicial | ❌ | ✅ |
-| Para quem | Quer experimentar sem mexer em nada | Quer o Onix como tela principal |
 
-> **Na dúvida, comece pelo Onix App.** Gostou? Instale o Onix Launcher por cima depois: nada se perde (apps organizados, banners e recordes ficam).
-
-### Instalar pela própria TV, com o app Downloader
-
-✅ *Testado numa Philips Google TV (outubro de 2026), do começo ao fim, só com o controle.*
-
-1. Na TV, abra a **Play Store**, procure **Downloader** (o ícone laranja, de *AFTVnews*) e instale.
-2. Abra o **Downloader**. Se ele pedir permissão para acessar arquivos, aceite.
-3. Clique na barra laranja do topo, onde está escrito **"Click here to enter a URL…"**.
-4. No quadro que abre, digite exatamente o link abaixo e clique em **Load**:
-   - para o Onix App: **`github.com/ruan2311/onix/releases/latest/download/onix-app.apk`**
-   - para o Onix Launcher: **`github.com/ruan2311/onix/releases/latest/download/onix-launcher.apk`**
-5. O download começa sozinho. Se a TV avisar que o Downloader não pode instalar apps, clique em **Configurações**, ligue a chave do **Downloader** e aperte **Voltar** no controle.
-6. Na tela do Android, clique em **Instalar** (se o Onix já estiver na TV, o botão se chama **Atualizar**).
-7. Apareceu **"App instalado"**? Clique em **Abrir**. Pronto! O Onix também fica na sua lista de apps.
-
-> Se o **Play Protect** avisar que o app é desconhecido ou arriscado, clique em **Mais detalhes → Instalar mesmo assim**. O aviso aparece porque o Onix não vem da Play Store; o código é aberto e está todo aqui no GitHub.
-
-> Se o Downloader perguntar depois se quer apagar o arquivo baixado, pode apagar: ele não é mais necessário.
-
-<details>
-<summary><b>Pelo computador, com adb</b> (para quem já conhece)</summary>
-
-✅ *Testado numa Philips Google TV.*
-
-1. Na TV, ative as **Opções do desenvolvedor**: em **Configurações → Sistema → Sobre**, clique 7 vezes em **Build do sistema operacional**.
-2. Em **Opções do desenvolvedor**, ative **Depuração USB** e/ou **Depuração sem fio**.
-3. No computador, com o [Android Platform Tools](https://developer.android.com/tools/releases/platform-tools) instalado:
-
-```bash
-adb connect IP_DA_TV:5555        # ou o IP:porta mostrado em "Depuração sem fio"
-adb install -r onix-app.apk      # ou onix-launcher.apk
-```
-
-Na primeira conexão, a TV pede para autorizar o computador: aceite.
-
-</details>
-
-Depois de instalado, o próprio Onix avisa e instala as versões novas: veja [Atualizações automáticas](#atualizações-automáticas).
-
----
-
-## TVs Samsung (Tizen)
-
-As TVs Samsung usam o **Tizen**, não o Android, então os arquivos `.apk` não servem nelas. A versão Samsung é a mesma interface, empacotada como app do Tizen (`.wgt`).
-
-> 🧪 **Experimental:** pode apresentar falhas. Se algo não funcionar, [abra uma issue](https://github.com/ruan2311/onix/issues).
-
-**TVs compatíveis:** Samsung de **2022 em diante**. Em modelos mais antigos, o navegador interno da TV não tem os recursos que a interface usa.
-
-> **Por que é mais trabalhoso que no Android?** A Samsung só deixa instalar um app de fora da loja se ele for **assinado para a sua TV** (com o número de série dela) usando uma **conta Samsung**. O app de celular abaixo faz essa assinatura por você.
-
-### Jeito 1: pelo celular, com o app Apps2Samsung (mais fácil)
-
-Você vai precisar de: um **celular Android**, a sua **conta Samsung** e o celular e a TV **no mesmo Wi-Fi**.
-
-> O Apps2Samsung é um app gratuito de outro desenvolvedor, não do Onix.
-
-**1. Descubra o IP do celular.** No celular, vá em **Configurações → Sobre o telefone → Status** (ou **Configurações → Wi-Fi →** toque na rede conectada) e anote o **Endereço IP**, algo como `192.168.0.25`.
-
-**2. Ligue o Modo Desenvolvedor da TV.**
-1. Na TV, abra **Apps** (Aplicativos) na tela inicial.
-2. Com a tela de Apps aberta, digite **1 2 3 4 5** no controle. Se o controle não tiver números, use o botão **123** para abrir o teclado numérico da tela.
-3. Na janela que abrir, ligue o **Developer mode** (**On**), digite o **IP do celular** do passo 1 e confirme.
-4. **Desligue e ligue a TV** pelo controle. Se não funcionar, tire a TV da tomada por 30 segundos.
-
-**3. Instale o Apps2Samsung no celular.** Baixe o arquivo que termina em **`-android.apk`** na [página de downloads do Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung/releases/latest) e abra. Se o celular pedir, permita instalar apps do navegador.
-
-**4. Baixe o Onix no celular:** [onix-tizen.wgt](https://github.com/ruan2311/onix/releases/latest/download/onix-tizen.wgt).
-
-**5. Instale.** Abra o Apps2Samsung, escolha a sua TV na lista, escolha **instalar um arquivo .wgt próprio** (custom .wgt) e selecione o **onix-tizen.wgt** (fica em **Downloads**). Na primeira vez, ele pede para entrar na **conta Samsung**: é assim que ele assina o app para a sua TV.
-
-**6. Pronto!** O **Onix** aparece em **Apps** na TV. Para deixá-lo à mão, selecione o Onix, segure **OK** (ou aperte o botão de opções) e escolha **Adicionar à Página Inicial**.
-
-Depois de instalado, você pode desligar o Modo Desenvolvedor (repita o passo 2 e deixe em **Off**). Ele só é necessário para instalar e atualizar.
-
-> Para **atualizar**, baixe o `onix-tizen.wgt` novo e repita o passo 5: seus apps organizados, banners e recordes são mantidos. Para **desinstalar**, vá em **Apps → ⚙️ Configurações**, selecione o Onix e escolha **Excluir**.
-
-<details>
-<summary><b>Jeito 2: pelo computador, com o Tizen Studio</b> (oficial da Samsung)</summary>
-
-#### Passo 1: instale o Tizen Studio no computador
-
-1. Baixe e instale o [Tizen Studio](https://developer.tizen.org/development/tizen-studio/download) (Windows, macOS ou Linux). A versão "CLI", sem a IDE, já basta.
-2. Abra o **Package Manager** do Tizen Studio e, na aba **Extension SDK**, instale:
-   - **Samsung Certificate Extension**
-   - **TV Extensions** (a versão mais nova)
-3. Os comandos `tizen` e `sdb` ficam em `tizen-studio/tools/ide/bin` e `tizen-studio/tools`. No Windows, são `C:\tizen-studio\tools\ide\bin\tizen.bat` e `C:\tizen-studio\tools\sdb.exe`. Coloque essas pastas no `PATH` ou use o caminho completo.
-
-#### Passo 2: ative o Modo Desenvolvedor na TV
-
-Igual ao passo 2 do jeito pelo celular, mas digitando o **IP do computador** (no Windows, `ipconfig`; no macOS e no Linux, `ip addr`). A TV e o computador precisam estar na mesma rede.
-
-#### Passo 3: conecte o computador à TV
-
-Descubra o IP da TV em **Configurações → Geral → Rede → Status da rede → Configurações de IP**. Depois:
-
-```bash
-sdb connect IP_DA_TV
-sdb devices          # anote o nome do aparelho (ex.: UN55AU7700) para o passo 5
-```
-
-> Se aparecer `failed to connect`, confira se o Modo Desenvolvedor está ligado com o IP certo do computador e se a TV foi reiniciada depois disso.
-
-#### Passo 4: crie o certificado da Samsung (uma vez só)
-
-1. Com a TV conectada, abra o **Certificate Manager** do Tizen Studio (**Tools → Certificate Manager**, ou `tizen-studio/tools/certificate-manager`).
-2. Clique em **+**, escolha **Samsung** e depois **TV**.
-3. Dê um nome ao perfil, por exemplo **Onix**. Esse nome é usado no passo 5.
-4. **Author certificate:** escolha *Create a new author certificate*, preencha um nome e uma senha (guarde a senha) e entre com a sua **conta Samsung** quando pedir.
-5. **Distributor certificate:** deixe o nível de privilégio em **Public**. O **DUID** da TV aparece sozinho porque ela está conectada; se não aparecer, clique em *Add* e escolha a TV. Entre com a conta Samsung de novo e conclua.
-
-#### Passo 5: assine e instale o Onix
-
-1. Baixe o [onix-tizen.zip](https://github.com/ruan2311/onix/releases/latest/download/onix-tizen.zip) e extraia. Vai aparecer a pasta `onix`.
-2. No terminal, dentro da pasta onde está a `onix`:
-
-```bash
-tizen package -t wgt -s Onix -- onix                 # "Onix" = nome do perfil do passo 4; gera onix/Onix.wgt
-tizen install -n Onix.wgt -t NOME_DA_TV -- onix      # NOME_DA_TV = o nome que apareceu no "sdb devices"
-```
-
-3. Pronto: o **Onix** aparece em **Apps** na TV. Para atualizar, baixe o zip novo e repita este passo.
-
-</details>
-
-### O que muda na Samsung
-
-| Recurso | Na Samsung |
-|---|---|
-| Apps, Organizar seus apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android |
-| Aba Jogos | 🎮 No lugar do Onix GameHub (que é só Android), um **hub de jogos na nuvem**: os jogos mais populares do **Game Pass** em banners (OK abre o app do Xbox) e os apps de cloud gaming. Os que já estão na TV abrem direto; os outros pedem para instalar pela loja da Samsung |
-| Indicações da semana + **Assistir na Netflix** | ✅ Abre a Netflix no título. Se a sua TV não aceitar o link direto, abre a Netflix e você procura o título |
-| Atualizações | ⚠️ O Onix avisa quando sai uma versão nova, mas você instala do mesmo jeito que a primeira vez |
-| Indicações do Disney+, HBO Max e Globoplay | ✅ Mesma regra do Android, inclusive a escolha manual em Configurações (mais de 3 aberturas, sai depois de 7 dias). O app abre, mas nem sempre direto no título: o Tizen não documenta links diretos para esses apps |
-| Indicações que não são da Netflix | ⚠️ A Samsung não tem a busca "onde assistir" do Google |
-| Entradas TV e HDMI | ⚠️ A TV (antena) e a HDMI aparecem **em tela cheia dentro do Onix**. **Voltar** ou **OK** retorna ao Onix. Recursos como Modo Jogo automático podem não ligar nessa janela: para jogar, prefira o botão de fontes do controle |
-| Virar a tela inicial | ❌ O Tizen não aceita launchers de terceiros. O Onix abre como um app; dá para fixá-lo na barra da tela inicial |
-| Desligar TV, ajustes de imagem, configurações da TV | ❌ O Tizen não deixa apps comuns fazerem isso, então esses botões não aparecem |
-
-### Compilar a versão Samsung a partir do código
-
-```bash
-bash tizen/build.sh            # gera tizen/build/onix/, o onix-tizen.zip e o onix-tizen.wgt (sem assinatura)
-bash tizen/build.sh Onix       # também gera o Onix.wgt assinado (precisa do Tizen CLI e do perfil "Onix")
-```
-
-O `tizen/build.sh` pega o mesmo `index.html` do Android e, pelo `tv/page.py`, faz quatro coisas: coloca a ponte (`tv/bridge.js` com o adaptador `tizen/platform.js`) antes do script da página, embute as indicações iniciais, libera na Content-Security-Policy só os hosts de indicações e notícias, e troca `inset` e `aspect-ratio` por equivalentes que o navegador das TVs de 2022 entende.
-
----
-
-## TVs LG (webOS)
-
-As TVs LG usam o **webOS**, então os arquivos `.apk` também não servem nelas. A versão LG é a mesma interface, empacotada como app do webOS (`onix-webos.ipk`).
-
-> 🧪 **Experimental:** pode apresentar falhas. Se algo não funcionar, [abra uma issue](https://github.com/ruan2311/onix/issues).
-
-**TVs compatíveis:** LG de **2022 em diante** (webOS 22 ou mais novo).
-
-> **Dá para instalar só com o celular?** Infelizmente, ainda não: a LG só deixa instalar apps de fora da loja usando um programa no **computador** (Windows, macOS ou Linux). Você precisa dele **só para instalar**; depois o Onix funciona sozinho na TV.
-
-### Instalar pelo computador (sem terminal)
-
-Você vai precisar de: um **computador** e a TV **no mesmo Wi-Fi**, e uns 15 minutos.
-
-**1. Crie uma conta de desenvolvedor da LG (grátis).** Entre em [webostv.developer.lge.com](https://webostv.developer.lge.com/), clique em **Sign In → Create Account** e siga os passos. É diferente da conta LG que você usa na TV.
-
-**2. Ligue o Modo Desenvolvedor na TV.**
-1. Na TV, abra a **LG Content Store** (ou **Apps**), procure **Developer Mode** e instale.
-2. Abra o **Developer Mode** e entre com a conta do passo 1.
-3. Ligue **Dev Mode Status**. A TV reinicia sozinha.
-4. Abra o **Developer Mode** de novo e ligue **Key Server**. Deixe essa tela aberta: ela mostra o **IP** e a **Passphrase** da TV.
-
-**3. Instale o webOS Dev Manager no computador.** Baixe na [página de downloads dele](https://github.com/webosbrew/dev-manager-desktop/releases/latest) o arquivo do seu sistema (no Windows, o que termina em **`.msi`**) e instale.
-
-**4. Conecte o computador à TV.** Abra o Dev Manager, clique em **Add Device** (adicionar aparelho), escolha a sua TV ou digite o **IP** que aparece no Developer Mode, e cole a **Passphrase** quando ele pedir.
-
-**5. Instale o Onix.** Baixe o [onix-webos.ipk](https://github.com/ruan2311/onix/releases/latest/download/onix-webos.ipk). No Dev Manager, vá em **Apps**, clique em **Install** (ícone de instalar) e escolha o arquivo baixado.
-
-**6. Pronto!** O **Onix** aparece na barra de apps da TV.
-
-> ⏳ **Importante: o Modo Desenvolvedor vence em 50 horas.** Quando vence, a LG **apaga** os apps instalados por ele, inclusive o Onix. Para não perder: de vez em quando, abra o app **Developer Mode** na TV e aperte **Extend** (o contador volta para 50 horas). O Dev Manager também mostra quanto tempo falta.
-
-> Para **atualizar**, baixe o `.ipk` novo e repita o passo 5: seus apps organizados, banners e recordes são mantidos. Para **desinstalar**, segure **OK** no Onix na barra de apps e escolha **Excluir**.
-
-<details>
-<summary><b>Pelo terminal, com o webOS CLI</b> (para quem já conhece)</summary>
-
-Com o [webOS CLI](https://webostv.developer.lge.com/develop/tools/cli-installation) (`npm install -g @webos-tools/cli`), depois dos passos 1 e 2:
-
-```bash
-ares-setup-device                          # "add": nome tv, IP da TV, porta 9922, usuário prisoner
-ares-novacom --device tv --getkey          # pede a Passphrase do app Developer Mode
-ares-install --device tv onix-webos.ipk
-ares-launch --device tv com.ruan2311.onix
-```
-
-</details>
-
-<details>
-<summary><b>TV com root (Homebrew Channel)</b></summary>
-
-Se a sua TV já tem o [Homebrew Channel](https://github.com/webosbrew/webos-homebrew-channel), instale o `onix-webos.ipk` pelo webOS Dev Manager do mesmo jeito. Assim o Onix não expira.
-
-</details>
-
-### O que muda na LG
-
-| Recurso | Na LG |
-|---|---|
-| Aba Jogos | 🎮 O mesmo **hub de jogos na nuvem** da Samsung (Game Pass e apps de cloud gaming) |
-| Apps, Organizar seus apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android. Os apps vêm da barra da LG; se a sua TV não deixar o Onix ler essa lista, ele mostra os apps mais comuns (Netflix, YouTube, Prime Video, Disney+, Spotify, Apple TV, Navegador e Configurações) |
-| Indicações da semana + **Assistir na Netflix** | ✅ Abre a Netflix no título. Se a TV não aceitar o link direto, abre a Netflix e você procura o título |
-| Indicações do Disney+, HBO Max e Globoplay | ⚠️ Mesma regra do Android. O app abre, mas nem sempre direto no título |
-| Entradas TV e HDMI | ✅ Troca a TV inteira para a entrada, como o botão de entradas do controle. Se a TV não informar as portas, aparecem TV e HDMI 1 a 4 |
-| Configurações da TV e ajustes de imagem | ✅ Abrem as Configurações da LG |
-| Atualizações | ⚠️ O Onix avisa quando sai uma versão nova; instale o `.ipk` novo do mesmo jeito que o primeiro |
-| Virar a tela inicial | ❌ O webOS não aceita launchers de terceiros. O Onix aparece na barra de apps da LG, e dá para trazê-lo para o começo dela |
-| Desligar TV | ❌ O webOS não deixa apps comuns desligarem a TV |
-
-### Compilar a versão LG a partir do código
-
-```bash
-bash webos/build.sh            # gera webos/build/onix/ e o onix-webos.ipk
-```
-
-O `webos/build.sh` monta o `index.html` com o mesmo `tv/page.py` da Samsung (trocando o adaptador por `webos/platform.js`), gera os ícones de 80 e 130 px e empacota o `.ipk` com o `webos/ipk.py`, sem precisar do `ares-package`.
-
----
-
-## Usar como tela inicial (Onix Launcher)
-
-### Android TV "clássico"
-Depois de instalar o **Onix Launcher**, aperte **Home** no controle. Se aparecer a pergunta de qual tela inicial usar, escolha **Onix Launcher → Sempre**.
-
-### Google TV
-Na Google TV, a TV **não pergunta** qual tela inicial usar: o **Home** sempre volta para a tela do Google. Para o Onix assumir, é preciso **desativar** a tela inicial do Google (ela **não é apagada** e pode ser reativada quando quiser).
-
-✅ *Testado numa Philips Google TV (Android TV 14), com os dois comandos abaixo.*
-
-> 🧪 **Experimental:** pode apresentar falhas.
->
-> ⚠️ **Antes, abra o Onix Launcher pela lista de apps e confirme que ele funciona.** Sem nenhuma tela inicial ativa, a TV fica sem tela inicial. Para voltar ao normal, veja [Desfazer](#como-desfazer-tudo).
-
-**Pelo celular (Android), com o app Bugjaeger:**
-
-1. Na TV, ative as **Opções do desenvolvedor**: em **Configurações → Sistema → Sobre**, clique 7 vezes em **Build do SO do Android TV** (em versões mais antigas, **Build do sistema operacional**; aparece "Você é um desenvolvedor").
-2. Em **Configurações → Sistema → Opções do desenvolvedor**, ligue **Depuração USB** (e, se existir, **Depuração sem fio** ou **ADB pela rede**).
-3. Descubra o IP da TV em **Configurações → Rede e Internet →** sua rede (algo como `192.168.0.40`).
-4. No celular, instale o **Bugjaeger Mobile ADB** pela Play Store. Celular e TV no **mesmo Wi-Fi**.
-5. No Bugjaeger, use a opção de **conectar por Wi-Fi** (ícone de rede), digite o **IP da TV** com a porta **5555** (ex.: `192.168.0.40:5555`) e conecte. Na TV, aparece um pedido de autorização: marque **Sempre permitir** e aperte **OK**.
-6. Abra a aba de **comandos** (terminal/shell) do Bugjaeger e rode, um de cada vez:
-
-   ```
-   pm disable-user --user 0 com.google.android.apps.tv.launcherx
-   pm disable-user --user 0 com.google.android.tungsten.setupwraith
-   ```
-
-7. Aperte **Home** no controle: o Onix abre direto, **sem perguntar nada**, porque passa a ser a única tela inicial da TV. Só se você tiver outro launcher instalado (como o Projectivy) a TV pergunta qual usar: escolha **Onix Launcher → Sempre**.
+1. Na TV, abra a **Play Store** e instale o **Downloader** (ícone laranja, de *AFTVnews*).
+2. Abra o Downloader e clique na barra laranja **"Click here to enter a URL…"**.
+3. Digite o link e clique em **Load**:
+   - Onix App: **`github.com/ruan2311/onix/releases/latest/download/onix-app.apk`**
+   - Onix Launcher: **`github.com/ruan2311/onix/releases/latest/download/onix-launcher.apk`**
+4. Se a TV disser que o Downloader não pode instalar apps, clique em **Configurações**, ligue a chave do Downloader e aperte **Voltar**.
+5. Clique em **Instalar** (ou **Atualizar**) e depois em **Abrir**.
+
+> Se o **Play Protect** avisar que o app é desconhecido, clique em **Mais detalhes → Instalar mesmo assim**. O aviso aparece porque o Onix não vem da Play Store; o código está todo aqui.
 
 <details>
 <summary><b>Pelo computador, com adb</b></summary>
 
-```bash
-# Google TV (Chromecast com Google TV, TVs Philips, TCL, Sony etc.)
-adb shell pm disable-user --user 0 com.google.android.apps.tv.launcherx
-adb shell pm disable-user --user 0 com.google.android.tungsten.setupwraith
-```
+Ative as **Opções do desenvolvedor** (7 cliques em **Configurações → Sistema → Sobre → Build do sistema operacional**) e a **Depuração USB** ou **sem fio**. Depois:
 
 ```bash
-# Android TV "clássico" (launcher antigo do Google), se for o caso
-adb shell pm disable-user --user 0 com.google.android.tvlauncher
+adb connect IP_DA_TV:5555
+adb install -r onix-app.apk      # ou onix-launcher.apk
 ```
 
 </details>
 
+### TVs Samsung (Tizen)
+
+A versão Samsung é a mesma interface, empacotada como app do Tizen (`.wgt`). Funciona em TVs de **2022 em diante**. A Samsung só instala apps de fora da loja **assinados para a sua TV** com uma conta Samsung, e o app de celular abaixo faz isso por você.
+
+Você vai precisar de: um **celular Android**, uma **conta Samsung** e os dois aparelhos **no mesmo Wi-Fi**.
+
+1. **Anote o IP do celular** (**Configurações → Wi-Fi →** a rede conectada), algo como `192.168.0.25`.
+2. **Ligue o Modo Desenvolvedor da TV:** abra **Apps**, digite **1 2 3 4 5** no controle (ou pelo botão **123**), ligue **Developer mode**, digite o IP do celular e **desligue e ligue a TV**.
+3. **Instale o [Apps2Samsung](https://github.com/Apps2Samsung/Apps2Samsung/releases/latest)** no celular (o arquivo que termina em `-android.apk`). É um app gratuito de outro desenvolvedor.
+4. **Baixe o [onix-tizen.wgt](https://github.com/ruan2311/onix/releases/latest/download/onix-tizen.wgt)** no celular.
+5. **Instale:** no Apps2Samsung, escolha a TV, **instalar um .wgt próprio** (custom .wgt) e o `onix-tizen.wgt`. Na primeira vez, ele pede a conta Samsung para assinar o app.
+6. **Pronto:** o Onix aparece em **Apps**. Depois, você pode desligar o Modo Desenvolvedor.
+
+> **Ligar a TV direto no Onix:** siga o tutorial [Samsung: ligar a TV direto no Onix](docs/samsung-tela-inicial.md). Usa só as configurações da TV e dá para desfazer quando quiser.
+
+> **Atualizar:** baixe o `.wgt` novo e repita o passo 5; nada se perde. **Desinstalar:** **Apps → ⚙️ → Onix → Excluir**.
+
+<details>
+<summary><b>Pelo computador, com o Tizen Studio</b> (oficial da Samsung)</summary>
+
+1. Instale o [Tizen Studio](https://developer.tizen.org/development/tizen-studio/download) (a versão CLI basta) e, no **Package Manager → Extension SDK**, a **Samsung Certificate Extension** e as **TV Extensions**.
+2. Ligue o Modo Desenvolvedor da TV como no passo 2 acima, com o **IP do computador**.
+3. Conecte: `sdb connect IP_DA_TV` e `sdb devices` (anote o nome da TV).
+4. No **Certificate Manager**, crie um perfil **Samsung → TV** chamado `Onix`: um *author certificate* novo e o *distributor* com privilégio **Public** (o DUID da TV aparece sozinho). Entre com a conta Samsung quando pedir.
+5. Baixe e extraia o [onix-tizen.zip](https://github.com/ruan2311/onix/releases/latest/download/onix-tizen.zip) e rode:
+
+```bash
+tizen package -t wgt -s Onix -- onix
+tizen install -n Onix.wgt -t NOME_DA_TV -- onix
+```
+
+</details>
+
+#### O que muda na Samsung
+
+| Recurso | Na Samsung |
+|---|---|
+| Apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android |
+| Aba Jogos | 🎮 Hub de jogos na nuvem (Game Pass e apps de cloud gaming) no lugar do Cobalt GameHub |
+| Indicações + **Assistir na Netflix** | ✅ Abre o título. Disney+, HBO Max e Globoplay abrem o app, nem sempre direto no título |
+| Entradas TV e HDMI | ⚠️ Em tela cheia **dentro do Onix**; Voltar ou OK retorna. Para jogar, prefira o botão de fontes do controle (o Modo Jogo pode não ligar) |
+| Ligar a TV no Onix | ✅ Pelo [Executar último app](docs/samsung-tela-inicial.md) |
+| Botão Home | ❌ Continua abrindo o Smart Hub; dá para pôr o Onix em primeiro na barra |
+| Atualizações | ⚠️ O Onix avisa, mas você instala do mesmo jeito da primeira vez |
+| Desligar TV e ajustes da TV | ❌ O Tizen não deixa apps comuns fazerem isso |
+
+### TVs LG (webOS)
+
+A versão LG é a mesma interface, como app do webOS (`onix-webos.ipk`), para TVs de **2022 em diante** (webOS 22+). A LG só instala apps de fora da loja pelo **computador**, uma vez.
+
+1. **Crie uma conta de desenvolvedor** em [webostv.developer.lge.com](https://webostv.developer.lge.com/) (grátis, diferente da conta LG da TV).
+2. **Na TV**, instale o app **Developer Mode** da loja, entre com essa conta e ligue **Dev Mode Status** (a TV reinicia). Abra de novo e ligue **Key Server**: a tela mostra o **IP** e a **Passphrase**.
+3. **No computador**, instale o [webOS Dev Manager](https://github.com/webosbrew/dev-manager-desktop/releases/latest) e use **Add Device** com o IP e a Passphrase.
+4. Baixe o [onix-webos.ipk](https://github.com/ruan2311/onix/releases/latest/download/onix-webos.ipk) e instale pelo Dev Manager (**Apps → Install**).
+
+> ⏳ **O Modo Desenvolvedor vence em 50 horas** e, quando vence, a LG apaga o Onix. De vez em quando, abra o **Developer Mode** e aperte **Extend**. Com o [Homebrew Channel](https://github.com/webosbrew/webos-homebrew-channel) (root), ele não expira.
+
+<details>
+<summary><b>Pelo terminal, com o webOS CLI</b></summary>
+
+```bash
+npm install -g @webos-tools/cli
+ares-setup-device                          # "add": nome tv, IP da TV, porta 9922, usuário prisoner
+ares-novacom --device tv --getkey          # pede a Passphrase
+ares-install --device tv onix-webos.ipk
+```
+
+</details>
+
+**O que muda na LG:** igual à Samsung, com duas diferenças boas: as **entradas** trocam a TV inteira, como o botão de fontes, e as **configurações da TV** abrem pelo Onix. Não vira tela inicial e não desliga a TV.
+
 ---
 
-## Onix GameHub (jogos clássicos)
+## Usar como tela inicial
 
-<img src="gamehub/res/drawable-xxxhdpi/icon.png" alt="Ícone do Onix GameHub" width="72" align="right">
+| TV | Como |
+|---|---|
+| **Android TV clássico** | Instale o **Onix Launcher**, aperte **Home** e escolha **Onix Launcher → Sempre** |
+| **Google TV** | Desative a tela inicial do Google (passos abaixo). Ela não é apagada e volta quando quiser |
+| **Samsung** | O Home não muda, mas a TV pode [ligar direto no Onix](docs/samsung-tela-inicial.md) |
+| **LG** | Não dá; traga o Onix para o começo da barra de apps |
 
-> ⚠️ **Só para Google TV e Android TV.** Nas TVs Samsung e LG, a aba Jogos mostra o hub de jogos na nuvem no lugar dele.
+**Google TV** (✅ *testado numa Philips Google TV, Android TV 14*):
 
-Um app **opcional**, no visual do Onix, para jogar os seus jogos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advance** e **Mega Drive** na TV. Ele conversa com o Onix: o perfil, o idioma, o Modo Infantil, os sons e as animações vêm de lá, e o "Continuar jogando" aparece na aba **Jogos** do Onix.
+> ⚠️ Antes, abra o **Onix Launcher** pela lista de apps e confirme que ele funciona. Sem nenhuma tela inicial ativa, a TV fica sem tela inicial.
 
-✅ *Testado numa Philips Google TV (Android TV 14), com controle DualSense: 60 FPS no Super Nintendo.*
+1. Ative as **Opções do desenvolvedor** (7 cliques em **Configurações → Sistema → Sobre → Build do SO do Android TV**) e ligue a **Depuração USB** (e a **sem fio**, se existir).
+2. No celular, instale o **Bugjaeger Mobile ADB** (Play Store) e conecte por Wi-Fi em `IP_DA_TV:5555`. Na TV, marque **Sempre permitir**.
+3. No terminal do Bugjaeger (ou com `adb shell` na frente, pelo computador), rode:
 
-> 🧪 **Experimental:** pode apresentar falhas. Se algo não funcionar, [abra uma issue](https://github.com/ruan2311/onix/issues).
+```
+pm disable-user --user 0 com.google.android.apps.tv.launcherx
+pm disable-user --user 0 com.google.android.tungsten.setupwraith
+```
 
-> ⚖️ **Nenhum jogo vem com o GameHub.** Use só jogos que você tem o direito de usar (por exemplo, cópias dos seus próprios cartuchos).
+4. Aperte **Home**: o Onix abre direto. No Android TV clássico, o comando é `pm disable-user --user 0 com.google.android.tvlauncher`.
+
+---
+
+## Cobalt GameHub (jogos clássicos)
+
+<img src="gamehub/res/drawable-xxxhdpi/icon.png" alt="Ícone do Cobalt GameHub" width="72" align="right">
+
+App **opcional**, no visual do Onix, para jogar **NES, Super Nintendo, Game Boy Advance, Game Boy Color, Mega Drive, PlayStation, Atari e Fliperama** na **Google TV e Android TV** (também há versões para celular, PC e iPhone). Instale pela aba **Jogos** do Onix: o perfil, o idioma, o Modo Infantil e o "Continuar jogando" vêm de lá. Os jogos chegam pelo celular, com um QR code, ou direto de um pendrive ou HD.
+
+> ⚖️ **Nenhum jogo vem com o GameHub.** Use só jogos que você tem o direito de usar.
+
+Tudo sobre ele no [README do Cobalt GameHub](gamehub/README.md) e nas [Releases do ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub/releases).
 
 <p align="center">
-  <img src="docs/screenshots/gamehub-inicio.jpg" alt="Início do Onix GameHub com Continuar jogando" width="49%">
+  <img src="docs/screenshots/gamehub-inicio.jpg" alt="Cobalt GameHub: Continuar jogando" width="49%">
   <img src="docs/screenshots/gamehub-consoles.jpg" alt="Consoles e jogos adicionados" width="49%">
 </p>
-
-### Instalar
-1. No Onix, abra a aba **Jogos** e clique em **Instalar o GameHub**.
-2. Na primeira vez, o Android pede para o **Onix** poder instalar apps: ative e volte. Depois, confirme em **Instalar**.
-3. Pronto: o cartão **Onix GameHub** aparece na aba **Jogos**, com **Abrir o GameHub** e os quatro consoles.
-
-Sem o Onix (ou se preferir): no app **Downloader**, use o link **`github.com/ruan2311/onix-gamehub/releases/latest/download/onix-gamehub.apk`**, do mesmo jeito do [tutorial do Onix](#instalar-pela-própria-tv-com-o-app-downloader).
-
-O GameHub não aparece na lista de apps do Onix: ele abre pela aba **Jogos**.
-
-### Mandar jogos pelo celular
-1. No GameHub, abra **Adicionar jogos** (o **+** no topo).
-2. Aponte a câmera do celular para o **QR code**. A página abre no navegador, sem instalar nada. O celular precisa estar **no mesmo Wi-Fi** da TV.
-3. Toque em **Escolher arquivos** e escolha um ou vários jogos. A TV mostra o progresso, e a capa e o nome certos aparecem em alguns segundos (precisa de internet).
-
-Sem câmera? Digite no navegador do celular o endereço que aparece na TV (por exemplo `http://192.168.1.75:8770`) e, quando a página pedir, o **código de 6 números** que está logo embaixo. Cinco códigos errados trocam o código, e a TV mostra o novo.
-
-- **Formatos:** `.nes`, `.sfc`, `.smc`, `.gba`, `.md`, `.gen`, `.bin` e `.zip` (com o jogo dentro). Até 64 MB por arquivo.
-- **Espaço:** o GameHub nunca enche a memória da TV. Ele sempre deixa livre para o sistema 10% da memória (no mínimo 768 MB e no máximo 2 GB); o resto aparece como **livre para jogos** no topo.
-- Arquivos que não são jogo, como uma foto, são recusados com aviso.
-
-<p align="center">
-  <img src="docs/screenshots/gamehub-adicionar-jogos.jpg" alt="Adicionar jogos pelo QR code ou pelo endereço com código" width="70%">
-</p>
-
-### Jogar
-- **Use um controle Bluetooth** (Xbox, PlayStation, 8BitDo…). Para parear, clique em **Sem controle** no topo do GameHub ou vá em **Configurações → Controles → Conectar controle novo**. O controle remoto da TV também joga, mas só com poucos botões.
-- **Continuar jogando:** ao sair, o GameHub guarda o ponto exato. **Continuar** volta dali, com a imagem de onde você parou. Também dá para continuar direto pela aba **Jogos** do Onix.
-- **Atalhos:** segure **R2** para acelerar e **L2** para rebobinar (ligue **Rebobinar** em **Configurações → Jogo**).
-
-### Menu do jogo
-Aperte **Voltar** (ou **Select + Start** no controle) durante o jogo:
-
-- **Salvar estado** e **Carregar estado**: quatro espaços por jogo, cada um com a imagem do momento.
-- **Avançar rápido**, **Imagem** (filtro **Nítido**, **CRT** ou **LCD**, tamanho e proporção) e **Opções do emulador**, só para aquele jogo.
-- **Trapaças**: códigos Game Genie, Action Replay, GameShark…
-- **Atribuir botões**: OK num botão do console e aperte, no controle, o botão que vai fazer aquilo. Vale só para aquele jogo.
-- **Reiniciar o jogo** e **Sair do jogo**.
-
-<p align="center">
-  <img src="docs/screenshots/gamehub-menu-do-jogo.jpg" alt="Menu do jogo" width="49%">
-  <img src="docs/screenshots/gamehub-atribuir-botoes.jpg" alt="Atribuir botões" width="49%">
-</p>
-
-### Configurações
-Na engrenagem do topo:
-
-- **Imagem, Som e Jogo**: valem para todos os consoles. **Mostrar FPS**, **Atraso do som** (se o som estalar, teste 96 ms), **Run-ahead** (menos atraso nos botões, pesa mais na TV), velocidade do avançar e do turbo.
-- **Controles → Controle 1 e Controle 2**: clique em **Definir** e aperte um botão no controle escolhido. Ele fica guardado mesmo depois de desligar; sem definir, o primeiro controle que apertar um botão é o jogador 1. Também dá para **trocar botões** de cada console.
-- **Interface**: **Som de navegação** e **Animações**, *Igual ao Onix* (padrão), *Ligado* ou *Desligado*.
-- **Nintendinho, Super Nintendo, Game Boy Advance e Mega Drive**: imagem, turbo e as opções do emulador daquele console.
-- **Armazenamento**: quanto os jogos ocupam e quanto ainda cabe.
-
-<p align="center">
-  <img src="docs/screenshots/gamehub-controles.jpg" alt="Controle 1 e Controle 2" width="49%">
-  <img src="docs/screenshots/gamehub-interface.jpg" alt="Som de navegação e Animações" width="49%">
-</p>
-
-### Perfis e Modo Infantil
-- Cada perfil do Onix tem os **próprios saves e estados**. Os jogos (os arquivos) são os mesmos para todos.
-- No perfil **infantil**, só aparecem os jogos marcados com **Liberar no Modo Infantil** (OK no jogo, num perfil de adulto). Não dá para adicionar, apagar nem instalar ou desinstalar o GameHub.
-
-### Atualizar e desinstalar
-- Quando sai versão nova, o cartão do GameHub na aba **Jogos** mostra **Atualizar**. Dentro dele, também em **Configurações → Sobre → Procurar atualizações**.
-- **Desinstalar** fica no mesmo cartão da aba **Jogos**. Os jogos e os saves saem junto com o app.
-
-### Créditos dos emuladores
-Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): **FCEUmm** (NES, GPL-2.0), **Snes9x** (SNES, licença não comercial), **mGBA** (GBA, MPL-2.0) e **Genesis Plus GX** (Mega Drive, licença não comercial). Nomes dos jogos: libretro-database (No-Intro, CC BY-SA 4.0); capas: libretro-thumbnails. As licenças completas estão em **Configurações → Sobre** e em [`gamehub/assets/licenses`](gamehub/assets/licenses). O GameHub é gratuito e nunca terá anúncios.
 
 ---
 
@@ -617,263 +246,123 @@ Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): *
 
 <img src="controle/res/mipmap-xxxhdpi/icon.png" alt="Ícone do Onix Controle" width="72" align="right">
 
-> 📱 **Disponível para Android e iPhone/iPad.** Funciona em Google TV e Android TV. Não funciona em TVs Samsung e LG.
+Transforma o celular no **controle remoto da TV inteira** (dentro da Netflix, do YouTube, das configurações…) e num **gamepad** para o Cobalt GameHub, pelo Wi-Fi de casa. Funciona em **Google TV e Android TV**, não em Samsung e LG.
 
-Transforma o celular no **controle remoto da TV inteira** e em **gamepad para jogos clássicos**: funciona dentro da Netflix, do YouTube, das configurações, no Onix e emulando comandos para o Cobalt GameHub. Ele se conecta direto pelo Wi-Fi de casa.
+- Setas ou deslizar, **OK**, **Voltar**, **Início**, ligar/desligar, volume (inclusive pelos botões do celular) e mídia.
+- **Teclado do celular** aparece sozinho quando a TV abre uma busca.
+- Atalhos para YouTube, Netflix, Prime Video, Disney+ e Max, e o nome do app aberto na TV.
 
-✅ *Testado numa Philips Google TV (Android TV 14).*
+**Android (6+):** baixe o **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.6/onix-controle.apk)** (ou pelo QR code em **Configurações → Controle pelo celular** no Onix), instale, toque na sua TV e digite o código de 6 caracteres que aparece nela. Ele se atualiza pelo GitHub em **Configurações → Atualização**.
 
-> 🧪 **Experimental:** pode apresentar falhas. Se algo não funcionar, [abra uma issue](https://github.com/ruan2311/onix/issues).
+**iPhone e iPad:** o Safari não deixa um site controlar a TV, então funciona **só como controle do Cobalt GameHub**. No GameHub, escolha **Usar celular como controle** e aponte a câmera, ou abra [projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle).
 
-**Funciona com:** TVs **Google TV** e **Android TV** (com ou sem o Onix), no mesmo Wi-Fi do celular. Celular **Android 6 ou mais novo** (app `.apk`). Não funciona em TVs Samsung e LG.
-
-> 📱 **iPhone e iPad:** o Safari não deixa um site controlar a TV pela rede de casa, por isso no iPhone ele funciona **só como controle do Cobalt GameHub** (veja [Instalar](#instalar)).
-
-### O que ele faz
-- **Setas ou "Deslizar":** use o direcional ou deslize o dedo na tela (cada deslizada é um passo; um toque é **OK**). Segurar uma seta repete.
-- **Gamepad para emuladores:** botões A, B, X, Y, L, R, Start, Select e D-Pad dedicados para jogar os clássicos do Cobalt GameHub na TV sem precisar de controle físico.
-- **Ligar/desligar, Voltar** e **Início**.
-- **Volume e mudo**, com o nível atual na tela. Com o app aberto, os **botões de volume do celular** mudam o volume da TV.
-- **Mídia:** voltar, tocar/pausar e avançar.
-- **Teclado:** abriu uma busca na TV? O teclado do celular aparece sozinho, com o nome do campo. Digite e apague normalmente, com ditado e corretor.
-- **Abrir apps na TV:** YouTube, Netflix, Prime Video, Disney+ e Max num toque.
-- **O que está na tela:** o app mostra qual app está aberto na TV, com destaque quando é o Onix.
-- Português e espanhol, no visual escuro do Onix.
-
-### Instalar
-
-**No Android:**
-1. No celular, abra este link no navegador e baixe o arquivo (ou, na TV, vá em **Configurações → Controle pelo celular → Baixar o Onix Controle** e aponte a câmera do celular para o QR code):
-   **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.6/onix-controle.apk)**
-2. Toque no arquivo baixado. Se o Android pedir, permita **instalar apps desta fonte** para o navegador (ou para o app de arquivos) e volte.
-3. Toque em **Instalar**. Se o **Play Protect** avisar que o app é desconhecido, toque em **Mais detalhes → Instalar mesmo assim** (o aviso aparece porque o app não vem da Play Store; o código está todo neste GitHub).
-
-**No iPhone e iPad (só controle do Cobalt GameHub):**
-1. Na TV, abra o **Cobalt GameHub** e escolha **Usar celular como controle**.
-2. Aponte a câmera do iPhone para o QR code. O controle abre no Safari.
-   Sem câmera? Abra **[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)** e digite o endereço que aparece na TV (ele fica salvo para as próximas vezes).
-3. Para jogar em tela cheia, com o controle aberto, toque em **Compartilhar → Adicionar à Tela de Início**.
-
-### Primeiro uso
-1. Abra o **Onix Controle**. Ele procura as TVs no Wi-Fi sozinho; toque na sua.
-   Se ela não aparecer, digite o **IP da TV** (fica em **Configurações → Rede e Internet →** sua rede).
-2. A TV mostra um **código de 6 letras e números**. Digite no celular e toque em **Conectar**.
-3. Pronto. Das próximas vezes, ele conecta sozinho ao abrir.
-
-### Atualizações
-Em **Configurações** (a engrenagem, no alto) → **Atualização**, toque em **Procurar atualização**. O app também procura sozinho, uma vez a cada 6 horas, e mostra um ponto verde na engrenagem quando há versão nova. Ele baixa daqui do GitHub, confere o arquivo e o Android pede a confirmação para instalar. No iPhone e iPad, o controle vem da própria TV e se atualiza junto com o Cobalt GameHub.
-
-### E o QR code do Onix?
-São duas opções complementares:
-- **Controle web clássico** (o QR code rápido do Onix): não instala nada, abre no navegador e controla o Onix na tela.
-- **Onix Controle**: app para Android. Controla a **TV inteira**, dentro de qualquer app, e tem **gamepad virtual** para os jogos do Cobalt GameHub. No iPhone e iPad, só o controle do Cobalt GameHub ([projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)).
+> O **QR code rápido do Onix** (sem instalar nada) continua existindo: ele controla só o Onix, pelo navegador.
 
 ---
 
-## Atualizações automáticas
+## Atualizações
 
-A partir da **13.6.0**, o Onix se atualiza sozinho pela [página de Releases](https://github.com/ruan2311/onix/releases):
+No Android, o Onix confere a [página de Releases](https://github.com/ruan2311/onix/releases) ao abrir e a cada 6 horas. Com **Atualizar automaticamente** ligado (padrão), ele baixa a versão nova, confere o **SHA-256** e abre a tela de instalação: é só apertar **Instalar**. Na primeira vez, o Android pede para permitir que o Onix instale apps. Nada se perde na atualização.
 
-1. Com o Onix aberto (e a cada 6 horas em segundo plano), ele confere se saiu uma versão nova.
-2. Saiu? Aparece um aviso na tela e um **ponto verde** em **Configurações**. Em **Configurações → Atualizações**, a linha mostra a versão nova.
-3. Com **Atualizar automaticamente** ligado (padrão), o Onix já baixa a APK e, quando você volta para ele, abre a tela de instalação do Android. É só apertar **Instalar**. Com a opção desligada, ele só avisa, e você aperta **Instalar a versão…** quando quiser.
-
-Na **primeira atualização**, o Android pede para **permitir que o Onix instale apps**. O Onix abre essa tela sozinho: ligue a opção do Onix, volte e aperte **Instalar a versão…** de novo.
-
-> **Por que precisa confirmar?** O Android não deixa um app comum se instalar sem a pessoa apertar **Instalar**. O Onix baixa da página de Releases, confere o **SHA-256** publicado pelo GitHub e se o arquivo é mesmo uma versão nova do Onix. O Android ainda confere se a APK foi assinada com a mesma chave. A atualização mantém apps organizados, banners, recordes e configurações. Se recusar, ele pergunta de novo no dia seguinte, ou quando você mandar.
-
-**TVs Samsung e LG:** o Onix avisa quando sai uma versão nova, mas não consegue se instalar sozinho; atualize do mesmo jeito que instalou ([Samsung](#tvs-samsung-tizen), [LG](#tvs-lg-webos)).
-
----
+Na **Samsung e na LG**, o Onix só avisa; instale o arquivo novo do mesmo jeito que o primeiro.
 
 ## Ativar o botão "Desligar TV"
 
-Apps comuns não podem desligar a TV. O Onix usa a única via oficial do Android para isso: registrar-se como **administrador do dispositivo** com uma só política, *bloquear a tela*. Na TV, bloquear a tela coloca o aparelho em standby, como o botão de energia.
-
-**Jeito mais fácil:** aperte **Desligar TV** duas vezes. Se o aparelho tiver a tela de administradores, o Android pede a autorização; aceite e aperte de novo.
-
-**Se a sua TV não mostrar o pedido** (algumas não têm essa tela), dá para liberar pelo computador, com adb:
+O Onix se registra como **administrador do dispositivo** com uma única política, *bloquear a tela*, que na TV coloca o aparelho em standby. Aperte **Desligar TV** duas vezes e aceite o pedido. Se a TV não mostrar o pedido, pelo computador:
 
 ```bash
 adb shell dpm set-active-admin com.aurora.launcher/.PowerAdmin
 ```
 
-O Onix não usa nenhuma outra função de administrador: não apaga dados, não troca senhas e não bloqueia nada.
-
----
-
 ## Como desfazer tudo
 
-**Tirar o Onix (Android TV e Google TV):** em **Configurações → Apps →** **Onix** (ou **Onix Launcher**) **→ Desinstalar**.
-
-> Se a permissão de **Desligar TV** estiver ativa, o Android não deixa desinstalar o Onix. Desative antes em **Configurações → Privacidade/Segurança → Apps de administrador do dispositivo → Onix**. O nome do menu varia conforme a marca; procure por "administrador".
-
-**Pelo computador:** `adb uninstall com.aurora.launcher` desinstala o Onix.
-
-**Trazer de volta a tela inicial do Google** (se você desativou): conecte de novo pelo Bugjaeger (ou pelo adb) e rode:
-
-```
-pm enable com.google.android.apps.tv.launcherx
-pm enable com.google.android.tungsten.setupwraith
-pm enable com.google.android.tvlauncher
-```
-
-Pelo computador, é o mesmo com `adb shell` na frente (ex.: `adb shell pm enable com.google.android.apps.tv.launcherx`).
+- **Desinstalar (Android):** **Configurações → Apps → Onix → Desinstalar**, ou `adb uninstall com.aurora.launcher`. Se o **Desligar TV** estiver ativo, desative antes em **Configurações → Segurança → Apps de administrador do dispositivo**.
+- **Trazer de volta a tela do Google:** `pm enable com.google.android.apps.tv.launcherx`, `pm enable com.google.android.tungsten.setupwraith` e `pm enable com.google.android.tvlauncher` (pelo Bugjaeger, ou com `adb shell` na frente).
+- **Samsung:** desligue **Executar último app automaticamente** ([detalhes](docs/samsung-tela-inicial.md#como-desfazer)) e exclua o Onix em **Apps → ⚙️**.
 
 ---
 
 ## Permissões e privacidade
 
-| Permissão | Para quê |
-|---|---|
-| `INTERNET` | Baixar indicações, notícias e miniaturas (só pelo código nativo) |
-| `ACCESS_NETWORK_STATE` | Mostrar "Conectado / Sem internet" e tentar de novo quando a rede volta |
-| `RECEIVE_BOOT_COMPLETED` | Manter o agendamento semanal das indicações depois de reiniciar a TV |
-| `REQUEST_INSTALL_PACKAGES` | Instalar as atualizações do Onix (o Android sempre pede confirmação na tela) |
-| Administrador do dispositivo (opcional) | Apenas `force-lock`, usado pelo botão **Desligar TV** |
-
-- **Sem rastreamento, sem anúncios, sem conta.** O Onix não envia nenhum dado sobre você ou sobre o que você assiste.
-- A contagem de aberturas dos apps de streaming (para as indicações) também fica **só na TV**: o Onix guarda apenas quantas vezes cada serviço foi aberto e quando foi a última vez.
-- As preferências (apps favoritos, banners, recordes, configurações) e os perfis (nomes, fotos, PIN do Modo Infantil) ficam **só na TV**.
-- A interface roda num WebView **totalmente offline**: o HTML vem empacotado no APK, com uma Content-Security-Policy que bloqueia qualquer acesso à rede. Os downloads são feitos pelo Java, apenas por HTTPS e apenas destes serviços:
-  - `apis.justwatch.com` e `images.justwatch.com`: indicações da Netflix, do Disney+, da HBO Max e do Globoplay
-  - `itunes.apple.com`: filmes mais vistos
-  - `adrenaline.com.br` e `eurogamer.pt`: notícias de games
-  - `api.github.com`, `github.com` e `release-assets.githubusercontent.com`: procurar e baixar versões novas do Onix
-  - `connectivitycheck.gstatic.com`: teste de internet do chip **Conectado** (uma resposta vazia, a mesma que o Android usa)
-  - `api.open-meteo.com` e `geocoding-api.open-meteo.com`: clima da tela inicial, só se você ligar, e a busca da cidade que você digitar (o Onix não pede a sua localização)
-- Tudo o que vem da página para o código nativo é validado (nomes de pacote, IDs de entrada, títulos da lista atual).
-- **Controle pelo celular** (Android TV e Google TV): enquanto o Onix está aberto, ele atende na porta `8765`, só pela rede de casa e só por HTTP (numa rede local não existe certificado). Para conectar, o celular precisa da chave do QR code que está na tela, que muda a cada conexão e uma vez por dia; depois, cada pedido leva o token daquele celular, e a TV guarda só um resumo (hash) dele. Dá para desligar e desconectar todos os celulares em **Configurações → Controle pelo celular**. A foto de perfil é recortada e reduzida no celular e fica só na TV.
-- **Onix Controle** (app de celular): pede só `INTERNET`, `ACCESS_NETWORK_STATE` e `REQUEST_INSTALL_PACKAGES` (atualizações, sempre com confirmação). Fala direto com a TV pela rede de casa, nas portas `6466` e `6467` da própria TV, com conexão criptografada (TLS). No pareamento, o celular cria uma chave própria, que fica só no app, e guarda o certificado da TV: depois disso, ele só conversa com aquela TV. A conexão só fica aberta com o app na tela. Na internet, ele só acessa o GitHub para procurar versões novas.
+- **Sem rastreamento, sem anúncios, sem conta.** Preferências, perfis, PIN e contagem de uso dos apps ficam **só na TV**.
+- A interface roda num WebView **offline**, com uma Content-Security-Policy que bloqueia a rede. Os downloads são feitos pelo código nativo, só por HTTPS e só destes serviços: JustWatch e iTunes (indicações), Adrenaline e Eurogamer.pt (notícias), GitHub (atualizações), `connectivitycheck.gstatic.com` (teste de internet) e Open-Meteo (clima, só se você ligar).
+- Permissões do Android: `INTERNET`, `ACCESS_NETWORK_STATE`, `RECEIVE_BOOT_COMPLETED` (agenda das indicações), `REQUEST_INSTALL_PACKAGES` (atualizações, sempre com confirmação) e, opcional, o administrador do dispositivo só com `force-lock`.
+- **Controle pelo celular:** com o Onix aberto, atende na porta `8765`, só na rede de casa, com a chave do QR code (muda a cada conexão e uma vez por dia). Dá para desligar em **Configurações → Controle pelo celular**.
+- **Onix Controle:** fala direto com a TV nas portas `6466` e `6467`, com TLS e certificado da TV guardado no pareamento. Na internet, só acessa o GitHub.
 
 ---
 
 ## Compilar a partir do código
 
-O build não usa Gradle nem Android Studio: só ferramentas que estão nos repositórios do Ubuntu/Debian.
+Sem Gradle nem Android Studio, só pacotes do Ubuntu/Debian:
 
 ```bash
-sudo apt install openjdk-17-jdk-headless libandroid-23-java \
-                 dalvik-exchange aapt zipalign apksigner
+sudo apt install openjdk-17-jdk-headless libandroid-23-java dalvik-exchange aapt zipalign apksigner
+git clone https://github.com/ruan2311/onix.git && cd onix
+
+bash android/build.sh launcher   # onix-launcher.apk
+bash android/build.sh app        # onix-app.apk (sem as categorias HOME/DEFAULT)
+bash controle/build.sh           # onix-controle.apk
+bash tizen/build.sh [PERFIL]     # Samsung: onix-tizen.wgt/.zip (e Onix.wgt assinado, com um perfil)
+bash webos/build.sh              # LG: onix-webos.ipk
 ```
 
-```bash
-git clone https://github.com/ruan2311/onix.git
-cd onix
-bash android/build.sh            # launcher-philips.apk
-bash android/build.sh launcher   # onix-launcher.apk (o da página de Releases)
-bash android/build.sh app        # onix-app.apk (o da página de Releases)
-```
+- A **versão** vem do `android:versionName` do `android/AndroidManifest.xml` e vai para todos os builds.
+- Ao lançar, atualize a lista `CHANGELOG` do `index.html` (tela **Novidades**) junto com o [CHANGELOG.md](CHANGELOG.md).
+- Os APKs saem assinados com a chave de debug do seu computador: não instalam por cima dos APKs deste repositório (e vice-versa).
+- **Testar no navegador:** `python3 -m http.server 8000` e abra `http://localhost:8000/index.html` (setas e Enter fazem de controle).
 
-O APK sai em `launcher-philips.apk` (ou `onix-launcher.apk` / `onix-app.apk`), na raiz do projeto, assinado com a chave de debug do seu computador (`~/.android/debug.keystore`, criada automaticamente se não existir).
-
-**Versão:** o `android:versionName` do `AndroidManifest.xml` manda. O `build.sh` copia esse valor para o `index.html`, e ele aparece no menu e em "Sobre".
-
-**Onix App × Onix Launcher:** os dois saem do mesmo código. O **Onix App** é o mesmo manifesto sem as categorias `HOME` e `DEFAULT` no `intent-filter` da `MainActivity` e com `android:label="Onix App"`; o `build.sh app` gera essa versão sem mexer no manifesto.
-
-**Onix Controle (celular):** `bash controle/build.sh` gera `onix-controle.apk`, com a mesma chave.
-
-**Samsung e LG:** `bash tizen/build.sh` e `bash webos/build.sh` (detalhes em [Samsung](#compilar-a-versão-samsung-a-partir-do-código)).
-
-**Novidades:** a lista `CHANGELOG` no `index.html` alimenta a tela **Configurações → Novidades**. Ao lançar uma versão, atualize ela junto com o `CHANGELOG.md`.
-
-> **Assinatura:** um APK só instala por cima de outro com a mesma chave. Se você compilar com a sua chave, não vai conseguir atualizar um Onix instalado a partir dos APKs deste repositório (e vice-versa): desinstale antes.
-
-### Testar a interface no navegador
-O `index.html` também roda direto no navegador do computador, em "modo navegador": sem a ponte nativa, ele mostra dados de exemplo e simula as ações. Use as setas e o Enter como se fossem o controle.
-
-```bash
-python3 -m http.server 8000
-# abra http://localhost:8000/index.html
-```
-
----
-
-## Estrutura do projeto
+<details>
+<summary><b>Estrutura do projeto</b></summary>
 
 ```
 .
-├── index.html                  # Toda a interface: HTML, CSS e JS num arquivo só
-├── CHANGELOG.md                # O que mudou em cada versão
-├── tv/                         # Comum às TVs sem Android (Samsung e LG)
-│   ├── bridge.js               # Ponte JS: apps, indicações, notícias, internet, atualizações
-│   └── page.py                 # Monta o index.html da TV (ponte, CSP, CSS das TVs de 2022)
-├── tizen/                      # Versão Samsung (Tizen)
-│   ├── platform.js             # Adaptador com as APIs do Tizen (apps, HDMI, Netflix)
-│   ├── config.xml              # Manifesto do app (.wgt): privilégios e hosts liberados
-│   └── build.sh                # Monta o app e, com um perfil de certificado, o .wgt assinado
-├── webos/                      # Versão LG (webOS)
-│   ├── platform.js             # Adaptador com os serviços Luna da LG (apps, entradas, Netflix)
-│   ├── appinfo.json            # Manifesto do app
-│   ├── ipk.py                  # Empacota o .ipk (sem o ares-package)
-│   ├── Resize.java             # Ícones de 80 e 130 px a partir do ícone do Android
-│   └── build.sh                # Monta o app e o onix-webos.ipk
-├── controle/                   # Onix Controle (app de celular que controla a Google TV)
-│   ├── AndroidManifest.xml
-│   ├── build.sh                # Build sem Gradle, como o do Android
-│   ├── assets/controle.html    # A tela do controle (offline, no visual do Onix)
-│   ├── res/                    # Ícone (gerado pelo android/tools/GenArt.java)
-│   └── src/com/onix/controle/
-│       ├── MainActivity.java   # WebView, ponte JS e botões de volume do celular
-│       ├── Tv.java             # Protocolo de controle da TV: pareamento (6467) e controle (6466)
-│       ├── Proto.java          # Mensagens do protocolo (protobuf mínimo)
-│       ├── Cert.java           # Chave e certificado deste celular
-│       ├── Finder.java         # Procura as TVs no Wi-Fi (mDNS)
-│       ├── Updater.java        # Atualizações pelo GitHub (releases controle-vX.Y.Z)
-│       └── UpdateReceiver.java # Resposta do instalador do sistema
-├── android/
-│   ├── AndroidManifest.xml
-│   ├── build.sh                # Build sem Gradle (javac → dx → aapt → zipalign → apksigner)
-│   ├── src/com/onix/launcher/  # o código (o pacote do app segue com.aurora.launcher)
-│   │   ├── MainActivity.java   # WebView, tela inicial, rede, Voltar
-│   │   ├── AndroidBridge.java  # Ponte JS ↔ Android (apps, entradas, Netflix, desligar…)
-│   │   ├── WeeklyPicks.java    # Indicações da semana (JustWatch + iTunes), por serviço
-│   │   ├── AppUsage.java       # Aberturas de cada serviço (quem entra nas indicações)
-│   │   ├── Updater.java        # Atualizações pelo GitHub (procura, baixa, confere e instala)
-│   │   ├── UpdateReceiver.java # Resposta do instalador do sistema
-│   │   ├── GameNews.java       # Notícias (RSS da Adrenaline e da Eurogamer.pt)
-│   │   └── PicksJob.java       # Agendamento semanal das indicações
-│   ├── src/com/aurora/launcher/
-│   │   └── PowerAdmin.java     # "Desligar TV" (só force-lock); nome antigo para não perder a permissão
-│   ├── res/                    # Ícone, banner e política de administrador
-│   ├── assets/picks-seed.json  # Indicações embutidas para o primeiro uso sem internet
-│   └── tools/                  # Geradores do ícone/banner e da lista embutida
-└── docs/screenshots/
+├── index.html          # Toda a interface: HTML, CSS e JS num arquivo só
+├── android/            # App Android: MainActivity, AndroidBridge, indicações, notícias, atualizações
+├── tv/                 # Comum às TVs sem Android: bridge.js (a mesma ponte em JS) e page.py (monta o index.html)
+├── tizen/              # Samsung: platform.js (APIs do Tizen), config.xml e build.sh
+├── webos/              # LG: platform.js (serviços Luna), appinfo.json, ipk.py e build.sh
+├── controle/           # Onix Controle (celular): protocolo de controle da Google TV
+├── gamehub/            # Cobalt GameHub (TV, celular, PC e iPhone)
+└── docs/               # Tutoriais e capturas de tela
 ```
 
-**Na Samsung e na LG**, o `tv/bridge.js` cria um `AndroidBridge` com os mesmos métodos e baixa indicações e notícias com o mesmo código, portado para JavaScript. O que muda de uma TV para a outra fica num adaptador pequeno: `tizen/platform.js` (APIs web do Tizen: `tizen.application`, `tizen.systeminfo`, `tizen.tvwindow`) e `webos/platform.js` (serviços Luna da LG pelo `PalmServiceBridge`: `applicationManager` e o serviço de entradas).
+A página conversa com o aparelho pelo objeto `AndroidBridge` (`getInstalledApps()`, `launchApp()`, `openPick()`…) e recebe as novidades em `window.Launcher.onAppsChanged()`, `onPicksChanged()` etc. Na Samsung e na LG, o `tv/bridge.js` cria esse mesmo `AndroidBridge` em JavaScript, e só o adaptador de cada TV muda.
 
-**Como funciona:** a `MainActivity` abre um WebView com o `index.html` dos assets. A página conversa com o Android pelo objeto `AndroidBridge` (por exemplo, `getInstalledApps()`, `launchApp()`, `getTvInputs()`, `openPick()`, `powerOff()`), e o Android avisa a página das novidades com `window.Launcher.onAppsChanged()`, `onPicksChanged()`, `onNewsChanged()` e outros.
+**Personalizar:** banners de entrada em `INPUT_BANNERS` (`index.html`), fontes de notícias em `FEEDS` (`GameNews.java`), serviços das indicações em `PROVIDERS` (`WeeklyPicks.java` e `tv/bridge.js`), tempo da tela de descanso em `SAVER_IDLE`.
 
----
-
-## Personalização
-
-- **Novos banners de entrada:** adicione um item em `INPUT_BANNERS`, no `index.html`, com `id`, `name` e `art` (um SVG de 160×100).
-- **Fontes de notícias:** edite `FEEDS` em `GameNews.java`.
-- **Serviços das indicações:** a tabela `PROVIDERS` em `WeeklyPicks.java` (e em `tv/bridge.js`), com o código do serviço no JustWatch, o formato do link do título e os pacotes do app. A regra de uso (4 aberturas, 7 dias) fica em `AppUsage.java`.
-- **País e idioma das indicações:** `vars.put("c", "BR")` e `vars.put("l", "pt-BR")` em `WeeklyPicks.java`.
-- **Tempo da tela de descanso:** `SAVER_IDLE` no `index.html` (padrão: 10 minutos).
+</details>
 
 ---
 
 ## Limitações conhecidas
 
-- **"Continuar assistindo" da Google TV:** não é possível mostrar. Ler o progresso dos outros apps exige permissões que o Android reserva a apps de sistema (`ACCESS_WATCHED_PROGRAMS`, `ACCESS_ALL_EPG_DATA`).
-- **Botão Home na Google TV:** só leva ao Onix depois de desativar o launcher do Google (veja [acima](#google-tv)).
-- **Entradas HDMI** só aparecem em TVs. Em Chromecast e TV boxes, a aba avisa que o aparelho não tem entradas.
+- **"Continuar assistindo" da Google TV:** exige permissões reservadas a apps de sistema.
+- **Botão Home:** na Google TV, só depois de desativar o launcher do Google; na Samsung e na LG, não muda.
 - **Desligar TV** depende do recurso de administrador do dispositivo, que alguns aparelhos não têm.
 - **Indicações e notícias** são focadas no Brasil e em português.
-- **TV boxes com Android antigo:** o Onix roda dentro do navegador interno do Android (o *Android System WebView*). Desde a 13.7.2 ele se ajusta a versões antigas, mas, se algo aparecer estranho, atualize o **Android System WebView** pela Play Store da TV box. A versão aparece em **Configurações → Sobre → Navegador da TV**.
-- **Samsung (Tizen):** não vira tela inicial, não desliga a TV e mostra a HDMI numa janela do próprio Onix. Veja [O que muda na Samsung](#o-que-muda-na-samsung).
-- **LG (webOS):** não vira tela inicial, não desliga a TV e, pelo Modo Desenvolvedor, precisa renovar a sessão a cada 50 horas. Veja [O que muda na LG](#o-que-muda-na-lg).
+- **TV boxes antigas:** se algo aparecer estranho, atualize o **Android System WebView** pela Play Store (a versão aparece em **Configurações → Sobre → Navegador da TV**).
+- **LG:** pelo Modo Desenvolvedor, é preciso renovar a sessão a cada 50 horas.
+
+---
+
+## 🇪🇸 En español
+
+Onix está en **español**: en **Configuración → Idioma**, elige *Español* o *Automático*. Las noticias y las sinopsis siguen en portugués.
+
+**Instalar en Android TV / Google TV:** en la TV, instala **Downloader** (de *AFTVnews*) desde Play Store, ábrelo, toca la barra naranja, escribe el enlace y toca **Load**:
+
+- Onix App: **`github.com/ruan2311/onix/releases/latest/download/onix-app.apk`**
+- Onix Launcher (puede ser la pantalla de inicio): **`github.com/ruan2311/onix/releases/latest/download/onix-launcher.apk`**
+
+Si Downloader no puede instalar apps, actívalo en **Configuración** y vuelve. Si **Play Protect** avisa, toca **Más detalles → Instalar de todos modos**.
+
+**Novedades de la 17.0.0:** **4 temas** (*Onix Cobalt*, *Onix Aurora*, *Onix Rubí Cine* y *Onix White*), **10 fuentes** y **8 estilos de reloj** en **Configuración → Apariencia**. El historial completo está en el [CHANGELOG.md](CHANGELOG.md) (en portugués).
 
 ---
 
 ## Créditos
 
-Criado por **Ruan Amaral** · Instagram [@ruan_amarl](https://instagram.com/ruan_amarl)
+Criado por **Ruan Amaral** · Instagram [@ruan_amarl](https://instagram.com/ruan_amarl) · Distribuído sob a [licença MIT](LICENSE).
 
-Distribuído sob a [licença MIT](LICENSE).
-
-PlayStation, Xbox, Nintendo Switch, Netflix e os demais nomes e logotipos citados são marcas de seus respectivos donos. Eles aparecem apenas para identificar aparelhos e serviços; o Onix não tem nenhuma ligação com essas empresas. Indicações via [JustWatch](https://www.justwatch.com) e iTunes; notícias da [Adrenaline](https://www.adrenaline.com.br) e da [Eurogamer.pt](https://www.eurogamer.pt).
+PlayStation, Xbox, Nintendo Switch, Netflix e os demais nomes citados são marcas de seus donos e aparecem só para identificar aparelhos e serviços. Indicações via [JustWatch](https://www.justwatch.com) e iTunes; notícias da [Adrenaline](https://www.adrenaline.com.br) e da [Eurogamer.pt](https://www.eurogamer.pt).
