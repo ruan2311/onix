@@ -23,6 +23,7 @@ notícias de games, jogos embutidos, o **Onix GameHub** de jogos clássicos, tro
 ## Sumário
 
 - [🇪🇸 En español](#-en-español)
+- [Novidades da 17.0.0](#novidades-da-1700)
 - [Novidades da 16.4](#novidades-da-164)
 - [Novidades da 16.0.0](#novidades-da-1600)
 - [Recursos](#recursos)
@@ -68,6 +69,8 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 **Novedades de la 16.4.1:** actualizador oficial de **Cobalt GameHub** conectado directamente al repositorio [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) (`cobalt-gamehub.apk`).
 
+**Novedades de la 17.0.0:** nueva sección **Configuración → Apariencia** con **4 temas** que cambian todo el aspecto de Onix (*Onix Cobalt* en pixel art, *Onix Aurora* con la aurora boreal, *Onix Rubí Cine* con telón y proyector y el claro *Onix White*), **10 fuentes** (Bodoni Moda, Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand y Press Start 2P) y **8 estilos de reloj** (Fino, Negrita, Apilado, Analógico, Digital, Flip, En palabras y Neón).
+
 **Novedades de la 16.4.0:** llega **Cobalt GameHub** como gema oficial de Project Gems junto a Onix, Amethyst y Opala. **Onix Controle** renovado con nuevo icono cósmico, gamepad virtual integrado para emuladores en la TV y versión Web App instalable para iPhone y iPad ([projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)). La Trayectoria de Onix también se actualizó con la gema Cobalt GameHub.
 
 **Novedades de la 16.1.0:** nueva **Trayectoria de Onix** en **Configuración → Acerca de**: la historia de Onix y de su creador en siete diapositivas animadas (OK pasa a la siguiente). Onix GameHub ahora tiene página propia: [ruan2311/onix-gamehub](https://github.com/ruan2311/onix-gamehub).
@@ -79,6 +82,12 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 **Onix Controle (app para Android e iPhone/iPad):** convierte el celular en el control remoto de toda la TV, dentro de cualquier app, en el mismo Wi-Fi. Ahora cuenta con **gamepad virtual** integrado para los juegos de Cobalt GameHub. Disponible como app para Android (**[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.6/onix-controle.apk)**). En iPhone y iPad funciona solo como control de Cobalt GameHub (**[projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle)**). Funciona con Google TV y Android TV. Está en español si el celular está en español. Detalles (en portugués) en [Onix Controle](#onix-controle-app-de-celular).
 
 ---
+
+## Novidades da 17.0.0
+
+- **Temas novos:** em **Configurações → Aparência → Tema**, 4 temas que mudam o visual inteiro (vidro, cores, foco, desenhos e tela de descanso): **Onix Cobalt** (pixel art, inspirado no Cobalt GameHub), **Onix Aurora** (aurora boreal sobre montanhas), **Onix Rubi Cinema** (cortina, lâmpadas e o feixe do projetor) e **Onix White** (claro sem cansar a vista). O Onix Escuro continua como o padrão.
+- **10 fontes novas:** Bodoni Moda, Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand e Press Start 2P. Mudam todas as palavras do Onix e funcionam sem internet.
+- **8 estilos de relógio:** Fino, Negrito, Empilhado, Analógico, Digital, Flip, Por extenso e Neon, na tela inicial e na tela de descanso.
 
 ## Novidades da 16.4
 
@@ -185,6 +194,7 @@ O histórico completo está no [CHANGELOG.md](CHANGELOG.md) e na [página de Rel
 - **Português e español**: em **Configurações → Idioma**, escolha o idioma ou deixe no automático (segue o idioma da TV).
 - **Perfis e Modo Infantil**: um perfil para cada pessoa da casa e um perfil infantil com visual próprio, só os apps liberados, PIN para sair e limite de tempo por dia.
 - **Sons do menu**: cinco timbres (**Onix Chime**, **Crystal**, **Sharpness**, **Velvet** e **Pulse**), ou nenhum.
+- **Aparência**: em **Configurações → Aparência**, escolha o tema (Escuro, Cobalt, Aurora, Rubi Cinema ou White), a fonte (Sistema ou uma das 10) e o estilo do relógio (8 opções).
 - **Configurações do Onix**: desliga efeitos visuais para TVs mais fracas e controla relógio de 24 h, sons do menu e tela de descanso.
 
 ---

@@ -2,6 +2,12 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 17.0.0 (novembro de 2026)
+
+- **Temas novos:** em **Configurações → Aparência → Tema**, o Onix ganhou 4 temas que mudam o visual inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. **Onix Cobalt** é pixel art, inspirado no Cobalt GameHub, com nave, estrelas e planetas de pixel. **Onix Aurora** tem a aurora boreal se movendo sobre montanhas e pinheiros. **Onix Rubi Cinema** é uma sala de cinema, com cortina, lâmpadas e o feixe do projetor. **Onix White** é claro sem cansar a vista. O Onix Escuro continua como o padrão, e nada muda de lugar na tela.
+- **10 fontes novas:** Bodoni Moda (o estilo da Vogue), Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand e Press Start 2P. A fonte escolhida muda todas as palavras do Onix, do relógio aos menus. Todas vêm dentro do app e funcionam sem internet.
+- **8 estilos de relógio:** Fino (o de sempre), Negrito, Empilhado, Analógico, Digital (como um rádio-relógio), Flip (cartões que viram a cada minuto), Por extenso ("dez e meia") e Neon. Valem na tela inicial e na tela de descanso.
+
 ## 16.4.4 (novembro de 2026)
 
 - **Minijogos voltaram a funcionar:** ao apertar OK para começar uma partida, o jogo ficava parado em "OK para começar" e o OK seguinte pausava. Era a música dos minijogos que dava erro na hora de começar. Agora a partida começa no primeiro OK, com música.
