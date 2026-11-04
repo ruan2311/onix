@@ -2,6 +2,10 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 16.4.4 (novembro de 2026)
+
+- **Minijogos voltaram a funcionar:** ao apertar OK para começar uma partida, o jogo ficava parado em "OK para começar" e o OK seguinte pausava. Era a música dos minijogos que dava erro na hora de começar. Agora a partida começa no primeiro OK, com música.
+
 ## 16.4.3 (novembro de 2026)
 
 - **Aba Jogos com os consoles novos:** o cartão do Cobalt GameHub mostra os 8 consoles da versão 1.5.0 (Game Boy Color, PlayStation, Atari e Fliperama, além dos 4 de antes), com a cor e o desenho de cada um. Com o GameHub antigo, continuam só os 4 de sempre.

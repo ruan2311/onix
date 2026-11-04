@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, jogos embutidos, o **Onix GameHub** de jogos clássicos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-16.4.3-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-16.4.4-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -62,6 +62,8 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 > Si **Play Protect** avisa que la app es desconocida, haz clic en **Más detalles → Instalar de todos modos**. Aparece porque Onix no viene de Play Store; el código es abierto y está todo en este GitHub.
 
+**Novedades de la 16.4.4:** los **minijuegos** de Onix vuelven a funcionar: la partida empieza con el primer OK, en vez de quedarse quieta y pausarse con el siguiente.
+
 **Novedades de la 16.4.3:** la pestaña **Juegos** muestra las 8 consolas de Cobalt GameHub 1.5.0 (Game Boy Color, PlayStation, Atari y Arcade además de las 4 de antes) y **Onix Controle 1.0.5** trae los botones de las consolas nuevas y la opción de cambiar la cruceta por un analógico.
 
 **Novedades de la 16.4.1:** actualizador oficial de **Cobalt GameHub** conectado directamente al repositorio [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) (`cobalt-gamehub.apk`).
@@ -80,6 +82,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Português*
 
 ## Novidades da 16.4
 
+- **16.4.4 · Minijogos voltaram a funcionar:** a partida começa no primeiro OK, em vez de ficar parada e pausar no OK seguinte.
 - **16.4.3 · Aba Jogos com os consoles novos:** o cartão do Cobalt GameHub mostra os 8 consoles da versão 1.5.0 (Game Boy Color, PlayStation, Atari e Fliperama, além dos 4 de antes), com a cor e o desenho de cada um.
 - **16.4.3 · Onix Controle 1.0.5:** botões dos consoles novos (△ ○ ✕ □ com L1 e R1 no PlayStation, seis botões e a ficha no Fliperama, dois botões no Atari e no Game Boy Color) e a opção de trocar a cruz por um analógico, em **Editar → Usar analógico**.
 - **16.4.1 · Atualizador do Cobalt GameHub:** o Onix agora instala e atualiza o emulador diretamente do repositório oficial [ruan2311/cobalt-gamehub](https://github.com/ruan2311/cobalt-gamehub) com o pacote `cobalt-gamehub.apk`.
