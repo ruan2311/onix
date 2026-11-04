@@ -94,13 +94,17 @@ final class FolderImport {
         }
     }
 
-    private static boolean supported(String name) {
+    static boolean supported(String name) {
         return "zip".equals(Consoles.extension(name)) || Consoles.byExtension(name) != null;
     }
 
-    private static void importAll(Context ctx, List<Object[]> files, UploadServer.Host host) {
+    /** Também a do pendrive (UsbDrives), com Uri de arquivo. */
+    static void importAll(Context ctx, List<Object[]> files, UploadServer.Host host) {
         UploadServer.cueFirst(files);
-        emit(host, new JSONObjectBuilder().put("type", "scan").put("count", files.size()).o);
+        long bytes = 0;
+        for (Object[] f : files) bytes += Math.max(0, (Long) f[2]);
+        // bytes e available: a tela avisa quando os jogos não cabem na TV antes de começar.
+        emit(host, new JSONObjectBuilder().put("type", "scan").put("count", files.size()).put("bytes", bytes).put("available", Storage.available(ctx)).o);
         for (Object[] f : files) {
             Uri uri = (Uri) f[0];
             String name = (String) f[1];

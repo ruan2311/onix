@@ -222,6 +222,38 @@ final class HubBridge {
         return a.kids ? 0 : Storage.clean(a, true);
     }
 
+    /* Pendrive e HD na TV (UsbDrives). */
+    @JavascriptInterface
+    public String usbState() {
+        return a.kids ? "{}" : UsbDrives.state(a).toString();
+    }
+
+    @JavascriptInterface
+    public String usbList(String path) {
+        return a.kids ? "{}" : UsbDrives.list(a, path).toString();
+    }
+
+    @JavascriptInterface
+    public boolean usbImport(String json) {
+        if (a.kids) return false;
+        UsbDrives.importPaths(a, json, a);
+        return true;
+    }
+
+    /** Pede a permissão de ler o pendrive; a resposta volta no evento "usbAsk" (screen, dialog, details, picker ou none). */
+    @JavascriptInterface
+    public void usbAsk() {
+        if (a.kids) return;
+        // Meio segundo depois: o OK do controle é apertar e soltar, e o soltar caía já na tela das
+        // Configurações e ligava a chave sozinho (a pessoa nem via a tela).
+        a.web.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                Web.emit(a.web, "usbAsk", Web.quote(UsbDrives.ask(a)));
+            }
+        }, 500);
+    }
+
     @JavascriptInterface
     public String uploadStart() {
         if (a.kids) return "{}";

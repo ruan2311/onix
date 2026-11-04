@@ -109,7 +109,11 @@ public class GameActivity extends Activity implements Gamepads.Listener {
             finish();
             return;
         }
-        rom = new File(Files.roms(this), game.optString("file"));
+        rom = game.has("path") ? usbRom(game) : new File(Files.roms(this), game.optString("file"));
+        if (rom == null || !rom.isFile()) {
+            finish();
+            return;
+        }
         saveDir = Files.saves(this, profile);
         stateDir = Files.states(this, profile, id);
         settings = Config.effective(this, console.id, id);
@@ -929,5 +933,27 @@ public class GameActivity extends Activity implements Gamepads.Listener {
 
     boolean isFailed() {
         return failed;
+    }
+
+    /**
+     * Jogo do pendrive (UsbDrives): abre direto de lá. O .zip de NES, SNES… vira uma cópia
+     * temporária no cache, apagada no próximo jogo (os núcleos não abrem .zip).
+     */
+    private File usbRom(JSONObject g) {
+        File f = new File(g.optString("path"));
+        if (!f.isFile()) return null;
+        if (!g.optBoolean("zip")) return f;
+        File dir = new File(getCacheDir(), "usb-run");
+        Files.delete(dir);
+        dir.mkdirs();
+        try {
+            File tmp = new File(dir, "rom");
+            String inner = Importer.unzip(f, tmp);
+            if (inner == null) return null;
+            File out = new File(dir, g.optString("id") + "." + Consoles.extension(inner));
+            return tmp.renameTo(out) ? out : null;
+        } catch (Exception e) {
+            return null;
+        }
     }
 }

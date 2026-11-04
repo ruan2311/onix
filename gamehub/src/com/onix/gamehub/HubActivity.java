@@ -1,11 +1,16 @@
 package com.onix.gamehub;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.WindowManager;
@@ -289,6 +294,15 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         stopGamepadServer();
         JSONObject g = Library.game(this, id);
         if (g == null || (kids && !g.optBoolean("kids"))) return false;
+        // Jogo do pendrive com o pendrive fora: a página pede para ligar (no "Continuar jogando" do Onix, ela abre).
+        if (g.has("path") && !new java.io.File(g.optString("path")).isFile()) {
+            try {
+                Web.emit(web, "usbMissing", new JSONObject().put("name", g.optString("name")).put("drive", g.optString("driveName")).toString());
+            } catch (Exception ignored) {
+            }
+            if (direct) direct = false;
+            return false;
+        }
         Intent i = new Intent(this, GameActivity.class);
         i.putExtra("id", id);
         i.putExtra("mode", mode);
@@ -344,11 +358,68 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         gamepads.start();
         startGamepadServer();
         Web.emit(web, "resume", null);
+        // Pendrive: liga e tira com o GameHub aberto, e a volta da tela de permissão.
+        try {
+            IntentFilter media = new IntentFilter();
+            for (String act : new String[]{Intent.ACTION_MEDIA_MOUNTED, Intent.ACTION_MEDIA_UNMOUNTED, Intent.ACTION_MEDIA_REMOVED,
+                    Intent.ACTION_MEDIA_BAD_REMOVAL, Intent.ACTION_MEDIA_UNMOUNTABLE, Intent.ACTION_MEDIA_EJECT}) media.addAction(act);
+            media.addDataScheme("file");
+            registerReceiver(usbReceiver, media);
+            IntentFilter usb = new IntentFilter();
+            usb.addAction("android.hardware.usb.action.USB_DEVICE_ATTACHED");
+            usb.addAction("android.hardware.usb.action.USB_DEVICE_DETACHED");
+            registerReceiver(usbReceiver, usb);
+        } catch (Exception ignored) {
+        }
+        emitUsb(null);
+    }
+
+    private final Handler main = new Handler(Looper.getMainLooper());
+
+    /** Pendrive ligado ou tirado: a tela redesenha o cartão (um segundo depois: o Android ainda está abrindo). */
+    private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context c, Intent i) {
+            final String act = i.getAction() == null ? "" : i.getAction();
+            final String ev = act.endsWith("MEDIA_MOUNTED") ? "mounted" : act.endsWith("USB_DEVICE_ATTACHED") ? "attached"
+                    : act.endsWith("MEDIA_UNMOUNTABLE") ? "unmountable" : "removed";
+            main.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    emitUsb(ev);
+                }
+            }, ev.equals("attached") ? 4000 : 800);
+        }
+    };
+
+    /** Manda o estado dos pendrives para a página (a leitura sai da thread da tela: um HD pode demorar a acordar). */
+    void emitUsb(final String ev) {
+        if (kids || Device.mobile(this)) return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject o = UsbDrives.state(HubActivity.this);
+                    if (ev != null) o.put("event", ev);
+                    Web.emit(web, "usb", o.toString());
+                } catch (Exception ignored) {
+                }
+            }
+        }, "gamehub-usb-state").start();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int req, String[] perms, int[] results) {
+        if (req == UsbDrives.REQ_READ) emitUsb("permission");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
+        try {
+            unregisterReceiver(usbReceiver);
+        } catch (Exception ignored) {
+        }
         gamepads.stop();
         upload.stop();
         stopGamepadServer();

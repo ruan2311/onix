@@ -88,6 +88,19 @@ main{flex:1;position:relative;overflow:hidden;margin-top:1rem}
 .add .url{font-size:1.35rem;color:var(--cyan);font-weight:600}
 .add .code{font-size:1.7rem;letter-spacing:.3em;color:var(--ink);font-variant-numeric:tabular-nums}
 .xfers{display:flex;flex-direction:column;gap:.7rem;margin-top:.6rem}
+.cover .usbtag{position:absolute;left:.7rem;bottom:.7rem;height:1.7rem;padding:0 .6rem;border-radius:999rem;font-size:.8rem;font-weight:800;letter-spacing:.06em;display:flex;align-items:center;background:rgba(10,6,24,.82);color:var(--cyan);border:1px solid rgba(61,225,255,.45)}
+.usb{padding:1.3rem 1.6rem;border-radius:1.2rem;background:var(--glass);border:1px solid var(--line);display:flex;flex-direction:column;gap:.7rem}
+.usb .top{display:flex;gap:.8rem;align-items:center;font-size:1.45rem}
+.usb .top svg{width:1.9rem;height:1.9rem;color:var(--cyan)}
+.usb p{white-space:pre-line}
+.add .usb p.sub{font-size:1.1rem;color:var(--mute)}
+.usb .acts{display:flex;flex-wrap:wrap;gap:1rem}
+.usb.warn{border-color:rgba(255,138,165,.55);background:rgba(255,80,120,.08)}
+.usb.warn .top svg{color:#ff8aa5}
+.usbpath{font-size:1.2rem!important;color:var(--cyan)!important;word-break:break-all}
+.item.req{align-items:flex-start}
+.item.req .grow{font-weight:700}
+.item.req .sub{display:block;font-weight:400;margin-top:.3rem;line-height:1.4}
 .xfer{padding:1rem 1.4rem;border-radius:1rem;background:var(--glass);display:flex;flex-direction:column;gap:.6rem;font-size:1.2rem}
 .xfer .top{display:flex;gap:1rem;align-items:center}
 .xfer .top b{flex:1;font-weight:600;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
@@ -520,7 +533,7 @@ function openGame(g) {
     kid._act = () => { call('setKids', g.id, !g.kids); g.kids = !g.kids; kid.classList.toggle('on', g.kids); kid.lastChild.textContent = g.kids ? t('Liberado') : t('Bloqueado'); loadLibrary(); };
     list.append(kid);
     list.append(h('button', { class: 'f item', act: () => renameSheet(g) }, icon('edit'), h('span', { class: 'grow', text: t('Renomear') })));
-    list.append(h('button', { class: 'f item', act: () => ask(t('Apagar {n}?', { n: g.name }), t(INFO.web ? 'O jogo, os saves e os estados salvos dele saem deste aparelho. Não dá para desfazer.' : INFO.pc ? 'O jogo sai da biblioteca, com os saves e os estados salvos dele. O arquivo continua na pasta do computador.' : 'O jogo, os saves e os estados salvos dele saem da TV. Não dá para desfazer.'),
+    list.append(h('button', { class: 'f item', act: () => ask(t('Apagar {n}?', { n: g.name }), t(INFO.web ? 'O jogo, os saves e os estados salvos dele saem deste aparelho. Não dá para desfazer.' : INFO.pc ? 'O jogo sai da biblioteca, com os saves e os estados salvos dele. O arquivo continua na pasta do computador.' : g.path ? 'O jogo sai da biblioteca, com os saves e os estados salvos dele. O arquivo continua no pendrive.' : 'O jogo, os saves e os estados salvos dele saem da TV. Não dá para desfazer.'),
       [[t('Apagar'), () => { call('remove', g.id); loadLibrary(); closeAllLayers(); show(PAGE, true); toast(t('Jogo apagado')); }, 'danger'], [t('Cancelar')]]) },
       icon('trash'), h('span', { class: 'grow', text: t('Apagar jogo') })));
   }
@@ -766,11 +779,12 @@ function addPage() {
       h('p', { text: t('O celular precisa estar no mesmo Wi-Fi da TV.') }),
       uploadInfo.ip ? h('p', { class: 'url', text: t('Ou digite no navegador: {u}', { u: 'http://' + uploadInfo.ip }) }) : null,
       uploadInfo.ip && uploadInfo.code ? h('p', null, t('Código para quem digitar o endereço:') + ' ', h('b', { class: 'code', id: 'upCode', text: uploadInfo.code })) : null,
+      INFO.kids ? null : h('div', { class: 'usb', id: 'usb' }),
       h('p', { text: formatsText() }),
       h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }),
       store, xfers)));
   // Foco em algo da página (o QR não é focável): a aba fica selecionada.
-  setTimeout(() => { drawStore(); drawXfers(); }, 0);
+  setTimeout(() => { drawStore(); drawXfers(); drawUsb(); }, 0);
   return page;
 }
 /* PC: os jogos vêm de pastas do computador. As pastas ficam guardadas e, a cada abertura, o
@@ -799,6 +813,115 @@ function pcAddPage(page) {
     h('div', { class: 'col' }, h('div', { class: 'xfers', id: 'xfers' }), h('div', { class: 'store', id: 'store' }))));
   setTimeout(() => { drawFolders(); drawStore(); drawXfers(); }, 0);
   return page;
+}
+/* ---------------- Pendrive e HD (TV) ----------------
+   Muitas TVs não têm gerenciador de arquivos: o GameHub lista as pastas do pendrive e copia os
+   jogos para a TV (UsbDrives). O cartão mostra o pendrive ligado, pede a permissão na primeira vez e
+   avisa quando a TV não conseguiu abrir o pendrive (formato que ela não lê, ou HD sem energia). */
+let usbInfo = {};
+function drawUsb(s) {
+  const el = $('#usb');
+  if (s) usbInfo = s;
+  else if (el) usbInfo = json(call('usbState'), {});
+  if (!el) return;
+  s = usbInfo;
+  const drives = s.drives || [], acts = [];
+  const warn = !drives.length && (s.unread > 0 || (s.bad || []).length > 0);
+  const lines = drives.map(d => [d.name || t('Pendrive'), d.fs, d.free != null ? t('{n} livres', { n: fmtBytes(d.free) }) : ''].filter(Boolean).join(' · '));
+  const msg = drives.length ? lines.join('\n') : warn
+    ? t('A TV não conseguiu abrir o pendrive ou HD ligado. Ele precisa estar formatado em FAT32 ou exFAT: o NTFS, que o Windows usa nos HDs, muitas TVs não leem. HD sem energia suficiente também não aparece.')
+    : t('Ligue um pendrive, HD externo ou cartão de memória na TV para jogar direto dele, sem ocupar a memória da TV.');
+  if (drives.length && !s.permission) acts.push(h('button', { class: 'f btn primary', act: () => call('usbAsk') }, icon('usb'), t('Permitir ler o pendrive')));
+  if (drives.length && s.permission) drives.slice(0, 3).forEach(d => acts.push(h('button', { class: 'f btn primary', act: () => usbBrowse(d.path, d.name || t('Pendrive')) },
+    icon('folder'), drives.length > 1 ? t('Abrir {n}', { n: d.name || t('Pendrive') }) : t('Abrir o pendrive'))));
+  acts.push(h('button', { class: 'f btn', act: usbHelp }, icon('info'), t('O que o pendrive precisa')));
+  const had = focused && el.contains(focused);
+  el.className = 'usb' + (warn ? ' warn' : '');
+  el.replaceChildren(...[h('div', { class: 'top' }, icon('usb'), h('b', { text: t('Pendrive ou HD') })), h('p', { text: msg }),
+    drives.length && !s.permission ? h('p', { class: 'sub', text: t('Na primeira vez, o GameHub pede para ler o armazenamento. Ele só lê os jogos: nunca apaga nem muda nada no pendrive.') }) : null,
+    h('div', { class: 'acts' }, ...acts)].filter(Boolean));
+  if (had) ensureFocus(el.querySelector('.f'));
+}
+handlers.usb = s => {
+  const before = (usbInfo.drives || []).length;
+  drawUsb(s);
+  const now = (s.drives || []).length;
+  if (s.event === 'mounted' && now > before) toast(PAGE === 'add' ? t('Pendrive conectado') : t('Pendrive conectado: abra Adicionar jogos para pôr os jogos dele na biblioteca'));
+  else if (s.event === 'removed' && now < before) toast(t('Pendrive desconectado'));
+  else if ((s.event === 'unmountable' || s.event === 'attached') && !now && (s.unread > 0 || (s.bad || []).length)) toast(t('A TV não conseguiu abrir o pendrive. Veja em Adicionar jogos o que ele precisa.'));
+  else if (s.event === 'permission' && s.permission) toast(t('Pronto: o GameHub já pode ler o pendrive'));
+};
+handlers.usbMissing = g => ask(t('Ligue o pendrive'), g.drive ? t('{g} está no pendrive {d}. Ligue ele na TV e tente de novo.', { g: g.name, d: g.drive }) : t('{g} está num pendrive. Ligue ele na TV e tente de novo.', { g: g.name }), [[t('Entendi')]]);
+handlers.usbAsk = how => {
+  if (how === 'screen') toast(t('Ligue o Cobalt GameHub na lista e volte com o botão Voltar'));
+  else if (how === 'details' || how === 'none') usbManual(how);
+};
+/* A TV não abriu a tela da permissão: o caminho à mão (ou o celular). */
+function usbManual(how) {
+  const sdk = usbInfo.sdk || 0;
+  const path = sdk >= 30 ? t('Configurações da TV → Apps → Acesso especial a apps → Acesso a todos os arquivos → Cobalt GameHub, e ligue.')
+    : t('Configurações da TV → Apps → Cobalt GameHub → Permissões → Armazenamento, e ligue.');
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '56rem', maxWidth: '92vw' } },
+    h('h2', { text: t('Permitir ler o pendrive') }),
+    h('p', { text: how === 'details' ? t('A TV abriu a tela do GameHub. Se a permissão não estiver lá, o caminho é:') : t('Esta TV não abriu a tela da permissão. O caminho nas Configurações da TV é:') }),
+    h('p', { style: { color: 'var(--ink)' }, text: path }),
+    h('p', { text: t('Se a sua TV não tiver essa opção, mande os jogos pelo celular com o QR code desta tela.') }),
+    h('div', { class: 'acts', style: { display: 'flex', gap: '1rem' } }, h('button', { class: 'f btn primary', text: t('Entendi'), act: closeLayer })))));
+}
+/* As pastas do pendrive, com o controle remoto. OK numa pasta entra; no topo, copiar a pasta toda. */
+function usbBrowse(root, name) {
+  const list = h('div', { class: 'list' });
+  const where = h('p', { class: 'usbpath' });
+  const box = h('div', { class: 'scroll', style: { maxHeight: '60vh', overflowY: 'auto' } }, list);
+  const row = (ic, label, sub, act) => {
+    const it = h('button', { class: 'f item' }, ic, h('span', { class: 'grow' }, label, sub ? h('span', { class: 'sub', text: sub }) : null));
+    it._act = act;
+    return it;
+  };
+  const go = path => {
+    const r = json(call('usbList', path), {});
+    if (r.error || !r.path) {
+      toast(r.error === 'gone' ? t('O pendrive foi tirado.') : r.error === 'permission' ? t('Falta a permissão para ler o pendrive.') : t('Não deu para abrir essa pasta.'));
+      if (r.error === 'gone' || r.error === 'permission') closeLayer();
+      return;
+    }
+    where.textContent = [name, ...r.path.slice(r.root.length).split('/').filter(Boolean)].join('  ›  ');
+    const items = [row(icon('plus'), r.parent ? t('Adicionar os jogos desta pasta') : t('Adicionar todos os jogos do pendrive'), t('Procura também nas subpastas. Os jogos continuam no pendrive.'), () => usbCopy([r.path]))];
+    if (r.parent) items.push(row(icon('up'), t('Voltar uma pasta'), null, () => go(r.parent)));
+    for (const d of r.dirs) items.push(row(icon('folder'), d, null, () => go(r.path + '/' + d)));
+    for (const f of r.files) items.push(row(icon('pad'), f.name, [f.console === 'zip' ? t('Arquivo .zip') : t(consoleOf(f.console).name), fmtBytes(f.size)].join(' · '), () => usbCopy([r.path + '/' + f.name])));
+    if (!r.dirs.length && !r.files.length) items.push(h('div', { class: 'item', style: { color: 'var(--mute)' }, text: t('Nenhuma pasta nem jogo aqui.') }));
+    if (r.more) items.push(h('div', { class: 'item', style: { color: 'var(--mute)' }, text: t('Pasta com muitos arquivos: aparecem só os 400 primeiros.') }));
+    list.replaceChildren(...items);
+    box.scrollTop = 0;
+    focus(items[0], true);
+  };
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '64rem', maxWidth: '92vw' } }, h('h2', { text: t('Jogos do pendrive') }), where, box)));
+  go(root);
+}
+function usbCopy(paths) {
+  closeLayer();
+  call('usbImport', JSON.stringify(paths));
+  toast(t('Procurando jogos no pendrive…'));
+}
+/* O que o pendrive e o HD precisam para a TV ler. Cada item é focável para o controle rolar a lista. */
+function usbHelp() {
+  const ps1 = CONSOLES.some(c => c.id === 'ps1');
+  const reqs = [
+    [t('Formato FAT32 ou exFAT'), t('É o formato da maioria dos pendrives. O NTFS, que o Windows usa nos HDs, muitas TVs não leem. Para trocar, formate no computador em exFAT (isso apaga o que está nele: copie os arquivos antes). No FAT32, nenhum arquivo pode passar de 4 GB.')],
+    [t('Use como armazenamento removível'), t('Se a TV perguntar como usar o pendrive, escolha armazenamento removível (ou portátil). A opção de armazenamento do dispositivo apaga o pendrive, e ele passa a funcionar só nesta TV.')],
+    [t('HD externo precisa de energia'), t('HD de notebook pode precisar de mais energia do que a porta USB da TV dá. Se ele não aparecer ou sumir no meio, use um HD com fonte própria, um cabo em Y ou um hub USB com fonte. Pendrive e SSD não costumam ter esse problema.')],
+    [t('Porta USB'), t('Se a TV tiver mais de uma porta, prefira a marcada como HDD ou USB 3.0 (a azul). Se uma porta não reconhecer, tente a outra.')],
+    [t('Permissão para ler'), t('Na primeira vez, o GameHub pede para ler o armazenamento (no Android 11 ou mais novo, a TV chama de acesso a todos os arquivos). Ele só lê os jogos: nunca apaga nem muda nada no pendrive.')],
+    [t('Deixe o pendrive ligado para jogar'), t('Os jogos rodam direto do pendrive: na TV ficam só os saves e as capas, que são bem pequenos. Não tire o pendrive durante o jogo. Se tirar, os jogos continuam na lista e voltam a abrir quando você ligar de novo.')],
+    ps1 ? [t('Jogos de PlayStation'), t('O .cue e os .bin dele precisam estar na mesma pasta. Também valem os formatos .chd e .pbp.')] : null,
+    [t('Formatos'), formatsText()],
+  ].filter(Boolean);
+  const list = h('div', { class: 'list' }, ...reqs.map(([k, v]) => h('button', { class: 'f item req' }, h('span', { class: 'grow' }, k, h('span', { class: 'sub', text: v })))));
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '66rem', maxWidth: '92vw' } },
+    h('h2', { text: t('O que o pendrive precisa') }),
+    h('div', { class: 'scroll', style: { maxHeight: '62vh', overflowY: 'auto' } }, list),
+    h('p', { text: t('Use só jogos que você tem o direito de usar. Nenhum jogo vem com o GameHub.') }))));
 }
 function drawStore() {
   const el = $('#store');
@@ -844,8 +967,9 @@ handlers.upload = e => {
   // Errou o código 5 vezes no celular: a TV mostra o código novo.
   if (e.type === 'code') { const el = $('#upCode'); if (el) el.textContent = e.code; return; }
   // Celular, pasta escolhida: quantos achou e, no fim, quantos entraram.
+  if (e.type === 'scan' && e.count && e.bytes > e.available) { importCount = 0; toast(t('Pode faltar espaço na TV: os jogos somam {a} e cabem {b}. Os que não couberem ficam de fora.', { a: fmtBytes(e.bytes), b: fmtBytes(e.available) })); return; }
   if (e.type === 'scan') { importCount = 0; toast(e.count ? t('{n} arquivos de jogo encontrados', { n: e.count }) : t(CONSOLES.length > 4 ? 'Nenhum jogo nessa pasta.' : 'Nenhum jogo de NES, SNES, GBA ou Mega Drive nessa pasta.')); return; }
-  if (e.type === 'finished') { if (e.count) toast(t('{n} jogos novos na biblioteca', { n: importCount })); drawStore(); renderStore(); return; }
+  if (e.type === 'finished') { if (e.count) toast(importCount === 1 ? t('1 jogo novo na biblioteca') : t('{n} jogos novos na biblioteca', { n: importCount })); drawStore(); renderStore(); return; }
   if (e.type === 'done' && e.ok && !e.dup && !e.wait && !e.bios) importCount++;
   const k = e.file || e.name;
   const x = uploading[k] || (uploading[k] = { name: k });

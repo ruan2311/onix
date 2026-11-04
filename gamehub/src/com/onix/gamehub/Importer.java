@@ -65,21 +65,8 @@ final class Importer {
             long size = rom.length();
             if (size < 512 || size > console.maxBytes) return fail(r, "O arquivo não parece um jogo desse console.");
 
-            byte[] head = new byte[16];
-            InputStream in = new FileInputStream(rom);
-            int got;
-            try {
-                got = in.read(head);
-            } finally {
-                in.close();
-            }
-            int skip = 0;
-            if ("nes".equals(console.id) && got >= 4 && head[0] == 'N' && head[1] == 'E' && head[2] == 'S' && head[3] == 0x1A) skip = 16;
-            if ("snes".equals(console.id) && size % 1024 == 512) skip = 512;
-            if ("atari".equals(console.id) && got >= 10 && new String(head, 1, 9, "ISO-8859-1").equals("ATARI7800")) skip = 128;
-            // Discos grandes: o id sai do começo, do fim e do tamanho (ler 700 MB demora na TV).
-            String[] sums = size > 64L * 1024 * 1024 ? quickSums(rom) : sums(rom, skip);
-            String id = sums[0].substring(0, 16);
+            String[] info = identify(c, console, rom, name);
+            String id = info[0];
 
             r.put("console", console.id);
             JSONObject existing = Library.game(c, id);
@@ -89,14 +76,8 @@ final class Importer {
             }
             if (!Storage.fits(c, size)) return fail(r, "Sem espaço seguro no aparelho para esse jogo.");
 
-            String title = lookup(c, console.id, sums[1]);
-            if (title == null && skip > 0) title = lookup(c, console.id, sums[2]);
-            boolean known = title != null;
-            if (title == null) {
-                String base = new File(name).getName();
-                int dot = base.lastIndexOf('.');
-                title = dot > 0 ? base.substring(0, dot) : base;
-            }
+            String title = info[2];
+            boolean known = !info[3].isEmpty();
             String ext = Consoles.extension(name);
             File dest = new File(Files.roms(c), id + "." + ext);
             if (!move(rom, dest)) return fail(r, "Não deu para guardar o jogo.");
@@ -110,7 +91,7 @@ final class Importer {
             game.put("known", known);
             game.put("file", dest.getName());
             game.put("size", size);
-            game.put("crc", sums[1]);
+            game.put("crc", info[1]);
             game.put("added", System.currentTimeMillis());
             game.put("cover", false);
             game.put("kids", false);
@@ -124,6 +105,111 @@ final class Importer {
             if (rom != null && rom != upload) rom.delete();
             upload.delete();
         }
+    }
+
+    /** {id, crc, título, "1" se o jogo está no banco No-Intro}: o mesmo para a cópia e para o pendrive. */
+    private static String[] identify(Context c, Consoles.Console console, File rom, String name) throws Exception {
+        long size = rom.length();
+        byte[] head = new byte[16];
+        InputStream in = new FileInputStream(rom);
+        int got;
+        try {
+            got = in.read(head);
+        } finally {
+            in.close();
+        }
+        int skip = 0;
+        if ("nes".equals(console.id) && got >= 4 && head[0] == 'N' && head[1] == 'E' && head[2] == 'S' && head[3] == 0x1A) skip = 16;
+        if ("snes".equals(console.id) && size % 1024 == 512) skip = 512;
+        if ("atari".equals(console.id) && got >= 10 && new String(head, 1, 9, "ISO-8859-1").equals("ATARI7800")) skip = 128;
+        // Discos grandes: o id sai do começo, do fim e do tamanho (ler 700 MB demora na TV).
+        String[] sums = size > 64L * 1024 * 1024 ? quickSums(rom) : sums(rom, skip);
+        String title = lookup(c, console.id, sums[1]);
+        if (title == null && skip > 0) title = lookup(c, console.id, sums[2]);
+        boolean known = title != null;
+        if (title == null) {
+            String base = new File(name).getName();
+            int dot = base.lastIndexOf('.');
+            title = dot > 0 ? base.substring(0, dot) : base;
+        }
+        return new String[]{sums[0].substring(0, 16), sums[1], title, known ? "1" : ""};
+    }
+
+    /* ---------------- Pendrive ----------------
+     * O jogo fica no pendrive: a biblioteca guarda o caminho ("path") e o pendrive ("drive",
+     * "driveName"), e o GameActivity abre o arquivo de lá. Na TV ficam só o nome, a capa e os saves.
+     * O id é o mesmo da cópia, então o mesmo jogo não entra duas vezes. Nada é gravado no pendrive:
+     * o .zip de NES, SNES… abre numa cópia temporária na hora de jogar.
+     */
+    static JSONObject link(Context c, File f, String drive, String driveName) {
+        JSONObject r = new JSONObject();
+        File tmp = null;
+        try {
+            String name = f.getName(), ext0 = Consoles.extension(name);
+            JSONObject game;
+            if ("zip".equals(ext0) && arcadeInfo(c, romset(name)) != null) {
+                String set = romset(name), info = arcadeInfo(c, set);
+                r.put("console", "arcade");
+                // A BIOS (neogeo.zip…) fica na pasta do pendrive, ao lado dos jogos que precisam dela.
+                if (info.endsWith("\tbios")) return r.put("ok", true).put("bios", true).put("name", info.substring(0, info.length() - 5));
+                String id = sha1("arcade:" + set).substring(0, 16);
+                if (linked(c, id, f, drive, driveName, r)) return r;
+                game = newGame(id, "arcade", info, true, "arcade/" + set + ".zip", f.length(), "");
+            } else if ("cue".equals(ext0)) {
+                r.put("console", "ps1");
+                java.util.List<String> need = cueFiles(f);
+                if (need.isEmpty()) return fail(r, "Esse .cue não diz quais arquivos .bin são do disco.");
+                long size = 0;
+                for (String n : need) {
+                    File b = findIgnoreCase(f.getParentFile(), n);
+                    if (b == null) return fail(r, "Faltam os .bin desse disco na pasta do .cue.");
+                    size += b.length();
+                }
+                String id = sha1Hex(read(f)).substring(0, 16);
+                if (linked(c, id, f, drive, driveName, r)) return r;
+                game = newGame(id, "ps1", name.substring(0, name.length() - 4), false, name, size, "");
+            } else {
+                String inner = name;
+                File rom = f;
+                if ("zip".equals(ext0)) {
+                    tmp = new File(c.getCacheDir(), "link-" + System.nanoTime());
+                    inner = unzip(f, tmp);
+                    if (inner == null) return fail(r, "O .zip não tem nenhum jogo que o GameHub conheça. No fliperama, o nome do .zip tem que ser o do jogo, como sf2.zip.");
+                    rom = tmp;
+                }
+                Consoles.Console console = Consoles.byExtension(inner);
+                if (console == null) return fail(r, "Esse tipo de arquivo não é de nenhum console do GameHub.");
+                r.put("console", console.id);
+                if ("bin".equals(Consoles.extension(inner)) && rom.length() > Consoles.MD_MAX) {
+                    return fail(r.put("console", "ps1"), "Disco de PlayStation em .bin precisa do .cue dele na mesma pasta.");
+                }
+                long size = rom.length();
+                if (size < 512 || size > console.maxBytes) return fail(r, "O arquivo não parece um jogo desse console.");
+                String[] info = identify(c, console, rom, inner);
+                if (linked(c, info[0], f, drive, driveName, r)) return r;
+                game = newGame(info[0], console.id, info[2], !info[3].isEmpty(), inner, size, info[1]);
+                if (tmp != null) game.put("zip", true);
+            }
+            game.put("path", f.getAbsolutePath()).put("drive", drive).put("driveName", driveName);
+            Library.add(c, game);
+            Covers.fetchLater(c, game.getString("id"));
+            return r.put("ok", true).put("name", game.getString("name")).put("id", game.getString("id"));
+        } catch (Exception e) {
+            return fail(r, "Não deu para ler esse arquivo.");
+        } finally {
+            if (tmp != null) tmp.delete();
+        }
+    }
+
+    /** Já está na biblioteca: se for do pendrive e mudou de lugar, o caminho novo vale. */
+    private static boolean linked(Context c, String id, File f, String drive, String driveName, JSONObject r) throws Exception {
+        JSONObject existing = Library.game(c, id);
+        if (existing == null) return false;
+        if (existing.has("path") && !f.getAbsolutePath().equals(existing.optString("path"))) {
+            Library.update(c, id, new JSONObject().put("path", f.getAbsolutePath()).put("drive", drive).put("driveName", driveName));
+        }
+        r.put("ok", true).put("dup", true).put("name", existing.optString("name")).put("id", id);
+        return true;
     }
 
     /* ---------------- Fliperama ---------------- */
@@ -366,7 +452,7 @@ final class Importer {
     }
 
     /** Tira do .zip a maior ROM de um dos 4 consoles. Retorna o nome dela ou null. */
-    private static String unzip(File zip, File out) throws Exception {
+    static String unzip(File zip, File out) throws Exception {
         ZipFile z = new ZipFile(zip);
         try {
             ZipEntry best = null;

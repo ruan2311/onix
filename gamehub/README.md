@@ -13,6 +13,10 @@ Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advanc
 
 O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde está e muda a interface.
 
+> 💾 **Novo na TV (1.6.0): jogos direto do pendrive ou do HD.** Ligue um pendrive, HD externo ou cartão de memória na TV e abra **Adicionar jogos**: o GameHub mostra as pastas e põe os jogos na biblioteca **sem copiar nada para a memória da TV**. Funciona até nas TVs sem gerenciador de arquivos. Veja [Jogos do pendrive ou HD](#jogos-do-pendrive-ou-hd).
+
+> 🇪🇸 *Nuevo en la TV (1.6.0): juegos directo desde una memoria USB o un disco externo, sin copiar nada a la memoria de la TV. Funciona incluso en las TV sin administrador de archivos.*
+
 > 🎮 **1.5.1:** o PlayStation ganhou **L2 e R2** nos controles na tela do celular e no controle pelo celular (embaixo de L1 e R1 com o celular em pé, ao lado com ele deitado).
 
 > 📺📱 **Novo na TV e no celular (1.5.0):** chegaram **Game Boy Color**, **PlayStation (PS1)**, **Atari 2600 e 7800** e **Fliperama** (jogos de arcade, como os do MAME, pelo FinalBurn Neo). Veja [Consoles novos da TV e do celular](#️-consoles-novos-da-tv-e-do-celular-150). O Armazenamento agora mostra o que ocupa espaço e limpa as sobras de envios que caíram.
@@ -51,6 +55,21 @@ Sem o Onix: no app **Downloader**, use o link **`github.com/ruan2311/onix-gamehu
 Com o Onix, o GameHub usa o perfil, o idioma, o Modo Infantil, os sons e as animações dele, e o "Continuar jogando" aparece também na aba **Jogos** do Onix. Nas TVs Samsung e LG não há GameHub: lá a aba Jogos do Onix vira um hub de jogos na nuvem.
 
 ✅ *Testado numa Philips Google TV (Android TV 14), com controle DualSense: 60 FPS no Super Nintendo.*
+
+### Jogos do pendrive ou HD
+1. Ligue o pendrive, o HD externo ou o cartão de memória na TV e abra **Adicionar jogos** (o **+** no topo). O cartão **Pendrive ou HD** mostra o nome, o formato e o espaço dele.
+2. Na primeira vez, aperte **Permitir ler o pendrive**. A TV abre a tela **Acesso a todos os arquivos** (no Android 11 ou mais novo): ligue o **Cobalt GameHub** e volte. Do Android 6 ao 10, é só aceitar a pergunta. O GameHub só lê os jogos: nunca apaga nem muda nada no pendrive.
+3. Aperte **Abrir o pendrive**, navegue pelas pastas com o controle e escolha **Adicionar os jogos desta pasta** (procura também nas subpastas) ou um jogo só.
+
+Os jogos **rodam direto do pendrive**: na TV ficam só o nome, a capa e os saves, que são bem pequenos. Eles ganham a marca **USB** na capa. Se o pendrive não estiver ligado, o GameHub avisa qual ligar. Apagar um jogo do pendrive tira ele só da biblioteca; o arquivo continua lá.
+
+**O que o pendrive precisa** (o GameHub mostra isso na TV, no botão **O que o pendrive precisa**):
+- **Formato FAT32 ou exFAT.** Muitas TVs não leem o NTFS, que o Windows usa nos HDs. Se a TV não conseguir abrir o pendrive, o GameHub avisa. No FAT32, nenhum arquivo passa de 4 GB.
+- **Armazenamento removível:** se a TV perguntar como usar o pendrive, escolha *removível* (ou *portátil*). A opção *armazenamento do dispositivo* apaga o pendrive.
+- **HD externo com energia:** HD de notebook pode precisar de mais energia do que a porta USB da TV dá. Use um HD com fonte própria, um cabo em Y ou um hub USB com fonte.
+- **Porta USB:** prefira a marcada como HDD ou USB 3.0 (azul). Se uma porta não reconhecer, tente a outra.
+- **PlayStation:** o `.cue` e os `.bin` dele na mesma pasta (ou `.chd` e `.pbp`).
+- Não tire o pendrive durante o jogo.
 
 ### Mandar jogos pelo celular
 1. No GameHub, abra **Adicionar jogos** (o **+** no topo).

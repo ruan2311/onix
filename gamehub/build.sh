@@ -12,6 +12,11 @@ set -euo pipefail
 cd "$(dirname "$0")"
 ROOT=$(cd .. && pwd)
 SDK_JAR=/usr/lib/android-sdk/platforms/android-23/android.jar
+# O aapt lê o manifesto com a base do Android 10: a 23 não conhece o requestLegacyExternalStorage
+# (sem ele, o Android 10 não deixa ler o pendrive). A do Android 15 o aapt do Debian não abre.
+# Vem do site do Google na primeira vez (78 MB, gratuito) e fica em ~/sdk/platforms/android-29.
+RES_JAR="$HOME/sdk/platforms/android-29/android.jar"
+RES_ZIP_SHA=951da8bf175254da74626824f919bd28def64f8828f29dd3b124a535cf4049d8
 NDK=${NDK:-$HOME/sdk/android-ndk-r27c}
 OUT=build/apk
 KEYSTORE="$HOME/.android/debug.keystore"
@@ -71,7 +76,15 @@ echo "[6/8] dx (dalvik-exchange)"
 dalvik-exchange --dex --min-sdk-version=21 --output="$OUT/classes.dex" "$OUT/classes"
 
 echo "[7/8] aapt + bibliotecas"
-aapt package -f -M AndroidManifest.xml -S res -A "$OUT/assets" -I "$SDK_JAR" -F "$OUT/unsigned.apk"
+if [ ! -f "$RES_JAR" ]; then
+  echo "    baixando a base do Android 10 (uma vez só)"
+  tmp=$(mktemp -d)
+  curl -sfLo "$tmp/p.zip" https://dl.google.com/android/repository/platform-29_r05.zip
+  echo "$RES_ZIP_SHA  $tmp/p.zip" | sha256sum -c --quiet || { echo "A base do Android 10 veio diferente do esperado" >&2; exit 1; }
+  (cd "$tmp" && unzip -oq p.zip "*/android.jar")
+  mkdir -p "$(dirname "$RES_JAR")" && mv "$tmp"/*/android.jar "$RES_JAR" && rm -rf "$tmp"
+fi
+aapt package -f -M AndroidManifest.xml -S res -A "$OUT/assets" -I "$RES_JAR" -F "$OUT/unsigned.apk"
 (cd "$OUT" && aapt add -f unsigned.apk classes.dex >/dev/null)
 (cd "$OUT/native" && aapt add -f ../unsigned.apk $(find lib -name '*.so' | sort) >/dev/null)
 zipalign -f -p 4 "$OUT/unsigned.apk" "$OUT/aligned.apk"

@@ -86,9 +86,12 @@ final class Library {
             if (gone == null) return false;
             save(c, keep);
             // O disco .cue fica numa pasta só dele (<id>/jogo.cue); o fliperama, solto em arcade/.
+            // Jogo do pendrive: sai só da biblioteca, o arquivo continua no pendrive (o GameHub nunca apaga nada lá).
             String file = gone.optString("file");
             int slash = file.indexOf('/');
-            if (slash > 0 && !file.startsWith("arcade/")) Files.delete(new File(Files.roms(c), file.substring(0, slash)));
+            if (gone.has("path")) {
+                // nada na pasta roms
+            } else if (slash > 0 && !file.startsWith("arcade/")) Files.delete(new File(Files.roms(c), file.substring(0, slash)));
             else new File(Files.roms(c), file).delete();
             new File(Files.covers(c), id + ".jpg").delete();
             Files.cheats(c, id).delete();

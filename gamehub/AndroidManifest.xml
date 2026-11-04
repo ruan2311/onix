@@ -8,8 +8,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.onix.gamehub"
-    android:versionCode="10501"
-    android:versionName="1.5.1">
+    android:versionCode="10600"
+    android:versionName="1.6.0">
 
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
 
@@ -17,6 +17,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <!-- Atualizações pelo próprio GameHub (o Android sempre pede confirmação na tela). -->
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <!-- Pendrive e HD na TV (UsbDrives): o GameHub só lê os jogos, nunca grava nada neles.
+         Do Android 6 ao 10 basta ler o armazenamento; do 11 em diante, o "acesso a todos os
+         arquivos" (o Android não deixa um app ler arquivos que não são fotos, vídeos ou músicas
+         de outro jeito, e muitas TVs não têm o seletor de arquivos). -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <!-- Só apps com a mesma assinatura (o Onix) leem o "Continuar jogando". O Onix declara a
          mesma permissão, para funcionar em qualquer ordem de instalação. -->
@@ -40,6 +46,10 @@
         <intent>
             <action android:name="android.settings.SETTINGS" />
         </intent>
+        <!-- Saber se o seletor de pastas do Android é de verdade (no Google TV é uma casca vazia). -->
+        <intent>
+            <action android:name="android.intent.action.OPEN_DOCUMENT_TREE" />
+        </intent>
         <package android:name="com.android.tv.settings" />
         <package android:name="com.aurora.launcher" />
     </queries>
@@ -53,6 +63,7 @@
         android:usesCleartextTraffic="false"
         android:extractNativeLibs="true"
         android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
         android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen">
 
         <activity
