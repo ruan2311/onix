@@ -21,13 +21,14 @@ import java.util.List;
 /**
  * Controle na tela do celular, no traço do Onix: linhas na cor de cada botão, com o símbolo
  * dentro, e preenchimento leve quando apertado. Cada console tem o seu esquema (NES: B e A; SNES:
- * o losango X, A, B, Y nas cores do controle; GBA: B, A, L e R; Mega Drive: A, B, C e X, Y, Z).
+ * o losango X, A, B, Y nas cores do controle; GBA: B, A, L e R; Mega Drive: A, B, C e X, Y, Z;
+ * PS1: △ ○ ✕ □, L1/R1 e L2/R2: em pé, embaixo de L1/R1; deitado, ao lado).
  * Em pé, ocupa a parte de baixo da tela (o jogo fica em cima); deitado, fica por cima do jogo,
  * nos cantos. Vários dedos ao mesmo tempo e arrastar de um botão para outro funcionam; o
  * direcional aceita diagonais.
  *
  * Editor (menu do jogo ou Configurações → Controles): arrastar cada botão por conta própria (o
- * direcional, cada botão de ação, L, R, SELECT, START, menu e avançar), mudar o
+ * direcional, cada botão de ação, L, R, L2, R2, SELECT, START, menu e avançar), mudar o
  * tamanho e a transparência de todos ou, tocando num botão, só daquele; fica guardado em touch.json (TouchLayout), em pé e deitado separados.
  * O tamanho 100% é calculado para caber na tela: o direcional e os botões de ação não se encostam.
  * Os botões de ação guardam a posição por console ("snes.B"), porque cada um tem o seu esquema.
@@ -47,8 +48,8 @@ final class TouchPad extends View {
 
     private static final int ROUND = 0, PILL = 1, MENU = 2, FAST = 3;
     /* O que se arrasta no editor: cada botão. Os de ação vêm de G_FACE em diante, um por botão
-     * (o 1 era o conjunto todo na versão 1 e não é mais usado). */
-    private static final int G_DPAD = 0, G_L = 2, G_R = 3, G_SELECT = 4, G_START = 5, G_MENU = 6, G_FAST = 7, G_FACE = 8;
+     * (o 1 era o conjunto todo na versão 1 e não é mais usado). L2 e R2 só existem no PS1. */
+    private static final int G_DPAD = 0, G_L = 2, G_R = 3, G_SELECT = 4, G_START = 5, G_MENU = 6, G_FAST = 7, G_L2 = 8, G_R2 = 9, G_FACE = 10;
     /* Barra do editor. */
     private static final int T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17, T_STICK = -18;
 
@@ -149,6 +150,8 @@ final class TouchPad extends View {
             face.add(new Btn("□", Native.Y, 0xFFF472B6, ROUND, G_FACE, -1.35f, 0, 1));
             shoulders.add(new Btn("L1", Native.L, 0xFF34D399, PILL, G_L, -1, 0, 1));
             shoulders.add(new Btn("R1", Native.R, 0xFF34D399, PILL, G_R, 1, 0, 1));
+            shoulders.add(new Btn("L2", Native.L2, 0xFF34D399, PILL, G_L2, -1, 1, 1));
+            shoulders.add(new Btn("R2", Native.R2, 0xFF34D399, PILL, G_R2, 1, 1, 1));
         } else if ("arcade".equals(console)) {
             accent = 0xFFE879F9;
             // Quatro botões em losango e o 5 e o 6 em cima; Select é a ficha.
@@ -234,6 +237,8 @@ final class TouchPad extends View {
         landscape = w > h;
         float s = Math.min(w, h), k = layout.scale;
         float reachX = faceReach(true), reachY = faceReach(false);
+        boolean two = false;   // PS1: L2/R2 numa segunda fileira de ombros
+        for (Btn b : shoulders) two |= b.ry > 0;
         if (landscape) {
             // Por cima do jogo: direcional embaixo à esquerda, botões embaixo à direita.
             dpadR = Math.min(s * 0.17f, 92 * dp) * k;
@@ -241,7 +246,7 @@ final class TouchPad extends View {
             dpadX = m + 8 * dp;
             dpadY = h - m;
             placeFace(w - m - 8 * dp, h - m, dpadR);
-            placeShoulders(m * 0.9f, 30 * dp, w - m * 0.9f, dpadR);
+            placeShoulders(m * 0.9f, 30 * dp, w - m * 0.9f, dpadR, true);
             placeSystem(w / 2f, h - 26 * dp, 26 * dp * k, w / 2f, 30 * dp, k);
         } else {
             // Em pé: a área inteira é do controle (o jogo fica em cima dela). O tamanho 100% é o
@@ -249,13 +254,14 @@ final class TouchPad extends View {
             // ombros (em cima) e SELECT/START (embaixo).
             float edge = 12 * dp, mid = 18 * dp, top = 26 * dp, bottom = h - 34 * dp - 30 * dp * k;
             float fitW = (w - 2 * edge - mid) / (2 + 2 * reachX);
-            float fitH = (h - 26 * dp - 34 * dp - 30 * dp - 24 * dp) / (2 * Math.max(1, reachY) + 0.42f);
+            float rows = two ? 0.84f : 0.42f, rowGap = two ? 8 * dp : 0;
+            float fitH = (h - 26 * dp - 34 * dp - 30 * dp - 24 * dp - rowGap) / (2 * Math.max(1, reachY) + rows);
             dpadR = Math.min(Math.min(w * 0.2f, h * 0.24f), Math.min(fitW, fitH)) * k;
-            float cy = (top + dpadR * 0.42f + bottom) / 2;
+            float cy = (top + dpadR * rows + rowGap + bottom) / 2;
             dpadX = edge + dpadR;
             dpadY = cy;
             placeFace(w - edge - reachX * dpadR, cy, dpadR);
-            placeShoulders(dpadR * 1.1f, top, w - dpadR * 1.1f, dpadR);
+            placeShoulders(dpadR * 1.1f, top, w - dpadR * 1.1f, dpadR, false);
             placeSystem(w / 2f, h - 34 * dp, 30 * dp * k, w / 2f, 28 * dp, k);
         }
         // Ajustes da versão 1: SELECT+START e menu+avançar andavam juntos.
@@ -344,12 +350,13 @@ final class TouchPad extends View {
         }
     }
 
-    private void placeShoulders(float lx, float y, float rx, float r) {
+    /** L2/R2 (ry 1) ficam embaixo de L1/R1 ou, com beside (deitado, pouca altura), ao lado, para dentro. */
+    private void placeShoulders(float lx, float y, float rx, float r, boolean beside) {
         for (Btn b : shoulders) {
             b.w = r * 1.25f;
             b.h = r * 0.42f;
-            b.cx = b.rx < 0 ? lx : rx;
-            b.cy = y + b.h / 2;
+            b.cx = (b.rx < 0 ? lx : rx) - (beside ? b.rx * b.ry * (b.w + 8 * dp) : 0);
+            b.cy = y + b.h / 2 + (beside ? 0 : b.ry * (b.h + 8 * dp));
         }
     }
 

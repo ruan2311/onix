@@ -13,6 +13,8 @@ Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advanc
 
 O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde está e muda a interface.
 
+> 🎮 **1.5.1:** o PlayStation ganhou **L2 e R2** nos controles na tela do celular e no controle pelo celular (embaixo de L1 e R1 com o celular em pé, ao lado com ele deitado).
+
 > 📺📱 **Novo na TV e no celular (1.5.0):** chegaram **Game Boy Color**, **PlayStation (PS1)**, **Atari 2600 e 7800** e **Fliperama** (jogos de arcade, como os do MAME, pelo FinalBurn Neo). Veja [Consoles novos da TV e do celular](#️-consoles-novos-da-tv-e-do-celular-150). O Armazenamento agora mostra o que ocupa espaço e limpa as sobras de envios que caíram.
 
 > 🖥️ **Novo no PC (1.4.0):** além dos quatro consoles, o Cobalt GameHub para Windows abre **PlayStation, Game Boy Color, Nintendo 64, Nintendo DS, PSP, GameCube, Wii e PlayStation 2**, com resolução e controles por console. O RetroArch já vem dentro do `.zip` (sem internet). Veja [PC (Windows)](#️-pc-windows).
@@ -101,7 +103,7 @@ Valem para a TV e para o celular Android (o mesmo APK).
 ### PlayStation (PS1)
 - **Formatos:** `.chd`, `.pbp` ou `.cue` com os `.bin` do disco, até 1,2 GB por arquivo. Pode mandar o `.cue` e os `.bin` juntos, em qualquer ordem: o disco espera até chegarem todos os arquivos e só então entra na biblioteca. Um disco que fica pela metade sai sozinho depois de um dia.
 - **BIOS:** não precisa; o PCSX ReARMed traz uma livre.
-- **Controle:** △ ○ ✕ □, L1/R1 e L2/R2 (no controle na tela: △ ○ ✕ □ e L1/R1).
+- **Controle:** △ ○ ✕ □, L1/R1 e L2/R2 (no controle na tela também: L2 e R2 ficam embaixo de L1 e R1 com o celular em pé e ao lado com ele deitado).
 - **Espaço:** um disco tem de 300 a 700 MB. Em TVs com pouca memória, cabe um ou dois.
 
 ### Atari 2600 e 7800
@@ -259,4 +261,4 @@ O código do GameHub está sob a [GPL-3.0](LICENSE). O GameHub é gratuito e nun
 
 ---
 
-🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance, Game Boy Color, Mega Drive, PlayStation, Atari y arcade con el estilo de Onix. **Novedades de la 1.5.0 (TV y celular Android):** Game Boy Color, PlayStation (.chd, .pbp o .cue con los .bin), Atari 2600 y 7800 y Arcade con FinalBurn Neo (el .zip con el nombre original del juego, como sf2.zip); el Almacenamiento muestra qué ocupa espacio y limpia los restos de envíos; en los controles táctiles se puede cambiar la cruceta por un analógico. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente), además de **PlayStation (PS1)**, **Game Boy Color** y, por RetroArch incluido (sin internet), **Nintendo 64, DS, PSP, GameCube, Wii y PS2** solo en PC, con resolución automática según la PC y controles por teclado o control; y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido.
+🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance, Game Boy Color, Mega Drive, PlayStation, Atari y arcade con el estilo de Onix. **Novedades de la 1.5.0 (TV y celular Android):** Game Boy Color, PlayStation (.chd, .pbp o .cue con los .bin), Atari 2600 y 7800 y Arcade con FinalBurn Neo (el .zip con el nombre original del juego, como sf2.zip); el Almacenamiento muestra qué ocupa espacio y limpia los restos de envíos; en los controles táctiles se puede cambiar la cruceta por un analógico. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente), además de **PlayStation (PS1)**, **Game Boy Color** y, por RetroArch incluido (sin internet), **Nintendo 64, DS, PSP, GameCube, Wii y PS2** solo en PC, con resolución automática según la PC y controles por teclado o control; y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido. **Novedades de la 1.5.1:** PlayStation con **L2 y R2** en los controles táctiles del celular y en el control por celular.
