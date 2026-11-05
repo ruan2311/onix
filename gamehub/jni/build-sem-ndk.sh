@@ -22,7 +22,7 @@ for abi in arm64-v8a armeabi-v7a; do
     -DANDROID -ffunction-sections -fdata-sections -fstack-protector-strong -D_FORTIFY_SOURCE=2 \
     -nodefaultlibs -fuse-ld=lld -Wl,--build-id=sha1 -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now \
     -Wl,-z,max-page-size=16384 -Wl,--gc-sections -Wl,-soname,libonixretro.so \
-    -o build/ndk-libs/$abi/libonixretro.so jni/retro.c -lGLESv2 -lOpenSLES -llog -ldl -lz -lm -lc $rt
+    -o build/ndk-libs/$abi/libonixretro.so jni/retro.c -lGLESv2 -lEGL -lOpenSLES -llog -ldl -lz -lm -lc $rt
   "$(dirname "$CLANG")/llvm-strip" --strip-unneeded build/ndk-libs/$abi/libonixretro.so 2>/dev/null || true
   echo "$abi: $(stat -c %s build/ndk-libs/$abi/libonixretro.so) bytes"
 done

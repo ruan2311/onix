@@ -49,6 +49,14 @@ final class Importer {
             String ext0 = Consoles.extension(name);
             if ("zip".equals(ext0) && arcadeInfo(c, romset(name)) != null) return arcade(c, upload, name, r);
             if ("cue".equals(ext0)) return cue(c, upload, name, r);
+            if ("bin".equals(ext0) && Consoles.byId("ps2") != null && SystemFiles.isPs2Bios(upload)) {
+                // BIOS do PS2 (do console da pessoa): vai para system/pcsx2/bios, sem virar jogo.
+                File dir = SystemFiles.ps2BiosDir(c);
+                dir.mkdirs();
+                String safe = new File(name.replace('\\', '/')).getName();
+                if (!move(upload, new File(dir, safe))) return fail(r, "Não deu para guardar o jogo.");
+                return r.put("ok", true).put("console", "ps2").put("bios", true).put("name", "BIOS do PlayStation 2");
+            }
             if ("bin".equals(ext0)) {
                 JSONObject d = disc(c, upload, name, r);
                 if (d != null) return d;
@@ -60,7 +68,7 @@ final class Importer {
             } else {
                 rom = upload;
             }
-            Consoles.Console console = Consoles.byExtension(name);
+            Consoles.Console console = Consoles.of(rom, name);
             if (console == null) return fail(r, "Esse tipo de arquivo não é de nenhum console do GameHub.");
             long size = rom.length();
             if (size < 512 || size > console.maxBytes) return fail(r, "O arquivo não parece um jogo desse console.");
@@ -177,7 +185,7 @@ final class Importer {
                     if (inner == null) return fail(r, "O .zip não tem nenhum jogo que o GameHub conheça. No fliperama, o nome do .zip tem que ser o do jogo, como sf2.zip.");
                     rom = tmp;
                 }
-                Consoles.Console console = Consoles.byExtension(inner);
+                Consoles.Console console = Consoles.of(rom, inner);
                 if (console == null) return fail(r, "Esse tipo de arquivo não é de nenhum console do GameHub.");
                 r.put("console", console.id);
                 if ("bin".equals(Consoles.extension(inner)) && rom.length() > Consoles.MD_MAX) {

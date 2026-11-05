@@ -5,6 +5,8 @@
 #   bash gamehub/cores.sh prontos   # só baixa os núcleos prontos (PS1, Atari e fliperama), sem NDK
 # PS1 (PCSX ReARMed), Atari 2600 (Stella 2014), Atari 7800 (ProSystem) e fliperama (FinalBurn Neo)
 # vêm prontos do buildbot do libretro, conferidos pelo SHA-256 abaixo (baixados em 03/11/2026).
+# Os 3D também (baixados em 05/11/2026): N64 (ParaLLEl N64), DS (melonDS DS) e PSP (PPSSPP) nos dois
+# tipos de aparelho; GameCube e Wii (Dolphin) e PS2 (PCSX2) só no de 64 bits.
 # Precisa do Android NDK (NDK=~/sdk/android-ndk-r27c) e, para o mGBA, de cmake e ninja no PATH.
 # Só é preciso rodar de novo para atualizar um emulador; o build.sh usa o que já estiver pronto.
 set -euo pipefail
@@ -34,6 +36,14 @@ prosystem    arm64-v8a   87335c02fdfb0c45d2a386b5f8d2ee6c220115f69ba9a0b7a9949aa
 prosystem    armeabi-v7a 8b5eeecad6ab2f5c84d7a4908cc3ada5e907bcfddd93aab6e196f067716a6364
 fbneo        arm64-v8a   816f6be8c5580332f641032dd163048ba114ce8391115bec201fbb8d68af304a
 fbneo        armeabi-v7a 1696f66f57482384a22abb0942977452cad8f66135ff03072320859dfe5f3aba
+parallel_n64 arm64-v8a   eab62d94fb39531272be2043d0c8d3f60b1de32e0a5608d85975368a3f651276
+parallel_n64 armeabi-v7a 4fed4b7061d3e49f244beacf7d7d4e7de041739313e88b953d8f0b7bc9b9dc38
+melondsds    arm64-v8a   9915df9386e7dec21ef1a9584e56d1fb1386ff60e5cc3b5ea411b5926a02d8a0
+melondsds    armeabi-v7a d53ede1cbda7a9b6a10ccef820d40bc0c2c71d0721e6dbec737e84c7914c6577
+ppsspp       arm64-v8a   772715bdc248838fdbcc598228213612d642ff6c8299de07bae8a74f4745759f
+ppsspp       armeabi-v7a a99be6d09234b819168d44d0aae1d003fac398a014cb7942f121773a3ef38fb2
+dolphin      arm64-v8a   b135f2403441d5dda1b476aa4db9dc9f32bbd1e6c183d90b8bf0388be2555624
+pcsx2        arm64-v8a   77a9e876e0944e1fbf7102fe31cd0f9f181a2db58ba0c65fc2fc65f22cb9893e
 "
 prontos() {
   local tmp; tmp=$(mktemp -d)

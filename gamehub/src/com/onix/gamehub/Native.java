@@ -70,9 +70,22 @@ final class Native {
 
     static native void setTurbo(int mask, int period);
 
+    /** Dedo na tela (DS), em pixels da GLSurfaceView. */
+    static native void setPointer(float x, float y, boolean down);
+
+    /** Tipo de controle do jogador (RETRO_DEVICE_*; no Wii, os do Dolphin). */
+    static native void setDevice(int port, int device);
+
+    static final int DEVICE_JOYPAD = 1, DEVICE_WII_NUNCHUK = (3 << 8) | 1, DEVICE_WII_CLASSIC = (4 << 8) | 1;
+
+    /** O jogo desenha em 3D (sem rebobinar nem run-ahead). */
+    static native boolean hardware();
+
     /* Botões do RetroPad (libretro.h) */
     static final int B = 0, Y = 1, SELECT = 2, START = 3, UP = 4, DOWN = 5, LEFT = 6, RIGHT = 7,
             A = 8, X = 9, L = 10, R = 11, L2 = 12, R2 = 13, L3 = 14, R3 = 15;
+    /** Botões C do N64 na tela: não existem no RetroPad, viram o analógico direito (GameActivity.push). */
+    static final int C_UP = 16, C_DOWN = 17, C_LEFT = 18, C_RIGHT = 19;
 
     /* Idiomas do libretro: as opções dos núcleos vêm traduzidas quando o núcleo tem a tradução. */
     static final int LANG_PT_BR = 7, LANG_ES = 3;

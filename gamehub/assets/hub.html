@@ -450,7 +450,11 @@ function homePage() {
 }
 
 /* Os formatos aceitos (o PC também abre discos de PS1; a TV, Atari e fliperama). */
-const formatsText = () => (CONSOLES.some(c => c.id === 'arcade')
+const formatsText = () => (CONSOLES.some(c => c.id === 'arcade') && CONSOLES.some(c => c.id === 'gc')
+  ? t('Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .chd, .pbp ou .cue (com os .bin); Atari: .a26 e .a78; Fliperama: o .zip com o nome do jogo (como sf2.zip); N64: .z64, .n64 e .v64; DS: .nds; PSP: .iso e .cso; GameCube e Wii: .iso, .rvz, .gcz, .wbfs e .gcm; PS2: .iso e .chd (e o .bin da BIOS do seu PS2)')
+  : CONSOLES.some(c => c.id === 'arcade') && CONSOLES.some(c => c.id === 'n64')
+  ? t('Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .chd, .pbp ou .cue (com os .bin); Atari: .a26 e .a78; Fliperama: o .zip com o nome do jogo (como sf2.zip); N64: .z64, .n64 e .v64; DS: .nds; PSP: .iso e .cso')
+  : CONSOLES.some(c => c.id === 'arcade')
   ? t('Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .chd, .pbp ou .cue (com os .bin); Atari: .a26 e .a78; Fliperama: o .zip com o nome do jogo (como sf2.zip)')
   : CONSOLES.some(c => c.ra)
   ? t('Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .cue (com os .bin), .chd e .pbp; N64: .z64, .n64 e .v64; DS: .nds; PSP: .iso e .cso; GameCube e Wii: .iso, .rvz, .gcz, .wbfs e .gcm; PS2: .iso e .chd')
@@ -1402,6 +1406,31 @@ function remapSheet(cid) {
 let KEYNAMES = {};
 try { KEYNAMES = JSON.parse(localStorage.getItem('keynames') || '{}'); } catch (_) { }
 
+/* Este aparelho (só TV e celular Android): a faixa que o GameHub mediu e, para cada console 3D, se
+   ele roda aqui. Abaixo do mínimo o console nem aparece na biblioteca (Hardware.java). */
+const MIN_TEXT = {
+  ds: 'Qualquer aparelho', n64: 'Qualquer aparelho', psp: 'Qualquer aparelho',
+  gc: 'Intermediário (Cortex-A76 ou melhor, 4 GB, 64 bits, OpenGL ES 3.2)',
+  wii: 'Intermediário (Cortex-A76 ou melhor, 4 GB, 64 bits, OpenGL ES 3.2)',
+  ps2: 'Forte (Cortex-X1 ou melhor, 6 GB, 64 bits, OpenGL ES 3.2)',
+};
+function hardwareRows() {
+  const hw = INFO.pc || INFO.web ? null : json(call('hardware'), null);
+  if (!hw || !hw.consoles) return [];
+  const st = { ok: t('Roda bem'), slow: t('Roda, mas pode ficar lento'), no: t('Abaixo do mínimo') };
+  const color = { ok: '#4ade80', slow: '#fbbf24', no: '#ff5a6e' };
+  const names = { n64: 'Nintendo 64', ds: 'Nintendo DS', psp: 'PSP', gc: 'GameCube', wii: 'Wii', ps2: 'PlayStation 2' };
+  const ram = hw.ramMb ? (hw.ramMb / 1024).toFixed(1).replace('.', ',') + ' GB' : '?';
+  return [
+    h('div', { class: 'sep', text: t('Este aparelho') }),
+    h('div', { class: 'f item' }, icon('info'), h('span', { class: 'grow' }, (hw.model || '') + ' · ' + t('Faixa: {f}', { f: t(hw.tierName) }),
+      h('span', { class: 'sub', text: [hw.cpu, t('Memória') + ' ' + ram, hw.is64 ? '64 bits' : '32 bits', 'OpenGL ES ' + hw.gles, hw.gpu].filter(Boolean).join(' · ') }))),
+    ...hw.consoles.map(c => h('div', { class: 'f item' }, h('span', { class: 'dot', style: { background: color[c.status] } }),
+      h('span', { class: 'grow' }, names[c.id], h('span', { class: 'sub', text: t('Mínimo: {m}', { m: t(MIN_TEXT[c.id]) }) })),
+      h('span', { class: 'val', text: st[c.status] }))),
+  ];
+}
+
 function aboutBody() {
   const up = json(call('update'), {});
   const wrap = h('div');
@@ -1413,13 +1442,16 @@ function aboutBody() {
     up.latest && (up.state === 'available' || up.state === 'ready' || up.state === 'error')
       ? h('button', { class: 'f item', act: () => { call('installUpdate'); toast(t('Baixando…')); } }, icon('load'), h('span', { class: 'grow', text: t('Instalar atualização {v}', { v: up.latest }) }))
       : h('button', { class: 'f item', act: () => { call('checkUpdate'); toast(t('Procurando…')); } }, icon('reset'), h('span', { class: 'grow', text: t('Procurar atualizações') })),
+    ...hardwareRows(),
     h('div', { class: 'sep', text: t('Créditos e licenças') }),
     h('p', { class: 'credits', text: t('Emuladores de código aberto do projeto libretro:') }),
     ...[['FCEUmm (NES)', 'fceumm', 'GPL-2.0'], ['Snes9x (SNES)', 'snes9x', 'Snes9x, não comercial'], [CONSOLES.some(c => c.id === 'gbc') ? 'mGBA (GBA e Game Boy Color)' : 'mGBA (GBA)', 'mgba', 'MPL-2.0'], ['Genesis Plus GX (Mega Drive)', 'genesis_plus_gx', 'não comercial'],
       ...(CONSOLES.some(c => c.id === 'ps1') ? [['PCSX ReARMed (PlayStation)', 'pcsx_rearmed', 'GPL-2.0']] : []),
       ...(CONSOLES.some(c => c.id === 'atari') ? [['Stella 2014 (Atari 2600)', 'stella2014', 'GPL-2.0'], ['ProSystem (Atari 7800)', 'prosystem', 'GPL-2.0']] : []),
       ...(CONSOLES.some(c => c.id === 'arcade') ? [['FinalBurn Neo (Fliperama)', 'fbneo', 'FBNeo, não comercial']] : []),
-      ...(CONSOLES.some(c => c.ra) ? [['Emuladores de N64, DS, PSP, GameCube, Wii e PS2 (RetroArch)', 'retroarch', 'GPL']] : [])]
+      ...(CONSOLES.some(c => c.ra) ? [['Emuladores de N64, DS, PSP, GameCube, Wii e PS2 (RetroArch)', 'retroarch', 'GPL']] : []),
+      ...(!CONSOLES.some(c => c.ra) && CONSOLES.some(c => c.id === 'n64') ? [['ParaLLEl N64 (Nintendo 64)', 'parallel_n64', 'GPL-2.0'], ['melonDS DS (Nintendo DS)', 'melondsds', 'GPL-3.0'], ['PPSSPP (PSP)', 'ppsspp', 'GPL-2.0']] : []),
+      ...(!CONSOLES.some(c => c.ra) && CONSOLES.some(c => c.id === 'gc') ? [['Dolphin (GameCube e Wii)', 'dolphin', 'GPL-2.0'], ['PCSX2 (PlayStation 2)', 'pcsx2', 'GPL-3.0']] : [])]
       .map(([name, file, lic]) => h('button', { class: 'f item', act: () => licenseSheet(name, file) }, h('span', { class: 'grow' }, name, h('span', { class: 'sub', text: lic })), h('span', { class: 'val', text: t('Abrir licença') }))),
     h('button', { class: 'f item', act: () => licenseSheet('libretro-database', 'libretro_database') }, h('span', { class: 'grow' }, t('Nomes dos jogos: libretro-database (No-Intro), CC BY-SA 4.0. Capas: libretro-thumbnails.')), h('span', { class: 'val', text: t('Abrir licença') })),
     h('p', { class: 'credits', text: t('O GameHub é gratuito e de código aberto (GPL-3.0). Nunca terá anúncios nem será vendido.') }),
@@ -1554,6 +1586,8 @@ function applyOpen() {
 /* ---------------- Início ---------------- */
 INFO = json(call('init'), { profile: 'default', lang: 'pt', gamepads: [], gamepadUrl: '', gamepadClients: 0 });
 limitConsoles(INFO.consoles);
+// Na TV e no celular os consoles 3D rodam no motor do próprio GameHub, não no RetroArch.
+if (!INFO.pc) for (const c of CONSOLES) delete c.ra;
 /* PC: mais filtros e ajustes de imagem (feitos na placa de vídeo), tela cheia, e som e animações
    sem o "Igual ao Onix" (não há Onix no PC). */
 if (INFO.pc || INFO.web) {

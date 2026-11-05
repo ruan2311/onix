@@ -7,13 +7,17 @@ Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advanc
 | Plataforma | Situação | Como os jogos entram |
 |---|---|---|
 | 📺 **Google TV e Android TV** | ✅ Disponível (1.5.0: 8 consoles) | Pelo celular, com um QR code |
-| 📱 **Celular Android** (5.0 ou mais novo) | ✅ Disponível (1.5.0: 8 consoles) | Escolhendo uma pasta do próprio celular |
+| 📱 **Celular Android** (5.0 ou mais novo) | ✅ Disponível (1.7.0: até 14 consoles) | Escolhendo uma pasta do próprio celular |
 | 🖥️ **PC (Windows)** | ✅ Disponível (1.4.0: com 7 consoles a mais) | Escolhendo a pasta dos jogos |
 | 🍎 **iPhone e iPad** (iOS 16.4 ou mais novo) | ✅ Disponível | Web app instalável em [projectgems.github.io/gamehub/app](https://projectgems.github.io/gamehub/app/) |
 
 O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde está e muda a interface.
 
-> 💾 **Novo na TV (1.6.0): jogos direto do pendrive ou do HD.** Ligue um pendrive, HD externo ou cartão de memória na TV e abra **Adicionar jogos**: o GameHub mostra as pastas e põe os jogos na biblioteca **sem copiar nada para a memória da TV**. Funciona até nas TVs sem gerenciador de arquivos. Veja [Jogos do pendrive ou HD](#jogos-do-pendrive-ou-hd).
+> 🎮 **Novo na TV e no celular (1.7.0): Nintendo 64, Nintendo DS e PSP, e GameCube, Wii e PS2 em teste.** Os seis consoles que antes eram só do PC agora rodam dentro do GameHub no Android. O GameHub olha o processador, a memória e a placa de vídeo do aparelho, mostra só os consoles que ele aguenta e escolhe a resolução sozinho. Veja [Consoles 3D na TV e no celular](#-consoles-3d-na-tv-e-no-celular-170).
+
+> 🇪🇸 *Nuevo en la TV y el celular (1.7.0): Nintendo 64, Nintendo DS y PSP, y GameCube, Wii y PS2 en prueba. GameHub analiza el procesador, la memoria y la tarjeta de video del aparato, muestra solo las consolas que aguanta y elige la resolución solo.*
+
+> 💾 **Na TV (1.6.0): jogos direto do pendrive ou do HD.** Ligue um pendrive, HD externo ou cartão de memória na TV e abra **Adicionar jogos**: o GameHub mostra as pastas e põe os jogos na biblioteca **sem copiar nada para a memória da TV**. Funciona até nas TVs sem gerenciador de arquivos. Veja [Jogos do pendrive ou HD](#jogos-do-pendrive-ou-hd).
 
 > 🇪🇸 *Nuevo en la TV (1.6.0): juegos directo desde una memoria USB o un disco externo, sin copiar nada a la memoria de la TV. Funciona incluso en las TV sin administrador de archivos.*
 
@@ -34,6 +38,7 @@ O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde
 - [📺 Google TV e Android TV](#-google-tv-e-android-tv)
 - [📱 Celular Android](#-celular-android)
 - [🕹️ Consoles novos da TV e do celular (1.5.0)](#️-consoles-novos-da-tv-e-do-celular-150)
+- [🎮 Consoles 3D na TV e no celular (1.7.0)](#-consoles-3d-na-tv-e-no-celular-170)
 - [🖥️ PC (Windows)](#️-pc-windows)
 - [🍎 iPhone e iPad](#-iphone-e-ipad)
 - [Funciona em todos](#funciona-em-todos)
@@ -107,7 +112,7 @@ Em **Adicionar jogos**, toque em **Escolher pasta** e escolha a pasta onde estã
 ### Jogar
 - Os menus ficam **em pé**. O jogo pode ser jogado **em pé ou deitado**.
 - Cada console tem os **próprios controles na tela**, no visual do Onix. Com um controle Bluetooth conectado, eles somem.
-- **Editor dos controles:** cada botão se arrasta sozinho (o direcional, A, B, X, Y, L, R, SELECT, START, menu e avançar). Toque num botão para mudar o tamanho e a transparência só dele; sem nenhum escolhido, a mudança vale para todos. As posições ficam guardadas separadas para em pé e deitado. No editor, **Usar analógico** troca a cruz por um analógico (e **Usar cruz** volta). Fica no menu do jogo e em **Configurações → Controles**.
+- **Editor dos controles:** cada botão se arrasta sozinho (o direcional, A, B, X, Y, L, R, SELECT, START, menu e avançar). Toque num botão para mudar o tamanho e a transparência só dele; sem nenhum escolhido, a mudança vale para todos. **Em pé e deitado são dois layouts separados** (desde a 1.7.0, como no Onix Controle): a posição, o tamanho e a transparência de um não mudam o outro, e **Restaurar** volta só o que está na tela. No editor, **Usar analógico** troca a cruz por um analógico (e **Usar cruz** volta). Fica no menu do jogo e em **Configurações → Controles**.
 - A tela cheia só liga durante o jogo.
 
 ---
@@ -135,6 +140,30 @@ Valem para a TV e para o celular Android (o mesmo APK).
 
 ### Armazenamento
 Em **Configurações → Armazenamento**, o GameHub mostra quanto ocupam os jogos, os saves e estados, as capas e as **sobras de envios** (um envio que caiu no meio, um disco de PS1 que ficou esperando). As sobras saem sozinhas ao abrir o GameHub e depois de apagar um jogo, e o botão **Limpar sobras** apaga na hora. O espaço livre do topo atualiza logo depois de apagar um jogo.
+
+---
+
+## 🎮 Consoles 3D na TV e no celular (1.7.0)
+
+Os mesmos seis consoles do PC, rodando dentro do GameHub (sem RetroArch à parte). Valem para a TV e para o celular Android (o mesmo APK).
+
+| Console | Formatos | Precisa de |
+|---|---|---|
+| **Nintendo 64** (ParaLLEl N64) | `.z64`, `.n64`, `.v64` | qualquer aparelho |
+| **Nintendo DS** (melonDS DS) | `.nds` | qualquer aparelho |
+| **PSP** (PPSSPP) | `.iso`, `.cso` | qualquer aparelho |
+| **GameCube** 🧪 (Dolphin) | `.iso`, `.gcm`, `.gcz`, `.ciso`, `.rvz`, `.wia` | 64 bits, processador intermediário (como o Cortex-A76) e 4 GB |
+| **Wii** 🧪 (Dolphin) | `.iso`, `.wbfs`, `.rvz`, `.wia`, `.gcz` | 64 bits, processador intermediário e 4 GB |
+| **PlayStation 2** 🧪 (PCSX2) | `.iso`, `.chd` | 64 bits, processador forte (Cortex-X) e 6 GB |
+
+🧪 = em teste: pode ficar lento ou não abrir alguns jogos.
+
+- **O GameHub vê o aparelho:** em **Configurações → Sobre → Este aparelho** aparecem o processador, a memória, a placa de vídeo e, para cada console, se roda bem, se pode ficar lento ou se fica abaixo do mínimo. Os consoles abaixo do mínimo **nem aparecem**. A resolução é escolhida sozinha pela força do aparelho (dá para mudar em **Opções do emulador**).
+- **Arquivos do sistema:** na primeira vez que um jogo de PSP, GameCube ou Wii abre, o GameHub baixa os arquivos que o emulador precisa (os mesmos do PC, conferidos). Precisa de internet só nessa vez.
+- **BIOS do PS2:** é a do seu próprio console. Mande o arquivo da BIOS pelo **Adicionar jogos**, como um jogo: o GameHub reconhece e guarda no lugar certo.
+- **Nintendo DS:** toque na tela de baixo para usar a caneta.
+- **Wii:** dois controles. O botão **⇄** na tela (ou **menu do jogo → Controle do Wii**) troca entre **Wii Remote + Nunchuk** (com A, B, 1, 2, C, Z, Sacudir e o analógico do Nunchuk; tocar na tela mira, como apontar o controle) e **Classic Controller** (A, B, X, Y, L, R, ZL, ZR). A escolha fica guardada em cada jogo.
+- **Na TV:** a maioria das TVs tem processador fraco e é de 32 bits, então mostra só N64, DS e PSP, e os jogos mais pesados podem ficar lentos.
 
 ---
 
@@ -271,13 +300,13 @@ As versões saem nas [Releases deste repositório](https://github.com/ruan2311/o
 - **Desinstalar (TV):** no mesmo cartão da aba **Jogos**. Os jogos e os saves saem junto com o app.
 
 ## Formatos de jogo
-`.nes`, `.sfc`, `.smc`, `.gba`, `.gbc`, `.gb`, `.md`, `.gen`, `.bin` e `.zip` (com o jogo dentro), até 64 MB por arquivo. PlayStation: `.cue` + `.bin`, `.chd` e `.pbp`. Atari: `.a26` e `.a78`. Fliperama: o `.zip` com o nome do romset (como `sf2.zip`). Arquivos que não são jogo, como uma foto, são recusados com aviso.
+`.nes`, `.sfc`, `.smc`, `.gba`, `.gbc`, `.gb`, `.md`, `.gen`, `.bin` e `.zip` (com o jogo dentro), até 64 MB por arquivo. PlayStation: `.cue` + `.bin`, `.chd` e `.pbp`. Atari: `.a26` e `.a78`. Fliperama: o `.zip` com o nome do romset (como `sf2.zip`). Desde a 1.7.0, também N64, DS, PSP, GameCube, Wii e PS2 (veja [Consoles 3D](#-consoles-3d-na-tv-e-no-celular-170)). Arquivos que não são jogo, como uma foto, são recusados com aviso.
 
 ## Créditos e licenças
-Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): **FCEUmm** (NES, GPL-2.0), **Snes9x** (SNES, licença não comercial), **mGBA** (GBA, MPL-2.0) e **Genesis Plus GX** (Mega Drive, licença não comercial), **PCSX ReARMed** (PlayStation, GPL-2.0), **Stella 2014** (Atari 2600, GPL-2.0), **ProSystem** (Atari 7800, GPL-2.0), **FinalBurn Neo** (fliperama, licença não comercial) e, no PC, e o **RetroArch** com **Mupen64Plus-Next** (N64), **melonDS DS** (DS), **PPSSPP** (PSP), **Dolphin** (GameCube e Wii) e **PCSX2/LRPS2** (PS2), todos GPL. Nomes dos jogos: libretro-database (No-Intro, CC BY-SA 4.0); capas: libretro-thumbnails. As licenças completas estão em **Configurações → Sobre** e em [`assets/licenses`](assets/licenses).
+Emuladores de código aberto do projeto [libretro](https://www.libretro.com/): **FCEUmm** (NES, GPL-2.0), **Snes9x** (SNES, licença não comercial), **mGBA** (GBA, MPL-2.0) e **Genesis Plus GX** (Mega Drive, licença não comercial), **PCSX ReARMed** (PlayStation, GPL-2.0), **Stella 2014** (Atari 2600, GPL-2.0), **ProSystem** (Atari 7800, GPL-2.0), **FinalBurn Neo** (fliperama, licença não comercial) e, no PC, o **RetroArch** com **Mupen64Plus-Next** (N64), **melonDS DS** (DS), **PPSSPP** (PSP), **Dolphin** (GameCube e Wii) e **PCSX2/LRPS2** (PS2), todos GPL. Na TV e no celular: **ParaLLEl N64** (GPL-2.0), **melonDS DS** (GPL-3.0), **PPSSPP** (GPL-2.0), **Dolphin** (GPL-2.0) e **PCSX2** (GPL-3.0). Nomes dos jogos: libretro-database (No-Intro, CC BY-SA 4.0); capas: libretro-thumbnails. As licenças completas estão em **Configurações → Sobre** e em [`assets/licenses`](assets/licenses).
 
 O código do GameHub está sob a [GPL-3.0](LICENSE). O GameHub é gratuito e nunca terá anúncios.
 
 ---
 
-🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance, Game Boy Color, Mega Drive, PlayStation, Atari y arcade con el estilo de Onix. **Novedades de la 1.5.0 (TV y celular Android):** Game Boy Color, PlayStation (.chd, .pbp o .cue con los .bin), Atari 2600 y 7800 y Arcade con FinalBurn Neo (el .zip con el nombre original del juego, como sf2.zip); el Almacenamiento muestra qué ocupa espacio y limpia los restos de envíos; en los controles táctiles se puede cambiar la cruceta por un analógico. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente), además de **PlayStation (PS1)**, **Game Boy Color** y, por RetroArch incluido (sin internet), **Nintendo 64, DS, PSP, GameCube, Wii y PS2** solo en PC, con resolución automática según la PC y controles por teclado o control; y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido. **Novedades de la 1.5.1:** PlayStation con **L2 y R2** en los controles táctiles del celular y en el control por celular.
+🇪🇸 **Cobalt GameHub:** juegos clásicos de NES, Super Nintendo, Game Boy Advance, Game Boy Color, Mega Drive, PlayStation, Atari y arcade con el estilo de Onix. **Novedades de la 1.5.0 (TV y celular Android):** Game Boy Color, PlayStation (.chd, .pbp o .cue con los .bin), Atari 2600 y 7800 y Arcade con FinalBurn Neo (el .zip con el nombre original del juego, como sf2.zip); el Almacenamiento muestra qué ocupa espacio y limpia los restos de envíos; en los controles táctiles se puede cambiar la cruceta por un analógico. En **Google TV y Android TV** los juegos llegan desde el celular por código QR; en el **celular Android** se eligen desde una carpeta, con controles táctiles editables; la versión para **PC (Windows)** permite jugar desde una carpeta con teclado o control y ajustes de imagen (CRT curvo, brillo, colores, fondo ambiente), además de **PlayStation (PS1)**, **Game Boy Color** y, por RetroArch incluido (sin internet), **Nintendo 64, DS, PSP, GameCube, Wii y PS2** solo en PC, con resolución automática según la PC y controles por teclado o control; y en **iPhone y iPad** funciona como web app instalable desde Safari, con edición de controles independiente en vertical y horizontal. Ningún juego viene incluido. **Novedades de la 1.5.1:** PlayStation con **L2 y R2** en los controles táctiles del celular y en el control por celular. **Novedades de la 1.7.0 (TV y celular Android):** Nintendo 64, Nintendo DS y PSP, y GameCube, Wii y PS2 en prueba (solo en aparatos de 64 bits); GameHub analiza el aparato, muestra solo las consolas que aguanta y elige la resolución; en Wii, botón ⇄ para cambiar entre Wii Remote + Nunchuk y Classic Controller; los controles táctiles tienen diseños separados en vertical y horizontal.

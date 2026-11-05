@@ -8,6 +8,9 @@
  *  - Áudio (callback do OpenSL): só lê o anel de amostras (uma escrita, uma leitura, sem trava).
  *  - UI do Java: só os botões (atômicos).
  *
+ * 3D: N64, PSP, GameCube, Wii e PS2 desenham pela placa de vídeo (RETRO_ENVIRONMENT_SET_HW_RENDER).
+ * Eles desenham num framebuffer nosso e o draw() mostra essa textura no lugar do quadro de software.
+ *
  * Ritmo: um quadro por vsync quando a tela e o jogo têm quase o mesmo ritmo (60 Hz x 60,09 do
  * SNES); a diferença é absorvida pelo controle dinâmico da taxa do som (o mesmo do RetroArch),
  * que estica ou encolhe o som em até 0,5% para o anel ficar sempre no meio. Se o ritmo for muito
@@ -28,7 +31,9 @@
 #include <time.h>
 #include <unistd.h>
 #include <zlib.h>
+#include <EGL/egl.h>
 #include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #ifndef ONIX_HOST_TEST
 #include <SLES/OpenSLES.h>
 #include <SLES/OpenSLES_Android.h>
@@ -70,7 +75,9 @@ static struct {
 } core;
 
 static bool loaded, game_loaded, probing;
-static char system_dir[512], save_dir[512];
+/* Tipo de controle de cada jogador (Wii: Wii Remote + Nunchuk ou Classic Controller, ids do núcleo). */
+static unsigned port_device[2] = {RETRO_DEVICE_JOYPAD, RETRO_DEVICE_JOYPAD};
+static char system_dir[512], save_dir[512], core_path[512];
 static unsigned language = RETRO_LANGUAGE_PORTUGUESE_BRAZIL;
 static void *rom_data;
 static size_t rom_size;
@@ -238,6 +245,147 @@ static unsigned frame_w, frame_h, frame_cap;
 static bool frame_dirty;
 static int av_enable = 3;          /* bit 0 vídeo, bit 1 áudio (run-ahead e avanço rápido desligam) */
 
+/* ---------------- 3D (núcleos que desenham pela placa de vídeo) ----------------
+   O núcleo pede um contexto OpenGL ES; o da tela do jogo serve (a GameActivity cria um ES 3 quando
+   dá). Ele desenha no hw_fbo (textura + profundidade) e avisa com RETRO_HW_FRAME_BUFFER_VALID.
+   Tudo roda na thread do GL, a mesma do núcleo. */
+
+static struct retro_hw_render_callback hw;
+static bool hw_on;        /* o núcleo pediu 3D */
+static bool hw_ready;     /* framebuffer criado e context_reset chamado */
+static bool hw_frame;     /* o último quadro está no hw_fbo (e não em frame) */
+static GLuint hw_fbo, hw_tex, hw_rb;
+static unsigned hw_w, hw_h;
+static int gles_major = 2, gles_minor;
+static void *gles_lib;
+static void (*p_bind_vao)(GLuint);
+static void (*p_bind_sampler)(GLuint, GLuint);
+
+static uintptr_t hw_get_fbo(void) { return hw_fbo; }
+
+static retro_proc_address_t hw_proc(const char *sym) {
+    if (!gles_lib) gles_lib = dlopen("libGLESv3.so", RTLD_NOW | RTLD_LOCAL);
+    if (!gles_lib) gles_lib = dlopen("libGLESv2.so", RTLD_NOW | RTLD_LOCAL);
+    void *f = gles_lib ? dlsym(gles_lib, sym) : NULL;
+    if (!f) f = (void *)eglGetProcAddress(sym);
+    return (retro_proc_address_t)f;
+}
+
+/* Versão do OpenGL ES do contexto atual ("OpenGL ES 3.2 ..."). */
+static void hw_detect(void) {
+    const char *v = (const char *)glGetString(GL_VERSION);
+    gles_major = 2;
+    gles_minor = 0;
+    if (v && sscanf(v, "OpenGL ES %d.%d", &gles_major, &gles_minor) < 1) gles_major = 2;
+    p_bind_vao = gles_major >= 3 ? (void (*)(GLuint))hw_proc("glBindVertexArray") : NULL;
+    p_bind_sampler = gles_major >= 3 ? (void (*)(GLuint, GLuint))hw_proc("glBindSampler") : NULL;
+}
+
+static bool hw_accept(struct retro_hw_render_callback *cb) {
+    if (probing || !cb) return false;
+    switch (cb->context_type) {
+        case RETRO_HW_CONTEXT_OPENGLES2:
+            break;
+        case RETRO_HW_CONTEXT_OPENGLES3:
+            if (gles_major < 3) return false;
+            break;
+        case RETRO_HW_CONTEXT_OPENGLES_VERSION:
+            if ((int)cb->version_major > gles_major || ((int)cb->version_major == gles_major && (int)cb->version_minor > gles_minor)) return false;
+            break;
+        default:
+            return false;   /* OpenGL de PC e Vulkan: o núcleo tenta o próximo */
+    }
+    cb->get_current_framebuffer = hw_get_fbo;
+    cb->get_proc_address = hw_proc;
+    hw = *cb;
+    hw_on = true;
+    LOGI("3D: contexto %d (ES %d.%d), profundidade %d, stencil %d", cb->context_type, gles_major, gles_minor, cb->depth, cb->stencil);
+    return true;
+}
+
+static void hw_fbo_make(unsigned w, unsigned h) {
+    GLint max = 4096;
+    glGetIntegerv(GL_MAX_RENDERBUFFER_SIZE, &max);
+    if (w > (unsigned)max) w = max;
+    if (h > (unsigned)max) h = max;
+    if (!w || !h) { w = 640; h = 480; }
+    /* Só os nomes antigos (sem apagar): depois de perder o contexto eles já não valem. */
+    glGenTextures(1, &hw_tex);
+    glBindTexture(GL_TEXTURE_2D, hw_tex);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, w, h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glGenFramebuffers(1, &hw_fbo);
+    glBindFramebuffer(GL_FRAMEBUFFER, hw_fbo);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, hw_tex, 0);
+    hw_rb = 0;
+    if (hw.depth || hw.stencil) {
+        glGenRenderbuffers(1, &hw_rb);
+        glBindRenderbuffer(GL_RENDERBUFFER, hw_rb);
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8_OES, w, h);
+        glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, hw_rb);
+        if (hw.stencil) glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_STENCIL_ATTACHMENT, GL_RENDERBUFFER, hw_rb);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    }
+    GLenum st = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (st != GL_FRAMEBUFFER_COMPLETE) LOGE("3D: framebuffer incompleto (0x%x) %ux%u", st, w, h);
+    glClearColor(0, 0, 0, 1);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    hw_w = w;
+    hw_h = h;
+    LOGI("3D: framebuffer %ux%u", w, h);
+}
+
+static void hw_fbo_free(void) {
+    if (hw_fbo) glDeleteFramebuffers(1, &hw_fbo);
+    if (hw_rb) glDeleteRenderbuffers(1, &hw_rb);
+    if (hw_tex) glDeleteTextures(1, &hw_tex);
+    hw_fbo = hw_rb = hw_tex = 0;
+}
+
+static unsigned hw_need_w(void) { return av.geometry.max_width ? av.geometry.max_width : av.geometry.base_width; }
+static unsigned hw_need_h(void) { return av.geometry.max_height ? av.geometry.max_height : av.geometry.base_height; }
+
+/* Depois do load_game (ou de o contexto ser recriado): framebuffer novo e o núcleo refaz o dele. */
+static void hw_start(void) {
+    hw_fbo_make(hw_need_w(), hw_need_h());
+    if (hw.context_reset) hw.context_reset();
+    hw_ready = true;
+}
+
+/* O núcleo mexe em quase tudo do OpenGL: volta ao que o draw() espera. */
+static void gl_restore(void) {
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glDisable(GL_DEPTH_TEST);
+    glDisable(GL_STENCIL_TEST);
+    glDisable(GL_SCISSOR_TEST);
+    glDisable(GL_BLEND);
+    glDisable(GL_CULL_FACE);
+    glDisable(GL_POLYGON_OFFSET_FILL);
+    glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE);
+    glActiveTexture(GL_TEXTURE0);
+    if (p_bind_vao) p_bind_vao(0);
+    if (p_bind_sampler) p_bind_sampler(0, 0);
+    if (gles_major >= 3) {
+        glBindBuffer(0x88EC, 0);   /* GL_PIXEL_UNPACK_BUFFER */
+        glBindBuffer(0x88EB, 0);   /* GL_PIXEL_PACK_BUFFER */
+    }
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    GLint n = 8;
+    glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &n);
+    for (GLint i = 0; i < n && i < 16; i++) glDisableVertexAttribArray(i);
+}
+
+/* ---------------- Toque (tela de baixo do DS) ----------------
+   O Java manda o dedo em pixels da tela; o draw() guarda onde a imagem ficou. */
+
+static volatile float img_x0, img_y0, img_w = 1, img_h = 1;
+static atomic_int ptr_x, ptr_y;
+static atomic_bool ptr_down, ptr_off = true;
+
 /* ---------------- Áudio ---------------- */
 
 #define RING_FRAMES 16384
@@ -369,6 +517,15 @@ static int16_t input_state(unsigned port, unsigned device, unsigned index, unsig
         return (bits >> id) & 1;
     }
     if (device == RETRO_DEVICE_ANALOG && index < 2 && id < 2) return (int16_t)atomic_load(&analog[port][index][id]);
+    if (device == RETRO_DEVICE_POINTER && port == 0 && index == 0) {
+        switch (id) {
+            case RETRO_DEVICE_ID_POINTER_X: return (int16_t)atomic_load(&ptr_x);
+            case RETRO_DEVICE_ID_POINTER_Y: return (int16_t)atomic_load(&ptr_y);
+            case RETRO_DEVICE_ID_POINTER_PRESSED: return atomic_load(&ptr_down) && !atomic_load(&ptr_off);
+            case RETRO_DEVICE_ID_POINTER_IS_OFFSCREEN: return atomic_load(&ptr_off);
+            case RETRO_DEVICE_ID_POINTER_COUNT: return atomic_load(&ptr_down) ? 1 : 0;
+        }
+    }
     return 0;
 }
 
@@ -376,6 +533,13 @@ static int16_t input_state(unsigned port, unsigned device, unsigned index, unsig
 
 static void video_refresh(const void *data, unsigned w, unsigned h, size_t pitch) {
     if (!data || !(av_enable & 1)) return;   /* NULL = repetir o quadro anterior */
+    if (data == RETRO_HW_FRAME_BUFFER_VALID) {
+        hw_frame = true;
+        frame_w = w;
+        frame_h = h;
+        return;
+    }
+    hw_frame = false;
     if ((size_t)w * h > frame_cap) {
         free(frame);
         frame_cap = w * h;
@@ -501,6 +665,24 @@ static bool environment(unsigned cmd, void *data) {
             return true;
         case RETRO_ENVIRONMENT_SET_SYSTEM_AV_INFO:
             av = *(const struct retro_system_av_info *)data;
+            /* Resolução interna maior (PSP, N64): o framebuffer cresce junto */
+            if (hw_ready && (hw_need_w() > hw_w || hw_need_h() > hw_h)) {
+                hw_fbo_free();
+                hw_fbo_make(hw_need_w(), hw_need_h());
+            }
+            return true;
+        case RETRO_ENVIRONMENT_SET_HW_RENDER:
+            return hw_accept((struct retro_hw_render_callback *)data);
+        case RETRO_ENVIRONMENT_GET_PREFERRED_HW_RENDER:
+            *(unsigned *)data = gles_major >= 3 ? RETRO_HW_CONTEXT_OPENGLES3 : RETRO_HW_CONTEXT_OPENGLES2;
+            return true;
+        case RETRO_ENVIRONMENT_SET_HW_SHARED_CONTEXT:
+            return true;
+        case RETRO_ENVIRONMENT_GET_INPUT_DEVICE_CAPABILITIES:
+            *(uint64_t *)data = (1 << RETRO_DEVICE_JOYPAD) | (1 << RETRO_DEVICE_ANALOG) | (1 << RETRO_DEVICE_POINTER);
+            return true;
+        case RETRO_ENVIRONMENT_GET_LIBRETRO_PATH:
+            *(const char **)data = core_path;
             return true;
         case RETRO_ENVIRONMENT_GET_AUDIO_VIDEO_ENABLE:
             *(int *)data = av_enable;
@@ -645,7 +827,7 @@ static size_t ra_size;
 
 static void run_one(bool video, bool audio) {
     frame_count++;
-    if (runahead > 0 && !fast_forwarding) {
+    if (runahead > 0 && !fast_forwarding && !hw_on) {   /* 3D: estado grande e lento demais */
         /* Run-ahead: roda o quadro de verdade (com som), guarda, adianta N quadros só para mostrar
            a imagem do futuro e volta. A resposta aos botões fica N quadros mais rápida. */
         size_t need = core.serialize_size();
@@ -779,22 +961,33 @@ static void gl_setup(void) {
 }
 
 static void draw(void) {
+    if (hw_ready) gl_restore();
     glViewport(0, 0, view_w, view_h);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-    if (!frame || !frame_w || !frame_h) return;
+    if (!frame_w || !frame_h || (hw_frame ? !hw_fbo : !frame)) return;
 
-    glBindTexture(GL_TEXTURE_2D, tex);
-    if (frame_w != tex_w || frame_h != tex_h) {
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame_w, frame_h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, frame);
-        tex_w = frame_w;
-        tex_h = frame_h;
-        frame_dirty = false;
-    } else if (frame_dirty) {
-        glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
-        glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame_w, frame_h, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, frame);
-        frame_dirty = false;
+    /* 3D: só um pedaço da textura tem o quadro, e ela vem de baixo para cima */
+    float su = 1, sv = 1;
+    bool flip = false;
+    if (hw_frame) {
+        glBindTexture(GL_TEXTURE_2D, hw_tex);
+        su = (float)frame_w / hw_w;
+        sv = (float)frame_h / hw_h;
+        flip = hw.bottom_left_origin;
+    } else {
+        glBindTexture(GL_TEXTURE_2D, tex);
+        if (frame_w != tex_w || frame_h != tex_h) {
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, frame_w, frame_h, 0, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, frame);
+            tex_w = frame_w;
+            tex_h = frame_h;
+            frame_dirty = false;
+        } else if (frame_dirty) {
+            glPixelStorei(GL_UNPACK_ALIGNMENT, 2);
+            glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, frame_w, frame_h, GL_RGB, GL_UNSIGNED_SHORT_5_6_5, frame);
+            frame_dirty = false;
+        }
     }
     GLint f = (filter_mode == 1 || filter_mode == 3 || filter_mode == 4) ? GL_NEAREST : GL_LINEAR;
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, f);
@@ -828,10 +1021,18 @@ static void draw(void) {
         }
     }
     float x = (float)(w / view_w), y = (float)(h / view_h);
+    img_x0 = (float)((view_w - w) / 2);
+    img_y0 = (float)((view_h - h) / 2);
+    img_w = (float)w;
+    img_h = (float)h;
     /* Cantos da tela (baixo-esq., baixo-dir., cima-dir., cima-esq.) e o canto da imagem em cada um */
     static const float uv[4][2] = {{0, 1}, {1, 1}, {1, 0}, {0, 0}};
     const float *bl = uv[(4 - rotation) & 3], *br = uv[(5 - rotation) & 3], *tr = uv[(6 - rotation) & 3], *tl = uv[(7 - rotation) & 3];
-    float quad[] = {-x, -y, bl[0], bl[1],  x, -y, br[0], br[1],  -x, y, tl[0], tl[1],  x, y, tr[0], tr[1]};
+#define U(c) ((c)[0] * su)
+#define V(c) ((flip ? 1 - (c)[1] : (c)[1]) * sv)
+    float quad[] = {-x, -y, U(bl), V(bl),  x, -y, U(br), V(br),  -x, y, U(tl), V(tl),  x, y, U(tr), V(tr)};
+#undef U
+#undef V
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(quad), quad, GL_STREAM_DRAW);
 
@@ -839,7 +1040,7 @@ static void draw(void) {
     glUseProgram(p);
     glUniform1i(glGetUniformLocation(p, "uTex"), 0);
     GLint loc = glGetUniformLocation(p, "uTexSize");
-    if (loc >= 0) glUniform2f(loc, (float)frame_w, (float)frame_h);
+    if (loc >= 0) glUniform2f(loc, (float)(hw_frame ? hw_w : frame_w), (float)(hw_frame ? hw_h : frame_h));
     loc = glGetUniformLocation(p, "uScale");
     if (loc >= 0) {
         double sw = turned ? h : w, sh = turned ? w : h;   /* tamanho na tela de cada eixo do quadro */
@@ -965,7 +1166,10 @@ JNI(jboolean, load)(JNIEnv *env, jclass c, jstring jcore, jstring jrom, jstring 
     snprintf(system_dir, sizeof(system_dir), "%s", sys);
     rotation = 0;
     snprintf(save_dir, sizeof(save_dir), "%s", sav);
+    snprintf(core_path, sizeof(core_path), "%s", path);
     language = (unsigned)lang;
+    hw_on = hw_ready = hw_frame = false;
+    hw_detect();
     bool ok = false;
     if (open_core(path)) {
         loaded = true;
@@ -988,7 +1192,8 @@ JNI(jboolean, load)(JNIEnv *env, jclass c, jstring jcore, jstring jrom, jstring 
         if (ok) {
             game_loaded = true;
             core.get_system_av_info(&av);
-            for (unsigned p = 0; p < 2; p++) core.set_controller_port_device(p, RETRO_DEVICE_JOYPAD);
+            if (hw_on) hw_start();
+            for (unsigned p = 0; p < 2; p++) core.set_controller_port_device(p, port_device[p]);
             LOGI("jogo carregado: %ux%u %.3f fps %.0f Hz", av.geometry.base_width, av.geometry.base_height, av.timing.fps, av.timing.sample_rate);
         } else {
             LOGE("o núcleo recusou o jogo");
@@ -1000,7 +1205,10 @@ JNI(jboolean, load)(JNIEnv *env, jclass c, jstring jcore, jstring jrom, jstring 
 
 JNI(void, unload)(JNIEnv *env, jclass c) {
     audio_stop();
+    if (hw_ready && hw.context_destroy) hw.context_destroy();
     if (game_loaded) core.unload_game();
+    if (hw_ready) hw_fbo_free();
+    hw_on = hw_ready = hw_frame = false;
     if (loaded) core.deinit();
     game_loaded = loaded = false;
     rewind_free();
@@ -1072,7 +1280,39 @@ JNI(void, setFastForward)(JNIEnv *env, jclass c, jboolean on) { ff_toggle = on; 
 
 JNI(jboolean, fastForward)(JNIEnv *env, jclass c) { return ff_toggle; }
 
-JNI(void, surfaceCreated)(JNIEnv *env, jclass c) { gl_setup(); }
+static int surfaces;
+
+JNI(void, surfaceCreated)(JNIEnv *env, jclass c) {
+    gl_setup();
+    /* Contexto novo (o Android jogou o antigo fora): os objetos do núcleo também se foram */
+    if (++surfaces > 1 && hw_ready) {
+        hw_detect();
+        hw_fbo = hw_rb = hw_tex = 0;
+        hw_start();
+    }
+}
+
+/* Dedo na tela, em pixels da GLSurfaceView. */
+JNI(void, setPointer)(JNIEnv *env, jclass c, jfloat x, jfloat y, jboolean down) {
+    float nx = (x - img_x0) / img_w * 2 - 1, ny = (y - img_y0) / img_h * 2 - 1;
+    bool off = nx < -1 || nx > 1 || ny < -1 || ny > 1;
+    atomic_store(&ptr_off, off);
+    if (!off) {
+        atomic_store(&ptr_x, (int)(nx * 0x7fff));
+        atomic_store(&ptr_y, (int)(ny * 0x7fff));
+    }
+    atomic_store(&ptr_down, down);
+}
+
+/* Troca o tipo de controle (antes de abrir o jogo, ou no meio dele). Chamar na thread do GL. */
+JNI(void, setDevice)(JNIEnv *env, jclass c, jint port, jint device) {
+    if (port < 0 || port > 1) return;
+    port_device[port] = (unsigned)device;
+    if (game_loaded) core.set_controller_port_device((unsigned)port, (unsigned)device);
+}
+
+/* Se o jogo desenha em 3D (sem rebobinar nem run-ahead). */
+JNI(jboolean, hardware)(JNIEnv *env, jclass c) { return hw_on; }
 
 JNI(void, surfaceChanged)(JNIEnv *env, jclass c, jint w, jint h) { view_w = w; view_h = h; }
 
@@ -1156,8 +1396,32 @@ JNI(jstring, options)(JNIEnv *env, jclass c) { return options_json(env); }
 
 /* Último quadro em ARGB para a miniatura dos estados salvos. Retorna (w << 16) | h. */
 JNI(jint, snapshot)(JNIEnv *env, jclass c, jintArray out) {
-    if (!frame || !frame_w || !frame_h) return 0;
     jsize len = (*env)->GetArrayLength(env, out);
+    if (hw_frame && hw_fbo && frame_w && frame_h) {
+        /* 3D: lê o framebuffer (de baixo para cima) e encolhe até caber */
+        unsigned w = frame_w, h = frame_h, k = 1;
+        while ((size_t)(w / k) * (h / k) > (size_t)len) k++;
+        uint8_t *px = malloc((size_t)w * h * 4);
+        if (!px) return 0;
+        glBindFramebuffer(GL_FRAMEBUFFER, hw_fbo);
+        glPixelStorei(GL_PACK_ALIGNMENT, 4);
+        glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, px);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        unsigned ow = w / k, oh = h / k;
+        jint *d = (*env)->GetIntArrayElements(env, out, NULL);
+        for (unsigned y = 0; y < oh; y++) {
+            unsigned sy = hw.bottom_left_origin ? h - 1 - y * k : y * k;
+            const uint8_t *row = px + (size_t)sy * w * 4;
+            for (unsigned x = 0; x < ow; x++) {
+                const uint8_t *q = row + (size_t)x * k * 4;
+                d[y * ow + x] = (jint)(0xFF000000u | (q[0] << 16) | (q[1] << 8) | q[2]);
+            }
+        }
+        (*env)->ReleaseIntArrayElements(env, out, d, 0);
+        free(px);
+        return (jint)((ow << 16) | oh);
+    }
+    if (!frame || !frame_w || !frame_h) return 0;
     if ((size_t)len < (size_t)frame_w * frame_h) return 0;
     jint *d = (*env)->GetIntArrayElements(env, out, NULL);
     for (size_t i = 0; i < (size_t)frame_w * frame_h; i++) {

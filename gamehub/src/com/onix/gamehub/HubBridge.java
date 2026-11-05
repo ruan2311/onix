@@ -211,6 +211,12 @@ final class HubBridge {
         }
     }
 
+    /** Configurações → Sobre: o aparelho, a faixa e o que cada console 3D precisa (Hardware). */
+    @JavascriptInterface
+    public String hardware() {
+        return Hardware.json().toString();
+    }
+
     @JavascriptInterface
     public String storage() {
         return Storage.info(a).toString();

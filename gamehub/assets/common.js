@@ -321,6 +321,25 @@ const ES = {
   'Reiniciar': 'Reiniciar', 'Estado salvo no espaço {n}': 'Estado guardado en el espacio {n}', 'Estado carregado': 'Estado cargado',
   'Não deu para salvar o estado.': 'No se pudo guardar el estado.', 'Não deu para carregar o estado.': 'No se pudo cargar el estado.',
   'O controle desconectou': 'El control se desconectó', 'Reconecte o controle ou continue com outro.': 'Vuelve a conectar el control o sigue con otro.',
+  'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .chd, .pbp ou .cue (com os .bin); Atari: .a26 e .a78; Fliperama: o .zip com o nome do jogo (como sf2.zip); N64: .z64, .n64 e .v64; DS: .nds; PSP: .iso e .cso; GameCube e Wii: .iso, .rvz, .gcz, .wbfs e .gcm; PS2: .iso e .chd (e o .bin da BIOS do seu PS2)': 'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin y .zip; PlayStation: .chd, .pbp o .cue (con los .bin); Atari: .a26 y .a78; Arcade: el .zip con el nombre del juego (como sf2.zip); N64: .z64, .n64 y .v64; DS: .nds; PSP: .iso y .cso; GameCube y Wii: .iso, .rvz, .gcz, .wbfs y .gcm; PS2: .iso y .chd (y el .bin de la BIOS de tu PS2)',
+  'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin e .zip; PlayStation: .chd, .pbp ou .cue (com os .bin); Atari: .a26 e .a78; Fliperama: o .zip com o nome do jogo (como sf2.zip); N64: .z64, .n64 e .v64; DS: .nds; PSP: .iso e .cso': 'Formatos: .nes, .sfc, .smc, .gba, .gbc, .gb, .md, .gen, .bin y .zip; PlayStation: .chd, .pbp o .cue (con los .bin); Atari: .a26 y .a78; Arcade: el .zip con el nombre del juego (como sf2.zip); N64: .z64, .n64 y .v64; DS: .nds; PSP: .iso y .cso',
+  'Falta a BIOS do PlayStation 2': 'Falta la BIOS de PlayStation 2',
+  'O PS2 precisa da BIOS do seu próprio console (um arquivo .bin de uns 4 MB). Mande ela pelo Adicionar jogos, como um jogo, e abra este de novo.': 'La PS2 necesita la BIOS de tu propia consola (un archivo .bin de unos 4 MB). Envíala por Agregar juegos, como un juego, y abre este de nuevo.',
+  'Não deu para baixar os arquivos do emulador': 'No se pudieron descargar los archivos del emulador',
+  'Na primeira vez, este console baixa alguns arquivos do emulador (uns 10 MB). Confira a internet e abra o jogo de novo.': 'La primera vez, esta consola descarga algunos archivos del emulador (unos 10 MB). Revisa internet y abre el juego de nuevo.',
+  'BIOS do PlayStation 2': 'BIOS de PlayStation 2',
+  'Este aparelho': 'Este dispositivo',
+  'Controle do Wii': 'Control de Wii',
+  'Faixa: {f}': 'Nivel: {f}',
+  'Fraco': 'Débil',
+  'Intermediário': 'Intermedio',
+  'Memória': 'Memoria',
+  'Roda bem': 'Funciona bien',
+  'Roda, mas pode ficar lento': 'Funciona, pero puede ir lento',
+  'Abaixo do mínimo': 'Por debajo del mínimo',
+  'Qualquer aparelho': 'Cualquier dispositivo',
+  'Intermediário (Cortex-A76 ou melhor, 4 GB, 64 bits, OpenGL ES 3.2)': 'Intermedio (Cortex-A76 o mejor, 4 GB, 64 bits, OpenGL ES 3.2)',
+  'Forte (Cortex-X1 ou melhor, 6 GB, 64 bits, OpenGL ES 3.2)': 'Potente (Cortex-X1 o mejor, 6 GB, 64 bits, OpenGL ES 3.2)',
   'Não deu para abrir este jogo': 'No se pudo abrir este juego', 'O arquivo pode estar corrompido ou ser de outra versão do console.': 'El archivo puede estar dañado o ser de otra versión de la consola.',
   'Select + Start: este menu': 'Select + Start: este menú',
   'Atalhos': 'Atajos', 'Segure R2: acelera · Segure L2: rebobina · Select + Start: este menu': 'Mantén R2: acelera · Mantén L2: rebobina · Select + Start: este menú',
@@ -511,7 +530,8 @@ const CONSOLES = [
   // Só na TV e no celular Android (o PC não manda estes na lista).
   { id: 'atari', name: 'Atari', short: 'Atari', color: '#f97316' },
   { id: 'arcade', name: 'Fliperama', short: 'Fliperama', color: '#e879f9' },
-  // Só no PC, pelo RetroArch (ra): sem filtros, trapaças nem troca de botões do GameHub.
+  // 3D. No PC vão pelo RetroArch (ra: sem filtros, trapaças nem troca de botões do GameHub); no
+  // Android rodam no motor do GameHub como os outros (o hub tira o ra). GameCube, Wii e PS2 só em 64 bits.
   { id: 'n64', name: 'Nintendo 64', short: 'N64', color: '#f97316', ra: true },
   { id: 'ds', name: 'Nintendo DS', short: 'DS', color: '#f472b6', ra: true },
   { id: 'psp', name: 'PSP', short: 'PSP', color: '#2dd4bf', ra: true },
@@ -536,6 +556,15 @@ const BUTTONS = {
   ps1: [[0, '✕'], [8, '○'], [1, '□'], [9, '△'], [10, 'L1'], [11, 'R1'], [12, 'L2'], [13, 'R2'], [2, 'Select'], [3, 'Start']],
   atari: [[0, 'Botão'], [8, 'Botão 2 (7800)'], [2, 'Select'], [3, 'Reset']],
   arcade: [[0, 'Botão 1'], [8, 'Botão 2'], [1, 'Botão 3'], [9, 'Botão 4'], [10, 'Botão 5'], [11, 'Botão 6'], [2, 'Ficha'], [3, 'Start']],
+  // Os do Android (no PC, RA_BUTTONS). Os botões C do N64 ficam no analógico direito.
+  n64: [[0, 'A'], [1, 'B'], [12, 'Z'], [10, 'L'], [11, 'R'], [3, 'Start']],
+  ds: [[8, 'A'], [0, 'B'], [9, 'X'], [1, 'Y'], [10, 'L'], [11, 'R'], [2, 'Select'], [3, 'Start']],
+  psp: [[0, '✕'], [8, '○'], [1, '□'], [9, '△'], [10, 'L'], [11, 'R'], [2, 'Select'], [3, 'Start']],
+  gc: [[8, 'A'], [0, 'B'], [9, 'X'], [1, 'Y'], [12, 'L'], [13, 'R'], [11, 'Z'], [3, 'Start']],
+  // Wii: Wii Remote + Nunchuk (o padrão) e Classic Controller (wiicc), como o Dolphin espera.
+  wii: [[8, 'A'], [0, 'B'], [3, '1'], [2, '2'], [9, 'C'], [1, 'Z'], [10, '−'], [11, '+'], [13, 'Sacudir'], [12, 'Sacudir Nunchuk'], [15, 'Home']],
+  wiicc: [[8, 'A'], [0, 'B'], [9, 'X'], [1, 'Y'], [12, 'L'], [13, 'R'], [10, 'ZL'], [11, 'ZR'], [2, '−'], [3, '+'], [15, 'Home']],
+  ps2: [[0, '✕'], [8, '○'], [1, '□'], [9, '△'], [10, 'L1'], [11, 'R1'], [12, 'L2'], [13, 'R2'], [14, 'L3'], [15, 'R3'], [2, 'Select'], [3, 'Start']],
 };
 // Desenho simples de cada console (traço), para os cartões.
 const CONSOLE_ART = {

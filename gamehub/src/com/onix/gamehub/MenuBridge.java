@@ -33,6 +33,7 @@ final class MenuBridge {
             o.put("lang", g.lang);
             o.put("loaded", g.isLoaded());
             o.put("failed", g.isFailed());
+            o.put("failReason", g.failReason);
             o.put("ff", Native.fastForward());
             o.put("settings", g.settings);
             o.put("gamepads", Gamepads.list(g));

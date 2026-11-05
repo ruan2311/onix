@@ -29,7 +29,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.Iterator;
 
+import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.egl.EGLContext;
+import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
 /**
@@ -54,6 +57,10 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     Consoles.Console console;
     private File rom, saveDir, stateDir;
     private volatile boolean loaded, failed, menuOpen, quitting;
+    /** Por que não abriu: "" (arquivo), "system" (sem os arquivos do emulador), "bios" (PS2). */
+    volatile String failReason = "";
+    /* Consoles 3D: a cruz que estava empurrando o analógico (para soltar só o que ela empurrou). */
+    private final boolean[] dpadStick = new boolean[4], cStick = new boolean[4];
     volatile boolean capture;   // menu → Atribuir botões: a próxima tecla vai para a página
     private long started, playedMs;
     private int frames, sramTick;
@@ -122,41 +129,30 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         FrameLayout root = new FrameLayout(this);
         root.setBackgroundColor(Color.BLACK);
         gl = new GLSurfaceView(this);
-        gl.setEGLContextClientVersion(2);
+        if (console.hw) {
+            // 3D: OpenGL ES 3 quando o aparelho tem (PSP, N64, Dolphin), senão o 2.
+            gl.setEGLConfigChooser(new Gles3Config());
+            gl.setEGLContextFactory(new Gles3Context());
+        } else {
+            gl.setEGLContextClientVersion(2);
+        }
         gl.setPreserveEGLContextOnPause(true);
         gl.setRenderer(new Renderer());
         gl.setRenderMode(GLSurfaceView.RENDERMODE_CONTINUOUSLY);
         root.addView(gl, new FrameLayout.LayoutParams(-1, -1));
+        // DS: a tela de baixo. Wii: a mira do Wii Remote.
+        if ("ds".equals(console.id) || "wii".equals(console.id)) gl.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent e) {
+                touchScreen(e.getX(), e.getY(), e.getActionMasked() != MotionEvent.ACTION_UP && e.getActionMasked() != MotionEvent.ACTION_CANCEL);
+                return true;
+            }
+        });
         mobile = Device.mobile(this);
         if (mobile) {
             // Em pé ou deitado, como a pessoa segurar o celular.
             setRequestedOrientation(android.content.pm.ActivityInfo.SCREEN_ORIENTATION_FULL_USER);
-            pad = new TouchPad(this, console.id, new TouchPad.Listener() {
-                @Override
-                public void padButtons(int bits) {
-                    touchBits = bits;
-                    push(0);
-                }
-
-                @Override
-                public void padFastForward(boolean on) {
-                    touchFast = on;
-                    Native.setHotkeys(ffHold || touchFast, rwHold);
-                }
-
-                @Override
-                public void padMenu() {
-                    openMenu("");
-                }
-
-                @Override
-                public void padEditDone() {
-                    // Saiu do editor (aberto pelo menu): volta ao jogo.
-                    if (!menuOpen) Native.setPaused(false);
-                }
-            });
-            pad.setSpanish("es".equals(lang));
-            root.addView(pad, new FrameLayout.LayoutParams(-1, -1));
+            makePad(root, -1);
             root.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
                 @Override
                 public void onLayoutChange(View v, int l, int t, int r, int b, int ol, int ot, int or, int ob) {
@@ -260,6 +256,89 @@ public class GameActivity extends Activity implements Gamepads.Listener {
      * Celular em pé: o jogo em cima (largura toda, na proporção 4:3) e o controle embaixo.
      * Deitado, ou com um controle de verdade: o jogo na tela toda (o controle fica por cima).
      */
+    /** Controle na tela do console (o do Wii muda com o tipo de controle). index -1 = por cima de tudo. */
+    private void makePad(FrameLayout root, int index) {
+        pad = new TouchPad(this, padConsole(), new TouchPad.Listener() {
+            @Override
+            public void padButtons(int bits) {
+                touchBits = bits;
+                push(0);
+            }
+
+            @Override
+            public void padFastForward(boolean on) {
+                touchFast = on;
+                Native.setHotkeys(ffHold || touchFast, rwHold);
+            }
+
+            @Override
+            public void padMenu() {
+                openMenu("");
+            }
+
+            @Override
+            public void padTouch(float x, float y, boolean down) {
+                touchScreen(x, y, down);
+            }
+
+            @Override
+            public void padSwap() {
+                swapWii();
+            }
+
+            @Override
+            public void padEditDone() {
+                // Saiu do editor (aberto pelo menu): volta ao jogo.
+                if (!menuOpen) Native.setPaused(false);
+            }
+        });
+        pad.setSpanish("es".equals(lang));
+        if (index < 0) root.addView(pad, new FrameLayout.LayoutParams(-1, -1));
+        else root.addView(pad, index, new FrameLayout.LayoutParams(-1, -1));
+    }
+
+    /* ---------------- Wii: Wii Remote + Nunchuk ou Classic Controller ---------------- */
+
+    private boolean wiiClassic() {
+        return "wii".equals(console.id) && "classic".equals(settings.optString("wiiPad"));
+    }
+
+    private String padConsole() {
+        return wiiClassic() ? "wiicc" : console.id;
+    }
+
+    /** Tipo de controle para o núcleo: o do Wii (ids do Dolphin, DolphinLibretro/Input.cpp) ou o RetroPad. */
+    private int portDevice() {
+        if (!"wii".equals(console.id)) return Native.DEVICE_JOYPAD;
+        return wiiClassic() ? Native.DEVICE_WII_CLASSIC : Native.DEVICE_WII_NUNCHUK;
+    }
+
+    /** Botão ⇄ (ou o menu): troca o tipo e guarda neste jogo. */
+    void swapWii() {
+        if (!"wii".equals(console.id)) return;
+        Config.set(this, "game:" + id, "wiiPad", wiiClassic() ? "\"nunchuk\"" : "\"classic\"");
+        reloadSettings();
+        toast(wiiClassic() ? "Classic Controller" : "Wii Remote + Nunchuk");
+    }
+
+    /** O tipo de controle do Wii mudou (pelo ⇄ ou pelo menu): avisa o núcleo e troca os botões da tela. */
+    private void applyWiiPad() {
+        final int dev = portDevice();
+        queue(new Runnable() {
+            @Override
+            public void run() {
+                Native.setDevice(0, dev);
+            }
+        });
+        if (pad == null || padConsole().equals(pad.console())) return;
+        FrameLayout root = (FrameLayout) pad.getParent();
+        int index = root.indexOfChild(pad);
+        pad.release();
+        root.removeView(pad);
+        makePad(root, index);
+        layoutPad();
+    }
+
     private void layoutPad() {
         if (pad == null) return;
         View root = (View) gl.getParent();
@@ -388,9 +467,44 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         return new File(stateDir, slot + ".state");
     }
 
+    /** Tela de toque do DS: o motor converte para a posição na imagem. */
+    private void touchScreen(float x, float y, boolean down) {
+        if (!menuOpen) Native.setPointer(x, y, down);
+    }
+
+    private boolean loadFail(String reason) {
+        failed = true;
+        failReason = reason;
+        ui.post(new Runnable() {
+            @Override
+            public void run() {
+                openMenu("error");
+            }
+        });
+        return false;
+    }
+
     private void load() {
+        if ("ps2".equals(console.id) && !SystemFiles.hasPs2Bios(this)) {
+            loadFail("bios");
+            return;
+        }
+        if (!SystemFiles.ready(this, console.system)) {
+            ui.post(new Runnable() {
+                @Override
+                public void run() {
+                    toast(tr("Baixando os arquivos do emulador (só na primeira vez)…", "Descargando los archivos del emulador (solo la primera vez)…"));
+                }
+            });
+            if (!SystemFiles.ensure(this, console.system)) {
+                loadFail("system");
+                return;
+            }
+        }
         Native.clearOptions();
         JSONObject core = settings.optJSONObject("core");
+        // Consoles 3D: resolução pela faixa do aparelho, se a pessoa não escolheu outra.
+        for (String[] kv : Hardware.coreDefaults(console.id)) if (core == null || !core.has(kv[0])) Native.setOption(kv[0], kv[1]);
         if (core != null) {
             Iterator<String> it = core.keys();
             while (it.hasNext()) {
@@ -399,6 +513,8 @@ public class GameActivity extends Activity implements Gamepads.Listener {
             }
         }
         String lib = getApplicationInfo().nativeLibraryDir + "/lib" + console.coreFor(rom.getName()) + ".so";
+        Native.setDevice(0, portDevice());
+        Native.setDevice(1, portDevice());
         boolean ok = rom.isFile() && Native.load(lib, rom.getPath(), Files.system(this).getPath(), saveDir.getPath(),
                 "es".equals(lang) ? Native.LANG_ES : Native.LANG_PT_BR);
         if (!ok) {
@@ -885,8 +1001,32 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         return Math.max(-32767, Math.min(32767, Math.round(v * 32767)));
     }
 
+    private static final int DPAD = (1 << Native.UP) | (1 << Native.DOWN) | (1 << Native.LEFT) | (1 << Native.RIGHT);
+    private static final int CBTN = (1 << Native.C_UP) | (1 << Native.C_DOWN) | (1 << Native.C_LEFT) | (1 << Native.C_RIGHT);
+
     private void push(int port) {
-        Native.setButtons(port, keyBits[port] | hatBits[port] | stickBits[port] | webBits[port] | (port == 0 ? touchBits : 0));
+        int bits = keyBits[port] | hatBits[port] | stickBits[port] | webBits[port] | (port == 0 ? touchBits : 0);
+        if (console.stick) {
+            // N64, GameCube e Wii andam pelo analógico: a cruz (controle remoto, tela, Onix Controle)
+            // empurra o analógico esquerdo até o fim. O analógico de verdade do controle continua.
+            int d = bits & DPAD;
+            bits &= ~DPAD;
+            if (d != 0 || dpadStick[port]) {
+                Native.setAnalog(port, 0, dir(d, Native.LEFT, Native.RIGHT), dir(d, Native.UP, Native.DOWN));
+                dpadStick[port] = d != 0;
+            }
+        }
+        int cb = bits & CBTN;
+        bits &= ~CBTN;
+        if (cb != 0 || cStick[port]) {
+            Native.setAnalog(port, 1, dir(cb, Native.C_LEFT, Native.C_RIGHT), dir(cb, Native.C_UP, Native.C_DOWN));
+            cStick[port] = cb != 0;
+        }
+        Native.setButtons(port, bits);
+    }
+
+    private static int dir(int bits, int minus, int plus) {
+        return ((bits >> plus & 1) - (bits >> minus & 1)) * 32767;
     }
 
     private void releaseAll() {
@@ -907,6 +1047,12 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     void reloadSettings() {
         settings = Config.effective(this, console.id, id);
         readRemap();
+        if ("wii".equals(console.id)) ui.post(new Runnable() {
+            @Override
+            public void run() {
+                applyWiiPad();
+            }
+        });
         queue(new Runnable() {
             @Override
             public void run() {
@@ -933,6 +1079,41 @@ public class GameActivity extends Activity implements Gamepads.Listener {
 
     boolean isFailed() {
         return failed;
+    }
+
+    /* ---------------- OpenGL ES 3 (consoles 3D) ---------------- */
+
+    private static final int EGL_CONTEXT_CLIENT_VERSION = 0x3098, EGL_OPENGL_ES2_BIT = 4, EGL_OPENGL_ES3_BIT = 0x40;
+
+    /** RGB 888 sem profundidade (o núcleo desenha no framebuffer dele); ES 3 se tiver, senão ES 2. */
+    private static final class Gles3Config implements GLSurfaceView.EGLConfigChooser {
+        @Override
+        public EGLConfig chooseConfig(EGL10 egl, EGLDisplay display) {
+            for (int bit : new int[]{EGL_OPENGL_ES3_BIT, EGL_OPENGL_ES2_BIT}) {
+                int[] attrs = {EGL10.EGL_RED_SIZE, 8, EGL10.EGL_GREEN_SIZE, 8, EGL10.EGL_BLUE_SIZE, 8,
+                        EGL10.EGL_RENDERABLE_TYPE, bit, EGL10.EGL_NONE};
+                EGLConfig[] out = new EGLConfig[1];
+                int[] n = new int[1];
+                if (egl.eglChooseConfig(display, attrs, out, 1, n) && n[0] > 0) return out[0];
+            }
+            throw new IllegalArgumentException("sem configuração OpenGL ES");
+        }
+    }
+
+    private static final class Gles3Context implements GLSurfaceView.EGLContextFactory {
+        @Override
+        public EGLContext createContext(EGL10 egl, EGLDisplay display, EGLConfig config) {
+            for (int v : new int[]{3, 2}) {
+                EGLContext c = egl.eglCreateContext(display, config, EGL10.EGL_NO_CONTEXT, new int[]{EGL_CONTEXT_CLIENT_VERSION, v, EGL10.EGL_NONE});
+                if (c != null && c != EGL10.EGL_NO_CONTEXT) return c;
+            }
+            return EGL10.EGL_NO_CONTEXT;
+        }
+
+        @Override
+        public void destroyContext(EGL10 egl, EGLDisplay display, EGLContext context) {
+            egl.eglDestroyContext(display, context);
+        }
     }
 
     /**

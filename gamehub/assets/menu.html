@@ -64,6 +64,8 @@ function header() {
 
 function message() {
   if (reason === 'disconnected') return h('div', { class: 'msg' }, h('b', { text: t('O controle desconectou') }), h('span', { text: t('Reconecte o controle ou continue com outro.') }));
+  if ((reason === 'error' || INFO.failed) && INFO.failReason === 'bios') return h('div', { class: 'msg' }, h('b', { text: t('Falta a BIOS do PlayStation 2') }), h('span', { text: t('O PS2 precisa da BIOS do seu próprio console (um arquivo .bin de uns 4 MB). Mande ela pelo Adicionar jogos, como um jogo, e abra este de novo.') }));
+  if ((reason === 'error' || INFO.failed) && INFO.failReason === 'system') return h('div', { class: 'msg' }, h('b', { text: t('Não deu para baixar os arquivos do emulador') }), h('span', { text: t('Na primeira vez, este console baixa alguns arquivos do emulador (uns 10 MB). Confira a internet e abra o jogo de novo.') }));
   if (reason === 'error' || INFO.failed) return h('div', { class: 'msg' }, h('b', { text: t('Não deu para abrir este jogo') }), h('span', { text: INFO.console === 'arcade' ? t('Ele pode precisar de outro .zip na mesma pasta: o do jogo principal (nas variações) ou o da BIOS, como neogeo.zip. Mande esse arquivo também.') : t('O arquivo pode estar corrompido ou ser de outra versão do console.') }));
   return null;
 }
@@ -113,6 +115,13 @@ function mainList() {
     list.append(item('sliders', t('Opções do emulador'), () => { go('core'); call('coreOptions'); }));
     list.append(item('code', t('Trapaças'), () => go('cheats')));
     list.append(item('pad', t('Atribuir botões'), () => go('buttons'), null, { sub: t('Vale só para este jogo.') }));
+    if (INFO.console === 'wii') {
+      // Wii Remote + Nunchuk ou Classic Controller: cada jogo pede um (o botão ⇄ da tela faz o mesmo).
+      const cc = (INFO.settings || {}).wiiPad === 'classic';
+      const wii = item('pad', t('Controle do Wii'), null, cc ? 'Classic Controller' : 'Wii Remote + Nunchuk', { sub: t('Vale só para este jogo.') });
+      wii._act = () => { call('setConfig', 'game:' + INFO.id, 'wiiPad', JSON.stringify(cc ? 'nunchuk' : 'classic')); refreshInfo(); draw(focusedIndex()); };
+      list.append(wii);
+    }
     if (INFO.mobile) list.append(item('sliders', t('Controles na tela'), () => call('editTouch'), null, { sub: t('Arraste os botões e mude o tamanho.') }));
   }
   list.append(item('pad', t('Controles'), () => go('pads'), String((INFO.gamepads || []).length || t('Sem controle'))));
@@ -187,9 +196,10 @@ try { KEYNAMES = JSON.parse(localStorage.getItem('keynames') || '{}'); } catch (
 function buttonsList() {
   const list = h('div', { class: 'list' });
   const remap = (INFO.settings || {}).remap || {};
-  for (const [rid, name] of BUTTONS[INFO.console] || []) {
+  const pad = INFO.console === 'wii' && (INFO.settings || {}).wiiPad === 'classic' ? 'wiicc' : INFO.console;
+  for (const [rid, name] of BUTTONS[pad] || []) {
     const keys = Object.keys(remap).filter(k => remap[k] === rid);
-    const row = item(null, name, () => captureButton(rid, name), keys.length ? keys.map(k => KEYNAMES[k] || ('#' + k)).join(', ') : t('Padrão'), { on: keys.length > 0 });
+    const row = item(null, t(name), () => captureButton(rid, name), keys.length ? keys.map(k => KEYNAMES[k] || ('#' + k)).join(', ') : t('Padrão'), { on: keys.length > 0 });
     list.append(row);
   }
   list.append(item('reset', t('Restaurar padrão'), () => { call('setConfig', 'game:' + INFO.id, 'remap', null); refreshInfo(); draw(focusedIndex()); }));

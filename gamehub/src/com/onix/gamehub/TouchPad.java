@@ -44,12 +44,18 @@ final class TouchPad extends View {
 
         /** Editor fechado (Concluir). */
         void padEditDone();
+
+        /** Wii: o botão ⇄ (troca o tipo de controle). */
+        void padSwap();
+
+        /** DS: dedo fora dos botões, na tela de toque do jogo. */
+        void padTouch(float x, float y, boolean down);
     }
 
     private static final int ROUND = 0, PILL = 1, MENU = 2, FAST = 3;
     /* O que se arrasta no editor: cada botão. Os de ação vêm de G_FACE em diante, um por botão
      * (o 1 era o conjunto todo na versão 1 e não é mais usado). L2 e R2 só existem no PS1. */
-    private static final int G_DPAD = 0, G_L = 2, G_R = 3, G_SELECT = 4, G_START = 5, G_MENU = 6, G_FAST = 7, G_L2 = 8, G_R2 = 9, G_FACE = 10;
+    private static final int G_DPAD = 0, G_SWAP = 1, G_L = 2, G_R = 3, G_SELECT = 4, G_START = 5, G_MENU = 6, G_FAST = 7, G_L2 = 8, G_R2 = 9, G_FACE = 10;
     /* Barra do editor. */
     private static final int T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17, T_STICK = -18;
 
@@ -100,6 +106,7 @@ final class TouchPad extends View {
     private final RectF rect = new RectF(), box = new RectF();
     private float dpadX, dpadY, dpadR;
     private int stickPtr = -1;   // o dedo que está no analógico (segue mesmo saindo do círculo)
+    private int screenPtr = -1;  // DS: o dedo que começou fora dos botões toca a tela do jogo
     private float knobX, knobY;
     private boolean landscape;
     private Paint backdrop;
@@ -111,6 +118,7 @@ final class TouchPad extends View {
     private boolean dragging;
     private int selected = -1;   // botão escolhido no editor: a barra mexe só nele
     private boolean es;
+    private boolean noSystemPills;
 
     /* Dedo → o que ele aperta: bits do RetroPad, ou -1 menu, -2 avançar. */
     private final SparseIntArray pointers = new SparseIntArray();
@@ -124,7 +132,7 @@ final class TouchPad extends View {
         dp = c.getResources().getDisplayMetrics().density;
         setLayerType(LAYER_TYPE_SOFTWARE, null);   // o brilho das linhas (setShadowLayer)
         int nes = 0xFFFF5A6E, snes = 0xFFA78BFA, gba = 0xFF38BDF8, md = 0xFFFBBF24;
-        String sel = "SELECT";
+        String sel = "SELECT", start = "START";
         this.console = console;
         six = "md".equals(console);
         if ("snes".equals(console)) {
@@ -137,8 +145,8 @@ final class TouchPad extends View {
             shoulders.add(new Btn("R", Native.R, snes, PILL, G_R, 1, 0, 1));
         } else if ("gba".equals(console)) {
             accent = gba;
-            face.add(new Btn("B", Native.B, gba, ROUND, G_FACE, -0.62f, 0.38f, 1.12f));
-            face.add(new Btn("A", Native.A, gba, ROUND, G_FACE, 0.62f, -0.38f, 1.12f));
+            face.add(new Btn("B", Native.B, gba, ROUND, G_FACE, -0.8f, 0.5f, 1.12f));
+            face.add(new Btn("A", Native.A, gba, ROUND, G_FACE, 0.8f, -0.5f, 1.12f));
             shoulders.add(new Btn("L", Native.L, gba, PILL, G_L, -1, 0, 1));
             shoulders.add(new Btn("R", Native.R, gba, PILL, G_R, 1, 0, 1));
         } else if ("ps1".equals(console)) {
@@ -152,6 +160,78 @@ final class TouchPad extends View {
             shoulders.add(new Btn("R1", Native.R, 0xFF34D399, PILL, G_R, 1, 0, 1));
             shoulders.add(new Btn("L2", Native.L2, 0xFF34D399, PILL, G_L2, -1, 1, 1));
             shoulders.add(new Btn("R2", Native.R2, 0xFF34D399, PILL, G_R2, 1, 1, 1));
+        } else if ("n64".equals(console)) {
+            accent = 0xFFF97316;
+            // A e B grandes; os quatro botões C (amarelos) num losango menor em cima.
+            face.add(new Btn("A", Native.B, 0xFF38BDF8, ROUND, G_FACE, -0.6f, 1.0f, 1.1f));
+            face.add(new Btn("B", Native.Y, 0xFF4ADE80, ROUND, G_FACE, -2.05f, -0.05f, 0.95f));
+            int cy = 0xFFFBBF24;
+            face.add(new Btn("▲", Native.C_UP, cy, ROUND, G_FACE, 0.9f, -1.55f, 0.7f));
+            face.add(new Btn("◀", Native.C_LEFT, cy, ROUND, G_FACE, 0, -0.65f, 0.7f));
+            face.add(new Btn("▶", Native.C_RIGHT, cy, ROUND, G_FACE, 1.8f, -0.65f, 0.7f));
+            face.add(new Btn("▼", Native.C_DOWN, cy, ROUND, G_FACE, 0.9f, 0.25f, 0.7f));
+            shoulders.add(new Btn("L", Native.L, 0xFFF97316, PILL, G_L, -1, 0, 1));
+            shoulders.add(new Btn("R", Native.R, 0xFFF97316, PILL, G_R, 1, 0, 1));
+            shoulders.add(new Btn("Z", Native.L2, 0xFFF97316, PILL, G_L2, -1, 1, 1));
+        } else if ("ds".equals(console)) {
+            accent = 0xFFF472B6;
+            face.add(new Btn("X", Native.X, 0xFF38BDF8, ROUND, G_FACE, 0, -1.35f, 1));
+            face.add(new Btn("A", Native.A, 0xFFFF5A6E, ROUND, G_FACE, 1.35f, 0, 1));
+            face.add(new Btn("B", Native.B, 0xFFFBBF24, ROUND, G_FACE, 0, 1.35f, 1));
+            face.add(new Btn("Y", Native.Y, 0xFF4ADE80, ROUND, G_FACE, -1.35f, 0, 1));
+            shoulders.add(new Btn("L", Native.L, 0xFFF472B6, PILL, G_L, -1, 0, 1));
+            shoulders.add(new Btn("R", Native.R, 0xFFF472B6, PILL, G_R, 1, 0, 1));
+        } else if ("psp".equals(console) || "ps2".equals(console)) {
+            boolean ps2 = "ps2".equals(console);
+            int col = ps2 ? 0xFF3B82F6 : 0xFF2DD4BF;
+            accent = col;
+            face.add(new Btn("△", Native.X, 0xFF34D399, ROUND, G_FACE, 0, -1.35f, 1));
+            face.add(new Btn("○", Native.A, 0xFFFF5A6E, ROUND, G_FACE, 1.35f, 0, 1));
+            face.add(new Btn("✕", Native.B, 0xFF38BDF8, ROUND, G_FACE, 0, 1.35f, 1));
+            face.add(new Btn("□", Native.Y, 0xFFF472B6, ROUND, G_FACE, -1.35f, 0, 1));
+            shoulders.add(new Btn(ps2 ? "L1" : "L", Native.L, col, PILL, G_L, -1, 0, 1));
+            shoulders.add(new Btn(ps2 ? "R1" : "R", Native.R, col, PILL, G_R, 1, 0, 1));
+            if (ps2) {
+                shoulders.add(new Btn("L2", Native.L2, col, PILL, G_L2, -1, 1, 1));
+                shoulders.add(new Btn("R2", Native.R2, col, PILL, G_R2, 1, 1, 1));
+            }
+        } else if ("gc".equals(console) || "wiicc".equals(console)) {
+            // GameCube e o Classic Controller do Wii: A grande no meio, B embaixo à esquerda, X e Y em
+            // volta (o Dolphin usa L2/R2 como L/R, e L/R como Z ou ZL/ZR).
+            boolean cc = "wiicc".equals(console);
+            int col = cc ? 0xFFE5E7EB : 0xFF818CF8;
+            accent = col;
+            // Distâncias com folga: o raio de um botão é 0,8 da unidade de posição vezes o tamanho dele.
+            face.add(new Btn("A", Native.A, 0xFF4ADE80, ROUND, G_FACE, 0, 0, 1.15f));
+            face.add(new Btn("B", Native.B, 0xFFFF5A6E, ROUND, G_FACE, -1.45f, 1.05f, 0.85f));
+            face.add(new Btn("X", Native.X, col, ROUND, G_FACE, 1.75f, -0.35f, 0.8f));
+            face.add(new Btn("Y", Native.Y, col, ROUND, G_FACE, -0.35f, -1.75f, 0.8f));
+            if (cc) face.add(new Btn("⌂", Native.R3, col, ROUND, G_FACE, 1.75f, -1.95f, 0.6f));
+            shoulders.add(new Btn("L", Native.L2, col, PILL, G_L, -1, 0, 1));
+            shoulders.add(new Btn("R", Native.R2, col, PILL, G_R, 1, 0, 1));
+            shoulders.add(new Btn(cc ? "ZL" : "Z", cc ? Native.L : Native.R, col, PILL, cc ? G_L2 : G_R2, cc ? -1 : 1, 1, 1));
+            if (cc) shoulders.add(new Btn("ZR", Native.R, col, PILL, G_R2, 1, 1, 1));
+            if (cc) {
+                sel = "−";
+                start = "+";
+            }
+        } else if ("wii".equals(console)) {
+            // Wii Remote + Nunchuk: A grande, B (o gatilho) ao lado, 1 e 2 embaixo, C e Z do Nunchuk
+            // à esquerda; SELECT/START viram − e +. Sacudir o controle e o Nunchuk ficam nos ombros.
+            int col = 0xFFE5E7EB;
+            accent = col;
+            face.add(new Btn("A", Native.A, 0xFF38BDF8, ROUND, G_FACE, 0, 0, 1.15f));
+            face.add(new Btn("B", Native.B, 0xFFFF5A6E, ROUND, G_FACE, 1.7f, -0.9f, 0.9f));
+            face.add(new Btn("1", Native.START, col, ROUND, G_FACE, 0.55f, 1.6f, 0.7f));
+            face.add(new Btn("2", Native.SELECT, col, ROUND, G_FACE, 1.75f, 1.3f, 0.7f));
+            face.add(new Btn("C", Native.X, 0xFFFBBF24, ROUND, G_FACE, -1.6f, -0.85f, 0.75f));
+            face.add(new Btn("Z", Native.Y, 0xFFFBBF24, ROUND, G_FACE, -1.65f, 0.75f, 0.9f));
+            face.add(new Btn("⌂", Native.R3, col, ROUND, G_FACE, 0, -1.75f, 0.6f));
+            shoulders.add(new Btn("−", Native.L, col, PILL, G_L, -1, 0, 1));
+            shoulders.add(new Btn("+", Native.R, col, PILL, G_R, 1, 0, 1));
+            shoulders.add(new Btn("SACUDIR N", Native.L2, col, PILL, G_L2, -1, 1, 1));
+            shoulders.add(new Btn("SACUDIR", Native.R2, col, PILL, G_R2, 1, 1, 1));
+            noSystemPills = true;
         } else if ("arcade".equals(console)) {
             accent = 0xFFE879F9;
             // Quatro botões em losango e o 5 e o 6 em cima; Select é a ficha.
@@ -164,33 +244,38 @@ final class TouchPad extends View {
             sel = "FICHA";
         } else if ("atari".equals(console)) {
             accent = 0xFFF97316;
-            face.add(new Btn("2", Native.A, 0xFFF97316, ROUND, G_FACE, 0.62f, -0.38f, 0.9f));
-            face.add(new Btn("●", Native.B, 0xFFF97316, ROUND, G_FACE, -0.62f, 0.38f, 1.25f));
+            face.add(new Btn("2", Native.A, 0xFFF97316, ROUND, G_FACE, 0.78f, -0.48f, 0.9f));
+            face.add(new Btn("●", Native.B, 0xFFF97316, ROUND, G_FACE, -0.78f, 0.48f, 1.25f));
             sel = "SELECT";
         } else if ("gbc".equals(console)) {
             accent = 0xFFC084FC;
-            face.add(new Btn("B", Native.B, 0xFFC084FC, ROUND, G_FACE, -0.62f, 0.38f, 1.12f));
-            face.add(new Btn("A", Native.A, 0xFFC084FC, ROUND, G_FACE, 0.62f, -0.38f, 1.12f));
+            face.add(new Btn("B", Native.B, 0xFFC084FC, ROUND, G_FACE, -0.8f, 0.5f, 1.12f));
+            face.add(new Btn("A", Native.A, 0xFFC084FC, ROUND, G_FACE, 0.8f, -0.5f, 1.12f));
         } else if (six) {
             accent = md;
             // A, B e C embaixo; X, Y e Z menores em cima (o controle de 6 botões).
-            face.add(new Btn("A", Native.Y, md, ROUND, G_FACE, -1.45f, 0.55f, 0.95f));
-            face.add(new Btn("B", Native.B, md, ROUND, G_FACE, 0, 0.35f, 0.95f));
-            face.add(new Btn("C", Native.A, md, ROUND, G_FACE, 1.45f, 0.15f, 0.95f));
+            face.add(new Btn("A", Native.Y, md, ROUND, G_FACE, -1.7f, 0.6f, 0.95f));
+            face.add(new Btn("B", Native.B, md, ROUND, G_FACE, 0, 0.4f, 0.95f));
+            face.add(new Btn("C", Native.A, md, ROUND, G_FACE, 1.7f, 0.2f, 0.95f));
             int dim = 0xCCFBBF24;
-            face.add(new Btn("X", Native.L, dim, ROUND, G_FACE, -1.45f, -0.85f, 0.7f));
-            face.add(new Btn("Y", Native.X, dim, ROUND, G_FACE, 0, -1.05f, 0.7f));
-            face.add(new Btn("Z", Native.R, dim, ROUND, G_FACE, 1.45f, -1.25f, 0.7f));
+            face.add(new Btn("X", Native.L, dim, ROUND, G_FACE, -1.7f, -0.9f, 0.7f));
+            face.add(new Btn("Y", Native.X, dim, ROUND, G_FACE, 0, -1.1f, 0.7f));
+            face.add(new Btn("Z", Native.R, dim, ROUND, G_FACE, 1.7f, -1.3f, 0.7f));
             sel = "MODE";
         } else {
             accent = nes;
-            face.add(new Btn("B", Native.B, nes, ROUND, G_FACE, -0.62f, 0.38f, 1.12f));
-            face.add(new Btn("A", Native.A, nes, ROUND, G_FACE, 0.62f, -0.38f, 1.12f));
+            face.add(new Btn("B", Native.B, nes, ROUND, G_FACE, -0.8f, 0.5f, 1.12f));
+            face.add(new Btn("A", Native.A, nes, ROUND, G_FACE, 0.8f, -0.5f, 1.12f));
         }
-        system.add(new Btn(sel, Native.SELECT, 0xFFA99FD0, PILL, G_SELECT, -1, 0, 1));
-        system.add(new Btn("START", Native.START, 0xFFA99FD0, PILL, G_START, 1, 0, 1));
+        // Wii Remote: 1 e 2 já estão entre os botões de ação (SELECT e START seriam repetidos).
+        if (!noSystemPills) {
+            system.add(new Btn(sel, Native.SELECT, 0xFFA99FD0, PILL, G_SELECT, -1, 0, 1));
+            system.add(new Btn(start, Native.START, 0xFFA99FD0, PILL, G_START, 1, 0, 1));
+        }
         system.add(new Btn("", -1, 0xFFF1EDFF, MENU, G_MENU, -1, 0, 1));
         system.add(new Btn("»", -2, 0xFF3DE1FF, FAST, G_FAST, 1, 0, 1));
+        // Wii: troca entre o Wii Remote + Nunchuk e o Classic Controller.
+        if ("wii".equals(console) || "wiicc".equals(console)) system.add(new Btn("⇄", -3, 0xFFE5E7EB, FAST, G_SWAP, 0, 1, 1));
         for (int i = 0; i < face.size(); i++) face.get(i).group = G_FACE + i;
         groups = G_FACE + face.size();
         all.addAll(face);
@@ -219,8 +304,16 @@ final class TouchPad extends View {
         setHapticFeedbackEnabled(true);
     }
 
+    String console() {
+        return console;
+    }
+
     void setSpanish(boolean on) {
         es = on;
+        for (Btn b : shoulders) {
+            if (on && b.label.startsWith("SACUDIR")) b.label = "AGITAR" + b.label.substring(7);
+            else if (!on && b.label.startsWith("AGITAR")) b.label = "SACUDIR" + b.label.substring(6);
+        }
         invalidate();
     }
 
@@ -235,7 +328,7 @@ final class TouchPad extends View {
     private void place(int w, int h) {
         if (w == 0 || h == 0) return;
         landscape = w > h;
-        float s = Math.min(w, h), k = layout.scale;
+        float s = Math.min(w, h), k = layout.scale(landscape);
         float reachX = faceReach(true), reachY = faceReach(false);
         boolean two = false;   // PS1: L2/R2 numa segunda fileira de ombros
         for (Btn b : shoulders) two |= b.ry > 0;
@@ -273,7 +366,7 @@ final class TouchPad extends View {
         legacy("face", faceGroups, w, h, false);
         // Tamanho de cada botão, em volta do próprio centro.
         for (int g = 0; g < groups; g++) {
-            float m = layout.size(key(g));
+            float m = layout.size(landscape, key(g));
             if (m == 1) continue;
             if (g == G_DPAD) dpadR *= m;
             for (Btn b : all) {
@@ -372,7 +465,21 @@ final class TouchPad extends View {
                 b.r = small;
                 b.w = b.h = b.r * 2;
                 b.cx = topX + b.rx * (b.r + 8 * dp);
-                b.cy = topY + b.r;
+                b.cy = topY + b.r + b.ry * (2 * b.r + 8 * dp);   // ry 1: a fileira de baixo (o ⇄ do Wii)
+            }
+        }
+        // Os ombros não encostam no menu nem no avançar: a ponta de dentro recua (a de fora fica).
+        for (Btn sh : shoulders) {
+            for (Btn m : system) {
+                if (m.kind == PILL || Math.abs(sh.cy - m.cy) > sh.h / 2 + m.r) continue;
+                float left = sh.cx - sh.w / 2, right = sh.cx + sh.w / 2, min = sh.h * 1.6f;
+                if (sh.cx < m.cx && right > m.cx - m.r - 8 * dp) {
+                    sh.w = Math.max(min, m.cx - m.r - 8 * dp - left);
+                    sh.cx = left + sh.w / 2;
+                } else if (sh.cx > m.cx && left < m.cx + m.r + 8 * dp) {
+                    sh.w = Math.max(min, right - (m.cx + m.r + 8 * dp));
+                    sh.cx = right - sh.w / 2;
+                }
             }
         }
     }
@@ -488,14 +595,14 @@ final class TouchPad extends View {
         if (selected >= 0 && id != T_DONE) {
             // Só o botão escolhido.
             String k = key(selected);
-            if (id == T_SMALLER || id == T_BIGGER) layout.setSize(k, Math.round((layout.size(k) + step) * 10) / 10f);
-            else if (id == T_LESS || id == T_MORE) layout.setOpacity(k, Math.round((layout.opacity(k) + step) * 10) / 10f);
+            if (id == T_SMALLER || id == T_BIGGER) layout.setSize(landscape, k, Math.round((layout.size(landscape, k) + step) * 10) / 10f);
+            else if (id == T_LESS || id == T_MORE) layout.setOpacity(landscape, k, Math.round((layout.opacity(landscape, k) + step) * 10) / 10f);
             else if (id == T_RESET) layout.resetButton(landscape, k);
             else return;
         } else if (id == T_SMALLER || id == T_BIGGER) {
-            layout.scale = TouchLayout.clamp(Math.round((layout.scale + (id == T_BIGGER ? 0.1f : -0.1f)) * 10) / 10f, TouchLayout.MIN_SCALE, TouchLayout.MAX_SCALE);
+            layout.setScale(landscape, Math.round((layout.scale(landscape) + (id == T_BIGGER ? 0.1f : -0.1f)) * 10) / 10f);
         } else if (id == T_LESS || id == T_MORE) {
-            layout.opacity = TouchLayout.clamp(Math.round((layout.opacity + (id == T_MORE ? 0.1f : -0.1f)) * 10) / 10f, TouchLayout.MIN_OPACITY, 1);
+            layout.setOpacityAll(landscape, Math.round((layout.opacity(landscape) + (id == T_MORE ? 0.1f : -0.1f)) * 10) / 10f);
         } else if (id == T_RESET) {
             layout.reset(landscape);
         } else if (id == T_DONE) {
@@ -602,7 +709,7 @@ final class TouchPad extends View {
 
     /** Opacidade do botão (no editor, nunca some de vez). */
     private int alpha(int g) {
-        float o = layout.opacity(key(g));
+        float o = layout.opacity(landscape, key(g));
         return Math.round(255 * (editing ? Math.max(o, 0.6f) : o));
     }
 
@@ -629,8 +736,8 @@ final class TouchPad extends View {
         }
         boolean one = selected >= 0;
         for (Btn b : tools) {
-            if (b.bit == T_SIZE) b.label = (es ? "Tamaño " : "Tamanho ") + Math.round((one ? layout.size(key(selected)) : layout.scale) * 100) + "%";
-            else if (b.bit == T_ALPHA) b.label = (es ? "Opacidad " : "Opacidade ") + Math.round((one ? layout.opacity(key(selected)) : layout.opacity) * 100) + "%";
+            if (b.bit == T_SIZE) b.label = (es ? "Tamaño " : "Tamanho ") + Math.round((one ? layout.size(landscape, key(selected)) : layout.scale(landscape)) * 100) + "%";
+            else if (b.bit == T_ALPHA) b.label = (es ? "Opacidad " : "Opacidade ") + Math.round((one ? layout.opacity(landscape, key(selected)) : layout.opacity(landscape)) * 100) + "%";
             else if (b.bit == T_RESET) b.label = one ? (es ? "Restaurar " : "Restaurar ") + name(selected) : "Restaurar";
             else if (b.bit == T_DONE) b.label = es ? "Listo" : "Concluir";
             else if (b.bit == T_STICK) b.label = layout.stick ? (es ? "Usar cruceta" : "Usar cruz") : "Usar analógico";
@@ -783,10 +890,13 @@ final class TouchPad extends View {
         if (action == MotionEvent.ACTION_CANCEL) {
             pointers.clear();
             releaseStick();
+            releaseScreen(0, 0);
         } else if (action == MotionEvent.ACTION_UP || action == MotionEvent.ACTION_POINTER_UP) {
             int id = e.getPointerId(e.getActionIndex());
             if (id == stickPtr) releaseStick();
+            if (id == screenPtr) releaseScreen(e.getX(e.getActionIndex()), e.getY(e.getActionIndex()));
             if (pointers.get(id, 0) == -1 && hitMenu(e.getX(e.getActionIndex()), e.getY(e.getActionIndex()))) listener.padMenu();
+            if (pointers.get(id, 0) == -3 && hitKind(-3, e.getX(e.getActionIndex()), e.getY(e.getActionIndex()))) listener.padSwap();
             pointers.delete(id);
         } else {
             boolean down = action == MotionEvent.ACTION_DOWN || action == MotionEvent.ACTION_POINTER_DOWN;
@@ -800,14 +910,29 @@ final class TouchPad extends View {
                     pointers.put(id, stickAt(x, y));
                     continue;
                 }
+                if (id == screenPtr) {
+                    listener.padTouch(x, y, true);
+                    continue;
+                }
                 int t = target(x, y);
+                if (t == 0 && id == downId && screenPtr == -1 && ("ds".equals(console) || "wii".equals(console))) {
+                    screenPtr = id;
+                    listener.padTouch(x, y, true);
+                    continue;
+                }
                 // O menu só conta para o dedo que começou nele (arrastar não abre o menu).
                 if (t == -1 && action == MotionEvent.ACTION_MOVE && pointers.get(id, 0) != -1) t = 0;
+                if (t == -3 && action == MotionEvent.ACTION_MOVE && pointers.get(id, 0) != -3) t = 0;
                 pointers.put(id, t);
             }
         }
         update();
         return true;
+    }
+
+    private boolean hitKind(int bit, float x, float y) {
+        for (Btn b : system) if (b.bit == bit) return b.hit(x, y, 1.4f);
+        return false;
     }
 
     private boolean hitMenu(float x, float y) {
@@ -841,6 +966,7 @@ final class TouchPad extends View {
         if (best == null) return 0;
         if (best.bit == -1) return -1;
         if (best.bit == -2) return -2;
+        if (best.bit == -3) return -3;
         return 1 << best.bit;
     }
 
@@ -866,6 +992,12 @@ final class TouchPad extends View {
         if (changed) invalidate();
     }
 
+    private void releaseScreen(float x, float y) {
+        if (screenPtr == -1) return;
+        screenPtr = -1;
+        listener.padTouch(x, y, false);
+    }
+
     /** Solta tudo (menu aberto, controle conectado). */
     private void releaseStick() {
         stickPtr = -1;
@@ -875,6 +1007,7 @@ final class TouchPad extends View {
 
     void release() {
         releaseStick();
+        releaseScreen(0, 0);
         pointers.clear();
         update();
     }

@@ -22,7 +22,10 @@ OUT=build/apk
 KEYSTORE="$HOME/.android/debug.keystore"
 APK="$ROOT/onix-gamehub.apk"
 ABIS="arm64-v8a armeabi-v7a"
-CORES="fceumm snes9x mgba gpgx pcsx_rearmed stella2014 prosystem fbneo"
+CORES="fceumm snes9x mgba gpgx pcsx_rearmed stella2014 prosystem fbneo parallel_n64 melondsds ppsspp"
+# GameCube, Wii e PS2: só nos aparelhos de 64 bits (Consoles.available esconde nos de 32).
+CORES_64="dolphin pcsx2"
+cores_of() { [ "$1" = arm64-v8a ] && echo "$CORES $CORES_64" || echo "$CORES"; }
 
 rm -rf "$OUT"; mkdir -p "$OUT/classes" "$OUT/assets" "$OUT/native"
 
@@ -48,7 +51,7 @@ if [ -n "${NATIVE_FROM:-}" ]; then
     bash jni/build-sem-ndk.sh >/dev/null
     for abi in $ABIS; do cp build/ndk-libs/$abi/libonixretro.so "$OUT/native/lib/$abi/"; done
   fi
-  for abi in $ABIS; do for c in onixretro $CORES; do
+  for abi in $ABIS; do for c in onixretro $(cores_of $abi); do
     f=$OUT/native/lib/$abi/lib$c.so
     [ -f "$f" ] || [ ! -f "build/cores/$abi/lib$c.so" ] || cp "build/cores/$abi/lib$c.so" "$f"
     [ -f "$f" ] || { echo "Falta lib/$abi/lib$c.so em $NATIVE_FROM e em build/cores" >&2; exit 1; }
@@ -60,7 +63,7 @@ else
 for abi in $ABIS; do
   mkdir -p "$OUT/native/lib/$abi"
   cp build/ndk-libs/$abi/libonixretro.so "$OUT/native/lib/$abi/"
-  for c in $CORES; do
+  for c in $(cores_of $abi); do
     f=build/cores/$abi/lib$c.so
     [ -f "$f" ] || { echo "Falta $f: rode bash gamehub/cores.sh" >&2; exit 1; }
     cp "$f" "$OUT/native/lib/$abi/"

@@ -40,6 +40,8 @@ final class Config {
         // Interface do GameHub: "onix" segue o que está no Onix (som de navegação e animações).
         choice("sounds", "onix", "onix", "on", "off");
         choice("motion", "onix", "onix", "on", "off");
+        // Wii: Wii Remote + Nunchuk ou Classic Controller (GameActivity.swapWii, por jogo).
+        choice("wiiPad", "nunchuk", "nunchuk", "classic");
     }
 
     private static final Pattern CORE_KEY = Pattern.compile("^[A-Za-z0-9_.-]{1,80}$");

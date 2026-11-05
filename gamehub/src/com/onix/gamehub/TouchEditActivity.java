@@ -18,9 +18,56 @@ import android.widget.TextView;
  */
 public class TouchEditActivity extends Activity {
 
-    private static final String[] CONSOLES = {"nes", "snes", "gba", "gbc", "md", "ps1", "atari", "arcade"};
-    private static final String[] NAMES = {"NES", "SNES", "GBA", "Game Boy Color", "Mega Drive", "PlayStation", "Atari", "Fliperama"};
-    private static final int[] COLORS = {0xFFFF5A6E, 0xFFA78BFA, 0xFF38BDF8, 0xFFFBBF24};
+    private static final String[] CONSOLES = ids();
+
+    /** Os consoles que este aparelho roda, na ordem da biblioteca. */
+    private static String[] ids() {
+        java.util.List<String> ids = new java.util.ArrayList<String>();
+        for (Consoles.Console c : Consoles.ALL) {
+            ids.add(c.id);
+            if ("wii".equals(c.id)) ids.add("wiicc");   // o Classic Controller tem botões próprios
+        }
+        return ids.toArray(new String[0]);
+    }
+    /** Nome e cor de cada console no editor (as cores do common.js). */
+    private static String name(String id) {
+        switch (id) {
+            case "nes": return "NES";
+            case "snes": return "SNES";
+            case "gba": return "GBA";
+            case "gbc": return "Game Boy Color";
+            case "md": return "Mega Drive";
+            case "ps1": return "PlayStation";
+            case "atari": return "Atari";
+            case "arcade": return "Fliperama";
+            case "n64": return "Nintendo 64";
+            case "ds": return "Nintendo DS";
+            case "psp": return "PSP";
+            case "gc": return "GameCube";
+            case "wii": return "Wii · Wii Remote + Nunchuk";
+            case "wiicc": return "Wii · Classic Controller";
+            case "ps2": return "PlayStation 2";
+        }
+        return id;
+    }
+
+    private static int color(String id) {
+        switch (id) {
+            case "nes": return 0xFFFF5A6E;
+            case "snes": return 0xFFA78BFA;
+            case "gba": return 0xFF38BDF8;
+            case "gbc": return 0xFFC084FC;
+            case "md": return 0xFFFBBF24;
+            case "ps1": return 0xFF34D399;
+            case "atari": case "n64": return 0xFFF97316;
+            case "arcade": return 0xFFE879F9;
+            case "ds": return 0xFFF472B6;
+            case "psp": return 0xFF2DD4BF;
+            case "gc": return 0xFF818CF8;
+            case "ps2": return 0xFF3B82F6;
+        }
+        return 0xFFE5E7EB;
+    }
 
     private FrameLayout root;
     private TextView screen;
@@ -71,6 +118,14 @@ public class TouchEditActivity extends Activity {
             public void padEditDone() {
                 finish();
             }
+
+            @Override
+            public void padTouch(float x, float y, boolean down) {
+            }
+
+            @Override
+            public void padSwap() {
+            }
         });
         pad.setSpanish(es);
         root.addView(pad, new FrameLayout.LayoutParams(-1, -1));
@@ -104,19 +159,19 @@ public class TouchEditActivity extends Activity {
             @Override
             public void onClick(View v) {
                 console = (console + 1) % CONSOLES.length;
-                screen.setText(NAMES[console] + "\n\n" + (es ? "Toca aquí para cambiar de consola" : "Toque aqui para trocar de console"));
+                screen.setText(name(CONSOLES[console]) + "\n\n" + (es ? "Toca aquí para cambiar de consola" : "Toque aqui para trocar de console"));
                 showPad();
             }
         });
-        screen.setText(NAMES[console] + "\n\n" + (es ? "Toca aquí para cambiar de consola" : "Toque aqui para trocar de console"));
-        screen.setTextColor(COLORS[console]);
+        screen.setText(name(CONSOLES[console]) + "\n\n" + (es ? "Toca aquí para cambiar de consola" : "Toque aqui para trocar de console"));
+        screen.setTextColor(color(CONSOLES[console]));
     }
 
     /** O quadro onde fica o jogo: fundo escuro com borda fina na cor do console. */
     private GradientDrawable frame() {
         GradientDrawable d = new GradientDrawable();
         d.setColor(0xFF0E0820);
-        d.setStroke(Math.round(2 * getResources().getDisplayMetrics().density), (COLORS[console] & 0x00FFFFFF) | 0x66000000);
+        d.setStroke(Math.round(2 * getResources().getDisplayMetrics().density), (color(CONSOLES[console]) & 0x00FFFFFF) | 0x66000000);
         return d;
     }
 

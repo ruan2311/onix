@@ -350,7 +350,7 @@ final class UsbDrives {
                     if (any) dirs.put(f.getName());
                 } else if (FolderImport.supported(f.getName()) && !tracks.contains(f.getName().toLowerCase(Locale.ROOT))) {
                     String ext = Consoles.extension(f.getName());
-                    Consoles.Console con = Consoles.byExtension(f.getName());
+                    Consoles.Console con = Consoles.of(f, f.getName());
                     files.put(new JSONObject().put("name", f.getName()).put("size", f.length()).put("console", "zip".equals(ext) || con == null ? "zip" : con.id));
                 }
             }
