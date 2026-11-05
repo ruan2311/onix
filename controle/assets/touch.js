@@ -2,7 +2,8 @@
 // Compatível com todos os WebViews (Android e iOS), sem blur pesado, sem crashes.
 'use strict';
 window.OnixPad = (function () {
-  const RB = { B: 0, Y: 1, SELECT: 2, START: 3, UP: 4, DOWN: 5, LEFT: 6, RIGHT: 7, A: 8, X: 9, L: 10, R: 11, L2: 12, R2: 13 };
+  const RB = { B: 0, Y: 1, SELECT: 2, START: 3, UP: 4, DOWN: 5, LEFT: 6, RIGHT: 7, A: 8, X: 9, L: 10, R: 11, L2: 12, R2: 13, L3: 14, R3: 15,
+    C_UP: 16, C_DOWN: 17, C_LEFT: 18, C_RIGHT: 19 };   // os C do N64: o GameHub vira o analógico direito
   const ROUND = 0, PILL = 1, MENU = 2, FAST = 3;
   const G_DPAD = 0, G_L = 1, G_R = 2, G_SELECT = 3, G_START = 4, G_MENU = 5, G_FAST = 6, G_L2 = 7, G_R2 = 8, G_FACE = 9;
   const T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17, T_STICK = -18;
@@ -168,7 +169,7 @@ window.OnixPad = (function () {
       this.raf = 0;
 
       const nes = 0xFF5A6E, snes = 0xA78BFA, gba = 0x38BDF8, md = 0xFBBF24;
-      let sel = 'SELECT';
+      let sel = 'SELECT', start = 'START', selBit = RB.SELECT, startBit = RB.START;
       this.six = this.console === 'md';
       const add = (list, ...a) => list.push(new Btn(...a));
 
@@ -206,6 +207,72 @@ window.OnixPad = (function () {
         this.accent = c;
         add(this.face, this.console === 'atari' ? '●' : 'B', RB.B, c, 1, ROUND, G_FACE + 0, -0.95, 0.00, 1.15);
         add(this.face, this.console === 'atari' ? '2' : 'A', RB.A, c, 1, ROUND, G_FACE + 1,  0.95, 0.00, 1.15);
+      } else if (this.console === 'n64') {
+        // N64: A e B grandes, os quatro C (amarelos) em losango em cima; Z embaixo do L.
+        const c = 0xF97316, y = 0xFBBF24;
+        this.accent = c;
+        add(this.face, 'A', RB.B, 0x38BDF8, 1, ROUND, G_FACE + 0, -0.50,  0.84, 1.1);
+        add(this.face, 'B', RB.Y, 0x4ADE80, 1, ROUND, G_FACE + 1, -1.72, -0.04, 0.95);
+        add(this.face, '▲', RB.C_UP, y, 1, ROUND, G_FACE + 2,  0.76, -1.30, 0.7);
+        add(this.face, '◀', RB.C_LEFT, y, 1, ROUND, G_FACE + 3,  0.00, -0.55, 0.7);
+        add(this.face, '▶', RB.C_RIGHT, y, 1, ROUND, G_FACE + 4,  1.51, -0.55, 0.7);
+        add(this.face, '▼', RB.C_DOWN, y, 1, ROUND, G_FACE + 5,  0.76,  0.21, 0.7);
+        add(this.shoulders, 'L', RB.L, c, 1, PILL, G_L, -1, 0, 1);
+        add(this.shoulders, 'R', RB.R, c, 1, PILL, G_R,  1, 0, 1);
+        add(this.shoulders, 'Z', RB.L2, c, 1, PILL, G_L2, -1, 1, 1);
+        sel = null;
+      } else if (this.console === 'ds' || this.console === 'psp' || this.console === 'ps2') {
+        // DS: o losango do SNES. PSP e PS2: △ ○ ✕ □ (o PS2 com L2 e R2 embaixo de L1 e R1).
+        const ds = this.console === 'ds', ps2 = this.console === 'ps2';
+        const c = ds ? 0xF472B6 : ps2 ? 0x3B82F6 : 0x2DD4BF;
+        this.accent = c;
+        add(this.face, ds ? 'X' : '△', RB.X, ds ? 0x38BDF8 : 0x34D399, 1, ROUND, G_FACE + 0,  0.00, -1.05, 1.0);
+        add(this.face, ds ? 'A' : '○', RB.A, 0xFF5A6E, 1, ROUND, G_FACE + 1,  1.05,  0.00, 1.0);
+        add(this.face, ds ? 'B' : '✕', RB.B, ds ? 0xFBBF24 : 0x38BDF8, 1, ROUND, G_FACE + 2,  0.00,  1.05, 1.0);
+        add(this.face, ds ? 'Y' : '□', RB.Y, ds ? 0x4ADE80 : 0xF472B6, 1, ROUND, G_FACE + 3, -1.05,  0.00, 1.0);
+        add(this.shoulders, ps2 ? 'L1' : 'L', RB.L, c, 1, PILL, G_L, -1, 0, 1);
+        add(this.shoulders, ps2 ? 'R1' : 'R', RB.R, c, 1, PILL, G_R,  1, 0, 1);
+        if (ps2) {
+          add(this.shoulders, 'L2', RB.L2, c, 1, PILL, G_L2, -1, 1, 1);
+          add(this.shoulders, 'R2', RB.R2, c, 1, PILL, G_R2,  1, 1, 1);
+        }
+      } else if (this.console === 'gc' || this.console === 'wiicc') {
+        // GameCube e o Classic Controller do Wii: A grande no meio, B embaixo à esquerda, X e Y em
+        // volta. O Dolphin usa L2/R2 como L/R e L/R como Z (GameCube) ou ZL/ZR (Classic).
+        const cc = this.console === 'wiicc', c = cc ? 0xE5E7EB : 0x818CF8;
+        this.accent = c;
+        add(this.face, 'A', RB.A, 0x4ADE80, 1, ROUND, G_FACE + 0,  0.00,  0.00, 1.15);
+        add(this.face, 'B', RB.B, 0xFF5A6E, 1, ROUND, G_FACE + 1, -1.22,  0.88, 0.85);
+        add(this.face, 'X', RB.X, c, 1, ROUND, G_FACE + 2,  1.47, -0.29, 0.8);
+        add(this.face, 'Y', RB.Y, c, 1, ROUND, G_FACE + 3, -0.29, -1.47, 0.8);
+        if (cc) add(this.face, '⌂', RB.R3, c, 1, ROUND, G_FACE + 4,  1.47, -1.64, 0.6);
+        add(this.shoulders, 'L', RB.L2, c, 1, PILL, G_L, -1, 0, 1);
+        add(this.shoulders, 'R', RB.R2, c, 1, PILL, G_R,  1, 0, 1);
+        if (cc) {
+          add(this.shoulders, 'ZL', RB.L, c, 1, PILL, G_L2, -1, 1, 1);
+          add(this.shoulders, 'ZR', RB.R, c, 1, PILL, G_R2,  1, 1, 1);
+          sel = '−'; start = '+';
+        } else {
+          add(this.shoulders, 'Z', RB.R, c, 1, PILL, G_R2, 1, 1, 1);
+          sel = null;
+        }
+      } else if (this.console === 'wii') {
+        // Wii Remote + Nunchuk: A grande, B (o gatilho) ao lado, 1 e 2 embaixo, C e Z do Nunchuk à
+        // esquerda; − e + nos ombros, e sacudir o controle e o Nunchuk na fileira de baixo.
+        const c = 0xE5E7EB, y = 0xFBBF24, shake = this.es ? 'AGITAR' : 'SACUDIR';
+        this.accent = c;
+        add(this.face, 'A', RB.A, 0x38BDF8, 1, ROUND, G_FACE + 0,  0.00,  0.00, 1.15);
+        add(this.face, 'B', RB.B, 0xFF5A6E, 1, ROUND, G_FACE + 1,  1.43, -0.76, 0.9);
+        add(this.face, '1', RB.START, c, 1, ROUND, G_FACE + 2,  0.46,  1.34, 0.7);
+        add(this.face, '2', RB.SELECT, c, 1, ROUND, G_FACE + 3,  1.47,  1.09, 0.7);
+        add(this.face, 'C', RB.X, y, 1, ROUND, G_FACE + 4, -1.34, -0.71, 0.75);
+        add(this.face, 'Z', RB.Y, y, 1, ROUND, G_FACE + 5, -1.39,  0.63, 0.9);
+        add(this.face, '⌂', RB.R3, c, 1, ROUND, G_FACE + 6,  0.00, -1.47, 0.6);
+        add(this.shoulders, '−', RB.L, c, 1, PILL, G_L, -1, 0, 1);
+        add(this.shoulders, '+', RB.R, c, 1, PILL, G_R,  1, 0, 1);
+        add(this.shoulders, shake + ' N', RB.L2, c, 1, PILL, G_L2, -1, 1, 1);
+        add(this.shoulders, shake, RB.R2, c, 1, PILL, G_R2,  1, 1, 1);
+        sel = start = null;
       } else if (this.six) {
         this.accent = md;
         // Mega Drive: grade 2x3 limpa e alinhada (X, Y, Z acima de A, B, C)
@@ -223,9 +290,10 @@ window.OnixPad = (function () {
         add(this.face, 'A', RB.A, nes, 1, ROUND, G_FACE + 1,  0.95, 0.00, 1.15);
       }
 
-      add(this.system, sel, RB.SELECT, 0xA99FD0, 1, PILL, G_SELECT, -1, 0, 1);
+      // Sem SELECT (N64, GameCube) ou sem os dois (Wii Remote: o 1 e o 2 ficam com os de ação).
+      if (sel) add(this.system, sel, selBit, 0xA99FD0, 1, PILL, G_SELECT, -1, 0, 1);
       add(this.system, 'MENU', -1, 0xA99FD0, 1, PILL, G_MENU, 0, 0, 1);
-      add(this.system, 'START', RB.START, 0xA99FD0, 1, PILL, G_START, 1, 0, 1);
+      if (start) add(this.system, start, startBit, 0xA99FD0, 1, PILL, G_START, 1, 0, 1);
 
       this.groups = G_FACE + this.face.length;
       this.all = [...this.face, ...this.shoulders, ...this.system];
@@ -811,6 +879,9 @@ window.OnixPad = (function () {
       g.textAlign = 'center';
       g.textBaseline = 'middle';
       g.fillStyle = on ? '#FFFFFF' : hexA(col, alpha);
+      // Nome comprido (SACUDIR N do Wii) encolhe para caber na pílula.
+      const room = b.kind === PILL ? b.w * 0.86 : 0;
+      if (room && g.measureText(b.label).width > room) g.font = '800 ' + Math.max(8, Math.floor(size * room / g.measureText(b.label).width)) + 'px system-ui, -apple-system, sans-serif';
       g.fillText(b.label, b.cx, b.cy);
     }
 

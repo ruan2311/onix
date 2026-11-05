@@ -467,11 +467,13 @@ if (ES) {
 
   function sendButtons(bits) {
     if (!ws || ws.readyState !== WebSocket.OPEN) return;
-    // Envia frame binário de 3 bytes: [porta, bits_low, bits_high]
-    const buf = new Uint8Array(3);
+    // Frame binário de 4 bytes: [porta, bits 0-7, bits 8-15, bits 16-23 (os C do N64)].
+    // O GameHub 1.7.0 ou mais velho lê só os 3 primeiros.
+    const buf = new Uint8Array(4);
     buf[0] = playerPort & 0xFF;
     buf[1] = bits & 0xFF;
     buf[2] = (bits >> 8) & 0xFF;
+    buf[3] = (bits >> 16) & 0xFF;
     try {
       ws.send(buf.buffer);
     } catch (_) {}

@@ -13,6 +13,8 @@ Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advanc
 
 O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde está e muda a interface.
 
+> 📲 **1.7.1:** o controle pelo celular (Onix Controle 1.0.7, iPhone e navegador) ganhou os botões de **Nintendo 64** (com os botões C), **DS**, **PSP**, **PS2**, **GameCube** e **Wii** (Wii Remote + Nunchuk e Classic Controller: o celular troca junto com o ⇄ da TV).
+
 > 🎮 **Novo na TV e no celular (1.7.0): Nintendo 64, Nintendo DS e PSP, e GameCube, Wii e PS2 em teste.** Os seis consoles que antes eram só do PC agora rodam dentro do GameHub no Android. O GameHub olha o processador, a memória e a placa de vídeo do aparelho, mostra só os consoles que ele aguenta e escolhe a resolução sozinho. Veja [Consoles 3D na TV e no celular](#-consoles-3d-na-tv-e-no-celular-170).
 
 > 🇪🇸 *Nuevo en la TV y el celular (1.7.0): Nintendo 64, Nintendo DS y PSP, y GameCube, Wii y PS2 en prueba. GameHub analiza el procesador, la memoria y la tarjeta de video del aparato, muestra solo las consolas que aguanta y elige la resolución solo.*

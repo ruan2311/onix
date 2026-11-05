@@ -238,7 +238,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
                     }
                 });
             }
-        }, console.id, game.optString("name"));
+        }, padConsole(), game.optString("name"));
         gamepadServer.start();
     }
 
@@ -330,6 +330,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
                 Native.setDevice(0, dev);
             }
         });
+        if (gamepadServer != null) gamepadServer.updateState(padConsole(), game.optString("name"));   // o celular troca os botões junto
         if (pad == null || padConsole().equals(pad.console())) return;
         FrameLayout root = (FrameLayout) pad.getParent();
         int index = root.indexOfChild(pad);

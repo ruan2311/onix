@@ -990,10 +990,12 @@ function disconnectGpWs() {
 
 function sendGpButtons(bits) {
   if (!gpWs || gpWs.readyState !== WebSocket.OPEN) return;
-  const buf = new Uint8Array(3);
+  // [porta, bits 0-7, bits 8-15, bits 16-23 (os C do N64)]; o GameHub 1.7.0 ou mais velho lê só 3.
+  const buf = new Uint8Array(4);
   buf[0] = gpPlayer & 0xFF;
   buf[1] = bits & 0xFF;
   buf[2] = (bits >> 8) & 0xFF;
+  buf[3] = (bits >> 16) & 0xFF;
   try { gpWs.send(buf.buffer); } catch (_) {}
 }
 

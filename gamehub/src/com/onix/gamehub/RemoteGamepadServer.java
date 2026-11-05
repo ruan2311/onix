@@ -376,10 +376,11 @@ final class RemoteGamepadServer {
                     break;
                 } else if (opcode == 0x9) { // PING
                     sendWsPong(payload);
-                } else if (opcode == 0x2) { // BINARY: [player(1B), bits(2B)]
+                } else if (opcode == 0x2) { // BINARY: [player(1B), bits(2B ou 3B: os C do N64 no terceiro)]
                     if (payload.length >= 3) {
                         int p = payload[0] & 0xFF;
                         int bits = (payload[1] & 0xFF) | ((payload[2] & 0xFF) << 8);
+                        if (payload.length >= 4) bits |= (payload[3] & 0xFF) << 16;
                         if (p >= 0 && p < 4) {
                             listener.onButtons(p, bits);
                         }
