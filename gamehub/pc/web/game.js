@@ -106,10 +106,13 @@ void main(){
   o = vec4(c, 1.0);
 }`;
 let prog, vbo, tex = [], texW = 0, texH = 0, cur = 0, lastSerial = -1, U = {}, amb = [], ambDirty = true;
+let glDirty = true, texSmooth = -1;   // glDirty: falta desenhar (quadro novo, tela ou ajuste mudou)
+/* No celular a tela tem 3 pixels por ponto: desenhar em 2x já fica nítido e é bem mais leve. */
+const MAX_DPR = PC.mobile ? 2 : Infinity;
 const AMB = [64, 32, 16];
 /* Placa de vídeo reiniciada (driver atualizado, outra tela): o WebGL volta sozinho. */
 canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); PC.log('WebGL perdido'); });
-canvas.addEventListener('webglcontextrestored', () => { glSetup(); texW = texH = 0; lastSerial = -1; });
+canvas.addEventListener('webglcontextrestored', () => { glSetup(); texW = texH = 0; lastSerial = -1; glDirty = true; });
 function glSetup() {
   const sh = (type, src) => { const s = gl.createShader(type); gl.shaderSource(s, src); gl.compileShader(s); if (!gl.getShaderParameter(s, gl.COMPILE_STATUS)) PC.log('shader: ' + gl.getShaderInfoLog(s)); return s; };
   prog = gl.createProgram();
@@ -121,6 +124,7 @@ function glSetup() {
   for (const n of ['uTex', 'uPrev', 'uTexSize', 'uScale', 'uOut', 'uMode', 'uBlend', 'uAmbient', 'uBright', 'uSat', 'uScan', 'uCurve', 'uVignette']) U[n] = gl.getUniformLocation(prog, n);
   vbo = gl.createBuffer();
   tex = [gl.createTexture(), gl.createTexture()];
+  texSmooth = -1;
   amb = AMB.map(n => {
     const t = gl.createTexture(), fb = gl.createFramebuffer();
     gl.bindTexture(gl.TEXTURE_2D, t);
@@ -189,6 +193,7 @@ function upload() {
     gl.texSubImage2D(gl.TEXTURE_2D, 0, 0, 0, w, h, gl.RGBA, gl.UNSIGNED_BYTE, data);
   }
   ambDirty = true;
+  glDirty = true;
 }
 function quad(x, y) {
   gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
@@ -200,9 +205,11 @@ function quad(x, y) {
   gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
 }
 function draw() {
-  const dpr = window.devicePixelRatio || 1;
+  const dpr = Math.min(window.devicePixelRatio || 1, MAX_DPR);
   const vw = Math.round(canvas.clientWidth * dpr), vh = Math.round(canvas.clientHeight * dpr);
-  if (canvas.width !== vw || canvas.height !== vh) { canvas.width = vw; canvas.height = vh; }
+  if (canvas.width !== vw || canvas.height !== vh) { canvas.width = vw; canvas.height = vh; glDirty = true; }
+  if (!glDirty) return;   // nada mudou: a tela continua com o último quadro
+  glDirty = false;
   if (!texW) {
     gl.viewport(0, 0, vw, vh);
     gl.clearColor(0, 0, 0, S.backdrop === 'glass' ? 0 : 1);
@@ -210,13 +217,16 @@ function draw() {
     return;
   }
   const mode = FILTERS[S.filter] !== undefined ? FILTERS[S.filter] : 0;
-  const smoothTex = mode === 0 || mode === 2 || mode === 5 || mode === 3 || mode === 4;
-  for (const t of tex) {
-    gl.bindTexture(gl.TEXTURE_2D, t);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, smoothTex ? gl.LINEAR : gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, smoothTex ? gl.LINEAR : gl.NEAREST);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+  const smoothTex = mode === 0 || mode === 2 || mode === 5 || mode === 3 || mode === 4 ? 1 : 0;
+  if (smoothTex !== texSmooth) {
+    texSmooth = smoothTex;
+    for (const t of tex) {
+      gl.bindTexture(gl.TEXTURE_2D, t);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, smoothTex ? gl.LINEAR : gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, smoothTex ? gl.LINEAR : gl.NEAREST);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+      gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    }
   }
   gl.useProgram(prog);
   gl.uniform1i(U.uTex, 0);
@@ -520,6 +530,7 @@ function reloadSettings() {
   readRemap();
   applySettings();
   for (const [k, v] of Object.entries(S.core || {})) setOption(k, v);
+  glDirty = true;
 }
 
 /* ---------------- Carregar ---------------- */
@@ -670,7 +681,7 @@ window.OnixMenu = {
   gamepads: () => JSON.stringify(padList()),
   openBluetooth: () => PC.hub('openBluetooth'),
   fullscreen: () => PC.call('fullscreen'),
-  setGameFullscreen: on => { const done = PC.call('setGameFullscreen', !!on); S = json(PC.call('effective', ID), S); return done; },
+  setGameFullscreen: on => { const done = PC.call('setGameFullscreen', !!on); S = json(PC.call('effective', ID), S); glDirty = true; return done; },
 };
 function openMenu(reason) {
   if (quitting || menuOpen) return;

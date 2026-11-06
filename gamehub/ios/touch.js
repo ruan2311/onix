@@ -6,7 +6,7 @@ window.OnixPad = (function () {
   const RB = { B: 0, Y: 1, SELECT: 2, START: 3, UP: 4, DOWN: 5, LEFT: 6, RIGHT: 7, A: 8, X: 9, L: 10, R: 11 };
   const ROUND = 0, PILL = 1, MENU = 2, FAST = 3;
   const G_DPAD = 0, G_L = 2, G_R = 3, G_SELECT = 4, G_START = 5, G_MENU = 6, G_FAST = 7, G_FACE = 8;
-  const T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17;
+  const T_SMALLER = -10, T_BIGGER = -11, T_LESS = -12, T_MORE = -13, T_RESET = -14, T_DONE = -15, T_SIZE = -16, T_ALPHA = -17, T_STICK = -18;
   const MIN_SCALE = 0.7, MAX_SCALE = 1.5, MIN_OPACITY = 0.3, MIN_SIZE = 0.5, MAX_SIZE = 2;
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
   const round1 = v => Math.round(v * 10) / 10;
@@ -22,6 +22,7 @@ window.OnixPad = (function () {
     try { o = JSON.parse(text || '{}') || {}; } catch (_) { o = {}; }
     this.port = defaultSide();
     this.land = defaultSide();
+    this.stick = !!o.stick;   // analógico no lugar da cruz
 
     if (o.v === 4 && (o.portrait || o.landscape)) {
       if (o.portrait) {
@@ -59,6 +60,7 @@ window.OnixPad = (function () {
     text() {
       return JSON.stringify({
         v: 4,
+        stick: this.stick,
         portrait: this.port,
         landscape: this.land
       });
@@ -104,6 +106,7 @@ window.OnixPad = (function () {
   };
 
   /* ---------------- Controle ---------------- */
+  const STICK_DIRS = [[RB.RIGHT], [RB.RIGHT, RB.DOWN], [RB.DOWN], [RB.DOWN, RB.LEFT], [RB.LEFT], [RB.LEFT, RB.UP], [RB.UP], [RB.UP, RB.RIGHT]];
   class Btn {
     constructor(label, bit, color, alpha, kind, group, rx, ry, size) { Object.assign(this, { label, bit, color, alpha, kind, group, rx, ry, size, cx: 0, cy: 0, r: 0, w: 0, h: 0 }); }
     hit(x, y, slack) {
@@ -126,6 +129,8 @@ window.OnixPad = (function () {
       this.pointers = new Map(); this.bits = 0; this.dpadBits = 0; this.isFast = false;
       this.editing = false; this.dragGroup = -1; this.dragId = -1; this.pressTool = 0; this.dragging = false; this.selected = -1;
       this.w = 0; this.h = 0; this.dpadX = 0; this.dpadY = 0; this.dpadR = 0; this.landscape = false;
+      this.stickPtr = -1; this.knobX = 0; this.knobY = 0;   // o dedo no analógico (segue mesmo saindo do círculo)
+      this.sprites = new Map(); this.rect = null;
       const nes = 0xFF5A6E, snes = 0xA78BFA, gba = 0x38BDF8, md = 0xFBBF24;
       let sel = 'SELECT';
       this.six = consoleId === 'md';
@@ -173,7 +178,8 @@ window.OnixPad = (function () {
       add(this.tools, '', T_ALPHA, t, 1, PILL, -1, 4, 0, 1.6);
       add(this.tools, '+', T_MORE, t, 1, PILL, -1, 5, 0, 0.6);
       add(this.tools, '', T_RESET, t, 1, PILL, -1, 6, 1, 2.2);
-      add(this.tools, '', T_DONE, cyan, 1, PILL, -1, 7, 1, 1.3);
+      add(this.tools, '', T_STICK, t, 1, PILL, -1, 7, 1, 2.2);
+      add(this.tools, '', T_DONE, cyan, 1, PILL, -1, 8, 1, 1.3);
       for (const e of ['pointerdown', 'pointermove', 'pointerup', 'pointercancel']) canvas.addEventListener(e, ev => this.onPointer(ev));
       canvas.addEventListener('contextmenu', e => e.preventDefault());
     }
@@ -227,7 +233,14 @@ window.OnixPad = (function () {
         if (dx || dy) this.move(g, dx, dy);
       }
       this.placeTools(w, h);
+      this.clearSprites();
+      // Em pé, o degradê do fundo fica no CSS: não precisa ser redesenhado a cada toque.
+      this.c.style.background = land ? '' : 'linear-gradient(' + hexA(this.accent, 0) + ',' + hexA(this.accent, 40 / 255) + ')';
       this.invalidate();
+    }
+    clearSprites() {
+      for (const s of this.sprites.values()) s.c.width = s.c.height = 0;   // o iOS só devolve a memória assim
+      this.sprites.clear();
     }
     faceReach(horizontal) {
       const br = 0.42, gap = br * 1.25 * (this.six ? 1.05 : 1);
@@ -297,10 +310,19 @@ window.OnixPad = (function () {
     setEditing(on) {
       this.editing = on; this.dragGroup = -1; this.selected = -1;
       this.pointers.clear();
+      this.releaseStick();
+      this.clearSprites();   // no editor os botões mudam de lugar
       this.update();
       this.invalidate();
     }
     tool(id) {
+      if (id === T_STICK) {
+        this.layout.stick = !this.layout.stick;
+        this.releaseStick();
+        this.save();
+        this.invalidate();
+        return;
+      }
       const land = this.landscape;
       const step = id === T_BIGGER || id === T_MORE ? 0.1 : -0.1, L = this.layout;
       if (this.selected >= 0 && id !== T_DONE) {
@@ -383,11 +405,6 @@ window.OnixPad = (function () {
       const g = this.g, dpr = this.dpr || 1;
       g.setTransform(dpr, 0, 0, dpr, 0, 0);
       g.clearRect(0, 0, this.w, this.h);
-      if (!this.landscape) {
-        const q = g.createLinearGradient(0, 0, 0, this.h);
-        q.addColorStop(0, hexA(this.accent, 0)); q.addColorStop(1, hexA(this.accent, 40 / 255));
-        g.fillStyle = q; g.fillRect(0, 0, this.w, this.h);
-      }
       if (this.editing) { g.fillStyle = 'rgba(4,2,10,.43)'; g.fillRect(0, 0, this.w, this.h); }
       this.drawDpad(this.alpha(G_DPAD));
       for (const b of this.all) this.drawButton(b, this.alpha(b.group));
@@ -395,7 +412,7 @@ window.OnixPad = (function () {
     }
     alpha(group) { const o = this.layout.opacityOf(this.landscape, this.key(group)); return this.editing ? Math.max(o, 0.6) : o; }
     name(group) {
-      if (group === G_DPAD) return this.es ? 'Cruceta' : 'Direcional';
+      if (group === G_DPAD) return this.layout.stick ? 'Analógico' : this.es ? 'Cruceta' : 'Direcional';
       if (group === G_MENU) return 'Menu';
       const b = this.all.find(x => x.group === group);
       return b ? b.label : '';
@@ -424,10 +441,11 @@ window.OnixPad = (function () {
         else if (b.bit === T_ALPHA) b.label = (this.es ? 'Opacidad ' : 'Opacidade ') + Math.round((one ? L.opacityOf(land, k) : L.opacity(land)) * 100) + '%';
         else if (b.bit === T_RESET) b.label = one ? 'Restaurar ' + this.name(this.selected) : 'Restaurar';
         else if (b.bit === T_DONE) b.label = this.es ? 'Listo' : 'Concluir';
+        else if (b.bit === T_STICK) b.label = this.layout.stick ? (this.es ? 'Usar cruceta' : 'Usar cruz') : 'Usar analógico';
         const x = b.cx - b.w / 2, y = b.cy - b.h / 2, info = b.bit === T_SIZE || b.bit === T_ALPHA;
         g.shadowBlur = 0; g.fillStyle = 'rgba(14,8,32,.9)';
         this.round(x, y, b.w, b.h, b.h / 2); g.fill();
-        const col = one && b.bit !== T_DONE ? 0x3DE1FF : b.color;
+        const col = one && b.bit !== T_DONE && b.bit !== T_STICK ? 0x3DE1FF : b.color;
         this.stroke(col, info ? (one ? 0.63 : 0.27) : 0.86, 1.6); g.stroke();
         g.shadowBlur = 0; g.fillStyle = hexA(col, 1);
         let size = b.label.length <= 1 ? 20 : 13;
@@ -438,7 +456,58 @@ window.OnixPad = (function () {
         g.fillText(b.label, b.cx, b.cy);
       }
     }
+    /* Cada peça (botão apertado ou solto, cruz em cada direção) é desenhada uma vez numa imagem
+       guardada; depois só é copiada. O brilho (shadowBlur) é caro no iPhone e travava o jogo a
+       cada toque. No editor desenha direto. */
+    paint(key, box, fn, dx = 0, dy = 0) {
+      if (this.editing) { fn(); return; }
+      let s = this.sprites.get(key);
+      const dpr = this.dpr || 1;
+      if (!s) {
+        const m = 14, x = Math.floor((box.l - m) * dpr) / dpr, y = Math.floor((box.t - m) * dpr) / dpr;
+        const c = document.createElement('canvas');
+        c.width = Math.ceil((box.r + m - x) * dpr); c.height = Math.ceil((box.b + m - y) * dpr);
+        const g = c.getContext('2d'), old = this.g;
+        g.setTransform(dpr, 0, 0, dpr, -x * dpr, -y * dpr);
+        this.g = g;
+        try { fn(); } finally { this.g = old; }
+        s = { c, x, y, w: c.width / dpr, h: c.height / dpr };
+        this.sprites.set(key, s);
+      }
+      this.g.drawImage(s.c, s.x + Math.round(dx * dpr) / dpr, s.y + Math.round(dy * dpr) / dpr, s.w, s.h);
+    }
     drawDpad(base) {
+      const box = this.center(G_DPAD);
+      if (!this.layout.stick) { this.paint('d' + this.dpadBits, box, () => this.drawCross(base)); return; }
+      this.paint('s' + this.dpadBits, box, () => this.drawStick(base));
+      const on = this.stickPtr !== -1;
+      if (this.editing) { this.drawKnob(this.dpadX, this.dpadY, base, on); return; }
+      const kr = this.dpadR * 0.44, kb = { l: this.dpadX - kr, t: this.dpadY - kr, r: this.dpadX + kr, b: this.dpadY + kr };
+      this.paint('k' + on, kb, () => this.drawKnob(this.dpadX, this.dpadY, base, on), this.knobX, this.knobY);
+    }
+    /** Analógico: base redonda e a bolinha que segue o dedo; manda as mesmas 8 direções da cruz. */
+    drawStick(base) {
+      const g = this.g, r = this.dpadR, X = this.dpadX, Y = this.dpadY, ac = this.accent;
+      g.shadowBlur = 0; g.fillStyle = 'rgba(255,255,255,' + 15 / 255 + ')';
+      g.beginPath(); g.arc(X, Y, r, 0, 7); g.fill();
+      this.stroke(ac, base, 2.4); g.stroke();
+      g.shadowBlur = 0;
+      const t = r * 0.12, o = r * 0.82;
+      for (const [dx, dy, bit] of [[0, -1, RB.UP], [0, 1, RB.DOWN], [-1, 0, RB.LEFT], [1, 0, RB.RIGHT]]) {
+        g.fillStyle = this.dpadBits & 1 << bit ? '#fff' : hexA(ac, base * 0.7);
+        this.arrow(X + dx * o, Y + dy * o, dx, dy, t);
+      }
+    }
+    drawKnob(x, y, base, on) {
+      const g = this.g, kr = this.dpadR * 0.44, ac = this.accent;
+      g.shadowBlur = 0; g.fillStyle = hexA(ac, (on ? 128 : 56) / 255);
+      g.beginPath(); g.arc(x, y, kr, 0, 7); g.fill();
+      this.stroke(ac, on ? 1 : base, 2.2); g.stroke();
+      this.stroke(ac, base / 2, 1.6);
+      g.beginPath(); g.arc(x, y, kr * 0.6, 0, 7); g.stroke();
+      g.shadowBlur = 0;
+    }
+    drawCross(base) {
       const g = this.g, r = this.dpadR, a = r * 0.34, X = this.dpadX, Y = this.dpadY, ac = this.accent;
       g.shadowBlur = 0; g.fillStyle = hexA(ac, 90 / 255 * base);
       if (this.dpadBits & 1 << RB.UP) g.fillRect(X - a, Y - r, 2 * a, r - a);
@@ -464,8 +533,11 @@ window.OnixPad = (function () {
       g.closePath(); g.fill();
     }
     drawButton(b, base) {
-      const g = this.g, on = b.bit >= 0 ? (this.bits & 1 << b.bit) !== 0 : (b.bit === -2 && this.isFast);
-      const alpha = base * b.alpha, col = b.color;
+      const on = b.bit >= 0 ? (this.bits & 1 << b.bit) !== 0 : (b.bit === -2 && this.isFast);
+      this.paint('b' + this.all.indexOf(b) + on, b.bounds(), () => this.drawButtonNow(b, base, on));
+    }
+    drawButtonNow(b, base, on) {
+      const g = this.g, alpha = base * b.alpha, col = b.color;
       if (b.kind === PILL) this.round(b.cx - b.w / 2, b.cy - b.h / 2, b.w, b.h, b.h / 2);
       else { g.beginPath(); g.arc(b.cx, b.cy, b.r, 0, 7); }
       if (on) { g.shadowBlur = 0; g.fillStyle = hexA(col, 110 / 255); g.fill(); }
@@ -487,15 +559,26 @@ window.OnixPad = (function () {
     /* ---------------- Toque ---------------- */
     onPointer(e) {
       e.preventDefault();
-      const rect = this.c.getBoundingClientRect(), x = e.clientX - rect.left, y = e.clientY - rect.top;
+      // A posição do controle só é lida ao encostar o dedo (ler a cada movimento força o
+      // navegador a recalcular a página).
+      if (e.type === 'pointerdown' || !this.rect) this.rect = this.c.getBoundingClientRect();
+      const rect = this.rect, x = e.clientX - rect.left, y = e.clientY - rect.top;
       if (this.editing) { this.editPointer(e, x, y); return; }
       const id = e.pointerId;
-      if (e.type === 'pointercancel') this.pointers.delete(id);
+      if (e.type === 'pointercancel') { this.pointers.delete(id); if (id === this.stickPtr) this.releaseStick(); }
       else if (e.type === 'pointerup') {
+        if (id === this.stickPtr) this.releaseStick();
         if (this.pointers.get(id) === -1 && this.hitMenu(x, y)) this.l.menu();
         this.pointers.delete(id);
       } else {
         if (e.type === 'pointermove' && !this.pointers.has(id) && e.pointerType === 'mouse') return;
+        if (this.layout.stick && (id === this.stickPtr || (e.type === 'pointerdown' && this.stickPtr === -1
+          && Math.hypot(x - this.dpadX, y - this.dpadY) <= this.dpadR * 1.25))) {
+          this.stickPtr = id;
+          this.pointers.set(id, this.stickAt(x, y));
+          this.update();
+          return;
+        }
         let t = this.target(x, y);
         if (t === -1 && e.type === 'pointermove' && this.pointers.get(id) !== -1) t = 0;
         this.pointers.set(id, t);
@@ -511,7 +594,7 @@ window.OnixPad = (function () {
         const d = (x - b.cx) * (x - b.cx) + (y - b.cy) * (y - b.cy);
         if (d < bestD) { bestD = d; best = b; }
       }
-      if (dist <= R || (!best && dist <= R * 1.35)) {
+      if (!this.layout.stick && (dist <= R || (!best && dist <= R * 1.35))) {
         if (dist < R * 0.16) return 0;
         let out = 0;
         if (dy < -0.38 * dist) out |= 1 << RB.UP;
@@ -535,7 +618,20 @@ window.OnixPad = (function () {
       this.bits = nb; this.dpadBits = nd; this.isFast = nf;
       if (changed) this.invalidate();
     }
-    release() { this.pointers.clear(); this.update(); }
+    /** Direção do analógico: zona morta no meio e 8 fatias de 45°, como a cruz. */
+    stickAt(x, y) {
+      const dx = x - this.dpadX, dy = y - this.dpadY, dist = Math.hypot(dx, dy), max = this.dpadR * 0.56;
+      const k = dist > max ? max / dist : 1;
+      this.knobX = dx * k; this.knobY = dy * k;
+      this.invalidate();
+      if (dist < this.dpadR * 0.22) return 0;
+      const sector = (Math.round(Math.atan2(dy, dx) / (Math.PI / 4)) + 8) % 8;
+      let out = 0;
+      for (const bit of STICK_DIRS[sector]) out |= 1 << bit;
+      return out | 1 << 30;
+    }
+    releaseStick() { this.stickPtr = -1; this.knobX = this.knobY = 0; this.invalidate(); }
+    release() { this.releaseStick(); this.pointers.clear(); this.update(); }
   }
   return { Pad };
 })();

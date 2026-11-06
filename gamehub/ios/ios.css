@@ -15,3 +15,5 @@ body:has(#game), body:has(#editor) { background: #000; }
 #install p { margin: 0; color: #cfc6ee; }
 #install button { margin-top: .4rem; padding: .7rem 1.2rem; border: 1px solid rgba(255, 255, 255, .2); border-radius: 2rem; color: #f1edff; background: transparent; font: 600 .95rem system-ui, sans-serif; }
 [hidden] { display: none !important; }
+/* Com o jogo aberto, a tela inicial (com a capa borrada no fundo) some de vez: o iPhone para de compor ela por trás do jogo. */
+body:has(#game) #hub, body:has(#editor) #hub { visibility: hidden; }
