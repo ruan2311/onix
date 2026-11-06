@@ -268,7 +268,7 @@ Transforma o celular no **controle remoto da TV inteira** (dentro da Netflix, do
 - **Teclado do celular** aparece sozinho quando a TV abre uma busca.
 - Atalhos para YouTube, Netflix, Prime Video, Disney+ e Max, e o nome do app aberto na TV.
 
-**Android (6+):** baixe o **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.7/onix-controle.apk)** (ou pelo QR code em **Configurações → Controle pelo celular** no Onix), instale, toque na sua TV e digite o código de 6 caracteres que aparece nela. Ele se atualiza pelo GitHub em **Configurações → Atualização**.
+**Android (6+):** baixe o **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.8/onix-controle.apk)** (ou pelo QR code em **Configurações → Controle pelo celular** no Onix), instale, toque na sua TV e digite o código de 6 caracteres que aparece nela. Ele se atualiza pelo GitHub em **Configurações → Atualização**.
 
 **iPhone e iPad:** o Safari não deixa um site controlar a TV, então funciona **só como controle do Cobalt GameHub**. No GameHub, escolha **Usar celular como controle** e aponte a câmera, ou abra [projectgems.github.io/onix/controle](https://projectgems.github.io/onix/controle).
 
@@ -370,7 +370,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Español* o
 
 - Onix App: **`github.com/ruan2311/onix/releases/latest/download/onix-app.apk`**
 - Onix Launcher (puede ser la pantalla de inicio): **`github.com/ruan2311/onix/releases/latest/download/onix-launcher.apk`**
-- Onix Controle 1.0.7 (el celular Android como control remoto de la TV y control de Cobalt GameHub): **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.7/onix-controle.apk)**
+- Onix Controle 1.0.8 (el celular Android como control remoto de la TV y control de Cobalt GameHub): **[onix-controle.apk](https://github.com/ruan2311/onix/releases/download/controle-v1.0.8/onix-controle.apk)**
 
 Si Downloader no puede instalar apps, actívalo en **Configuración** y vuelve. Si **Play Protect** avisa, toca **Más detalles → Instalar de todos modos**.
 

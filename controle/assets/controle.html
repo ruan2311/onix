@@ -102,6 +102,13 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
 .sheet{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;z-index:5}
 .sheet>div{width:100%;background:#15171c;border-top:1px solid rgba(255,255,255,.14);border-radius:22px 22px 0 0;padding:18px 18px 22px;display:flex;flex-direction:column;gap:12px}
 .sheet .lbl{margin:0}
+.num-btn{font-size:14px;font-weight:600;letter-spacing:.02em}
+@media (max-width:370px){.top .round{width:46px;height:46px}.seg button{padding:8px 10px}}   /* celular estreito: 4 botões na linha de cima */
+.numpad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.numpad button{height:60px;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:24px;display:flex;align-items:center;justify-content:center}
+.numpad button.cta{background:#fff;color:#0b0c0f;border:0;font-size:17px;font-weight:700}
+.numpad svg{width:24px;height:24px}
+.numpad button:active{transform:scale(.94);background:rgba(255,255,255,.16)}
 .sheet .row2{display:flex;gap:8px}
 .sheet .row2 button{flex:1;padding:13px;border-radius:14px;background:var(--card);border:1px solid var(--line)}
 .sheet .row2 .cta{background:#fff;color:#0b0c0f;border:0}
@@ -242,6 +249,7 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
         <button id="mDpad" aria-pressed="true">Setas</button>
         <button id="mPad" aria-pressed="false">Deslizar</button>
       </div>
+      <button class="round num-btn" id="numBtn" aria-label="Números">123</button>
       <button class="round" id="kbBtn" aria-label="Teclado"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="2.5" y="6" width="19" height="12" rx="2"/><path d="M6 10h.01M9.5 10h.01M13 10h.01M16.5 10h.01M8 14h8"/></svg></button>
     </div>
 
@@ -388,6 +396,14 @@ main{flex:1;min-height:0;overflow:auto;padding:4px 18px 18px}
     <div class="row2"><button id="kbClear">Apagar tudo</button><button class="cta" id="kbEnter">Enter</button></div>
   </div>
 </div>
+<!-- Números: as teclas 0–9 de verdade (como os botões de número do controle da TV), para a senha e o PIN do Onix e os canais -->
+<div class="sheet" id="num" hidden>
+  <div>
+    <div class="lbl">Números</div>
+    <div class="numpad"><button data-k="8">1</button><button data-k="9">2</button><button data-k="10">3</button><button data-k="11">4</button><button data-k="12">5</button><button data-k="13">6</button><button data-k="14">7</button><button data-k="15">8</button><button data-k="16">9</button><button data-k="67" aria-label="Apagar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H8M13 6l-6 6 6 6"/></svg></button><button data-k="7">0</button><button class="cta" data-k="23">OK</button></div>
+    <p class="hint" style="margin:0">Para a senha dos perfis e o PIN do Onix: cada toque é um número na TV.</p>
+  </div>
+</div>
 <div class="toast" id="toast" role="status"></div>
 
 <script src="touch.js"></script>
@@ -413,7 +429,7 @@ const T = {
   'Parear de novo': 'Vincular de nuevo', 'Não deu certo': 'No funcionó', 'Tentar de novo': 'Intentar de nuevo',
   'Setas': 'Flechas', 'Deslizar': 'Deslizar', 'Voltar': 'Atrás', 'Início': 'Inicio', 'Volume': 'Volumen', 'Mudo': 'Silencio',
   'Mídia': 'Multimedia', 'Abrir na TV': 'Abrir en la TV', 'na tela': 'en pantalla', 'Onix na tela': 'Onix en pantalla',
-  'Digitar na TV': 'Escribir en la TV', 'Digite aqui, aparece na TV': 'Escribe aquí, aparece en la TV', 'Apagar tudo': 'Borrar todo', 'Enter': 'Enter',
+  'Digitar na TV': 'Escribir en la TV', 'Digite aqui, aparece na TV': 'Escribe aquí, aparece en la TV', 'Apagar tudo': 'Borrar todo', 'Números': 'Números', 'Apagar': 'Borrar', 'Para a senha dos perfis e o PIN do Onix: cada toque é um número na TV.': 'Para la contraseña de los perfiles y el PIN de Onix: cada toque es un número en la TV.', 'Enter': 'Enter',
   'Abra um campo de busca na TV. O que você digitar aqui aparece lá.': 'Abre un campo de búsqueda en la TV. Lo que escribas aquí aparece allá.',
   'Digitando no campo da TV.': 'Escribiendo en el campo de la TV.', 'Abra um campo de texto na TV primeiro': 'Abre un campo de texto en la TV primero',
   'Este app não abriu na TV': 'Esta app no se abrió en la TV', 'TV desconectada': 'TV desconectada',
@@ -654,6 +670,8 @@ function openKb(auto) {
 }
 function closeKb() { $('kb').hidden = true; $('kbIn').blur(); }
 $('kbBtn').onclick = () => openKb(false);
+$('numBtn').onclick = () => { tap(); $('num').hidden = false; };
+$('num').addEventListener('click', e => { if (e.target === $('num')) $('num').hidden = true; });
 $('kb').addEventListener('click', e => { if (e.target === $('kb')) closeKb(); });
 $('kbIn').addEventListener('input', () => {
   clearTimeout(typing);
@@ -1057,6 +1075,7 @@ window.onixBack = () => {
     return true;
   }
   if (!$('kb').hidden) { closeKb(); return true; }
+  if (!$('num').hidden) { $('num').hidden = true; return true; }
   if (view === 'set' || (view === 'tvs' && conn.s === 'connected')) { show(conn.s === 'connected' ? 'remote' : 'tvs'); return true; }
   if (view === 'code') { $('codeCancel').click(); return true; }
   return false;
