@@ -254,6 +254,8 @@ const ES = {
   'Opções do emulador': 'Opciones del emulador',
   'As opções deste emulador aparecem depois que você abre um jogo deste console.': 'Las opciones de este emulador aparecen después de abrir un juego de esta consola.', 'Carregando…': 'Cargando…', 'Este emulador não tem opções extras.': 'Este emulador no tiene opciones extra.',
   'Vale para todos os jogos deste console.': 'Vale para todos los juegos de esta consola.', 'Vale só para este jogo.': 'Vale solo para este juego.',
+  'Vale só para este jogo, com o celular em pé.': 'Vale solo para este juego, con el celular en vertical.',
+  'Vale só para este jogo, com o celular deitado.': 'Vale solo para este juego, con el celular en horizontal.',
   'Vale para todos os consoles e jogos.': 'Vale para todas las consolas y juegos.',
   'Versão {v}': 'Versión {v}', 'Procurar atualizações': 'Buscar actualizaciones', 'Instalar atualização {v}': 'Instalar actualización {v}',
   'Em dia': 'Al día', 'Procurando…': 'Buscando…', 'Baixando…': 'Descargando…', 'Instalando…': 'Instalando…', 'Sem conexão com o GitHub': 'Sin conexión con GitHub',

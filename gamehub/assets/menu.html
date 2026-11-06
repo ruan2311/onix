@@ -35,6 +35,17 @@ html.mobile .head .t small{font-size:.72rem}
 html.mobile .msg b{font-size:1.05rem}
 html.mobile .msg span,html.mobile .hint{font-size:.85rem}
 html.mobile .slot .lb{font-size:.85rem}
+/* Em pé o painel cobre a tela toda e não sobra fundo para tocar e fechar: o botão no topo fecha o
+   menu (ou volta, num submenu). Deitado nada muda. */
+.head .x{display:none}
+@media (orientation:portrait){
+  html.mobile .head .t{flex:1}
+  html.mobile .head .x{display:flex;flex:none;align-items:center;justify-content:center;width:2.9rem;height:2.9rem;padding:0;border-radius:50%;
+    border:1px solid var(--line);background:var(--glass);color:inherit;font:inherit;cursor:pointer}
+  html.mobile .head .x svg{width:1.4rem;height:1.4rem}
+  html.mobile .panel{padding-bottom:0}
+  html.mobile .scroll{min-height:0;padding-bottom:1.2rem}
+}
 </style>
 </head>
 <body>
@@ -58,9 +69,15 @@ function refreshInfo() {
 
 function header() {
   const c = consoleOf(INFO.console);
+  const x = h('button', { class: 'x', 'aria-label': stack.length ? t('Voltar') : t('Fechar') });
+  x.innerHTML = stack.length ? BACK_SVG : CLOSE_SVG;
+  x.addEventListener('click', e => { e.stopPropagation(); back(); });
   return h('div', { class: 'head' }, svg(MARK), h('div', { class: 't' },
-    h('small', { style: { color: c.color }, text: t(c.name) }), h('b', { text: INFO.name || '' })));
+    h('small', { style: { color: c.color }, text: t(c.name) }), h('b', { text: INFO.name || '' })), x);
 }
+
+const CLOSE_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg>';
+const BACK_SVG = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
 
 function message() {
   if (reason === 'disconnected') return h('div', { class: 'msg' }, h('b', { text: t('O controle desconectou') }), h('span', { text: t('Reconecte o controle ou continue com outro.') }));
@@ -185,7 +202,9 @@ function imageList() {
     row._act = () => picker(t(label), choices.map(x => ({ value: x[0], label: t(x[1]) })), cur, set);
     list.append(row);
   }
-  list.append(h('p', { class: 'hint', text: t('Vale só para este jogo.') }));
+  // iPhone: em pé e deitado guardam cada um o seu (o game.js separa).
+  list.append(h('p', { class: 'hint', text: INFO.upright === undefined ? t('Vale só para este jogo.')
+    : INFO.upright ? t('Vale só para este jogo, com o celular em pé.') : t('Vale só para este jogo, com o celular deitado.') }));
   return list;
 }
 

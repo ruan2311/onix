@@ -143,6 +143,8 @@ const flag = (k, def) => { DEFAULTS[k] = def; };
 choice('filter', 'sharp', 'sharp', 'pixel', 'smooth', 'crt', 'crtcurve', 'scanlines', 'lcd');
 choice('scale', 'fit', 'fit', 'integer', 'stretch');
 choice('aspect', 'core', 'core', '4:3', 'pixel', '16:9');
+// Com o iPhone em pé, filtro, tamanho e proporção são outros (null: os mesmos de deitado).
+for (const k of ['filter', 'scale', 'aspect']) { DEFAULTS[k + 'Port'] = null; CHOICES[k + 'Port'] = CHOICES[k]; }
 range('volume', 100, 0, 100);
 range('latency', 64, 32, 128);
 range('runahead', 0, 0, 2);

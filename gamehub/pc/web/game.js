@@ -109,6 +109,16 @@ let prog, vbo, tex = [], texW = 0, texH = 0, cur = 0, lastSerial = -1, U = {}, a
 let glDirty = true, texSmooth = -1;   // glDirty: falta desenhar (quadro novo, tela ou ajuste mudou)
 /* No celular a tela tem 3 pixels por ponto: desenhar em 2x já fica nítido e é bem mais leve. */
 const MAX_DPR = PC.mobile ? 2 : Infinity;
+/* Celular: em pé e deitado têm filtro, tamanho e proporção separados (filterPort… valem em pé;
+   sem eles, em pé fica igual a deitado). Assim mudar um não estraga o outro. */
+const VIEW_KEYS = ['filter', 'scale', 'aspect'];
+const upright = () => !!PC.mobile && innerHeight > innerWidth;
+const view = k => (upright() && S[k + 'Port'] != null ? S[k + 'Port'] : S[k]);
+function viewSettings() {
+  const o = Object.assign({}, S);
+  for (const k of VIEW_KEYS) o[k] = view(k);
+  return o;
+}
 const AMB = [64, 32, 16];
 /* Placa de vídeo reiniciada (driver atualizado, outra tela): o WebGL volta sozinho. */
 canvas.addEventListener('webglcontextlost', e => { e.preventDefault(); PC.log('WebGL perdido'); });
@@ -216,7 +226,8 @@ function draw() {
     gl.clear(gl.COLOR_BUFFER_BIT);
     return;
   }
-  const mode = FILTERS[S.filter] !== undefined ? FILTERS[S.filter] : 0;
+  const filter = view('filter'), scale = view('scale'), aspectSet = view('aspect');
+  const mode = FILTERS[filter] !== undefined ? FILTERS[filter] : 0;
   const smoothTex = mode === 0 || mode === 2 || mode === 5 || mode === 3 || mode === 4 ? 1 : 0;
   if (smoothTex !== texSmooth) {
     texSmooth = smoothTex;
@@ -239,12 +250,12 @@ function draw() {
   gl.clear(gl.COLOR_BUFFER_BIT);
   // Proporção (as mesmas da TV)
   const core = M._ox_aspect();
-  const aspect = S.aspect === '4:3' ? 4 / 3 : S.aspect === '16:9' ? 16 / 9 : S.aspect === 'pixel' ? texW / texH : (core > 0 ? core : texW / texH);
+  const aspect = aspectSet === '4:3' ? 4 / 3 : aspectSet === '16:9' ? 16 / 9 : aspectSet === 'pixel' ? texW / texH : (core > 0 ? core : texW / texH);
   let w, h;
-  if (S.scale === 'stretch') { w = vw; h = vh; } else {
+  if (scale === 'stretch') { w = vw; h = vh; } else {
     h = vh; w = h * aspect;
     if (w > vw) { w = vw; h = w / aspect; }
-    if (S.scale === 'integer') { const k = Math.floor(h / texH); if (k >= 1) { h = k * texH; w = h * aspect; } if (w > vw) { w = vw; h = w / aspect; } }
+    if (scale === 'integer') { const k = Math.floor(h / texH); if (k >= 1) { h = k * texH; w = h * aspect; } if (w > vw) { w = vw; h = w / aspect; } }
   }
   if (useAmbient && (w < vw - 2 || h < vh - 2)) {
     gl.uniform1i(U.uAmbient, 1);
@@ -637,7 +648,7 @@ function statesList() {
 window.OnixMenu = {
   info: () => JSON.stringify({
     id: ID, name: INFO.name, console: INFO.console, profile: 'default', kids: false, lang: INFO.lang, loaded, failed,
-    ff: M && loaded ? !!M._ox_fast_forward() : false, settings: S, gamepads: padList(), sounds: true, mobile: !!PC.mobile, pc: !PC.mobile, motion: true,
+    ff: M && loaded ? !!M._ox_fast_forward() : false, settings: viewSettings(), upright: PC.mobile ? upright() : undefined, gamepads: padList(), sounds: true, mobile: !!PC.mobile, pc: !PC.mobile, motion: true,
     states: statesList(), cover: INFO.cover,
   }),
   resume: () => setTimeout(closeMenu, 0),
@@ -661,6 +672,11 @@ window.OnixMenu = {
   reset: () => { if (loaded) { M._ox_reset(); setTimeout(closeMenu, 0); } },
   setFastForward: on => { if (loaded) M._ox_set_fast_forward(on ? 1 : 0); },
   setConfig: (scope, key, value) => {
+    if (PC.mobile && VIEW_KEYS.includes(key) && value !== null) {
+      if (upright()) key += 'Port';
+      // Deitado, mudando pela primeira vez: em pé guarda o que estava, para não mudar junto.
+      else if (S[key + 'Port'] == null) PC.call('setConfig', ID, scope, key + 'Port', JSON.stringify(S[key]));
+    }
     const done = PC.call('setConfig', ID, scope, key, value);
     if (done && loaded) {
       if (value === null && key.startsWith('core.')) {
@@ -674,7 +690,7 @@ window.OnixMenu = {
   },
   editTouch: () => { if (pad) setTimeout(editPad, 0); return !!pad; },
   captureKey: on => { capture = !!on; },
-  effective: () => JSON.stringify(S),
+  effective: () => JSON.stringify(viewSettings()),
   coreOptions: () => { if (loaded) OPTIONS = M.UTF8ToString(M._ox_options()); setTimeout(() => menuEmit('options', json(OPTIONS, {})), 0); },
   cheats: () => PC.call('cheats', ID),
   setCheats: s => { const done = PC.call('setCheats', ID, s); if (done && loaded) applyCheats(); return done; },
