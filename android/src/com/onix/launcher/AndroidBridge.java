@@ -48,7 +48,8 @@ public class AndroidBridge {
 
     private static final Pattern PKG = Pattern.compile("^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9_]+)+$");
     private static final int MAX_APPS = 300;
-    private static final int MAX_PNG_BYTES = 380 * 1024;   // ~506 KB em base64 (limite do JS: 512 KB)
+    private static final int MAX_PNG_BYTES = 380 * 1024;
+    private static final int WEBP_FROM = 24 * 1024;      // PNG acima disso tenta WebP (fica o menor)   // ~506 KB em base64 (limite do JS: 512 KB)
     // Tamanho real do tile na tela (~220 px na UI 1080p da TV): maior que isso só gasta RAM e CPU.
     private static final int BANNER_W = 256, BANNER_H = 144, ICON_PX = 128;
 
@@ -834,8 +835,19 @@ public class AndroidBridge {
         d.draw(c);
         ByteArrayOutputStream png = new ByteArrayOutputStream();
         bmp.compress(Bitmap.CompressFormat.PNG, 100, png);
+        // Banner com foto vira um PNG grande (60 KB ou mais): em WebP fica umas 7 vezes menor, e a lista
+        // de apps que vai para a página encolhe junto. Logos simples continuam em PNG (aí o PNG é menor).
+        ByteArrayOutputStream out = png;
+        String type = "png";
+        if (png.size() > WEBP_FROM) {
+            ByteArrayOutputStream webp = new ByteArrayOutputStream();
+            if (bmp.compress(Bitmap.CompressFormat.WEBP, 90, webp) && webp.size() > 0 && webp.size() < png.size()) {
+                out = webp;
+                type = "webp";
+            }
+        }
         bmp.recycle();
-        if (png.size() > MAX_PNG_BYTES) return null;
-        return "data:image/png;base64," + Base64.encodeToString(png.toByteArray(), Base64.NO_WRAP);
+        if (out.size() > MAX_PNG_BYTES) return null;
+        return "data:image/" + type + ";base64," + Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP);
     }
 }
