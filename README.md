@@ -65,21 +65,33 @@ As versões anteriores estão no [CHANGELOG.md](CHANGELOG.md) e na [página de R
 <details>
 <summary><b>Capturas de tela</b></summary>
 
-| Onix Cosmos | Clean Glass |
+| Onix Cobalt | Onix Aurora |
 |---|---|
-| <img src="docs/screenshots/estilo-onix-cosmos.png" alt="Estilo Onix Cosmos"> | <img src="docs/screenshots/estilo-clean-glass.png" alt="Estilo Clean Glass"> |
+| <img src="docs/screenshots/tema-cobalt.png" alt="Tema Onix Cobalt, em pixel art"> | <img src="docs/screenshots/tema-aurora.png" alt="Tema Onix Aurora"> |
 
-| Modo Infantil | Configurações |
+| Onix Rubi Cinema | Onix White |
 |---|---|
-| <img src="docs/screenshots/modo-infantil.png" alt="Modo Infantil com o gatinho do Onix"> | <img src="docs/screenshots/configuracoes-inicio.png" alt="Estilo da tela inicial e Som da navegação"> |
+| <img src="docs/screenshots/tema-rubi.png" alt="Tema Onix Rubi Cinema"> | <img src="docs/screenshots/tema-white.png" alt="Tema Onix White, claro"> |
 
-| Apps | Jogos e notícias |
+| Relógio Flip | Onix Cosmos |
 |---|---|
-| <img src="docs/screenshots/apps.png" alt="Aba Apps com Recentes e Não usados"> | <img src="docs/screenshots/jogos.png" alt="Jogos e notícias dos games"> |
+| <img src="docs/screenshots/relogio-flip.png" alt="Relógio Flip na tela inicial"> | <img src="docs/screenshots/estilo-onix-cosmos.png" alt="Estilo Onix Cosmos"> |
 
-| Leitor de notícias | Entradas |
+| Clean Glass | Modo Infantil |
 |---|---|
-| <img src="docs/screenshots/noticia.png" alt="Leitor de notícias com QR code"> | <img src="docs/screenshots/entradas.png" alt="Entradas TV e HDMI"> |
+| <img src="docs/screenshots/estilo-clean-glass.png" alt="Estilo Clean Glass"> | <img src="docs/screenshots/modo-infantil.png" alt="Modo Infantil com o gatinho do Onix"> |
+
+| Configurações | Apps |
+|---|---|
+| <img src="docs/screenshots/configuracoes-inicio.png" alt="Estilo da tela inicial e Som da navegação"> | <img src="docs/screenshots/apps.png" alt="Aba Apps com Recentes e Não usados"> |
+
+| Jogos e notícias | Leitor de notícias |
+|---|---|
+| <img src="docs/screenshots/jogos.png" alt="Jogos e notícias dos games"> | <img src="docs/screenshots/noticia.png" alt="Leitor de notícias com QR code"> |
+
+| Entradas | |
+|---|---|
+| <img src="docs/screenshots/entradas.png" alt="Entradas TV e HDMI"> | |
 
 </details>
 
