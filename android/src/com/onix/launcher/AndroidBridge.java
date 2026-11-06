@@ -48,8 +48,8 @@ public class AndroidBridge {
 
     private static final Pattern PKG = Pattern.compile("^[a-zA-Z][a-zA-Z0-9_]*(\\.[a-zA-Z0-9_]+)+$");
     private static final int MAX_APPS = 300;
-    private static final int MAX_PNG_BYTES = 380 * 1024;
-    private static final int WEBP_FROM = 24 * 1024;      // PNG acima disso tenta WebP (fica o menor)   // ~506 KB em base64 (limite do JS: 512 KB)
+    private static final int MAX_PNG_BYTES = 380 * 1024;   // ~506 KB em base64 (limite do JS: 512 KB)
+    private static final int WEBP_FROM = 24 * 1024;        // PNG acima disso tenta WebP (fica o menor)
     // Tamanho real do tile na tela (~220 px na UI 1080p da TV): maior que isso só gasta RAM e CPU.
     private static final int BANNER_W = 256, BANNER_H = 144, ICON_PX = 128;
 
