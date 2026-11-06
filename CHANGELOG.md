@@ -5,6 +5,7 @@ As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 ## 17.1.0 (novembro de 2026)
 
 - **Mais 4 temas:** em **Configurações → Aparência → Tema**. **Onix Safira** é o fundo do mar, com raios de luz, bolhas subindo e águas-vivas. **Onix Esmeralda** é uma floresta à noite, com samambaias e vaga-lumes piscando. **Onix Âmbar** é um pôr do sol retrô, com o sol listrado e a grade neon. **Onix Quartzo Rosa** é um jardim japonês, com lua cheia, o monte ao fundo e pétalas de cerejeira caindo. Cada um tem o desenho do menu e a tela de descanso próprios.
+- **Desenhos do menu refeitos:** o desenho entre **Jogos** e **Entradas** ficou maior e mais caprichado nos temas Aurora, Safira, Esmeralda, Âmbar e Quartzo Rosa, e se mistura com o fundo do menu. No **Onix Esmeralda**, pequenas gemas de esmeralda em pixel art piscam no fundo e no menu.
 
 ## 17.0.0 (novembro de 2026)
 

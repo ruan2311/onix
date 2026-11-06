@@ -1258,7 +1258,7 @@ html.th-aurora .clk-flip .card i{background:linear-gradient(180deg,rgba(125,255,
 html.th-aurora .cz-orbit i{background:#7dffcf;box-shadow:0 0 .9rem rgba(125,255,207,.9)}
 html.th-aurora.home-cosmos .kicker{color:#c7b2ff}
 html.th-aurora .nav-art{display:none}
-html.th-aurora .nav-theme{display:block;-webkit-mask-image:radial-gradient(closest-side,#000 62%,transparent);mask-image:radial-gradient(closest-side,#000 62%,transparent)}
+html.th-aurora .nav-theme{display:block}
 @media (min-width:761px),(orientation:landscape){
   html.th-aurora.nav-top #sidebar{background:linear-gradient(180deg,#06161f,#030b10)}
   html.th-aurora.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(10,36,44,.94),rgba(3,14,18,.95));border-color:rgba(125,255,207,.22)}
@@ -1487,6 +1487,8 @@ html.th-quartzo .nav-theme{display:block}
 .es-fly1{animation:pxTwinkle 3.4s ease-in-out infinite}
 .es-fly2{animation:pxTwinkle 4.6s ease-in-out 1.3s infinite}
 .es-fly3{animation:pxTwinkle 2.8s ease-in-out .6s infinite}
+.es-gem{transform-box:fill-box;transform-origin:center;animation:esGem 3.6s ease-in-out infinite}
+@keyframes esGem{0%,100%{opacity:.12;transform:scale(.6)}50%{opacity:1;transform:scale(1.1)}}
 .es-drift{animation:esDrift 16s ease-in-out infinite alternate}
 .es-drift2{animation:esDrift 22s ease-in-out -8s infinite alternate-reverse}
 @keyframes esDrift{to{transform:translate(28px,-22px)}}
@@ -1500,7 +1502,7 @@ html.th-quartzo .nav-theme{display:block}
 @keyframes qzSway{from{transform:rotate(-24deg)}to{transform:rotate(30deg)}}
 
 /* Desenho do menu (no vão entre Jogos e Entradas) de cada tema; o padrão é o .nav-art. */
-.nav-theme{display:none;width:78%;max-height:100%;opacity:.8}
+.nav-theme{display:none;width:78%;max-height:100%;opacity:.95}
 html.kids .nav-theme{display:none!important}
 @media (min-width:761px),(orientation:landscape){html.nav-top .nav-theme,html.nav-bottom .nav-theme{display:none!important}}
 /* Tela de descanso: o Cobalt desenha em baixa resolução e amplia sem suavizar (pixel art). */
@@ -2079,6 +2081,22 @@ function pxSprite(rows, pal, x, y, u) {
   });
   return Object.keys(by).map(c => '<path fill="' + pal[c] + '" d="' + by[c].join('') + '"/>').join('');
 }
+// Gemas de esmeralda em pixel art do tema Esmeralda (inspiradas nas estrelinhas do site do Opala): lapidação
+// retangular com reflexo de luz, ou um brilhinho em cruz, cada um piscando no seu ritmo, com um halo verde atrás.
+const PX_EMERALD = ['.LLLLm.', 'LwLLLmm', 'LLMMMmd', 'LMMMMmd', 'LMMMMmd', 'LMMMMmd', 'mMMMMdd', '.mdddd.'];
+const PX_GLINT = ['..w..', '..w..', 'wwSww', '..w..', '..w..'];
+const PX_EM_PAL = { w: '#ffffff', S: '#f4ffb0', L: '#9dffc8', M: '#2fd47a', m: '#1fa860', d: '#0d6b3a' };
+function esGems(n, W, H, x0, y0, u, glow, seed, spots) {   // spots: lugares fixos (no menu, onde o sorteio amontoa)
+  const rnd = rng(seed); let s = '';
+  for (let i = 0; i < n; i++) {
+    const big = i % 3 !== 2, spr = big ? PX_EMERALD : PX_GLINT, w = spr[0].length * u, h = spr.length * u;
+    const x = spots ? spots[i][0] : x0 + rnd() * (W - w) | 0, y = spots ? spots[i][1] : y0 + rnd() * (H - h) | 0;
+    s += '<g class="es-gem" style="animation-duration:' + (2.6 + rnd() * 2.6).toFixed(1) + 's;animation-delay:-' + (rnd() * 4).toFixed(1) + 's">'
+      + '<circle cx="' + (x + w / 2) + '" cy="' + (y + h / 2) + '" r="' + (h * 1.1).toFixed(1) + '" fill="url(#' + glow + ')"/>'
+      + pxSprite(spr, PX_EM_PAL, x, y, u) + '</g>';
+  }
+  return '<g shape-rendering="crispEdges">' + s + '</g>';
+}
 // Planeta de pixels com sombra em degraus (dither xadrez entre os tons) e, se pedir, um anel inclinado.
 function pxPlanet(cx, cy, R, u, tones, ring) {
   const cells = {}, add = (col, x, y) => { (cells[col] = cells[col] || []).push('M' + x + ' ' + y + 'h' + u + 'v' + u + 'h-' + u + 'z'); };
@@ -2130,6 +2148,14 @@ function grainTile() {
 }
 const SVG_BG = '<svg viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMid slice" fill="none" stroke-linecap="round" stroke-linejoin="round">';
 const SVG_NAV = '<svg viewBox="0 0 160 170" width="100%" height="100%" fill="none" stroke-linecap="round" stroke-linejoin="round">';
+// Desenho do menu dos temas novos: uma cena solta, sem moldura, que se apaga aos poucos nas bordas e se mistura
+// com o fundo do menu (duas máscaras em degradê, uma de cima para baixo e outra dos lados).
+function navScene(p, defs, inner) {
+  const fade = (id, x2, y2) => '<linearGradient id="' + p + id + 'g" x1="0" y1="0" x2="' + x2 + '" y2="' + y2 + '"><stop offset="0" stop-color="#000"/><stop offset=".16" stop-color="#fff"/><stop offset=".84" stop-color="#fff"/><stop offset="1" stop-color="#000"/></linearGradient>'
+    + '<mask id="' + p + id + '"><rect width="160" height="170" fill="url(#' + p + id + 'g)"/></mask>';
+  return SVG_NAV + '<defs>' + fade('V', 0, 1) + fade('H', 1, 0) + defs + '</defs>'
+    + '<g mask="url(#' + p + 'V)"><g mask="url(#' + p + 'H)">' + inner + '</g></g></svg>';
+}
 const THEME_ART = {
   // Onix White: manchas de cor bem suaves, o planeta do Onix em traço cinza, nuvens e um aviãozinho de papel.
   white: { bg: () => SVG_BG + '<defs>'
@@ -2186,14 +2212,29 @@ const THEME_ART = {
         + '<path d="M0 1080V950c180-40 360 20 560-10s420-40 640 0 460 10 720-30V1080z" fill="url(#auM2)"/>'
         + '<path fill="#020a0d" d="' + pines + '"/></svg>';
     },
-    nav: () => SVG_NAV + '<defs><linearGradient id="anG" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5dffc0" stop-opacity="0"/><stop offset=".5" stop-color="#5dffc0" stop-opacity=".7"/><stop offset="1" stop-color="#5dffc0" stop-opacity="0"/></linearGradient>'
-      + '<linearGradient id="anV" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#b48cff" stop-opacity="0"/><stop offset=".5" stop-color="#b48cff" stop-opacity=".6"/><stop offset="1" stop-color="#b48cff" stop-opacity="0"/></linearGradient></defs>'
-      + softStars(18, 160, 170, 4, 110)
-      + '<g class="au-b"><path d="M-10 56C30 36 70 76 110 52S150 40 170 48" stroke="url(#anV)" stroke-width="36" stroke-dasharray="1.5 3.5"/></g>'
-      + '<g class="au-a"><path d="M-10 82C40 60 80 100 120 74S160 66 170 72" stroke="url(#anG)" stroke-width="40" stroke-dasharray="1.5 3"/></g>'
-      + '<circle cx="128" cy="26" r="9" fill="#e9fff6"/><circle cx="132" cy="23" r="8" fill="#06161f"/>'
-      + '<path d="M0 170v-36l26-16 20 12 28-26 26 20 22-14 38 26v34z" fill="#0d3440" stroke="#7dffcf" stroke-width="1.6" stroke-opacity=".5"/>'
-      + '<path d="M0 170v-18c40-8 80 4 160-6v24z" fill="#030b10"/></svg>',
+    nav: () => {
+      let g = '', v = '', pines = '';
+      for (let x = 2; x < 160; x += 2.4) {
+        g += 'M' + x.toFixed(1) + ' ' + (50 + Math.sin(x / 17) * 9).toFixed(1) + 'v' + (30 + Math.sin(x / 7 + 1) * 8).toFixed(1);
+        v += 'M' + x.toFixed(1) + ' ' + (26 + Math.sin(x / 23 + 2) * 7).toFixed(1) + 'v' + (18 + Math.sin(x / 5) * 5).toFixed(1);
+      }
+      for (let x = 6; x < 158; x += 6 + x * 7 % 5) { const h = 8 + x * 13 % 8; pines += 'M' + x + ' ' + (136 - h) + 'l' + (h * .35).toFixed(1) + ' ' + h + 'h-' + (h * .7).toFixed(1) + 'z'; }
+      return navScene('na', '<linearGradient id="naS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0c2a3e"/><stop offset=".6" stop-color="#07202b"/><stop offset="1" stop-color="#04131a"/></linearGradient>'
+        + '<linearGradient id="naG" gradientUnits="userSpaceOnUse" x1="0" y1="40" x2="0" y2="98"><stop offset="0" stop-color="#5dffc0" stop-opacity="0"/><stop offset=".65" stop-color="#5dffc0" stop-opacity=".55"/><stop offset=".88" stop-color="#c8ffe9" stop-opacity=".95"/><stop offset="1" stop-color="#5dffc0" stop-opacity="0"/></linearGradient>'
+        + '<linearGradient id="naV" gradientUnits="userSpaceOnUse" x1="0" y1="18" x2="0" y2="48"><stop offset="0" stop-color="#c58cff" stop-opacity="0"/><stop offset=".7" stop-color="#b48cff" stop-opacity=".6"/><stop offset="1" stop-color="#b48cff" stop-opacity="0"/></linearGradient>'
+        + '<linearGradient id="naL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0b3442"/><stop offset="1" stop-color="#03101a"/></linearGradient>'
+        + '<mask id="naM"><circle cx="118" cy="34" r="8" fill="#fff"/><circle cx="122" cy="31" r="7" fill="#000"/></mask>',
+        '<rect width="160" height="170" fill="url(#naS)"/>' + softStars(22, 160, 170, 4, 100)
+        + '<g class="au-b"><path d="' + v + '" stroke="url(#naV)" stroke-width="1.8"/></g>'
+        + '<g class="au-a"><path d="M-10 84C20 70 50 92 80 80s60-12 90 0" stroke="#5dffc0" stroke-width="14" stroke-opacity=".12"/><path d="' + g + '" stroke="url(#naG)" stroke-width="1.8"/></g>'
+        + '<circle cx="118" cy="34" r="8" fill="#e9fff6" mask="url(#naM)"/>'
+        + '<path d="M0 132l22-28 12 10 22-28 22 24 14-10 24 22 16-12 28 22z" fill="#0f3a48"/>'
+        + '<path d="M56 86l-7 9 4-1 3 3 3-3 4 1zM22 104l-5 6 3-1 2 2 3-2z" fill="#d8fff1" fill-opacity=".75"/>'
+        + '<path d="M0 138l28-20 18 10 30-22 28 22 20-8 36 18z" fill="#09262f" stroke="#7dffcf" stroke-width="1.2" stroke-opacity=".4"/>'
+        + '<rect y="134" width="160" height="36" fill="url(#naL)"/>'
+        + '<path fill="#020a0d" d="' + pines + '"/>'
+        + '<g class="au-c" stroke-width="1.4"><path d="M24 142h38M50 148h52M74 154h30" stroke="#5dffc0" stroke-opacity=".35"/><path d="M112 142h12M114 147h8" stroke="#e9fff6" stroke-opacity=".5"/></g>');
+    },
   },
 
   // Onix Rubi Cinema: bambinela com lâmpadas, cortina à direita, feixe do projetor com poeira, filme e as poltronas embaixo.
@@ -2261,11 +2302,23 @@ const THEME_ART = {
         + '<path d="M0 1080V1032c220-26 420 10 640-6s460-34 700-8 380 6 580-14V1080z" fill="url(#sfB)"/>'
         + '<g stroke="#2a7fa6" stroke-width="7" opacity=".55">' + weeds + '</g></svg>';
     },
-    nav: () => SVG_NAV + '<g stroke="#9fd8ff" stroke-width="2.4">'
-      + '<path d="M44 74C44 30 116 30 116 74Q107 81 98 74Q89 81 80 74Q71 81 62 74Q53 81 44 74z" fill="#041a36"/>'
-      + '<path d="M60 52c6-10 22-14 32-10" stroke-width="1.8" opacity=".55"/>'
-      + '<path d="M56 80c-6 18 8 32-2 52M74 80c4 20-6 36 4 58M90 80c-4 18 6 34-2 54M106 80c6 16-6 30 4 48" stroke-width="2" opacity=".75"/></g>'
-      + '<g stroke="#a8e6ff" stroke-width="1.6" opacity=".7"><circle cx="132" cy="40" r="5"/><circle cx="140" cy="22" r="3"/><circle cx="24" cy="118" r="4"/><circle cx="30" cy="100" r="2.4"/></g></svg>',
+    nav: () => navScene('ns', '<linearGradient id="nsS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e4c82"/><stop offset=".45" stop-color="#06264a"/><stop offset="1" stop-color="#020c1c"/></linearGradient>'
+        + '<linearGradient id="nsR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdeeff" stop-opacity=".4"/><stop offset="1" stop-color="#6fb8ff" stop-opacity="0"/></linearGradient>'
+        + '<radialGradient id="nsB" cx=".5" cy=".25" r=".8"><stop offset="0" stop-color="#bff0ff" stop-opacity=".55"/><stop offset="1" stop-color="#3a8fd0" stop-opacity=".12"/></radialGradient>'
+        + '<radialGradient id="nsH"><stop offset="0" stop-color="#6fd6ff" stop-opacity=".32"/><stop offset="1" stop-color="#6fd6ff" stop-opacity="0"/></radialGradient>',
+      '<rect width="160" height="170" fill="url(#nsS)"/>'
+        + '<g class="sf-ray" fill="url(#nsR)"><path d="M36 0h22l34 170H58z"/><path d="M100 0h14l28 170h-26z"/></g><g class="sf-ray2" fill="url(#nsR)"><path d="M70 0h10l10 170H76z"/></g>'
+        + '<path d="M0 20q10-4 20 0t20 0 20 0 20 0 20 0 20 0 20 0 20 0" stroke="#cdeeff" stroke-width="1.2" stroke-opacity=".4"/>'
+        + '<circle cx="80" cy="66" r="46" fill="url(#nsH)"/>'
+        + '<g stroke="#bfeaff"><path d="M50 70C50 34 110 34 110 70Q102.5 77 95 70Q87.5 77 80 70Q72.5 77 65 70Q57.5 77 50 70z" fill="url(#nsB)" stroke-width="2"/>'
+        + '<path d="M60 52c5-9 18-13 28-10" stroke="#fff" stroke-width="2" stroke-opacity=".7"/><path d="M58 64c8-11 36-11 44 0" stroke-width="1.2" stroke-opacity=".4"/>'
+        + '<path d="M72 75c-4 10 6 16 0 26s4 14 0 22M88 75c4 10-6 16 0 26s-4 14 0 22" stroke-width="2.6" stroke-opacity=".85"/>'
+        + '<path d="M54 74c-4 16 6 30-2 48M64 76c2 18-6 32 2 54M96 76c-2 18 6 32-2 54M106 74c4 16-6 30 2 48" stroke-width="1.2" stroke-opacity=".6"/>'
+        + '<g stroke-width="1.4" stroke-opacity=".75"><circle cx="122" cy="46" r="4"/><circle cx="130" cy="32" r="2.6"/><circle cx="125" cy="22" r="1.8"/><circle cx="34" cy="96" r="3.4"/><circle cx="40" cy="84" r="2"/></g></g>'
+        + '<g fill="#6fd6ff"><path d="M112 100c6-5 14-5 18 0-4 5-12 5-18 0zm18 0l6-4v8z" fill-opacity=".55"/><path d="M42 62c-4-3.5-10-3.5-13 0 3 3.5 9 3.5 13 0zm-13 0l-4-3v6z" fill-opacity=".4"/></g>'
+        + '<path d="M0 170v-24c24-8 46-4 70-8s52-6 90 2v30z" fill="#041a33"/><path d="M8 146c22-6 44-4 62-7" stroke="#6fb8ff" stroke-width="1" stroke-opacity=".3"/>'
+        + '<g stroke="#2a9fbf" stroke-width="3.2"><path d="M22 150c6-10-4-20 2-32s-2-18 4-26"/><path d="M32 152c-4-10 4-18-1-28"/><path d="M134 142c-6-10 4-18-2-30s2-16-3-22"/></g>'
+        + '<path d="M112 144v-14m0 7l-6-7m6 3l6-9m-6-1v0" stroke="#4fc3e8" stroke-width="2.2" stroke-opacity=".8"/>'),
   },
 
   // Onix Esmeralda: floresta à noite. Luz da lua entre as folhas, samambaias de linha e vaga-lumes piscando.
@@ -2286,19 +2339,43 @@ const THEME_ART = {
       for (let i = 0; i < 30; i++) { const x = 340 + rnd() * 1580 | 0, y = 260 + rnd() * 800 | 0; flies[i % 3] += '<circle cx="' + x + '" cy="' + y + '" r="16" fill="url(#esF)"/><circle cx="' + x + '" cy="' + y + '" r="2.6" fill="#f4ffb0"/>'; }
       return SVG_BG + '<defs>'
         + '<radialGradient id="esM"><stop offset="0" stop-color="#b8ffd6" stop-opacity=".2"/><stop offset="1" stop-color="#b8ffd6" stop-opacity="0"/></radialGradient>'
-        + '<radialGradient id="esF"><stop offset="0" stop-color="#e6ff8a" stop-opacity=".55"/><stop offset="1" stop-color="#e6ff8a" stop-opacity="0"/></radialGradient></defs>'
+        + '<radialGradient id="esF"><stop offset="0" stop-color="#e6ff8a" stop-opacity=".55"/><stop offset="1" stop-color="#e6ff8a" stop-opacity="0"/></radialGradient>'
+        + '<radialGradient id="esG"><stop offset="0" stop-color="#5fe89a" stop-opacity=".35"/><stop offset="1" stop-color="#5fe89a" stop-opacity="0"/></radialGradient></defs>'
         + '<circle cx="1640" cy="-40" r="620" fill="url(#esM)"/>'
         + '<g stroke="#2f9a5e" opacity=".55">' + fern(1920, 1080, 520, -2.5, 9) + fern(1800, 1090, 420, -1.95, 8) + fern(1560, 1100, 300, -1.5, 6)
         + fern(300, 1090, 360, -1.2, 7) + fern(1920, 0, 460, 2.55, 8) + '</g>'
         + '<g stroke="#3fbf78" stroke-width="2.4" opacity=".4"><path d="M1240 0c10 120-26 200-8 320"/><path d="M1340 0c-14 90 20 150 4 250"/><path d="M1232 160l-22 14M1234 230l20 10M1342 120l22 10M1338 190l-20 12"/></g>'
+        + esGems(16, 1560, 1000, 340, 40, 5, 'esG', 53)
         + '<g class="es-drift"><g class="es-fly1">' + flies[0] + '</g></g><g class="es-drift2"><g class="es-fly2">' + flies[1] + '</g></g><g class="es-fly3">' + flies[2] + '</g></svg>';
     },
-    nav: () => SVG_NAV + '<defs><radialGradient id="enF"><stop offset="0" stop-color="#e6ff8a" stop-opacity=".6"/><stop offset="1" stop-color="#e6ff8a" stop-opacity="0"/></radialGradient></defs>'
-      + '<g stroke="#5fe89a" stroke-width="2.4"><path d="M40 160C60 120 76 90 110 40"/>'
-      + '<path d="M52 136q-22-2-30-16M62 116q-22-4-28-20M74 96q-18-8-22-24M88 76q-14-10-14-26M58 130q18 6 32-2M70 110q20 2 32-10M84 88q18-2 26-16M98 64q14-4 18-18" stroke-width="2"/></g>'
-      + '<g class="es-fly1"><circle cx="124" cy="96" r="10" fill="url(#enF)"/><circle cx="124" cy="96" r="2" fill="#f4ffb0"/></g>'
-      + '<g class="es-fly2"><circle cx="30" cy="62" r="9" fill="url(#enF)"/><circle cx="30" cy="62" r="1.8" fill="#f4ffb0"/></g>'
-      + '<g class="es-fly3"><circle cx="136" cy="30" r="8" fill="url(#enF)"/><circle cx="136" cy="30" r="1.6" fill="#f4ffb0"/></g></svg>',
+    nav: () => {
+      const tree = (x, b, h, w) => 'M' + x + ' ' + (b - h) + 'L' + [[.28, .62], [.14, .62], [.4, .3], [.22, .3], [.5, 0]].map(([dx, dy]) => (x + w * dx) + ' ' + (b - h * dy)).join(' ')
+        + ' ' + [[-.5, 0], [-.22, .3], [-.4, .3], [-.14, .62], [-.28, .62]].map(([dx, dy]) => (x + w * dx) + ' ' + (b - h * dy)).join(' ') + 'z';
+      const fern = (x0, y0, len, ang, n) => {
+        let stem = 'M' + x0 + ' ' + y0, leaves = '';
+        for (let i = 1; i <= n; i++) {
+          const t = i / n, a = ang + t * .5, x = x0 + Math.cos(a) * len * t, y = y0 + Math.sin(a) * len * t, sz = 18 * (1 - t * .75);
+          stem += 'L' + x.toFixed(1) + ' ' + y.toFixed(1);
+          for (const sd of [-1, 1]) { const b = a + sd * 1.05, ex = x + Math.cos(b) * sz, ey = y + Math.sin(b) * sz, mx = (x + ex) / 2 + Math.cos(a) * sz * .25, my = (y + ey) / 2 + Math.sin(a) * sz * .25; leaves += 'M' + x.toFixed(1) + ' ' + y.toFixed(1) + 'Q' + mx.toFixed(1) + ' ' + my.toFixed(1) + ' ' + ex.toFixed(1) + ' ' + ey.toFixed(1); }
+        }
+        return '<path d="' + stem + '" stroke-width="2.2"/><path d="' + leaves + '" stroke-width="1.6"/>';
+      };
+      const fly = (c, x, y, r) => '<g class="' + c + '"><circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="url(#neF)"/><circle cx="' + x + '" cy="' + y + '" r="1.7" fill="#f4ffb0"/></g>';
+      return navScene('ne', '<linearGradient id="neS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f3d28"/><stop offset=".55" stop-color="#072217"/><stop offset="1" stop-color="#030e08"/></linearGradient>'
+        + '<radialGradient id="neM"><stop offset="0" stop-color="#d9ffe8" stop-opacity=".4"/><stop offset="1" stop-color="#d9ffe8" stop-opacity="0"/></radialGradient>'
+        + '<radialGradient id="neF"><stop offset="0" stop-color="#e6ff8a" stop-opacity=".7"/><stop offset="1" stop-color="#e6ff8a" stop-opacity="0"/></radialGradient>'
+        + '<radialGradient id="neG"><stop offset="0" stop-color="#7cf0ac" stop-opacity=".45"/><stop offset="1" stop-color="#7cf0ac" stop-opacity="0"/></radialGradient>'
+        + '<radialGradient id="neN"><stop offset="0" stop-color="#cfffe4" stop-opacity=".16"/><stop offset="1" stop-color="#cfffe4" stop-opacity="0"/></radialGradient>',
+        '<rect width="160" height="170" fill="url(#neS)"/>' + softStars(10, 160, 170, 47, 70)
+        + '<circle cx="110" cy="42" r="36" fill="url(#neM)"/><circle cx="110" cy="42" r="11" fill="#effff4" fill-opacity=".95"/>'
+        + '<path fill="#0e3d28" d="' + tree(24, 128, 46, 24) + tree(46, 126, 56, 26) + tree(70, 128, 40, 22) + tree(96, 126, 52, 26) + tree(122, 128, 44, 24) + tree(144, 126, 54, 26) + '"/>'
+        + '<ellipse cx="80" cy="128" rx="78" ry="12" fill="url(#neN)"/>'
+        + '<path d="M0 170v-36c30-6 60 2 90-2s50-4 70 0v38z" fill="#04150b"/>'
+        + '<path fill="#031009" d="' + tree(6, 156, 100, 40) + tree(156, 158, 92, 38) + '"/>'
+        + '<g stroke="#5fe89a" stroke-opacity=".9">' + fern(50, 166, 62, -1.35, 7) + fern(112, 168, 44, -1.95, 6) + '</g>'
+        + esGems(5, 0, 0, 0, 0, 3, 'neG', 7, [[26, 50], [118, 70], [66, 36], [88, 92], [40, 100]])
+        + fly('es-fly1', 124, 92, 9) + fly('es-fly2', 36, 70, 8) + fly('es-fly3', 84, 104, 7) + fly('es-fly2', 140, 66, 6) + fly('es-fly1', 62, 52, 6));
+    },
   },
 
   // Onix Âmbar: pôr do sol retrô. Sol listrado no horizonte, montanhas de linha e a grade neon em perspectiva.
@@ -2322,12 +2399,25 @@ const THEME_ART = {
         + '<path d="' + grid + '" stroke="#ff5ea8" stroke-width="2" opacity=".32"/>'
         + '<path d="M0 ' + hz + 'H1920" stroke="#ffb347" stroke-width="2.4" opacity=".5"/></svg>';
     },
-    nav: () => SVG_NAV + '<defs><linearGradient id="anS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#ff4f9a"/></linearGradient>'
-      + '<mask id="anM"><rect width="160" height="104" fill="#fff"/><g fill="#000"><rect y="80" width="160" height="3"/><rect y="88" width="160" height="4"/><rect y="97" width="160" height="5"/></g></mask></defs>'
-      + '<circle cx="80" cy="96" r="44" fill="url(#anS)" mask="url(#anM)"/>'
-      + '<path d="M0 104l26-18 18 10 22-20 20 16 18-12 24 20 32-16V104z" fill="#1c0828" stroke="#ff5ea8" stroke-width="1.6"/>'
-      + '<path d="M0 104H160M0 116H160M0 134H160M0 160H160M80 104L-20 170M80 104L30 170M80 104L80 170M80 104L130 170M80 104L180 170" stroke="#ff5ea8" stroke-width="1.6" opacity=".6"/>'
-      + '<circle cx="26" cy="30" r="1.6" fill="#fff"/><circle cx="140" cy="22" r="2" fill="#fff"/><circle cx="110" cy="44" r="1.2" fill="#fff"/></svg>',
+    nav: () => {
+      let grid = '', stripes = '';
+      for (let i = 1; i <= 6; i++) grid += 'M0 ' + (104 + Math.pow(i / 6, 2) * 62).toFixed(1) + 'H160';
+      for (let k = -7; k <= 7; k++) grid += 'M80 104L' + (80 + k * 26) + ' 170';
+      for (let i = 0; i < 5; i++) stripes += '<rect y="' + (80 + i * 5 + i * i * .6).toFixed(1) + '" width="160" height="' + (1 + i * .9).toFixed(1) + '"/>';
+      return navScene('nm', '<linearGradient id="nmK" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a0630"/><stop offset=".45" stop-color="#4a0f4a"/><stop offset=".85" stop-color="#b8306a"/><stop offset="1" stop-color="#ff7a4a"/></linearGradient>'
+        + '<linearGradient id="nmS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset=".55" stop-color="#ff8a3d"/><stop offset="1" stop-color="#ff4f9a"/></linearGradient>'
+        + '<radialGradient id="nmG"><stop offset="0" stop-color="#ff9a4a" stop-opacity=".55"/><stop offset="1" stop-color="#ff4f9a" stop-opacity="0"/></radialGradient>'
+        + '<linearGradient id="nmF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e0b30"/><stop offset="1" stop-color="#0c0310"/></linearGradient>'
+        + '<mask id="nmM"><rect width="160" height="104" fill="#fff"/><g fill="#000">' + stripes + '</g></mask>',
+        '<rect width="160" height="104" fill="url(#nmK)"/>' + softStars(14, 160, 60, 41, 56, 'am-tw')
+        + '<circle class="am-sun" cx="80" cy="98" r="62" fill="url(#nmG)"/><circle cx="80" cy="98" r="36" fill="url(#nmS)" mask="url(#nmM)"/>'
+        + '<path d="M0 104l18-14 14 8 22-22 18 16 14-8 20 16 22-20 16 14 16-8V104z" fill="#3a0f40" fill-opacity=".85"/>'
+        + '<path d="M0 104l28-20 18 12 20-14 20 22zM98 104l26-24 16 10 20-8V104z" fill="#1c0828" stroke="#ff5ea8" stroke-width="1.3"/>'
+        + '<g stroke="#12041a" stroke-width="2.4"><path d="M30 104c-2-14 2-26 8-36" stroke-width="3"/><path d="M38 68c-8-4-16-2-22 4M38 68c-6-8-14-10-22-8M38 68c2-8 10-12 18-10M38 68c8-2 16 2 20 10M38 68c0 6-4 12-8 16"/></g>'
+        + '<rect y="104" width="160" height="66" fill="url(#nmF)"/>'
+        + '<path d="' + grid + '" stroke="#ff5ea8" stroke-width="1.2" stroke-opacity=".6"/>'
+        + '<path d="M0 104H160" stroke="#ffb347" stroke-width="2"/>');
+    },
   },
 
   // Onix Quartzo Rosa: jardim japonês. Lua cheia, o monte ao fundo, galho de cerejeira em flor e pétalas caindo.
@@ -2355,11 +2445,24 @@ const THEME_ART = {
         + '<g fill="#ffb7d0" opacity=".85">' + flowers + '</g><g fill="#ff7fb0">' + centers + '</g>'
         + '<g fill="#ffc2d8" opacity=".8"><g class="qz-fall1">' + fall(4) + '</g><g class="qz-fall2">' + fall(4) + '</g><g class="qz-fall3">' + fall(3) + '</g></g></svg>';
     },
-    nav: () => SVG_NAV + '<circle cx="104" cy="50" r="30" fill="#2a1222" stroke="#ffe0ec" stroke-width="2" stroke-opacity=".6"/>'
-      + '<path d="M0 150C40 140 60 120 92 112S140 96 160 80" stroke="#6a3a50" stroke-width="5"/><path d="M64 126c-6-16-16-26-30-30" stroke="#6a3a50" stroke-width="3"/>'
-      + '<g fill="#ffb7d0">' + [[38, 96], [92, 110], [132, 92], [56, 132]].map(([x, y]) => [0, 1, 2, 3, 4].map(i => { const a = i * 1.2566 - 1.57; return '<circle cx="' + (x + Math.cos(a) * 6).toFixed(1) + '" cy="' + (y + Math.sin(a) * 6).toFixed(1) + '" r="5"/>'; }).join('')).join('') + '</g>'
-      + '<g fill="#ff7fb0"><circle cx="38" cy="96" r="2"/><circle cx="92" cy="110" r="2"/><circle cx="132" cy="92" r="2"/><circle cx="56" cy="132" r="2"/></g>'
-      + '<path d="M24 40c4-6 12-5 11 3-1 6-8 7-11-3z" fill="#ffc2d8" opacity=".8"/><path d="M140 140c4-6 12-5 11 3-1 6-8 7-11-3z" fill="#ffc2d8" opacity=".7"/></svg>',
+    nav: () => {
+      const flower = (x, y, r) => { let s = ''; for (let i = 0; i < 5; i++) { const a = i * 1.2566 - 1.57; s += '<circle cx="' + (x + Math.cos(a) * r).toFixed(1) + '" cy="' + (y + Math.sin(a) * r).toFixed(1) + '" r="' + (r * .8).toFixed(1) + '"/>'; } return s; };
+      const fl = [[64, 31, 4.6], [78, 35, 3.8], [96, 28, 4.8], [110, 46, 4.2], [126, 22, 4.8], [140, 30, 3.8], [86, 50, 3.6], [150, 20, 3.4], [52, 38, 3.4]];
+      const petal = (x, y) => '<g transform="translate(' + x + ' ' + y + ')"><path class="qz-sway" d="M0 0c4-6 12-5 11 3-1 6-8 7-11-3z"/></g>';
+      return navScene('nq', '<linearGradient id="nqS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a2040"/><stop offset=".6" stop-color="#2a1226"/><stop offset="1" stop-color="#160a13"/></linearGradient>'
+        + '<radialGradient id="nqM"><stop offset="0" stop-color="#fff4f8"/><stop offset="1" stop-color="#f6b8cf"/></radialGradient>'
+        + '<radialGradient id="nqH"><stop offset="0" stop-color="#ffb7d0" stop-opacity=".38"/><stop offset="1" stop-color="#ffb7d0" stop-opacity="0"/></radialGradient>',
+        '<rect width="160" height="170" fill="url(#nqS)"/>' + softStars(10, 160, 170, 61, 90)
+        + '<circle cx="104" cy="70" r="42" fill="url(#nqH)"/><circle cx="104" cy="70" r="18" fill="url(#nqM)" fill-opacity=".92"/>'
+        + '<path d="M8 136L62 98c8-6 16-6 24 0l62 38z" fill="#2c1426" stroke="#ffa8c8" stroke-width="1.2" stroke-opacity=".35"/>'
+        + '<path d="M62 98c8-6 16-6 24 0l-6 5-5-4-6 5-4-3z" fill="#f3d7e4" fill-opacity=".8"/>'
+        + '<rect y="134" width="160" height="36" fill="#1a0b16"/>'
+        + '<path d="M30 142h44M58 150h60M88 158h40" stroke="#ffa8c8" stroke-width="1.2" stroke-opacity=".35" stroke-dasharray="2 6"/><path d="M96 141h16M99 147h10" stroke="#ffe0ec" stroke-width="1.4" stroke-opacity=".5"/>'
+        + '<g stroke="#c8485a" stroke-opacity=".9"><path d="M20 136v-26M38 136v-26" stroke-width="3"/><path d="M12 108q17-5 34 0" stroke-width="3.4"/><path d="M16 116h26" stroke-width="2"/></g>'
+        + '<g stroke="#1e0a15"><path d="M164 24C142 30 128 20 108 24S80 36 46 34" stroke-width="4"/><path d="M120 24c-4 10-2 16-8 22M88 32c2 8 0 12-2 18" stroke-width="2.2"/></g>'
+        + '<g fill="#ffb7d0">' + fl.map(f => flower(...f)).join('') + '</g><g fill="#ff7fb0">' + fl.map(([x, y, r]) => '<circle cx="' + x + '" cy="' + y + '" r="' + (r * .4).toFixed(1) + '"/>').join('') + '</g>'
+        + '<g fill="#ffc2d8" fill-opacity=".85">' + petal(40, 62) + petal(58, 84) + petal(132, 96) + petal(26, 92) + '</g>');
+    },
   },
 };
 
@@ -3136,6 +3239,7 @@ const ES = Object.freeze({
   "Não deu para abrir o Cobalt GameHub": "No se pudo abrir Cobalt GameHub",
   // Onix 17.1.0: mais 4 temas
   "*Mais 4 temas:* em *Configurações → Aparência → Tema*. *Onix Safira* é o fundo do mar, com raios de luz, bolhas subindo e águas-vivas. *Onix Esmeralda* é uma floresta à noite, com samambaias e vaga-lumes piscando. *Onix Âmbar* é um pôr do sol retrô, com o sol listrado e a grade neon. *Onix Quartzo Rosa* é um jardim japonês, com lua cheia, o monte ao fundo e pétalas de cerejeira caindo. Cada um tem o desenho do menu e a tela de descanso próprios.": "*4 temas más:* en *Configuración → Apariencia → Tema*. *Onix Zafiro* es el fondo del mar, con rayos de luz, burbujas que suben y medusas. *Onix Esmeralda* es un bosque de noche, con helechos y luciérnagas que parpadean. *Onix Ámbar* es un atardecer retro, con el sol a rayas y la cuadrícula neón. *Onix Cuarzo Rosa* es un jardín japonés, con luna llena, el monte al fondo y pétalos de cerezo que caen. Cada uno tiene su dibujo del menú y su protector de pantalla.",
+  "*Desenhos do menu refeitos:* o desenho entre *Jogos* e *Entradas* ficou maior e mais caprichado nos temas Aurora, Safira, Esmeralda, Âmbar e Quartzo Rosa, e se mistura com o fundo do menu. No *Onix Esmeralda*, pequenas gemas de esmeralda em pixel art piscam no fundo e no menu.": "*Dibujos del menú rehechos:* el dibujo entre *Juegos* y *Entradas* es más grande y detallado en los temas Aurora, Zafiro, Esmeralda, Ámbar y Cuarzo Rosa, y se funde con el fondo del menú. En *Onix Esmeralda*, pequeñas gemas de esmeralda en pixel art parpadean en el fondo y en el menú.",
   // Onix 17.0.0: Aparência
   "*Temas novos:* em *Configurações → Aparência → Tema*, o Onix ganhou 4 temas que mudam o visual inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. *Onix Cobalt* é pixel art, inspirado no Cobalt GameHub, com nave, estrelas e planetas de pixel. *Onix Aurora* tem a aurora boreal se movendo sobre montanhas e pinheiros. *Onix Rubi Cinema* é uma sala de cinema, com cortina, lâmpadas e o feixe do projetor. *Onix White* é claro sem cansar a vista. O Onix Escuro continua como o padrão, e nada muda de lugar na tela.": "*Temas nuevos:* en *Configuración → Apariencia → Tema*, Onix ganó 4 temas que cambian todo el aspecto: el vidrio, los colores, el foco, los dibujos y el protector de pantalla. *Onix Cobalt* es pixel art, inspirado en Cobalt GameHub, con nave, estrellas y planetas de píxeles. *Onix Aurora* tiene la aurora boreal moviéndose sobre montañas y pinos. *Onix Rubí Cine* es una sala de cine, con telón, bombillas y el haz del proyector. *Onix White* es claro sin cansar la vista. Onix Oscuro sigue siendo el predeterminado y nada cambia de lugar en la pantalla.",
   "*10 fontes novas:* Bodoni Moda (o estilo da Vogue), Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand e Press Start 2P. A fonte escolhida muda todas as palavras do Onix, do relógio aos menus. Todas vêm dentro do app e funcionam sem internet.": "*10 fuentes nuevas:* Bodoni Moda (el estilo de Vogue), Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand y Press Start 2P. La fuente elegida cambia todas las palabras de Onix, del reloj a los menús. Todas vienen dentro de la app y funcionan sin internet.",
@@ -5454,6 +5558,7 @@ const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
   { version: '17.1.0', date: 'novembro de 2026', items: [
     ['new', '*Mais 4 temas:* em *Configurações → Aparência → Tema*. *Onix Safira* é o fundo do mar, com raios de luz, bolhas subindo e águas-vivas. *Onix Esmeralda* é uma floresta à noite, com samambaias e vaga-lumes piscando. *Onix Âmbar* é um pôr do sol retrô, com o sol listrado e a grade neon. *Onix Quartzo Rosa* é um jardim japonês, com lua cheia, o monte ao fundo e pétalas de cerejeira caindo. Cada um tem o desenho do menu e a tela de descanso próprios.'],
+    ['new', '*Desenhos do menu refeitos:* o desenho entre *Jogos* e *Entradas* ficou maior e mais caprichado nos temas Aurora, Safira, Esmeralda, Âmbar e Quartzo Rosa, e se mistura com o fundo do menu. No *Onix Esmeralda*, pequenas gemas de esmeralda em pixel art piscam no fundo e no menu.'],
   ] },
   { version: '17.0.0', date: 'novembro de 2026', items: [
     ['new', '*Temas novos:* em *Configurações → Aparência → Tema*, o Onix ganhou 4 temas que mudam o visual inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. *Onix Cobalt* é pixel art, inspirado no Cobalt GameHub, com nave, estrelas e planetas de pixel. *Onix Aurora* tem a aurora boreal se movendo sobre montanhas e pinheiros. *Onix Rubi Cinema* é uma sala de cinema, com cortina, lâmpadas e o feixe do projetor. *Onix White* é claro sem cansar a vista. O Onix Escuro continua como o padrão, e nada muda de lugar na tela.'],
