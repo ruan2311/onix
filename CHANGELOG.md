@@ -2,6 +2,12 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 17.1.1 (novembro de 2026)
+
+- **Senha nos perfis (opcional):** em **Gerenciar perfis → Editar perfil → Senha do perfil**, cada pessoa pode pôr uma senha de 4 números. Ao ligar a TV e ao entrar no perfil, o Onix pede a senha. Quem não quiser senha não precisa fazer nada.
+- **Modo Infantil de verdade:** a criança não consegue mais sair do perfil infantil pela tela **Quem está assistindo?**. Editar um perfil infantil ou criar um perfil novo pede o PIN dos pais.
+- **Senha e PIN pelos números do controle:** os botões de número do controle da TV preenchem a senha direto, e o 4º número já confere sozinho. No celular, a senha tem um teclado de números do Onix, sem abrir o teclado do celular.
+
 ## 17.1.0 (novembro de 2026)
 
 - **Mais 4 temas:** em **Configurações → Aparência → Tema**. **Onix Safira** é o fundo do mar, com raios de luz, bolhas subindo e águas-vivas. **Onix Esmeralda** é uma floresta à noite, com samambaias e vaga-lumes piscando. **Onix Âmbar** é um pôr do sol retrô, com o sol listrado e a grade neon. **Onix Quartzo Rosa** é um jardim japonês, com lua cheia, o monte ao fundo e pétalas de cerejeira caindo. Cada um tem o desenho do menu e a tela de descanso próprios.

@@ -62,7 +62,7 @@ As versões anteriores estão no [CHANGELOG.md](CHANGELOG.md) e na [página de R
 | **Notícias dos games** | Adrenaline e Eurogamer.pt, a cada 3 horas. **OK** abre o resumo; um QR code leva à matéria no celular |
 | **Entradas** | TV (antena e cabo) e HDMI direto pelo launcher, com banners editáveis (PlayStation 5, Xbox, Switch, Computador…) |
 | **Tela de descanso** | Planetas e asteroides depois de 10 minutos parado, com o relógio mudando de lugar para não marcar telas OLED |
-| **Perfis e Modo Infantil** | Um perfil por pessoa; o infantil só mostra os apps liberados, tem PIN para sair e limite de tempo por dia |
+| **Perfis e Modo Infantil** | Um perfil por pessoa, com senha opcional de 4 números; o infantil só mostra os apps liberados, tem PIN para sair e limite de tempo por dia |
 | **Aparência e sons** | 9 temas, 10 fontes, 8 relógios, posição do menu (lateral, em cima ou embaixo) e 5 sons de navegação |
 | **Outros** | **Desligar TV**, chip de conexão que testa a internet de verdade, clima opcional, atualizações pelo próprio app, português e español |
 

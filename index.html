@@ -1840,6 +1840,7 @@ html.th-cobalt #saver canvas{image-rendering:pixelated;image-rendering:crisp-edg
       <button class="f row-opt" id="peNameBtn" tabindex="-1"><span class="row-val" id="peNameVal"></span><span class="opt-desc">OK para digitar</span></button>
       <span class="lbl">Avatar</span>
       <div class="av-grid" id="peAvs"></div>
+      <button class="f row-opt" id="pePass" tabindex="-1"><span class="opt-text"><span class="opt-name">Senha do perfil</span><span class="opt-desc">Opcional: 4 números pedidos ao entrar no perfil</span></span><span class="row-val" id="pePassVal"></span></button>
       <button class="f row-opt" id="peKids" tabindex="-1"><span class="opt-text"><span class="opt-name">Perfil infantil</span><span class="opt-desc">Só os apps liberados, com PIN para sair</span></span><span class="switch" id="peKidsSw"></span></button>
       <div class="kids-opts" id="peKidsOpts">
         <button class="f row-opt" id="pePin" tabindex="-1"><span class="opt-name">PIN para sair</span><span class="row-val" id="pePinVal"></span></button>
@@ -2017,7 +2018,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '17.1.0'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '17.1.1'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -3033,6 +3034,18 @@ const ES = Object.freeze({
   "PIN para sair do Modo Infantil": "PIN para salir del Modo Infantil",
   "Escolha 4 números. Só quem souber o PIN tira a criança do perfil infantil.": "Elige 4 números. Solo quien sepa el PIN puede sacar al niño del perfil infantil.",
   "PIN salvo": "PIN guardado",
+  "Senha do perfil": "Contraseña del perfil",
+  "Opcional: 4 números pedidos ao entrar no perfil": "Opcional: 4 números que se piden al entrar al perfil",
+  "Definir senha": "Definir contraseña",
+  "Ligada · OK tira": "Activada · OK la quita",
+  "OK de novo para tirar": "OK otra vez para quitarla",
+  "Escolha 4 números. O Onix vai pedir a senha ao entrar neste perfil.": "Elige 4 números. Onix pedirá la contraseña al entrar a este perfil.",
+  "Senha definida. Salve o perfil para valer.": "Contraseña definida. Guarda el perfil para que valga.",
+  "Senha de {0}": "Contraseña de {0}",
+  "Digite a senha de 4 números deste perfil": "Escribe la contraseña de 4 números de este perfil",
+  "Senha incorreta. Tente de novo.": "Contraseña incorrecta. Inténtalo de nuevo.",
+  "PIN do Modo Infantil": "PIN del Modo Infantil",
+  "Peça para um adulto digitar o PIN": "Pide a un adulto que escriba el PIN",
   "Nome do perfil": "Nombre del perfil",
   "Dê um nome ao perfil antes de salvar": "Ponle un nombre al perfil antes de guardar",
   "Crie o PIN para sair do Modo Infantil": "Crea el PIN para salir del Modo Infantil",
@@ -3237,6 +3250,10 @@ const ES = Object.freeze({
   "O Cobalt GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "Cobalt GameHub todavía no fue publicado. Llega en una próxima actualización.",
   "Não deu para baixar o Cobalt GameHub. Confira a internet e tente de novo.": "No se pudo descargar Cobalt GameHub. Revisa internet e inténtalo de nuevo.",
   "Não deu para abrir o Cobalt GameHub": "No se pudo abrir Cobalt GameHub",
+  // Onix 17.1.1: senha nos perfis
+  "*Senha nos perfis (opcional):* em *Gerenciar perfis → Editar perfil → Senha do perfil*, cada pessoa pode pôr uma senha de 4 números. Ao ligar a TV e ao entrar no perfil, o Onix pede a senha. Quem não quiser senha não precisa fazer nada.": "*Contraseña en los perfiles (opcional):* en *Administrar perfiles → Editar perfil → Contraseña del perfil*, cada persona puede poner una contraseña de 4 números. Al encender la TV y al entrar al perfil, Onix pide la contraseña. Quien no quiera contraseña no tiene que hacer nada.",
+  "*Modo Infantil de verdade:* a criança não consegue mais sair do perfil infantil pela tela *Quem está assistindo?*. Editar um perfil infantil ou criar um perfil novo pede o PIN dos pais.": "*Modo Infantil de verdad:* el niño ya no puede salir del perfil infantil desde la pantalla *¿Quién está viendo?*. Editar un perfil infantil o crear un perfil nuevo pide el PIN de los padres.",
+  "*Senha e PIN pelos números do controle:* os botões de número do controle da TV preenchem a senha direto, e o 4º número já confere sozinho. No celular, a senha tem um teclado de números do Onix, sem abrir o teclado do celular.": "*Contraseña y PIN con los números del control:* los botones de número del control de la TV llenan la contraseña directo, y el 4º número ya la comprueba solo. En el celular, la contraseña tiene un teclado de números de Onix, sin abrir el teclado del celular.",
   // Onix 17.1.0: mais 4 temas
   "*Mais 4 temas:* em *Configurações → Aparência → Tema*. *Onix Safira* é o fundo do mar, com raios de luz, bolhas subindo e águas-vivas. *Onix Esmeralda* é uma floresta à noite, com samambaias e vaga-lumes piscando. *Onix Âmbar* é um pôr do sol retrô, com o sol listrado e a grade neon. *Onix Quartzo Rosa* é um jardim japonês, com lua cheia, o monte ao fundo e pétalas de cerejeira caindo. Cada um tem o desenho do menu e a tela de descanso próprios.": "*4 temas más:* en *Configuración → Apariencia → Tema*. *Onix Zafiro* es el fondo del mar, con rayos de luz, burbujas que suben y medusas. *Onix Esmeralda* es un bosque de noche, con helechos y luciérnagas que parpadean. *Onix Ámbar* es un atardecer retro, con el sol a rayas y la cuadrícula neón. *Onix Cuarzo Rosa* es un jardín japonés, con luna llena, el monte al fondo y pétalos de cerezo que caen. Cada uno tiene su dibujo del menú y su protector de pantalla.",
   "*Desenhos do menu refeitos:* o desenho entre *Jogos* e *Entradas* ficou maior e mais caprichado nos temas Aurora, Safira, Esmeralda, Âmbar e Quartzo Rosa, e se mistura com o fundo do menu. No *Onix Esmeralda*, pequenas gemas de esmeralda em pixel art piscam no fundo e no menu.": "*Dibujos del menú rehechos:* el dibujo entre *Juegos* y *Entradas* es más grande y detallado en los temas Aurora, Zafiro, Esmeralda, Ámbar y Cuarzo Rosa, y se funde con el fondo del menú. En *Onix Esmeralda*, pequeñas gemas de esmeralda en pixel art parpadean en el fondo y en el menú.",
@@ -3651,6 +3668,7 @@ function cleanProfile(o) {
     av: Number.isInteger(o.av) && o.av >= 0 && o.av < AVATARS_N ? o.av : 0,
     photo: typeof o.photo === 'string' && o.photo.length <= MAX_PHOTO && PHOTO_RE.test(o.photo) ? o.photo : null,
     kids: o.kids === true,
+    pin: typeof o.pin === 'string' && /^\d{4}$/.test(o.pin) ? o.pin : '',   // senha do perfil (opcional, 4 números)
     allow: Array.isArray(o.allow) ? o.allow.filter(p => typeof p === 'string' && p.length <= 150 && PKG_RE.test(p)).slice(0, 60) : [],
     limit: KIDS_LIMITS.indexOf(o.limit) >= 0 ? o.limit : 0,
     weather: o.weather === true, city: cleanCity(o.city),
@@ -5556,6 +5574,11 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '17.1.1', date: 'novembro de 2026', items: [
+    ['new', '*Senha nos perfis (opcional):* em *Gerenciar perfis → Editar perfil → Senha do perfil*, cada pessoa pode pôr uma senha de 4 números. Ao ligar a TV e ao entrar no perfil, o Onix pede a senha. Quem não quiser senha não precisa fazer nada.'],
+    ['new', '*Modo Infantil de verdade:* a criança não consegue mais sair do perfil infantil pela tela *Quem está assistindo?*. Editar um perfil infantil ou criar um perfil novo pede o PIN dos pais.'],
+    ['new', '*Senha e PIN pelos números do controle:* os botões de número do controle da TV preenchem a senha direto, e o 4º número já confere sozinho. No celular, a senha tem um teclado de números do Onix, sem abrir o teclado do celular.'],
+  ] },
   { version: '17.1.0', date: 'novembro de 2026', items: [
     ['new', '*Mais 4 temas:* em *Configurações → Aparência → Tema*. *Onix Safira* é o fundo do mar, com raios de luz, bolhas subindo e águas-vivas. *Onix Esmeralda* é uma floresta à noite, com samambaias e vaga-lumes piscando. *Onix Âmbar* é um pôr do sol retrô, com o sol listrado e a grade neon. *Onix Quartzo Rosa* é um jardim japonês, com lua cheia, o monte ao fundo e pétalas de cerejeira caindo. Cada um tem o desenho do menu e a tela de descanso próprios.'],
     ['new', '*Desenhos do menu refeitos:* o desenho entre *Jogos* e *Entradas* ficou maior e mais caprichado nos temas Aurora, Safira, Esmeralda, Âmbar e Quartzo Rosa, e se mistura com o fundo do menu. No *Onix Esmeralda*, pequenas gemas de esmeralda em pixel art piscam no fundo e no menu.'],
@@ -6234,12 +6257,20 @@ function paneKey(e) {
     if (!e.repeat && current && p.el.contains(current)) { sfx('select'); activate(current); }
     return;
   }
-  if (e.key === 'Backspace' && p.erase) { e.preventDefault(); p.erase(); return; }
+  if ((e.key === 'Backspace' || e.keyCode === 8) && p.erase) { e.preventDefault(); p.erase(); return; }
   if (e.key === 'Escape' || e.key === 'Backspace' || e.key === 'GoBack' || e.key === 'BrowserBack' || e.keyCode === 4) { e.preventDefault(); back(); return; }
-  if (p.digit && /^[0-9]$/.test(e.key)) { e.preventDefault(); p.digit(e.key); return; }
+  const dg = keyDigit(e);
+  if (p.digit && dg) { e.preventDefault(); p.digit(dg); return; }
   if (p.type && e.key && e.key.length === 1 && !e.ctrlKey && !e.metaKey && !e.altKey) { e.preventDefault(); p.type(e.key); }
 }
 function btnAct(id, fn) { $('#' + id)._act = fn; }
+// Número digitado no controle: o caractere ou, quando o controle não o manda, o código da tecla
+// (fileira de números 48–57 e teclado numérico 96–105, como nos controles com números da TV).
+function keyDigit(e) {
+  if (/^[0-9]$/.test(e.key)) return e.key;
+  const c = e.keyCode;
+  return c >= 48 && c <= 57 ? String(c - 48) : c >= 96 && c <= 105 ? String(c - 96) : '';
+}
 
 /* ---------------- Avatares ----------------
    Dez rostos de frente no traço do gatinho do Onix (miolo escuro, contorno branco, bochechas rosa)
@@ -6363,11 +6394,11 @@ function kbResults(list, msg) {
 }
 
 /* ---------------- PIN (sair do Modo Infantil) ----------------
-   mode 'check' confere o PIN salvo; 'set' pede duas vezes o PIN novo. */
+   mode 'check' confere o PIN salvo (ou a senha do perfil, em expect); 'set' pede duas vezes o PIN novo. */
 let pin = null;
 function openPin(o) {
-  pin = Object.assign({ mode: 'check', typed: '', first: '' }, o);
-  $('#pinTitle').textContent = t(pin.title);
+  pin = Object.assign({ mode: 'check', typed: '', first: '', rem: '', n: 0 }, o);
+  $('#pinTitle').textContent = t(pin.title, ...(pin.args || []));
   $('#pinSub').textContent = t(pin.sub);
   $('#pinMsg').textContent = '';
   const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'del', '0', 'cancel'].map(k => {
@@ -6387,6 +6418,16 @@ function pinWrong(msg) {
   dots.classList.remove('err'); void dots.offsetWidth; dots.classList.add('err');
   $('#pinMsg').textContent = t(msg);
   pin.typed = ''; pinDots();
+  pinRemoteReset();
+}
+// Campo do celular: limpa a cada tentativa (pinRemoteReset) e, a cada mudança, apaga ou digita a diferença.
+function pinRemoteReset() { pin.rem = ''; pin.n++; pushRemote(); }
+function pinRemote(v) {
+  const d = v.replace(/\D/g, '').slice(0, 4);
+  let c = 0; while (c < d.length && c < pin.rem.length && d[c] === pin.rem[c]) c++;
+  for (let i = c; i < pin.rem.length; i++) pinErase();
+  pin.rem = d;
+  for (const k of d.slice(c)) pinDigit(k);
 }
 function pinDigit(d) {
   if (pin.typed.length >= 4) return;
@@ -6396,9 +6437,9 @@ function pinDigit(d) {
   setTimeout(() => {
     if (p !== pin) return;
     if (p.mode === 'check') {
-      if (typed === kidsPin) { closePane('pinPad', true); p.onOk(); } else pinWrong('PIN incorreto. Tente de novo.');
+      if (typed === (p.expect || kidsPin)) { closePane('pinPad', true); p.onOk(); } else pinWrong(p.expect ? 'Senha incorreta. Tente de novo.' : 'PIN incorreto. Tente de novo.');
     } else if (!p.first) {
-      p.first = typed; p.typed = ''; pinDots();
+      p.first = typed; p.typed = ''; pinDots(); pinRemoteReset();
       $('#pinSub').textContent = t('Digite o mesmo PIN de novo para confirmar');
     } else if (typed === p.first) { closePane('pinPad', true); p.onOk(typed); }
     else { p.first = ''; pinWrong('Os dois PINs não batem. Comece de novo.'); $('#pinSub').textContent = t(p.sub); }
@@ -6438,13 +6479,13 @@ function openProfiles(manage, focusId) {
     if (manageProfiles) av.append(h('span', { class: 'pf-pen' }, svgFrom(PEN_SVG)));
     const b = h('button', { class: 'f pf', tabindex: '-1', 'aria-label': pr.name, 'data-id': pr.id }, av, h('span', { class: 'pf-name', text: pr.name }),
       pr.kids ? h('span', { class: 'kids-badge', text: 'Infantil' }) : null);
-    b._act = () => manageProfiles ? openProfileEditor(pr) : enterProfile(pr);
+    b._act = () => manageProfiles ? unlockProfile(pr, () => openProfileEditor(pr)) : pickProfile(pr);
     return b;
   });
   if (profiles.length < MAX_PROFILES) {
     const add = h('button', { class: 'f pf pf-add', tabindex: '-1', 'aria-label': 'Adicionar perfil' },
       h('span', { class: 'av' }, svgFrom(PLUS_SVG)), h('span', { class: 'pf-name', text: 'Adicionar perfil' }));
-    add._act = () => openProfileEditor(null);
+    add._act = () => unlockProfile(null, () => openProfileEditor(null));
     items.push(add);
   }
   $('#pfList').replaceChildren(...items);
@@ -6458,6 +6499,33 @@ function profilesBack() {
   if (activeProfile() && !kidsTimeUp()) closePane('profiles');
 }
 $('#pfManage')._act = () => openProfiles(!manageProfiles);
+/* Senha do perfil: quem tem senha só entra (e só é editado) digitando os 4 números. O perfil que já
+   está aberto não pede de novo. Perfil infantil (e perfil novo, quando há um infantil) pede o PIN do
+   Modo Infantil, a não ser que um adulto já esteja usando o Onix: assim a criança não se libera sozinha. */
+const adultIn = () => !!activeProfile() && !isKids();
+function unlockProfile(pr, then) {
+  if (pr && pr.pin && pr.id !== profileId) {
+    openPin({ title: 'Senha de {0}', args: [pr.name], sub: 'Digite a senha de 4 números deste perfil', expect: pr.pin, onOk: then });
+  } else if (kidsPin && !adultIn() && (pr ? pr.kids : profiles.some(x => x.kids))) {
+    openPin({ title: 'PIN do Modo Infantil', sub: 'Peça para um adulto digitar o PIN', onOk: then });
+  } else then();
+}
+// Entrar: só a senha do próprio perfil (o perfil infantil sem senha entra direto, como antes).
+function pickProfile(pr) {
+  if (pr.pin && pr.id !== profileId) openPin({ title: 'Senha de {0}', args: [pr.name], sub: 'Digite a senha de 4 números deste perfil', expect: pr.pin, onOk: () => enterProfile(pr) });
+  else enterProfile(pr);
+}
+/* TV desligada (Android avisa em Launcher.onScreenOff/onScreenOn): se o perfil aberto tem senha, ao
+   ligar de novo aparece "Quem está assistindo?" e a senha é pedida outra vez. */
+function lockProfile() {
+  const pr = activeProfile();
+  if (!pr || !pr.pin) return;
+  kidsFlush();
+  profileId = null;
+  closeAllPanes();
+  renderMe();
+  openProfiles(false);
+}
 
 let draft = null;
 function defaultKidsApps() {
@@ -6466,9 +6534,9 @@ function defaultKidsApps() {
 function openProfileEditor(pr) {
   const used = new Set(profiles.map(x => x.av));
   let free = 0; while (free < AVATARS_N - 1 && used.has(free)) free++;
-  draft = pr ? { id: pr.id, name: pr.name, av: pr.av, photo: pr.photo, kids: pr.kids, allow: pr.allow.slice(), limit: pr.limit, isNew: false }
-    : { id: newProfileId(), name: '', av: free, photo: null, kids: false, allow: defaultKidsApps(), limit: 60, isNew: true };
-  disarmDelete();
+  draft = pr ? { id: pr.id, name: pr.name, av: pr.av, photo: pr.photo, kids: pr.kids, allow: pr.allow.slice(), limit: pr.limit, pin: pr.pin, isNew: false }
+    : { id: newProfileId(), name: '', av: free, photo: null, kids: false, allow: defaultKidsApps(), limit: 60, pin: '', isNew: true };
+  disarmDelete(); disarmUnpass();
   $('#peAvs').replaceChildren();
   openPane('profileEdit');
   renderDraft();
@@ -6501,6 +6569,7 @@ function renderDraft() {
     const ph = $('#pePhoto');
     if (ph) ph.classList.toggle('sel', !!draft.photo);
   }
+  if (!unpassArmed) $('#pePassVal').textContent = t(draft.pin ? 'Ligada · OK tira' : 'Definir senha');
   $('#peKidsSw').classList.toggle('on', draft.kids);
   $('#peKidsOpts').hidden = !draft.kids;
   $('#pePinVal').textContent = kidsPin ? t('•••• · OK troca') : t('Criar');
@@ -6519,6 +6588,20 @@ btnAct('peKids', () => {
 });
 btnAct('pePin', () => openPin({ mode: 'set', title: 'PIN para sair do Modo Infantil', sub: 'Escolha 4 números. Só quem souber o PIN tira a criança do perfil infantil.',
   onOk: v => { kidsPin = v; saveProfiles(); renderDraft(); setFocus($('#pePin')); toast('PIN salvo'); } }));
+// Senha do perfil: sem senha, OK define (duas vezes, para confirmar); com senha, OK duas vezes tira.
+let unpassArmed = 0;
+function disarmUnpass() { clearTimeout(unpassArmed); unpassArmed = 0; }
+btnAct('pePass', () => {
+  if (!draft.pin) {
+    openPin({ mode: 'set', title: 'Senha do perfil', sub: 'Escolha 4 números. O Onix vai pedir a senha ao entrar neste perfil.',
+      onOk: v => { draft.pin = v; renderDraft(); setFocus($('#pePass')); toast('Senha definida. Salve o perfil para valer.'); } });
+    return;
+  }
+  if (!unpassArmed) { $('#pePassVal').textContent = t('OK de novo para tirar'); unpassArmed = setTimeout(() => { disarmUnpass(); if (draft) renderDraft(); }, 3000); return; }
+  disarmUnpass();
+  draft.pin = '';
+  renderDraft();
+});
 btnAct('peLimit', () => { draft.limit = KIDS_LIMITS[(KIDS_LIMITS.indexOf(draft.limit) + 1) % KIDS_LIMITS.length]; renderDraft(); });
 btnAct('peApps', openKidsApps);
 btnAct('peCancel', () => closePane('profileEdit'));
@@ -6529,7 +6612,7 @@ btnAct('peSave', () => {
   if (draft.kids && !draft.allow.length) { toast('Libere pelo menos um app para o perfil infantil'); setFocus($('#peApps')); return; }
   let pr = profiles.find(x => x.id === draft.id);
   if (!pr) { pr = cleanProfile({ id: draft.id, name, prefs: profilePrefsNow() }); profiles.push(pr); }
-  Object.assign(pr, { name, av: draft.av, photo: draft.photo, kids: draft.kids, allow: draft.allow.slice(), limit: draft.limit });
+  Object.assign(pr, { name, av: draft.av, photo: draft.photo, kids: draft.kids, allow: draft.allow.slice(), limit: draft.limit, pin: draft.pin });
   saveProfiles();
   const id = draft.id; draft = null;
   closePane('profileEdit', true);
@@ -7004,12 +7087,13 @@ function pushRemote() {
   remoteStateQueued = true;
   setTimeout(() => {
     remoteStateQueued = false;
-    const pr = activeProfile(), textOpen = !$('#keyboard').hidden || !$('#appSearch').hidden;
+    const pr = activeProfile(), pinOpen = !$('#pinPad').hidden && !!pin, textOpen = pinOpen || !$('#keyboard').hidden || !$('#appSearch').hidden;
     const sel = current && current.closest('#asRes') ? current.getAttribute('aria-label') : '';
     const st = {
       tv: Bridge.platform, profile: pr ? pr.name : '', kids: isKids(),
       apps: isKids() ? [] : homeApps().slice(0, MAX_HOME).map(a => ({ pkg: a.pkg, name: a.name })),
-      text: { open: textOpen, title: !$('#keyboard').hidden && kb ? t(kb.title) : '', value: !$('#keyboard').hidden && kb ? kb.value : searchQ, sel: sel || '' },
+      text: pinOpen ? { open: true, title: $('#pinTitle').textContent, value: '', sel: '', pin: pin.n }
+        : { open: textOpen, title: !$('#keyboard').hidden && kb ? t(kb.title) : '', value: !$('#keyboard').hidden && kb ? kb.value : searchQ, sel: sel || '' },
       photo: !!photoCb && !$('#phonePane').hidden,
     };
     try { AndroidBridge.remoteState(JSON.stringify(st)); } catch (_) {}
@@ -7037,7 +7121,8 @@ function onRemote(raw) {
     pushRemote();
   } else if (o.type === 'text' && typeof o.v === 'string') {
     const v = o.v.slice(0, 40);
-    if (!$('#keyboard').hidden) kbSet(v, true);
+    if (!$('#pinPad').hidden && pin) pinRemote(v);
+    else if (!$('#keyboard').hidden) kbSet(v, true);
     else if (!$('#appSearch').hidden) searchSet(v);
     else if (!game && !reader && !panes.some(p => p.back === false || p.el.id === 'welcome')) openSearch(v);
     pushRemote();
@@ -7819,7 +7904,7 @@ function resync() {
 }
 // Gancho para o lado nativo chamar via evaluateJavascript.
 Object.defineProperty(window, 'Launcher', {
-  value: Object.freeze({ onAppsChanged: () => { refreshApps(); renderHub(); }, onGameHub: () => renderHub(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); kidsTick(); refreshWeather(false); renderHub(); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync(), onWeather: j => onWeather(j), onCities: (j, q) => onCities(j, q), onRemote: j => onRemote(j), onRemoteInfo: e => onRemoteInfo(e), onSettingsKey: () => settingsKey() }),
+  value: Object.freeze({ onAppsChanged: () => { refreshApps(); renderHub(); }, onGameHub: () => renderHub(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onScreenOff: () => lockProfile(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); kidsTick(); refreshWeather(false); renderHub(); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync(), onWeather: j => onWeather(j), onCities: (j, q) => onCities(j, q), onRemote: j => onRemote(j), onRemoteInfo: e => onRemoteInfo(e), onSettingsKey: () => settingsKey() }),
   writable: false, configurable: false,
 });
 
@@ -7891,7 +7976,7 @@ function init() {
   }
 }
 /* Ao abrir: sem nada salvo, boas-vindas; quem veio de uma versão sem perfis vira o primeiro perfil
-   (com as chaves de sempre, nada muda de lugar); um perfil só entra direto; mais de um, pergunta. */
+   (com as chaves de sempre, nada muda de lugar); um perfil só (sem senha) entra direto; senão, pergunta. */
 function startProfiles() {
   if (!profiles.length) {
     let fresh = true;
@@ -7901,7 +7986,7 @@ function startProfiles() {
     profileId = FIRST_PROFILE;
     saveProfiles();
   }
-  if (profiles.length === 1) enterProfile(profiles[0], true);
+  if (profiles.length === 1 && !profiles[0].pin) enterProfile(profiles[0], true);
   else { profileId = null; renderMe(); openProfiles(false); }
   setInterval(() => refreshWeather(false), 10 * 60 * 1000);
 }

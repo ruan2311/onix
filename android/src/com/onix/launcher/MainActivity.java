@@ -46,7 +46,7 @@ public class MainActivity extends Activity {
     private WebView webView;
     private AndroidBridge bridge;
     private RemoteServer remote;
-    private BroadcastReceiver packageReceiver;
+    private BroadcastReceiver packageReceiver, screenReceiver;
     private ConnectivityManager.NetworkCallback netCallback;
     private Boolean online;   // null = ainda não verificado
     private final Handler ui = new Handler(Looper.getMainLooper());
@@ -140,6 +140,7 @@ public class MainActivity extends Activity {
         webView.loadUrl(START_URL);
 
         registerPackageReceiver();
+        registerScreenReceiver();
         PicksJob.schedule(this);
         Updater.get(this).setListener(new Runnable() {
             @Override
@@ -509,6 +510,20 @@ public class MainActivity extends Activity {
         registerReceiver(packageReceiver, f);
     }
 
+    /** TV desligada (e de novo ao ligar, caso o aviso de antes tenha se perdido): a interface fecha o
+     *  perfil que tem senha, para pedir a senha quando alguém voltar a usar a TV. */
+    private void registerScreenReceiver() {
+        screenReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (webView != null) webView.evaluateJavascript("window.Launcher&&Launcher.onScreenOff&&Launcher.onScreenOff()", null);
+            }
+        };
+        IntentFilter f = new IntentFilter(Intent.ACTION_SCREEN_OFF);
+        f.addAction(Intent.ACTION_SCREEN_ON);
+        registerReceiver(screenReceiver, f);
+    }
+
     /** true se o Onix é a tela inicial padrão (Onix Launcher escolhido como HOME). */
     private boolean isDefaultHome() {
         try {
@@ -593,6 +608,7 @@ public class MainActivity extends Activity {
         Updater.get(this).setListener(null);
         remote.stop();
         if (packageReceiver != null) unregisterReceiver(packageReceiver);
+        if (screenReceiver != null) unregisterReceiver(screenReceiver);
         if (webView != null) {
             bridge.setTrusted(false);
             webView.removeJavascriptInterface("AndroidBridge");

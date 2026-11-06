@@ -57,6 +57,14 @@ main{flex:1;min-height:0;overflow:auto;padding:8px 18px 12px}
 .lbl{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:12px 0 8px}
 #kbIn{width:100%;font-size:17px;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:14px 16px;outline:none;user-select:text;-webkit-user-select:text}
 #kbIn:focus{border-color:#fff}
+.pdots{display:flex;justify-content:center;gap:16px;margin:10px 0 22px}
+.pdots i{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.6)}
+.pdots i.on{background:#fff;border-color:#fff}
+.pkeys{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:300px;margin:0 auto}
+.pkeys button{height:62px;border-radius:16px;background:var(--card);border:1px solid var(--line);font-size:24px;display:flex;align-items:center;justify-content:center}
+.pkeys button.sm{font-size:14px}
+.pkeys svg{width:24px;height:24px}
+.pkeys button:active{transform:scale(.94);background:rgba(255,255,255,.16)}
 .nav3{display:grid;grid-template-columns:56px 1fr 56px;gap:8px;margin-top:10px}
 .nav3 button{height:52px;border-radius:14px;background:var(--card);display:flex;align-items:center;justify-content:center;min-width:0}
 .nav3 svg{width:22px;height:22px}
@@ -127,6 +135,11 @@ nav button[aria-selected="true"] svg{color:var(--ok)}
 
   <section id="vKb" hidden>
     <div class="lbl" id="kbLbl">Buscar na TV</div>
+    <div id="kbPin" hidden>
+      <div class="pdots" id="pDots"><i></i><i></i><i></i><i></i></div>
+      <div class="pkeys" id="pKeys"></div>
+    </div>
+    <div id="kbText">
     <input id="kbIn" type="text" autocomplete="off" autocapitalize="sentences" spellcheck="false" enterkeyhint="go" placeholder="Digite aqui, aparece na TV">
     <p class="hint" style="text-align:left">Toque no campo: o teclado do seu celular abre normalmente, com ditado e corretor.</p>
     <div class="lbl">Na TV</div>
@@ -136,6 +149,7 @@ nav button[aria-selected="true"] svg{color:var(--ok)}
       <button data-k="right" aria-label="Próximo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></button>
     </div>
     <div class="row2"><button id="kbClear">Limpar</button><button data-k="back">Fechar na TV</button></div>
+    </div>
   </section>
 
   <section id="vApps" hidden>
@@ -184,7 +198,7 @@ const T = {
   'A foto não foi enviada. Tente de novo.': 'La foto no se envió. Inténtalo de nuevo.', 'Não deu para abrir esta foto': 'No se pudo abrir esta foto',
   'Celular conectado ao Onix': 'Celular conectado a Onix', 'Abra o Onix na TV primeiro': 'Abre Onix en la TV primero',
   'Dica: adicione esta página à tela inicial do celular para abrir o controle num toque.': 'Consejo: añade esta página a la pantalla de inicio del celular para abrir el control con un toque.',
-  'Controle': 'Control', 'Teclado': 'Teclado', 'Voltar': 'Volver', 'Início': 'Inicio', 'Buscar': 'Buscar', 'Limpar': 'Borrar', 'Fechar na TV': 'Cerrar en la TV',
+  'Controle': 'Control', 'Teclado': 'Teclado', 'Voltar': 'Volver', 'Início': 'Inicio', 'Buscar': 'Buscar', 'Limpar': 'Borrar', 'Apagar': 'Borrar', 'Cancelar': 'Cancelar', 'Fechar na TV': 'Cerrar en la TV',
   'Escolher foto': 'Elegir foto', 'Enviar para a TV': 'Enviar a la TV', 'Foto do perfil': 'Foto del perfil',
   'A TV está esperando uma foto. Escolha da galeria ou tire uma agora.': 'La TV está esperando una foto. Elige de la galería o toma una ahora.',
   'Arraste para enquadrar. Só a foto recortada e pequena vai para a TV, e ela fica só lá.': 'Arrastra para encuadrar. Solo la foto recortada y pequeña va a la TV, y se queda solo allí.',
@@ -284,12 +298,18 @@ function render() {
   // Campo de texto aberto na TV (nome do perfil, cidade): o Teclado vai direto para ele.
   if (st.text && st.text.open && !textWas) { tab = 'kb'; $('kbIn').value = st.text.value || ''; }
   textWas = !!(st.text && st.text.open);
+  // Senha ou PIN na TV: no lugar do campo (que abriria o teclado do celular), só os números.
+  const isPin = !!(st.text && st.text.open && typeof st.text.pin === 'number');
+  if (isPin !== pinMode || (isPin && st.text.pin !== pinN)) { pinVal = ''; pinShow(); }   // a TV limpa a cada tentativa
+  if (isPin && !pinMode && document.activeElement) document.activeElement.blur();
+  pinMode = isPin; pinN = isPin ? st.text.pin : -1;
+  $('kbPin').hidden = !isPin; $('kbText').hidden = isPin;
   $('kbLbl').textContent = st.text && st.text.open ? (st.text.title || t('Digitando no campo da TV')) : t('Buscar na TV');
   $('kbGo').textContent = st.text && st.text.sel ? t('Abrir') + ' ' + st.text.sel : t('Abrir');
   show(tab);
   if (tab === 'apps') renderApps();
 }
-let textWas = false;
+let textWas = false, pinMode = false, pinN = -1, pinVal = '';
 function show(name) {
   ['remote', 'kb', 'apps', 'photo'].forEach(n => { $('v' + n.charAt(0).toUpperCase() + n.slice(1)).hidden = n !== name; });
   document.querySelectorAll('nav [data-tab]').forEach(b => b.setAttribute('aria-selected', String(b.dataset.tab === name)));
@@ -298,7 +318,7 @@ function show(name) {
 document.querySelectorAll('[data-tab]').forEach(b => b.addEventListener('click', () => {
   tab = b.dataset.tab;
   show(tab);
-  if (tab === 'kb') { send('text', { v: $('kbIn').value }); setTimeout(() => $('kbIn').focus(), 50); }
+  if (tab === 'kb' && !pinMode) { send('text', { v: $('kbIn').value }); setTimeout(() => $('kbIn').focus(), 50); }
   if (tab === 'apps') renderApps();
 }));
 
@@ -319,6 +339,23 @@ document.querySelectorAll('[data-k]').forEach(b => b.addEventListener('click', (
 let typing = 0;
 $('kbIn').addEventListener('input', () => { clearTimeout(typing); typing = setTimeout(() => send('text', { v: $('kbIn').value.slice(0, 40) }), 120); });
 $('kbIn').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); send('key', { k: 'ok' }); } });
+// Pad da senha: cada toque manda os números digitados até agora (a TV confere ao chegar no 4º).
+function pinShow() { document.querySelectorAll('#pDots i').forEach((d, i) => d.classList.toggle('on', i < pinVal.length)); }
+function pinKey(k) {
+  if (navigator.vibrate) navigator.vibrate(12);
+  if (k === 'back') { send('key', { k: 'back' }); return; }
+  if (k === 'del') pinVal = pinVal.slice(0, -1); else if (pinVal.length < 4) pinVal += k; else return;
+  pinShow();
+  send('text', { v: pinVal });
+}
+$('pKeys').replaceChildren(...['1', '2', '3', '4', '5', '6', '7', '8', '9', 'del', '0', 'back'].map(k => {
+  const b = document.createElement('button');
+  if (k === 'del') { b.setAttribute('aria-label', t('Apagar')); b.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12H8M13 6l-6 6 6 6"/></svg>'; }
+  else if (k === 'back') { b.className = 'sm'; b.textContent = t('Cancelar'); }
+  else b.textContent = k;
+  b.addEventListener('click', () => pinKey(k));
+  return b;
+}));
 $('kbClear').addEventListener('click', () => { $('kbIn').value = ''; send('text', { v: '' }); });
 
 // Apps: ordem de "Seus apps" do perfil que está na TV.
