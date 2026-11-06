@@ -2,6 +2,10 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 17.1.2 (novembro de 2026)
+
+- **Tela inicial mais leve:** os desenhos largos dos apps com foto (como os da Netflix e do Prime Video) passam do Android para a tela numa versão até 7 vezes menor, sem perder qualidade. A lista de apps carrega mais rápido e ocupa menos memória da TV.
+
 ## 17.1.1 (novembro de 2026)
 
 - **Senha nos perfis (opcional):** em **Gerenciar perfis → Editar perfil → Senha do perfil**, cada pessoa pode pôr uma senha de 4 números. Ao ligar a TV e ao entrar no perfil, o Onix pede a senha. Quem não quiser senha não precisa fazer nada.

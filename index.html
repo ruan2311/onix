@@ -2018,7 +2018,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '17.1.1'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '17.1.2'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -3250,6 +3250,8 @@ const ES = Object.freeze({
   "O Cobalt GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "Cobalt GameHub todavía no fue publicado. Llega en una próxima actualización.",
   "Não deu para baixar o Cobalt GameHub. Confira a internet e tente de novo.": "No se pudo descargar Cobalt GameHub. Revisa internet e inténtalo de nuevo.",
   "Não deu para abrir o Cobalt GameHub": "No se pudo abrir Cobalt GameHub",
+  // Onix 17.1.2: tela inicial mais leve
+  "*Tela inicial mais leve:* os desenhos largos dos apps com foto (como os da Netflix e do Prime Video) passam do Android para a tela numa versão até 7 vezes menor, sem perder qualidade. A lista de apps carrega mais rápido e ocupa menos memória da TV.": "*Pantalla de inicio más liviana:* los dibujos anchos de las apps con foto (como los de Netflix y Prime Video) pasan de Android a la pantalla en una versión hasta 7 veces más pequeña, sin perder calidad. La lista de apps carga más rápido y ocupa menos memoria de la TV.",
   // Onix 17.1.1: senha nos perfis
   "*Senha nos perfis (opcional):* em *Gerenciar perfis → Editar perfil → Senha do perfil*, cada pessoa pode pôr uma senha de 4 números. Ao ligar a TV e ao entrar no perfil, o Onix pede a senha. Quem não quiser senha não precisa fazer nada.": "*Contraseña en los perfiles (opcional):* en *Administrar perfiles → Editar perfil → Contraseña del perfil*, cada persona puede poner una contraseña de 4 números. Al encender la TV y al entrar al perfil, Onix pide la contraseña. Quien no quiera contraseña no tiene que hacer nada.",
   "*Modo Infantil de verdade:* a criança não consegue mais sair do perfil infantil pela tela *Quem está assistindo?*. Editar um perfil infantil ou criar um perfil novo pede o PIN dos pais.": "*Modo Infantil de verdad:* el niño ya no puede salir del perfil infantil desde la pantalla *¿Quién está viendo?*. Editar un perfil infantil o crear un perfil nuevo pide el PIN de los padres.",
@@ -5574,6 +5576,9 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '17.1.2', date: 'novembro de 2026', items: [
+    ['new', '*Tela inicial mais leve:* os desenhos largos dos apps com foto (como os da Netflix e do Prime Video) passam do Android para a tela numa versão até 7 vezes menor, sem perder qualidade. A lista de apps carrega mais rápido e ocupa menos memória da TV.'],
+  ] },
   { version: '17.1.1', date: 'novembro de 2026', items: [
     ['new', '*Senha nos perfis (opcional):* em *Gerenciar perfis → Editar perfil → Senha do perfil*, cada pessoa pode pôr uma senha de 4 números. Ao ligar a TV e ao entrar no perfil, o Onix pede a senha. Quem não quiser senha não precisa fazer nada.'],
     ['new', '*Modo Infantil de verdade:* a criança não consegue mais sair do perfil infantil pela tela *Quem está assistindo?*. Editar um perfil infantil ou criar um perfil novo pede o PIN dos pais.'],
