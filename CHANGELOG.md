@@ -2,6 +2,10 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 17.1.0 (novembro de 2026)
+
+- **Mais 4 temas:** em **Configurações → Aparência → Tema**. **Onix Safira** é o fundo do mar, com raios de luz, bolhas subindo e águas-vivas. **Onix Esmeralda** é uma floresta à noite, com samambaias e vaga-lumes piscando. **Onix Âmbar** é um pôr do sol retrô, com o sol listrado e a grade neon. **Onix Quartzo Rosa** é um jardim japonês, com lua cheia, o monte ao fundo e pétalas de cerejeira caindo. Cada um tem o desenho do menu e a tela de descanso próprios.
+
 ## 17.0.0 (novembro de 2026)
 
 - **Temas novos:** em **Configurações → Aparência → Tema**, o Onix ganhou 4 temas que mudam o visual inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. **Onix Cobalt** é pixel art, inspirado no Cobalt GameHub, com nave, estrelas e planetas de pixel. **Onix Aurora** tem a aurora boreal se movendo sobre montanhas e pinheiros. **Onix Rubi Cinema** é uma sala de cinema, com cortina, lâmpadas e o feixe do projetor. **Onix White** é claro sem cansar a vista. O Onix Escuro continua como o padrão, e nada muda de lugar na tela.

@@ -36,7 +36,11 @@ notícias de games, minijogos, o **Cobalt GameHub** de jogos clássicos, troca d
 
 ---
 
-## Novidades da 17.0.0
+## Novidades da 17.1.0
+
+- **Mais 4 temas:** **Onix Safira** (fundo do mar), **Onix Esmeralda** (floresta com vaga-lumes), **Onix Âmbar** (pôr do sol retrô) e **Onix Quartzo Rosa** (jardim japonês com cerejeiras). Agora são 9.
+
+Da 17.0.0:
 
 - **4 temas** em **Configurações → Aparência → Tema**, que mudam o visual inteiro: **Onix Cobalt** (pixel art), **Onix Aurora** (aurora boreal), **Onix Rubi Cinema** (cortina e projetor) e **Onix White** (claro). O Onix Escuro continua o padrão.
 - **10 fontes**, que funcionam sem internet: Bodoni Moda, Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand e Press Start 2P.
@@ -59,7 +63,7 @@ As versões anteriores estão no [CHANGELOG.md](CHANGELOG.md) e na [página de R
 | **Entradas** | TV (antena e cabo) e HDMI direto pelo launcher, com banners editáveis (PlayStation 5, Xbox, Switch, Computador…) |
 | **Tela de descanso** | Planetas e asteroides depois de 10 minutos parado, com o relógio mudando de lugar para não marcar telas OLED |
 | **Perfis e Modo Infantil** | Um perfil por pessoa; o infantil só mostra os apps liberados, tem PIN para sair e limite de tempo por dia |
-| **Aparência e sons** | 5 temas, 10 fontes, 8 relógios, posição do menu (lateral, em cima ou embaixo) e 5 sons de navegação |
+| **Aparência e sons** | 9 temas, 10 fontes, 8 relógios, posição do menu (lateral, em cima ou embaixo) e 5 sons de navegação |
 | **Outros** | **Desligar TV**, chip de conexão que testa a internet de verdade, clima opcional, atualizações pelo próprio app, português e español |
 
 <details>
@@ -370,7 +374,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Español* o
 
 Si Downloader no puede instalar apps, actívalo en **Configuración** y vuelve. Si **Play Protect** avisa, toca **Más detalles → Instalar de todos modos**.
 
-**Novedades de la 17.0.0:** **4 temas** (*Onix Cobalt*, *Onix Aurora*, *Onix Rubí Cine* y *Onix White*), **10 fuentes** y **8 estilos de reloj** en **Configuración → Apariencia**. El historial completo está en el [CHANGELOG.md](CHANGELOG.md) (en portugués).
+**Novedades de la 17.1.0:** **4 temas más**: *Onix Zafiro* (fondo del mar), *Onix Esmeralda* (bosque con luciérnagas), *Onix Ámbar* (atardecer retro) y *Onix Cuarzo Rosa* (jardín japonés con cerezos). **De la 17.0.0:** **4 temas** (*Onix Cobalt*, *Onix Aurora*, *Onix Rubí Cine* y *Onix White*), **10 fuentes** y **8 estilos de reloj** en **Configuración → Apariencia**. El historial completo está en el [CHANGELOG.md](CHANGELOG.md) (en portugués).
 
 ---
 

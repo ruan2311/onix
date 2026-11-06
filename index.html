@@ -1319,6 +1319,186 @@ html.th-rubi .nav-theme{display:block}
 .rb-bulbs1{animation:pxTwinkle 1.6s steps(1) infinite}
 .rb-bulbs2{animation:pxTwinkle 1.6s steps(1) .8s infinite}
 
+/* === Onix Safira: fundo do mar, raios de luz e bolhas === */
+html.th-safira{--bg:#020e1f;--text:#eef7ff;--muted:rgba(190,220,255,.62);
+  --glass:linear-gradient(135deg,rgba(90,180,255,.14),rgba(60,110,255,.05) 60%,rgba(255,255,255,.05)),linear-gradient(rgba(3,18,40,.6),rgba(3,18,40,.6));
+  --glass-border:rgba(120,200,255,.22);--glass-hi:inset 0 1px 0 rgba(190,230,255,.3);
+  --focus-glow:0 0 0 .14rem #6fd6ff,0 .5rem 1.6rem rgba(60,170,255,.32);--neon:#6fd6ff;--clock-accent:#6fd6ff}
+html.th-safira body{background:linear-gradient(180deg,#06264a 0%,#031630 45%,#010812 100%) var(--bg)}
+html.th-safira .glass-blur{background:linear-gradient(180deg,#041a36,#020a17)}
+html.th-safira #sidebar{border-right-color:rgba(111,214,255,0.14)}
+html.th-safira .nav-item.active{background:rgba(111,214,255,0.09);border-color:rgba(111,214,255,0.18)}
+html.th-safira .nav-item.is-focused,html.th-safira .nav-item.me.is-focused{color:#02132a;background:linear-gradient(100deg,#8fe4ff,#5aa2ff);border-color:transparent}
+html.th-safira .nav-item.me.is-focused .me-name{color:#02132a}
+html.th-safira .f.is-focused,html.th-safira .tile.is-focused .tile-art{border-color:rgba(111,214,255,0.88)}
+html.th-safira .tile.is-focused .tile-label{color:#6fd6ff}
+html.th-safira .btn.primary{background:linear-gradient(100deg,#8fe4ff,#5aa2ff);color:#02132a;border-color:transparent}
+html.th-safira .kicker{color:#6fd6ff}
+html.th-safira .hero-bg{opacity:.3}
+html.th-safira .dots i.on{background:#6fd6ff}
+html.th-safira .row-title::before{content:"";display:inline-block;margin-right:.7rem;width:.6rem;height:.6rem;border-radius:50%;border:2px solid #6fd6ff;vertical-align:.1rem}
+html.th-safira .switch.on{background:#2f8cff}
+html.th-safira .opt.is-focused,html.th-safira .row-opt.is-focused{background:linear-gradient(100deg,#8fe4ff,#5aa2ff);color:#02132a}
+html.th-safira .opt.is-focused .opt-desc,html.th-safira .row-opt.is-focused .opt-desc{color:rgba(2,19,42,0.72)}
+html.th-safira .tile-art{background:#04172e}
+html.th-safira .tile-art img{background:#062240}
+html.th-safira #toast{background:#041b36;border-color:rgba(111,214,255,0.3)}
+html.th-safira .reader-panel,html.th-safira .wx-card{background:linear-gradient(170deg,#08284c,#03101f 70%);border-color:rgba(111,214,255,0.2)}
+html.th-safira .layer{background:radial-gradient(70% 60% at 50% 0%,rgba(80,170,255,.2),transparent 70%),linear-gradient(180deg,#06264a,#010812)}
+html.th-safira .pf.is-focused .av{box-shadow:0 0 0 .2rem #6fd6ff,0 .8rem 2rem rgba(60,170,255,.35)}
+html.th-safira .kb-key.is-focused,html.th-safira .pin-key.is-focused,html.th-safira .svc.is-focused{background:#6fd6ff;color:#02132a;border-color:#6fd6ff}
+html.th-safira .clk-flip .card i{background:linear-gradient(180deg,rgba(111,214,255,.16) 0,rgba(111,214,255,.16) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}
+html.th-safira .clk-analog circle.face{fill:rgba(111,214,255,0.07)}
+html.th-safira .cz-orbit i{background:#6fd6ff;box-shadow:0 0 .9rem rgba(60,170,255,.9)}
+html.th-safira.home-cosmos .kicker{color:#9fb4ff}
+html.th-safira .nav-art{display:none}
+html.th-safira .nav-theme{display:block}
+@media (min-width:761px),(orientation:landscape){
+  html.th-safira.nav-top #sidebar{background:linear-gradient(180deg,#041a36,#020a17)}
+  html.th-safira.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(8,40,76,.94),rgba(2,12,26,.95));border-color:rgba(111,214,255,0.24)}
+  html.th-safira.nav-top .nav-item.active::before,html.th-safira.nav-bottom .nav-item.active::before{background:#6fd6ff;box-shadow:0 0 .7rem #6fd6ff}
+}
+/* === Onix Esmeralda: floresta à noite com vaga-lumes === */
+html.th-esmeralda{--bg:#03100a;--text:#effff4;--muted:rgba(200,235,210,.6);
+  --glass:linear-gradient(135deg,rgba(80,230,140,.12),rgba(220,255,140,.04) 60%,rgba(255,255,255,.05)),linear-gradient(rgba(3,22,12,.62),rgba(3,22,12,.62));
+  --glass-border:rgba(110,240,160,.2);--glass-hi:inset 0 1px 0 rgba(200,255,220,.28);
+  --focus-glow:0 0 0 .14rem #5fe89a,0 .5rem 1.6rem rgba(80,230,140,.32);--neon:#d9f56a;--clock-accent:#5fe89a}
+html.th-esmeralda body{background:radial-gradient(90% 70% at 80% 0%,#0d3a24 0%,#062014 45%,#020805 100%) var(--bg)}
+html.th-esmeralda .glass-blur{background:linear-gradient(180deg,#05190e,#020805)}
+html.th-esmeralda #sidebar{border-right-color:rgba(95,232,154,0.14)}
+html.th-esmeralda .nav-item.active{background:rgba(95,232,154,0.09);border-color:rgba(95,232,154,0.18)}
+html.th-esmeralda .nav-item.is-focused,html.th-esmeralda .nav-item.me.is-focused{color:#03200f;background:linear-gradient(100deg,#7cf0ac,#c9f26a);border-color:transparent}
+html.th-esmeralda .nav-item.me.is-focused .me-name{color:#03200f}
+html.th-esmeralda .f.is-focused,html.th-esmeralda .tile.is-focused .tile-art{border-color:rgba(95,232,154,0.88)}
+html.th-esmeralda .tile.is-focused .tile-label{color:#5fe89a}
+html.th-esmeralda .btn.primary{background:linear-gradient(100deg,#7cf0ac,#c9f26a);color:#03200f;border-color:transparent}
+html.th-esmeralda .kicker{color:#5fe89a}
+html.th-esmeralda .hero-bg{opacity:.3}
+html.th-esmeralda .dots i.on{background:#5fe89a}
+html.th-esmeralda .row-title::before{content:"";display:inline-block;margin-right:.7rem;width:.5rem;height:.5rem;border-radius:50%;background:#d9f56a;box-shadow:0 0 .6rem #d9f56a;vertical-align:.14rem}
+html.th-esmeralda .switch.on{background:#2fc47a}
+html.th-esmeralda .opt.is-focused,html.th-esmeralda .row-opt.is-focused{background:linear-gradient(100deg,#7cf0ac,#c9f26a);color:#03200f}
+html.th-esmeralda .opt.is-focused .opt-desc,html.th-esmeralda .row-opt.is-focused .opt-desc{color:rgba(3,32,15,0.72)}
+html.th-esmeralda .tile-art{background:#05170d}
+html.th-esmeralda .tile-art img{background:#082414}
+html.th-esmeralda #toast{background:#061c10;border-color:rgba(95,232,154,0.3)}
+html.th-esmeralda .reader-panel,html.th-esmeralda .wx-card{background:linear-gradient(170deg,#0a2c1a,#03100a 70%);border-color:rgba(95,232,154,0.2)}
+html.th-esmeralda .layer{background:radial-gradient(70% 60% at 70% 0%,rgba(90,230,140,.16),transparent 70%),linear-gradient(180deg,#0d3a24,#020805)}
+html.th-esmeralda .pf.is-focused .av{box-shadow:0 0 0 .2rem #5fe89a,0 .8rem 2rem rgba(80,230,140,.35)}
+html.th-esmeralda .kb-key.is-focused,html.th-esmeralda .pin-key.is-focused,html.th-esmeralda .svc.is-focused{background:#5fe89a;color:#03200f;border-color:#5fe89a}
+html.th-esmeralda .clk-flip .card i{background:linear-gradient(180deg,rgba(95,232,154,.15) 0,rgba(95,232,154,.15) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}
+html.th-esmeralda .clk-analog circle.face{fill:rgba(95,232,154,0.07)}
+html.th-esmeralda .cz-orbit i{background:#5fe89a;box-shadow:0 0 .9rem rgba(80,230,140,.9)}
+html.th-esmeralda.home-cosmos .kicker{color:#d9f56a}
+html.th-esmeralda .nav-art{display:none}
+html.th-esmeralda .nav-theme{display:block}
+@media (min-width:761px),(orientation:landscape){
+  html.th-esmeralda.nav-top #sidebar{background:linear-gradient(180deg,#05190e,#020805)}
+  html.th-esmeralda.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(10,44,26,.94),rgba(2,10,6,.95));border-color:rgba(95,232,154,0.24)}
+  html.th-esmeralda.nav-top .nav-item.active::before,html.th-esmeralda.nav-bottom .nav-item.active::before{background:#5fe89a;box-shadow:0 0 .7rem #5fe89a}
+}
+/* === Onix Âmbar: pôr do sol retrô, com sol listrado e grade neon === */
+html.th-ambar{--bg:#14061c;--text:#fff4ec;--muted:rgba(255,214,200,.62);
+  --glass:linear-gradient(135deg,rgba(255,150,70,.14),rgba(255,70,160,.06) 60%,rgba(255,255,255,.05)),linear-gradient(rgba(26,8,30,.62),rgba(26,8,30,.62));
+  --glass-border:rgba(255,170,120,.22);--glass-hi:inset 0 1px 0 rgba(255,220,190,.28);
+  --focus-glow:0 0 0 .14rem #ffb347,0 .5rem 1.6rem rgba(255,140,70,.32);--neon:#ff5ea8;--clock-accent:#ffb347}
+html.th-ambar body{background:linear-gradient(180deg,#1c0a33 0%,#3a0f3c 48%,#5a1a32 72%,#200812 100%) var(--bg)}
+html.th-ambar .glass-blur{background:linear-gradient(180deg,#22092c,#0e0410)}
+html.th-ambar #sidebar{border-right-color:rgba(255,179,71,0.14)}
+html.th-ambar .nav-item.active{background:rgba(255,179,71,0.09);border-color:rgba(255,179,71,0.18)}
+html.th-ambar .nav-item.is-focused,html.th-ambar .nav-item.me.is-focused{color:#2a0c00;background:linear-gradient(100deg,#ffd36b,#ff8a3d 55%,#ff5ea8);border-color:transparent}
+html.th-ambar .nav-item.me.is-focused .me-name{color:#2a0c00}
+html.th-ambar .f.is-focused,html.th-ambar .tile.is-focused .tile-art{border-color:rgba(255,179,71,0.88)}
+html.th-ambar .tile.is-focused .tile-label{color:#ffb347}
+html.th-ambar .btn.primary{background:linear-gradient(100deg,#ffd36b,#ff8a3d 55%,#ff5ea8);color:#2a0c00;border-color:transparent}
+html.th-ambar .kicker{color:#ffb347}
+html.th-ambar .hero-bg{opacity:.3}
+html.th-ambar .dots i.on{background:#ffb347}
+html.th-ambar .row-title::before{content:"";display:inline-block;margin-right:.7rem;width:1.2rem;height:.5rem;border-radius:0;background:linear-gradient(180deg,#ffd36b 0 30%,transparent 30% 45%,#ff8a3d 45% 70%,transparent 70% 82%,#ff5ea8 82%);vertical-align:.16rem}
+html.th-ambar .switch.on{background:#ff7a3d}
+html.th-ambar .opt.is-focused,html.th-ambar .row-opt.is-focused{background:linear-gradient(100deg,#ffd36b,#ff8a3d 55%,#ff5ea8);color:#2a0c00}
+html.th-ambar .opt.is-focused .opt-desc,html.th-ambar .row-opt.is-focused .opt-desc{color:rgba(42,12,0,0.72)}
+html.th-ambar .tile-art{background:#1d0920}
+html.th-ambar .tile-art img{background:#2a0d2c}
+html.th-ambar #toast{background:#24092a;border-color:rgba(255,179,71,0.3)}
+html.th-ambar .reader-panel,html.th-ambar .wx-card{background:linear-gradient(170deg,#36103a,#140616 70%);border-color:rgba(255,179,71,0.2)}
+html.th-ambar .layer{background:radial-gradient(60% 60% at 50% 100%,rgba(255,120,60,.18),transparent 70%),linear-gradient(180deg,#1c0a33,#200812)}
+html.th-ambar .pf.is-focused .av{box-shadow:0 0 0 .2rem #ffb347,0 .8rem 2rem rgba(255,140,70,.35)}
+html.th-ambar .kb-key.is-focused,html.th-ambar .pin-key.is-focused,html.th-ambar .svc.is-focused{background:#ffb347;color:#2a0c00;border-color:#ffb347}
+html.th-ambar .clk-flip .card i{background:linear-gradient(180deg,rgba(255,179,71,.15) 0,rgba(255,179,71,.15) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}
+html.th-ambar .clk-analog circle.face{fill:rgba(255,179,71,0.07)}
+html.th-ambar .cz-orbit i{background:#ffb347;box-shadow:0 0 .9rem rgba(255,140,70,.9)}
+html.th-ambar.home-cosmos .kicker{color:#ff8fc4}
+html.th-ambar .nav-art{display:none}
+html.th-ambar .nav-theme{display:block}
+@media (min-width:761px),(orientation:landscape){
+  html.th-ambar.nav-top #sidebar{background:linear-gradient(180deg,#22092c,#0e0410)}
+  html.th-ambar.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(54,16,58,.94),rgba(20,6,22,.95));border-color:rgba(255,179,71,0.24)}
+  html.th-ambar.nav-top .nav-item.active::before,html.th-ambar.nav-bottom .nav-item.active::before{background:#ffb347;box-shadow:0 0 .7rem #ffb347}
+}
+/* === Onix Quartzo Rosa: jardim japonês com lua cheia e cerejeiras === */
+html.th-quartzo{--bg:#140a12;--text:#fff2f6;--muted:rgba(255,215,228,.6);
+  --glass:linear-gradient(135deg,rgba(255,170,205,.13),rgba(255,255,255,.04) 60%,rgba(255,220,235,.06)),linear-gradient(rgba(28,12,22,.6),rgba(28,12,22,.6));
+  --glass-border:rgba(255,180,210,.22);--glass-hi:inset 0 1px 0 rgba(255,225,238,.3);
+  --focus-glow:0 0 0 .14rem #ffa8c8,0 .5rem 1.6rem rgba(255,150,195,.32);--neon:#ff8fbe;--clock-accent:#ffa8c8}
+html.th-quartzo body{background:radial-gradient(80% 70% at 85% 10%,#3a1a2e 0%,#1f0e1a 50%,#0a0408 100%) var(--bg)}
+html.th-quartzo .glass-blur{background:linear-gradient(180deg,#1f0e1a,#0b050a)}
+html.th-quartzo #sidebar{border-right-color:rgba(255,168,200,0.14)}
+html.th-quartzo .nav-item.active{background:rgba(255,168,200,0.09);border-color:rgba(255,168,200,0.18)}
+html.th-quartzo .nav-item.is-focused,html.th-quartzo .nav-item.me.is-focused{color:#2a0a18;background:linear-gradient(100deg,#ffe0ec,#ffa8c8);border-color:transparent}
+html.th-quartzo .nav-item.me.is-focused .me-name{color:#2a0a18}
+html.th-quartzo .f.is-focused,html.th-quartzo .tile.is-focused .tile-art{border-color:rgba(255,168,200,0.88)}
+html.th-quartzo .tile.is-focused .tile-label{color:#ffa8c8}
+html.th-quartzo .btn.primary{background:linear-gradient(100deg,#ffe0ec,#ffa8c8);color:#2a0a18;border-color:transparent}
+html.th-quartzo .kicker{color:#ffa8c8}
+html.th-quartzo .hero-bg{opacity:.3}
+html.th-quartzo .dots i.on{background:#ffa8c8}
+html.th-quartzo .row-title::before{content:"";display:inline-block;margin-right:.7rem;width:.62rem;height:.62rem;border-radius:50% 0;border:2px solid #ffa8c8;transform:rotate(45deg);vertical-align:.08rem}
+html.th-quartzo .switch.on{background:#ff7fb0}
+html.th-quartzo .opt.is-focused,html.th-quartzo .row-opt.is-focused{background:linear-gradient(100deg,#ffe0ec,#ffa8c8);color:#2a0a18}
+html.th-quartzo .opt.is-focused .opt-desc,html.th-quartzo .row-opt.is-focused .opt-desc{color:rgba(42,10,24,0.72)}
+html.th-quartzo .tile-art{background:#1c0c17}
+html.th-quartzo .tile-art img{background:#2a1222}
+html.th-quartzo #toast{background:#231020;border-color:rgba(255,168,200,0.3)}
+html.th-quartzo .reader-panel,html.th-quartzo .wx-card{background:linear-gradient(170deg,#331a2b,#120810 70%);border-color:rgba(255,168,200,0.2)}
+html.th-quartzo .layer{background:radial-gradient(60% 60% at 70% 0%,rgba(255,170,205,.14),transparent 70%),radial-gradient(80% 70% at 85% 10%,#3a1a2e,#0a0408)}
+html.th-quartzo .pf.is-focused .av{box-shadow:0 0 0 .2rem #ffa8c8,0 .8rem 2rem rgba(255,150,195,.35)}
+html.th-quartzo .kb-key.is-focused,html.th-quartzo .pin-key.is-focused,html.th-quartzo .svc.is-focused{background:#ffa8c8;color:#2a0a18;border-color:#ffa8c8}
+html.th-quartzo .clk-flip .card i{background:linear-gradient(180deg,rgba(255,168,200,.14) 0,rgba(255,168,200,.14) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}
+html.th-quartzo .clk-analog circle.face{fill:rgba(255,168,200,0.07)}
+html.th-quartzo .cz-orbit i{background:#ffa8c8;box-shadow:0 0 .9rem rgba(255,150,195,.9)}
+html.th-quartzo.home-cosmos .kicker{color:#ffe0ec}
+html.th-quartzo .nav-art{display:none}
+html.th-quartzo .nav-theme{display:block}
+@media (min-width:761px),(orientation:landscape){
+  html.th-quartzo.nav-top #sidebar{background:linear-gradient(180deg,#1f0e1a,#0b050a)}
+  html.th-quartzo.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(52,24,42,.94),rgba(14,6,12,.95));border-color:rgba(255,168,200,0.24)}
+  html.th-quartzo.nav-top .nav-item.active::before,html.th-quartzo.nav-bottom .nav-item.active::before{background:#ffa8c8;box-shadow:0 0 .7rem #ffa8c8}
+}
+/* Animações dos 4 temas: só transform e opacity, devagar (a TV continua a 60 FPS). */
+.sf-ray{animation:auGlow 9s ease-in-out infinite alternate}
+.sf-ray2{animation:auGlow 13s ease-in-out -5s infinite alternate-reverse}
+.sf-up{animation:sfUp 26s linear infinite}
+.sf-up2{animation:sfUp 34s linear -12s infinite}
+.sf-up3{animation:sfUp 21s linear -7s infinite}
+@keyframes sfUp{from{transform:translateY(0)}to{transform:translateY(-1200px)}}
+.sf-jelly{animation:sfJelly 9s ease-in-out infinite alternate}
+@keyframes sfJelly{to{transform:translateY(-46px)}}
+.es-fly1{animation:pxTwinkle 3.4s ease-in-out infinite}
+.es-fly2{animation:pxTwinkle 4.6s ease-in-out 1.3s infinite}
+.es-fly3{animation:pxTwinkle 2.8s ease-in-out .6s infinite}
+.es-drift{animation:esDrift 16s ease-in-out infinite alternate}
+.es-drift2{animation:esDrift 22s ease-in-out -8s infinite alternate-reverse}
+@keyframes esDrift{to{transform:translate(28px,-22px)}}
+.am-sun{animation:auGlow 6s ease-in-out infinite alternate}
+.am-tw{animation:pxTwinkle 4s ease-in-out infinite}
+.qz-fall1{animation:qzFall 24s linear infinite}
+.qz-fall2{animation:qzFall 31s linear -11s infinite}
+.qz-fall3{animation:qzFall 27s linear -19s infinite}
+@keyframes qzFall{from{transform:translate(0,0)}to{transform:translate(-520px,1220px)}}
+.qz-sway{transform-box:fill-box;transform-origin:center;animation:qzSway 3s ease-in-out infinite alternate}
+@keyframes qzSway{from{transform:rotate(-24deg)}to{transform:rotate(30deg)}}
+
 /* Desenho do menu (no vão entre Jogos e Entradas) de cada tema; o padrão é o .nav-art. */
 .nav-theme{display:none;width:78%;max-height:100%;opacity:.8}
 html.kids .nav-theme{display:none!important}
@@ -1835,7 +2015,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '17.0.0'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '17.1.0'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
@@ -1849,7 +2029,7 @@ const CHOICES = Object.freeze({
   soundFx: [['chime', 'Onix Chime'], ['crystal', 'Crystal'], ['sharp', 'Sharpness'], ['velvet', 'Velvet'], ['pulse', 'Pulse']],
   homeStyle: [['glass', 'Onix Glass'], ['clean', 'Clean Glass'], ['cosmos', 'Onix Cosmos']],
   navPos: [['left', 'Lateral'], ['top', 'Em cima'], ['bottom', 'Embaixo']],
-  theme: [['dark', 'Onix Escuro'], ['cobalt', 'Onix Cobalt'], ['aurora', 'Onix Aurora'], ['rubi', 'Onix Rubi Cinema'], ['white', 'Onix White']],   // o claro por último, para ninguém passar por ele de surpresa
+  theme: [['dark', 'Onix Escuro'], ['cobalt', 'Onix Cobalt'], ['aurora', 'Onix Aurora'], ['rubi', 'Onix Rubi Cinema'], ['safira', 'Onix Safira'], ['esmeralda', 'Onix Esmeralda'], ['ambar', 'Onix Âmbar'], ['quartzo', 'Onix Quartzo Rosa'], ['white', 'Onix White']],   // o claro por último, para ninguém passar por ele de surpresa
   font: [['system', 'Sistema'], ['bodoni', 'Bodoni Moda'], ['cinzel', 'Cinzel'], ['butler', 'Butler'], ['playfair', 'Playfair Display'], ['montserrat', 'Montserrat'],
     ['poppins', 'Poppins'], ['bebas', 'Bebas Neue'], ['orbitron', 'Orbitron'], ['quicksand', 'Quicksand'], ['pressstart', 'Press Start 2P']],
   clock: [['thin', 'Fino'], ['bold', 'Negrito'], ['stack', 'Empilhado'], ['analog', 'Analógico'], ['digital', 'Digital'], ['flip', 'Flip'], ['words', 'Por extenso'], ['neon', 'Neon']],
@@ -2054,6 +2234,133 @@ const THEME_ART = {
       + '<path d="M104 80c20 4 30 20 34 44 3 18 0 30-6 40" stroke-width="16" stroke="#0d0306"/><path d="M104 80c20 4 30 20 34 44 3 18 0 30-6 40" stroke-width="16" stroke-dasharray="3 6" stroke-opacity=".6"/>'
       + '</g><path d="M128 20l3.5 8.5 8.5 3.5-8.5 3.5-3.5 8.5-3.5-8.5-8.5-3.5 8.5-3.5z" fill="#ffd27a"/><circle cx="28" cy="140" r="2.5" fill="#ffe3a3"/><circle cx="142" cy="66" r="2" fill="#ffe3a3"/></svg>',
   },
+
+  // Onix Safira: fundo do mar. Raios de luz vindos de cima, bolhas subindo, águas-vivas de linha e algas no chão.
+  safira: {
+    bg: () => {
+      const rnd = rng(31);
+      // Cada leva de bolhas sobe 1200 px e recomeça; a cópia 1200 px acima deixa a volta sem salto.
+      const bubbles = n => { let s = ''; for (let i = 0; i < n; i++) { const x = 340 + rnd() * 1580 | 0, y = 1100 + rnd() * 1200 | 0, r = (2 + rnd() * 9).toFixed(1); s += '<circle cx="' + x + '" cy="' + y + '" r="' + r + '"/><circle cx="' + x + '" cy="' + (y - 1200) + '" r="' + r + '"/>'; } return s; };
+      const weed = (x, h, k) => 'M' + x + ' 1080c' + (k * 26) + ' -' + (h * .25 | 0) + ' ' + (-k * 22) + ' -' + (h * .5 | 0) + ' ' + (k * 6) + ' -' + (h * .75 | 0) + 's' + (-k * 18) + ' -' + (h * .2 | 0) + ' ' + (k * 4) + ' -' + (h * .25 | 0);
+      let weeds = '';
+      for (const [x, h, k] of [[1660, 230, 1], [1700, 320, -1], [1742, 190, 1], [1860, 280, -1], [1890, 170, 1], [380, 210, -1], [420, 150, 1]]) weeds += '<path d="' + weed(x, h, k) + '"/>';
+      const jelly = (x, y, s, delay) => '<g class="sf-jelly" style="animation-delay:' + delay + 's"><g transform="translate(' + x + ' ' + y + ') scale(' + s + ')">'
+        + '<circle r="90" fill="url(#sfJ)" stroke="none"/>'
+        + '<path d="M-60 0C-60-78 60-78 60 0Q45 12 30 0Q15 12 0 0Q-15 12-30 0Q-45 12-60 0z" stroke-width="3"/>'
+        + '<path d="M-34-26C-26-46 6-54 22-46" stroke-width="2.4" opacity=".55"/>'
+        + '<path d="M-40 6c-10 30 12 54-4 90M-14 8c8 34-12 64 6 104M14 8c-8 32 12 58-2 96M40 6c10 28-10 52 6 84" stroke-width="2.2" opacity=".75"/></g></g>';
+      return SVG_BG + '<defs>'
+        + '<linearGradient id="sfR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fdcff" stop-opacity=".22"/><stop offset=".7" stop-color="#6fb8ff" stop-opacity=".05"/><stop offset="1" stop-color="#6fb8ff" stop-opacity="0"/></linearGradient>'
+        + '<radialGradient id="sfJ"><stop offset="0" stop-color="#6fd6ff" stop-opacity=".22"/><stop offset="1" stop-color="#6fd6ff" stop-opacity="0"/></radialGradient>'
+        + '<linearGradient id="sfB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#041a33"/><stop offset="1" stop-color="#010812"/></linearGradient></defs>'
+        + '<g class="sf-ray"><path d="M760 0h150l320 1080H930z" fill="url(#sfR)"/><path d="M1300 0h90l250 1080h-190z" fill="url(#sfR)"/></g>'
+        + '<g class="sf-ray2"><path d="M1040 0h70l140 1080h-120z" fill="url(#sfR)"/><path d="M1560 0h140l220 900v180h-120z" fill="url(#sfR)"/></g>'
+        + softStars(70, 1920, 1080, 33, 1080)
+        + '<g stroke="#a8e6ff" stroke-width="2" opacity=".5"><g class="sf-up">' + bubbles(9) + '</g><g class="sf-up2">' + bubbles(8) + '</g><g class="sf-up3">' + bubbles(7) + '</g></g>'
+        + '<g stroke="#9fd8ff" opacity=".7">' + jelly(1730, 620, 1, 0) + jelly(1480, 860, .55, -4) + '</g>'
+        + '<path d="M0 1080V1032c220-26 420 10 640-6s460-34 700-8 380 6 580-14V1080z" fill="url(#sfB)"/>'
+        + '<g stroke="#2a7fa6" stroke-width="7" opacity=".55">' + weeds + '</g></svg>';
+    },
+    nav: () => SVG_NAV + '<g stroke="#9fd8ff" stroke-width="2.4">'
+      + '<path d="M44 74C44 30 116 30 116 74Q107 81 98 74Q89 81 80 74Q71 81 62 74Q53 81 44 74z" fill="#041a36"/>'
+      + '<path d="M60 52c6-10 22-14 32-10" stroke-width="1.8" opacity=".55"/>'
+      + '<path d="M56 80c-6 18 8 32-2 52M74 80c4 20-6 36 4 58M90 80c-4 18 6 34-2 54M106 80c6 16-6 30 4 48" stroke-width="2" opacity=".75"/></g>'
+      + '<g stroke="#a8e6ff" stroke-width="1.6" opacity=".7"><circle cx="132" cy="40" r="5"/><circle cx="140" cy="22" r="3"/><circle cx="24" cy="118" r="4"/><circle cx="30" cy="100" r="2.4"/></g></svg>',
+  },
+
+  // Onix Esmeralda: floresta à noite. Luz da lua entre as folhas, samambaias de linha e vaga-lumes piscando.
+  esmeralda: {
+    bg: () => {
+      const rnd = rng(47);
+      // Samambaia: um talo curvo com folhinhas dos dois lados, que diminuem até a ponta.
+      const fern = (x0, y0, len, ang, n) => {
+        let stem = 'M' + x0 + ' ' + y0, leaves = '';
+        for (let i = 1; i <= n; i++) {
+          const t = i / n, a = ang + t * .5, x = x0 + Math.cos(a) * len * t, y = y0 + Math.sin(a) * len * t, sz = 70 * (1 - t * .8);
+          stem += 'L' + (x | 0) + ' ' + (y | 0);
+          for (const sd of [-1, 1]) { const b = a + sd * 1.05, ex = x + Math.cos(b) * sz, ey = y + Math.sin(b) * sz, mx = (x + ex) / 2 + Math.cos(a) * sz * .25, my = (y + ey) / 2 + Math.sin(a) * sz * .25; leaves += 'M' + (x | 0) + ' ' + (y | 0) + 'Q' + (mx | 0) + ' ' + (my | 0) + ' ' + (ex | 0) + ' ' + (ey | 0); }
+        }
+        return '<path d="' + stem + '" stroke-width="5"/><path d="' + leaves + '" stroke-width="3.2"/>';
+      };
+      const flies = ['', '', ''];
+      for (let i = 0; i < 30; i++) { const x = 340 + rnd() * 1580 | 0, y = 260 + rnd() * 800 | 0; flies[i % 3] += '<circle cx="' + x + '" cy="' + y + '" r="16" fill="url(#esF)"/><circle cx="' + x + '" cy="' + y + '" r="2.6" fill="#f4ffb0"/>'; }
+      return SVG_BG + '<defs>'
+        + '<radialGradient id="esM"><stop offset="0" stop-color="#b8ffd6" stop-opacity=".2"/><stop offset="1" stop-color="#b8ffd6" stop-opacity="0"/></radialGradient>'
+        + '<radialGradient id="esF"><stop offset="0" stop-color="#e6ff8a" stop-opacity=".55"/><stop offset="1" stop-color="#e6ff8a" stop-opacity="0"/></radialGradient></defs>'
+        + '<circle cx="1640" cy="-40" r="620" fill="url(#esM)"/>'
+        + '<g stroke="#2f9a5e" opacity=".55">' + fern(1920, 1080, 520, -2.5, 9) + fern(1800, 1090, 420, -1.95, 8) + fern(1560, 1100, 300, -1.5, 6)
+        + fern(300, 1090, 360, -1.2, 7) + fern(1920, 0, 460, 2.55, 8) + '</g>'
+        + '<g stroke="#3fbf78" stroke-width="2.4" opacity=".4"><path d="M1240 0c10 120-26 200-8 320"/><path d="M1340 0c-14 90 20 150 4 250"/><path d="M1232 160l-22 14M1234 230l20 10M1342 120l22 10M1338 190l-20 12"/></g>'
+        + '<g class="es-drift"><g class="es-fly1">' + flies[0] + '</g></g><g class="es-drift2"><g class="es-fly2">' + flies[1] + '</g></g><g class="es-fly3">' + flies[2] + '</g></svg>';
+    },
+    nav: () => SVG_NAV + '<defs><radialGradient id="enF"><stop offset="0" stop-color="#e6ff8a" stop-opacity=".6"/><stop offset="1" stop-color="#e6ff8a" stop-opacity="0"/></radialGradient></defs>'
+      + '<g stroke="#5fe89a" stroke-width="2.4"><path d="M40 160C60 120 76 90 110 40"/>'
+      + '<path d="M52 136q-22-2-30-16M62 116q-22-4-28-20M74 96q-18-8-22-24M88 76q-14-10-14-26M58 130q18 6 32-2M70 110q20 2 32-10M84 88q18-2 26-16M98 64q14-4 18-18" stroke-width="2"/></g>'
+      + '<g class="es-fly1"><circle cx="124" cy="96" r="10" fill="url(#enF)"/><circle cx="124" cy="96" r="2" fill="#f4ffb0"/></g>'
+      + '<g class="es-fly2"><circle cx="30" cy="62" r="9" fill="url(#enF)"/><circle cx="30" cy="62" r="1.8" fill="#f4ffb0"/></g>'
+      + '<g class="es-fly3"><circle cx="136" cy="30" r="8" fill="url(#enF)"/><circle cx="136" cy="30" r="1.6" fill="#f4ffb0"/></g></svg>',
+  },
+
+  // Onix Âmbar: pôr do sol retrô. Sol listrado no horizonte, montanhas de linha e a grade neon em perspectiva.
+  ambar: {
+    bg: () => {
+      const hz = 760, vx = 1320;
+      let grid = '', stripes = '';
+      for (let i = 1; i <= 9; i++) { const y = hz + Math.pow(i / 9, 2) * 330; grid += 'M0 ' + (y | 0) + 'H1920'; }
+      for (let i = -14; i <= 14; i++) grid += 'M' + vx + ' ' + hz + 'L' + (vx + i * 190) + ' 1080';
+      for (let i = 0; i < 6; i++) { const y = 560 + i * 34 + i * i * 2; stripes += '<rect x="1100" y="' + y + '" width="700" height="' + (3 + i * 3) + '"/>'; }
+      return SVG_BG + '<defs>'
+        + '<linearGradient id="amS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset=".55" stop-color="#ff8a3d"/><stop offset="1" stop-color="#ff4f9a"/></linearGradient>'
+        + '<radialGradient id="amG"><stop offset="0" stop-color="#ff8a3d" stop-opacity=".28"/><stop offset="1" stop-color="#ff4f9a" stop-opacity="0"/></radialGradient>'
+        + '<linearGradient id="amF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0b2c"/><stop offset="1" stop-color="#0c0310"/></linearGradient>'
+        + '<mask id="amM"><rect x="1100" y="0" width="700" height="' + hz + '" fill="#fff"/><g fill="#000">' + stripes + '</g></mask></defs>'
+        + softStars(80, 1920, 1080, 41, 520, 'am-tw')
+        + '<circle class="am-sun" cx="1450" cy="' + hz + '" r="520" fill="url(#amG)"/>'
+        + '<circle cx="1450" cy="' + (hz - 20) + '" r="250" fill="url(#amS)" mask="url(#amM)" opacity=".6"/>'
+        + '<path d="M860 ' + hz + 'l120-70 80 40 110-90 90 60 70-30 120 80 70-40 90 50 110-100 130 90 100-40 80 50V' + hz + 'z" fill="#1c0828" stroke="#ff5ea8" stroke-width="2.4" stroke-opacity=".7"/>'
+        + '<rect y="' + hz + '" width="1920" height="' + (1080 - hz) + '" fill="url(#amF)"/>'
+        + '<path d="' + grid + '" stroke="#ff5ea8" stroke-width="2" opacity=".32"/>'
+        + '<path d="M0 ' + hz + 'H1920" stroke="#ffb347" stroke-width="2.4" opacity=".5"/></svg>';
+    },
+    nav: () => SVG_NAV + '<defs><linearGradient id="anS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset="1" stop-color="#ff4f9a"/></linearGradient>'
+      + '<mask id="anM"><rect width="160" height="104" fill="#fff"/><g fill="#000"><rect y="80" width="160" height="3"/><rect y="88" width="160" height="4"/><rect y="97" width="160" height="5"/></g></mask></defs>'
+      + '<circle cx="80" cy="96" r="44" fill="url(#anS)" mask="url(#anM)"/>'
+      + '<path d="M0 104l26-18 18 10 22-20 20 16 18-12 24 20 32-16V104z" fill="#1c0828" stroke="#ff5ea8" stroke-width="1.6"/>'
+      + '<path d="M0 104H160M0 116H160M0 134H160M0 160H160M80 104L-20 170M80 104L30 170M80 104L80 170M80 104L130 170M80 104L180 170" stroke="#ff5ea8" stroke-width="1.6" opacity=".6"/>'
+      + '<circle cx="26" cy="30" r="1.6" fill="#fff"/><circle cx="140" cy="22" r="2" fill="#fff"/><circle cx="110" cy="44" r="1.2" fill="#fff"/></svg>',
+  },
+
+  // Onix Quartzo Rosa: jardim japonês. Lua cheia, o monte ao fundo, galho de cerejeira em flor e pétalas caindo.
+  quartzo: {
+    bg: () => {
+      const rnd = rng(59);
+      const flower = (x, y, r) => { let s = ''; for (let i = 0; i < 5; i++) { const a = i * 1.2566 - 1.57; s += '<circle cx="' + (x + Math.cos(a) * r).toFixed(1) + '" cy="' + (y + Math.sin(a) * r).toFixed(1) + '" r="' + (r * .8).toFixed(1) + '"/>'; } return s; };
+      let flowers = '', centers = '';
+      for (const [x, y, r] of [[1900, 30, 11], [1850, 44, 9], [1790, 28, 12], [1730, 52, 9], [1670, 30, 10], [1610, 58, 11], [1550, 40, 9], [1490, 64, 10],
+        [1430, 46, 8], [1370, 60, 9], [1310, 42, 8], [1250, 56, 7], [1760, 92, 9], [1700, 108, 8], [1580, 100, 9], [1200, 36, 7], [1880, 84, 8]]) {
+        flowers += flower(x, y, r); centers += '<circle cx="' + x + '" cy="' + y + '" r="' + (r * .35).toFixed(1) + '"/>';
+      }
+      const petal = (x, y) => '<g transform="translate(' + x + ' ' + y + ')"><path class="qz-sway" d="M0 0c6-9 18-7 16 4-2 9-12 11-16-4z"/></g>';
+      const fall = n => { let s = ''; for (let i = 0; i < n; i++) { const x = 760 + rnd() * 1360 | 0, y = -120 + rnd() * 1200 | 0; s += petal(x, y) + petal(x + 520, y - 1220); } return s; };
+      return SVG_BG + '<defs>'
+        + '<radialGradient id="qzM"><stop offset="0" stop-color="#ffe6ef" stop-opacity=".55"/><stop offset=".7" stop-color="#f6b8cf" stop-opacity=".3"/><stop offset="1" stop-color="#f6b8cf" stop-opacity=".18"/></radialGradient>'
+        + '<radialGradient id="qzH"><stop offset="0" stop-color="#ffb7d0" stop-opacity=".22"/><stop offset="1" stop-color="#ffb7d0" stop-opacity="0"/></radialGradient></defs>'
+        + softStars(50, 1920, 1080, 61, 600)
+        + '<circle cx="1730" cy="700" r="400" fill="url(#qzH)"/><circle cx="1730" cy="700" r="150" fill="url(#qzM)" stroke="#ffe0ec" stroke-width="2" stroke-opacity=".35"/>'
+        + '<path d="M1020 1080L1430 700c40-34 80-34 120 0l370 330V1080z" fill="#22101d" stroke="#ffa8c8" stroke-width="2.4" stroke-opacity=".35"/>'
+        + '<path d="M1430 700c40-34 80-34 120 0l-28 24-22-16-26 22-20-14z" fill="#3a2232" stroke="#ffe0ec" stroke-width="2" stroke-opacity=".45"/>'
+        + '<path d="M300 1080c260-90 520-70 760-20s520 40 860-40V1080z" fill="#160a13"/>'
+        + '<path d="M300 1036c200-50 420-50 620-10M980 1050c220-40 460-40 700-16" stroke="#ffa8c8" stroke-width="2" stroke-dasharray="2 12" opacity=".4"/>'
+        + '<g stroke="#4a2636" fill="none"><path d="M1940 20C1820 50 1700 24 1580 54S1340 66 1180 40" stroke-width="10"/><path d="M1760 40c-6 26-20 50-50 70" stroke-width="5"/><path d="M1600 54c-10 20-14 34-20 50" stroke-width="4"/></g>'
+        + '<g fill="#ffb7d0" opacity=".85">' + flowers + '</g><g fill="#ff7fb0">' + centers + '</g>'
+        + '<g fill="#ffc2d8" opacity=".8"><g class="qz-fall1">' + fall(4) + '</g><g class="qz-fall2">' + fall(4) + '</g><g class="qz-fall3">' + fall(3) + '</g></g></svg>';
+    },
+    nav: () => SVG_NAV + '<circle cx="104" cy="50" r="30" fill="#2a1222" stroke="#ffe0ec" stroke-width="2" stroke-opacity=".6"/>'
+      + '<path d="M0 150C40 140 60 120 92 112S140 96 160 80" stroke="#6a3a50" stroke-width="5"/><path d="M64 126c-6-16-16-26-30-30" stroke="#6a3a50" stroke-width="3"/>'
+      + '<g fill="#ffb7d0">' + [[38, 96], [92, 110], [132, 92], [56, 132]].map(([x, y]) => [0, 1, 2, 3, 4].map(i => { const a = i * 1.2566 - 1.57; return '<circle cx="' + (x + Math.cos(a) * 6).toFixed(1) + '" cy="' + (y + Math.sin(a) * 6).toFixed(1) + '" r="5"/>'; }).join('')).join('') + '</g>'
+      + '<g fill="#ff7fb0"><circle cx="38" cy="96" r="2"/><circle cx="92" cy="110" r="2"/><circle cx="132" cy="92" r="2"/><circle cx="56" cy="132" r="2"/></g>'
+      + '<path d="M24 40c4-6 12-5 11 3-1 6-8 7-11-3z" fill="#ffc2d8" opacity=".8"/><path d="M140 140c4-6 12-5 11 3-1 6-8 7-11-3z" fill="#ffc2d8" opacity=".7"/></svg>',
+  },
 };
 
 /* ---------------- Estilos do relógio ----------------
@@ -2143,13 +2450,48 @@ function drawThemeSky(g, W, H, rnd, th) {
     const gr = g.createLinearGradient(W, 0, W * .5, H);
     gr.addColorStop(0, 'rgba(255,230,190,.07)'); gr.addColorStop(1, 'rgba(255,230,190,0)');
     g.fillStyle = gr; g.beginPath(); g.moveTo(W, 0); g.lineTo(W * .62, H); g.lineTo(W * .32, H); g.closePath(); g.fill();
+  } else if (th === 'safira') {
+    // Fundo do mar escuro: azul quase preto e três faixas de luz bem fracas vindas de cima.
+    const gr = g.createLinearGradient(0, 0, 0, H);
+    gr.addColorStop(0, '#031a35'); gr.addColorStop(.5, '#010a18'); gr.addColorStop(1, '#000306');
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    for (const [x, w] of [[.42, .06], [.6, .04], [.78, .07]]) {
+      const ray = g.createLinearGradient(0, 0, 0, H);
+      ray.addColorStop(0, 'rgba(140,210,255,.07)'); ray.addColorStop(1, 'rgba(140,210,255,0)');
+      g.fillStyle = ray; g.beginPath(); g.moveTo(W * x, 0); g.lineTo(W * (x + w), 0); g.lineTo(W * (x + w * 3), H); g.lineTo(W * (x + w), H); g.closePath(); g.fill();
+    }
+  } else if (th === 'esmeralda') {
+    g.fillStyle = '#010603'; g.fillRect(0, 0, W, H);
+    glowAt(g, W * .85, 0, 0, H * .8, 'rgba(60,200,120,.12)');
+    for (let i = 0; i < 18; i++) glowAt(g, rnd() * W, H * (.25 + rnd() * .6), 0, 10 * u, 'rgba(230,255,138,.35)');
+  } else if (th === 'ambar') {
+    // Fim de tarde apagado: roxo escuro em cima, o sol baixo só como um brilho e a grade no chão.
+    const gr = g.createLinearGradient(0, 0, 0, H);
+    gr.addColorStop(0, '#07020d'); gr.addColorStop(.7, '#1a0618'); gr.addColorStop(1, '#0a0208');
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    glowAt(g, W * .6, H * .72, 0, H * .5, 'rgba(255,120,60,.14)');
+    g.strokeStyle = 'rgba(255,94,168,.12)'; g.lineWidth = Math.max(1, u * 1.5); g.beginPath();
+    for (let i = 1; i <= 7; i++) { const y = H * (.72 + Math.pow(i / 7, 2) * .28); g.moveTo(0, y); g.lineTo(W, y); }
+    for (let i = -10; i <= 10; i++) { g.moveTo(W * .6, H * .72); g.lineTo(W * .6 + i * W * .1, H); }
+    g.stroke();
+  } else if (th === 'quartzo') {
+    g.fillStyle = '#070307'; g.fillRect(0, 0, W, H);
+    glowAt(g, W * .8, H * .25, 0, H * .5, 'rgba(255,190,215,.1)');
+    g.fillStyle = 'rgba(255,214,228,.08)'; g.beginPath(); g.arc(W * .8, H * .25, H * .12, 0, TAU); g.fill();
   } else return false;
   const n = Math.round(W * H / 14000);
-  for (let i = 0; i < n; i++) { g.globalAlpha = .08 + rnd() * .35; g.fillStyle = '#fff'; g.beginPath(); g.arc(rnd() * W, rnd() * H * (th === 'aurora' ? .7 : 1), (rnd() > .9 ? 1.2 : .7) * u, 0, TAU); g.fill(); }
+  for (let i = 0; i < n; i++) { g.globalAlpha = .08 + rnd() * .35; g.fillStyle = '#fff'; g.beginPath(); g.arc(rnd() * W, rnd() * H * (th === 'aurora' || th === 'ambar' ? .7 : 1), (rnd() > .9 ? 1.2 : .7) * u, 0, TAU); g.fill(); }
   g.globalAlpha = 1;
   if (th === 'aurora') {
     g.fillStyle = '#000'; g.beginPath(); g.moveTo(0, H);
     for (let x = 0; x <= W; x += W / 14) g.lineTo(x, H * (.86 + Math.sin(x / W * 9) * .035 + (rnd() - .5) * .03));
+    g.lineTo(W, H); g.closePath(); g.fill();
+  }
+  if (th === 'esmeralda' || th === 'quartzo') {
+    // Folhagem (Esmeralda) ou o monte com as colinas (Quartzo Rosa), em silhueta preta embaixo.
+    g.fillStyle = '#000'; g.beginPath(); g.moveTo(0, H);
+    if (th === 'quartzo') { g.lineTo(W * .5, H); g.lineTo(W * .74, H * .7); g.quadraticCurveTo(W * .78, H * .66, W * .82, H * .7); g.lineTo(W, H * .86); }
+    else for (let x = 0; x <= W; x += W / 40) g.lineTo(x, H * (.9 - Math.abs(Math.sin(x / W * 23)) * .06 - rnd() * .03));
     g.lineTo(W, H); g.closePath(); g.fill();
   }
   if (th === 'rubi') {
@@ -2792,15 +3134,17 @@ const ES = Object.freeze({
   "O Cobalt GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "Cobalt GameHub todavía no fue publicado. Llega en una próxima actualización.",
   "Não deu para baixar o Cobalt GameHub. Confira a internet e tente de novo.": "No se pudo descargar Cobalt GameHub. Revisa internet e inténtalo de nuevo.",
   "Não deu para abrir o Cobalt GameHub": "No se pudo abrir Cobalt GameHub",
+  // Onix 17.1.0: mais 4 temas
+  "*Mais 4 temas:* em *Configurações → Aparência → Tema*. *Onix Safira* é o fundo do mar, com raios de luz, bolhas subindo e águas-vivas. *Onix Esmeralda* é uma floresta à noite, com samambaias e vaga-lumes piscando. *Onix Âmbar* é um pôr do sol retrô, com o sol listrado e a grade neon. *Onix Quartzo Rosa* é um jardim japonês, com lua cheia, o monte ao fundo e pétalas de cerejeira caindo. Cada um tem o desenho do menu e a tela de descanso próprios.": "*4 temas más:* en *Configuración → Apariencia → Tema*. *Onix Zafiro* es el fondo del mar, con rayos de luz, burbujas que suben y medusas. *Onix Esmeralda* es un bosque de noche, con helechos y luciérnagas que parpadean. *Onix Ámbar* es un atardecer retro, con el sol a rayas y la cuadrícula neón. *Onix Cuarzo Rosa* es un jardín japonés, con luna llena, el monte al fondo y pétalos de cerezo que caen. Cada uno tiene su dibujo del menú y su protector de pantalla.",
   // Onix 17.0.0: Aparência
   "*Temas novos:* em *Configurações → Aparência → Tema*, o Onix ganhou 4 temas que mudam o visual inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. *Onix Cobalt* é pixel art, inspirado no Cobalt GameHub, com nave, estrelas e planetas de pixel. *Onix Aurora* tem a aurora boreal se movendo sobre montanhas e pinheiros. *Onix Rubi Cinema* é uma sala de cinema, com cortina, lâmpadas e o feixe do projetor. *Onix White* é claro sem cansar a vista. O Onix Escuro continua como o padrão, e nada muda de lugar na tela.": "*Temas nuevos:* en *Configuración → Apariencia → Tema*, Onix ganó 4 temas que cambian todo el aspecto: el vidrio, los colores, el foco, los dibujos y el protector de pantalla. *Onix Cobalt* es pixel art, inspirado en Cobalt GameHub, con nave, estrellas y planetas de píxeles. *Onix Aurora* tiene la aurora boreal moviéndose sobre montañas y pinos. *Onix Rubí Cine* es una sala de cine, con telón, bombillas y el haz del proyector. *Onix White* es claro sin cansar la vista. Onix Oscuro sigue siendo el predeterminado y nada cambia de lugar en la pantalla.",
   "*10 fontes novas:* Bodoni Moda (o estilo da Vogue), Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand e Press Start 2P. A fonte escolhida muda todas as palavras do Onix, do relógio aos menus. Todas vêm dentro do app e funcionam sem internet.": "*10 fuentes nuevas:* Bodoni Moda (el estilo de Vogue), Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand y Press Start 2P. La fuente elegida cambia todas las palabras de Onix, del reloj a los menús. Todas vienen dentro de la app y funcionan sin internet.",
   "*8 estilos de relógio:* Fino (o de sempre), Negrito, Empilhado, Analógico, Digital (como um rádio-relógio), Flip (cartões que viram a cada minuto), Por extenso (\"dez e meia\") e Neon. Valem na tela inicial e na tela de descanso.": "*8 estilos de reloj:* Fino (el de siempre), Negrita, Apilado, Analógico, Digital (como un radio reloj), Flip (tarjetas que giran cada minuto), En palabras (\"las diez y media\") y Neón. Valen en la pantalla de inicio y en el protector de pantalla.",
   "Aparência": "Apariencia", "Tema": "Tema", "Fonte": "Fuente", "Estilo do relógio": "Estilo del reloj",
-  "Muda o visual do Onix inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. Onix Escuro é o de sempre; Onix Cobalt é pixel art, como o Cobalt GameHub; Onix Aurora tem a aurora boreal sobre montanhas; Onix Rubi Cinema é uma sala de cinema; Onix White é claro sem cansar a vista. OK troca.": "Cambia el aspecto de todo Onix: el vidrio, los colores, el foco, los dibujos y el protector de pantalla. Onix Oscuro es el de siempre; Onix Cobalt es pixel art, como Cobalt GameHub; Onix Aurora tiene la aurora boreal sobre montañas; Onix Rubí Cine es una sala de cine; Onix White es claro sin cansar la vista. OK cambia.",
+  "Muda o visual do Onix inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. Onix Escuro é o de sempre; Onix Cobalt é pixel art, como o Cobalt GameHub; Onix Aurora tem a aurora boreal sobre montanhas; Onix Rubi Cinema é uma sala de cinema; Onix Safira é o fundo do mar; Onix Esmeralda é uma floresta à noite com vaga-lumes; Onix Âmbar é um pôr do sol retrô; Onix Quartzo Rosa é um jardim japonês com cerejeiras; Onix White é claro sem cansar a vista. OK troca.": "Cambia el aspecto de todo Onix: el vidrio, los colores, el foco, los dibujos y el protector de pantalla. Onix Oscuro es el de siempre; Onix Cobalt es pixel art, como Cobalt GameHub; Onix Aurora tiene la aurora boreal sobre montañas; Onix Rubí Cine es una sala de cine; Onix Zafiro es el fondo del mar; Onix Esmeralda es un bosque de noche con luciérnagas; Onix Ámbar es un atardecer retro; Onix Cuarzo Rosa es un jardín japonés con cerezos; Onix White es claro sin cansar la vista. OK cambia.",
   "Muda a letra de todas as palavras do Onix, do relógio aos menus. Sistema é a de sempre. OK troca.": "Cambia la letra de todas las palabras de Onix, del reloj a los menús. Sistema es la de siempre. OK cambia.",
   "Fino, negrito, empilhado, analógico (de ponteiros), digital (como um rádio-relógio), flip (cartões que viram), por extenso ou neon. Vale também na tela de descanso. OK troca.": "Fino, negrita, apilado, analógico (de agujas), digital (como un radio reloj), flip (tarjetas que giran), en palabras o neón. También vale en el protector de pantalla. OK cambia.",
-  "Onix Escuro": "Onix Oscuro", "Onix Rubi Cinema": "Onix Rubí Cine", "Sistema": "Sistema",
+  "Onix Escuro": "Onix Oscuro", "Onix Rubi Cinema": "Onix Rubí Cine", "Onix Safira": "Onix Zafiro", "Onix Esmeralda": "Onix Esmeralda", "Onix Âmbar": "Onix Ámbar", "Onix Quartzo Rosa": "Onix Cuarzo Rosa", "Sistema": "Sistema",
   "Fino": "Fino", "Negrito": "Negrita", "Empilhado": "Apilado", "Analógico": "Analógico", "Por extenso": "En palabras",
   });
 let LANG = 'pt';
@@ -5061,7 +5405,7 @@ const OPTIONS = [
   { group: 'Idioma' },
   { key: 'lang',   name: 'Idioma',                desc: 'Português ou espanhol. Automático segue o idioma da TV. OK troca.' },
   { group: 'Aparência' },
-  { key: 'theme', name: 'Tema', desc: 'Muda o visual do Onix inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. Onix Escuro é o de sempre; Onix Cobalt é pixel art, como o Cobalt GameHub; Onix Aurora tem a aurora boreal sobre montanhas; Onix Rubi Cinema é uma sala de cinema; Onix White é claro sem cansar a vista. OK troca.' },
+  { key: 'theme', name: 'Tema', desc: 'Muda o visual do Onix inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. Onix Escuro é o de sempre; Onix Cobalt é pixel art, como o Cobalt GameHub; Onix Aurora tem a aurora boreal sobre montanhas; Onix Rubi Cinema é uma sala de cinema; Onix Safira é o fundo do mar; Onix Esmeralda é uma floresta à noite com vaga-lumes; Onix Âmbar é um pôr do sol retrô; Onix Quartzo Rosa é um jardim japonês com cerejeiras; Onix White é claro sem cansar a vista. OK troca.' },
   { key: 'font', name: 'Fonte', desc: 'Muda a letra de todas as palavras do Onix, do relógio aos menus. Sistema é a de sempre. OK troca.' },
   { key: 'clock', name: 'Estilo do relógio', desc: 'Fino, negrito, empilhado, analógico (de ponteiros), digital (como um rádio-relógio), flip (cartões que viram), por extenso ou neon. Vale também na tela de descanso. OK troca.' },
   { group: 'Desempenho' },
@@ -5108,6 +5452,9 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '17.1.0', date: 'novembro de 2026', items: [
+    ['new', '*Mais 4 temas:* em *Configurações → Aparência → Tema*. *Onix Safira* é o fundo do mar, com raios de luz, bolhas subindo e águas-vivas. *Onix Esmeralda* é uma floresta à noite, com samambaias e vaga-lumes piscando. *Onix Âmbar* é um pôr do sol retrô, com o sol listrado e a grade neon. *Onix Quartzo Rosa* é um jardim japonês, com lua cheia, o monte ao fundo e pétalas de cerejeira caindo. Cada um tem o desenho do menu e a tela de descanso próprios.'],
+  ] },
   { version: '17.0.0', date: 'novembro de 2026', items: [
     ['new', '*Temas novos:* em *Configurações → Aparência → Tema*, o Onix ganhou 4 temas que mudam o visual inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. *Onix Cobalt* é pixel art, inspirado no Cobalt GameHub, com nave, estrelas e planetas de pixel. *Onix Aurora* tem a aurora boreal se movendo sobre montanhas e pinheiros. *Onix Rubi Cinema* é uma sala de cinema, com cortina, lâmpadas e o feixe do projetor. *Onix White* é claro sem cansar a vista. O Onix Escuro continua como o padrão, e nada muda de lugar na tela.'],
     ['new', '*10 fontes novas:* Bodoni Moda (o estilo da Vogue), Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand e Press Start 2P. A fonte escolhida muda todas as palavras do Onix, do relógio aos menus. Todas vêm dentro do app e funcionam sem internet.'],
