@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 17.1.3 (novembro de 2026)
+
+- **Aba Jogos sem demora:** a página de Jogos aparece na hora. Antes, o Onix esperava o Cobalt GameHub responder (e, se ele estivesse fechado, esperava ele abrir) para trocar de tela. Agora ela mostra os últimos jogos guardados e os números novos chegam em seguida, sozinhos.
+- **Foco no tema Cobalt:** os botões do cartão do Cobalt GameHub (como **Abrir o GameHub** e **Baixar controle**) não mostravam a borda ao passar o foco por eles. Agora ganham a borda ciano do tema.
+
 ## 17.1.2 (novembro de 2026)
 
 - **Tela inicial mais leve:** os desenhos largos dos apps com foto (como os da Netflix e do Prime Video) passam do Android para a tela numa versão até 7 vezes menor, sem perder qualidade. A lista de apps carrega mais rápido e ocupa menos memória da TV.

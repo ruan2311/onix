@@ -66,6 +66,11 @@ final class GameHub {
     private String state = "none", error = "", latest, url, sha256;
     private int progress;
     private long checked;
+    // Resumo da aba Jogos guardado por perfil: perguntar ao GameHub pode ter que abrir o processo dele, e a aba
+    // esperava essa resposta para aparecer. Agora ela mostra o último resumo na hora e o novo chega em seguida.
+    private final java.util.HashMap<String, String> summaries = new java.util.HashMap<>();
+    private final java.util.HashMap<String, Long> asked = new java.util.HashMap<>();
+    private static final long SUMMARY_MS = 2000;
 
     static synchronized GameHub get(Context ctx) {
         if (instance == null) instance = new GameHub(ctx.getApplicationContext());
@@ -110,7 +115,10 @@ final class GameHub {
             o.put("progress", progress);
             o.put("error", error);
             if (v != null) {
-                JSONObject s = summary(profile, kids);
+                String c = summaries.get(key(profile, kids));
+                refreshSummary(profile, kids);
+                JSONObject s = c == null ? null : new JSONObject(c);
+                if (s == null) o.put("loading", true);   // primeira vez: o resumo chega pelo changed()
                 if (s != null) {
                     o.put("recent", s.optJSONArray("recent") != null ? s.optJSONArray("recent") : new JSONArray());
                     o.put("counts", s.optJSONObject("counts") != null ? s.optJSONObject("counts") : new JSONObject());
@@ -119,6 +127,32 @@ final class GameHub {
         } catch (Exception ignored) {
         }
         return o.toString();
+    }
+
+    private static String key(String profile, boolean kids) {
+        return profile + (kids ? "|kids" : "");
+    }
+
+    /** Pergunta o resumo ao GameHub em segundo plano (no máximo a cada 2 s); se mudou, avisa a aba Jogos. */
+    private void refreshSummary(final String profile, final boolean kids) {
+        final String k = key(profile, kids);
+        long now = System.currentTimeMillis();
+        Long at = asked.get(k);
+        if (at != null && now - at < SUMMARY_MS) return;
+        asked.put(k, now);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                JSONObject s = summary(profile, kids);
+                String json = s == null ? null : s.toString();
+                boolean diff;
+                synchronized (GameHub.this) {
+                    diff = json != null && !json.equals(summaries.get(k));
+                    if (diff) summaries.put(k, json);
+                }
+                if (diff) changed();
+            }
+        }, "onix-gamehub-summary").start();
     }
 
     private JSONObject summary(String profile, boolean kids) {
