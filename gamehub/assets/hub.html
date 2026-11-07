@@ -634,7 +634,7 @@ function raPage(acc) {
   page.append(h('div', { class: 'cq-head' },
     raAvatar(acc),
     h('div', { class: 't' }, h('small', { text: 'RetroAchievements' }), h('b', { text: acc.user }),
-      h('div', { class: 'cq-nums' }, h('span', null, h('em', { text: nf(acc.score) }), t('pontos')),
+      h('div', { class: 'cq-nums' }, h('span', null, h('em', { text: nf(acc.score) }), acc.score === 1 ? t('ponto') : t('pontos')),
         h('span', null, h('em', { text: String(games.length) }), t('jogos com conquistas')),
         h('span', null, h('em', { text: String(done) }), t('jogos completos')))),
     h('button', { class: 'f btn', text: t('Sair da conta'), act: () => ask(t('Sair da conta {u}?', { u: acc.user }),

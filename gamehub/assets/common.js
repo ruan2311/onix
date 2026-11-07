@@ -160,7 +160,7 @@ const ES = {
   'Seus jogos': 'Tus juegos', 'conquistas de cada jogo': 'logros de cada juego', '{n} de {m} conquistas': '{n} de {m} logros',
   'Abra um jogo: o GameHub confere sozinho se ele tem conquistas no RetroAchievements. O jogo precisa ser a mesma versão que o site reconhece.':
     'Abre un juego: GameHub revisa solo si tiene logros en RetroAchievements. El juego tiene que ser la misma versión que reconoce el sitio.',
-  'Conquistas': 'Logros', 'Conquistas do Cobalt': 'Logros de Cobalt', 'Seu perfil': 'Tu perfil', 'pontos': 'puntos', 'conquistas': 'logros',
+  'Conquistas': 'Logros', 'Conquistas do Cobalt': 'Logros de Cobalt', 'Seu perfil': 'Tu perfil', 'pontos': 'puntos', 'ponto': 'punto', 'conquistas': 'logros',
   'platina!': '¡platino!', 'até a platina': 'hasta el platino', 'Desbloqueadas recentemente': 'Desbloqueados recientemente',
   'Todas as conquistas': 'Todos los logros', 'só neste aparelho, por perfil, sem conta': 'solo en este dispositivo, por perfil, sin cuenta',
   'Comum': 'Común', 'Rara': 'Raro', 'Platina': 'Platino', 'Faltam {n} de {m}': 'Faltan {n} de {m}', 'Ainda não desbloqueada': 'Todavía no desbloqueado',

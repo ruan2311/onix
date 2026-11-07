@@ -107,6 +107,34 @@ final class RetroAchievements {
         }
     }
 
+    private static long lastRefresh;
+
+    /**
+     * Busca a pontuação no site com o token (sem senha): pega o que saiu em jogos de antes e em outros aparelhos.
+     * No máximo uma vez por minuto. Chamar fora da thread da tela. Devolve true se os pontos ou a foto mudaram.
+     */
+    static boolean refresh(Context c, String profile) {
+        JSONObject a = account(c, profile);
+        long now = System.currentTimeMillis();
+        if (a == null || now - lastRefresh < 60000) return false;
+        lastRefresh = now;
+        init(c);
+        try {
+            String body = "r=login2&u=" + URLEncoder.encode(a.optString("user"), "UTF-8") + "&t=" + URLEncoder.encode(a.optString("token"), "UTF-8");
+            Response r = http(LOGIN_URL, body, "application/x-www-form-urlencoded");
+            if (r.status != 200) return false;
+            JSONObject o = new JSONObject(new String(r.body, "UTF-8"));
+            if (!o.optBoolean("Success")) return false;
+            long score = o.optLong("Score") + o.optLong("SoftcoreScore");
+            String avatar = o.optString("AvatarUrl");
+            if (score == a.optLong("score") && (avatar.isEmpty() || avatar.equals(a.optString("avatar")))) return false;
+            updateAccount(c, profile, new JSONObject().put("score", score).put("avatar", avatar));
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
     /** O jogo guardou o que tem (para a aba Conquistas). */
     static synchronized void saveGame(Context c, String profile, String gameId, JSONObject game) {
         try {

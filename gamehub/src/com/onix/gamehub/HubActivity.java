@@ -445,6 +445,7 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
             @Override
             public void run() {
                 Conquistas.check(getApplicationContext(), p, null);
+                if (RetroAchievements.refresh(getApplicationContext(), p)) Web.emit(web, "conquistas", null);
             }
         }, "cobalt-conquistas").start();
     }
