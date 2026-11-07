@@ -12,6 +12,9 @@ TC=$NDK/toolchains/llvm/prebuilt/linux-x86_64
 CLANG=${CLANG:-$(command -v clang || echo /data/data/com.termux/files/usr/bin/clang)}
 RT=$(ls -d "$TC"/lib/clang/*/lib/linux | head -1)
 [ -d "$TC/sysroot" ] || { echo "Sem o sysroot do NDK em $TC" >&2; exit 1; }
+# RetroAchievements: a biblioteca rcheevos (jni/rcheevos/src) entra junto, com a ligação jni/cheevos.c.
+RC_SRC=$(find jni/rcheevos/src -name '*.c' | sort)
+RC_FLAGS="-Ijni -Ijni/rcheevos/include -Ijni/rcheevos/src -DRC_CLIENT_SUPPORTS_HASH"
 for abi in arm64-v8a armeabi-v7a; do
   case $abi in
     arm64-v8a)   target=aarch64-linux-android21; rt=$RT/libclang_rt.builtins-aarch64-android.a; extra="" ;;
@@ -22,7 +25,7 @@ for abi in arm64-v8a armeabi-v7a; do
     -DANDROID -ffunction-sections -fdata-sections -fstack-protector-strong -D_FORTIFY_SOURCE=2 \
     -nodefaultlibs -fuse-ld=lld -Wl,--build-id=sha1 -Wl,--no-undefined -Wl,-z,noexecstack -Wl,-z,relro -Wl,-z,now \
     -Wl,-z,max-page-size=16384 -Wl,--gc-sections -Wl,-soname,libonixretro.so \
-    -o build/ndk-libs/$abi/libonixretro.so jni/retro.c -lGLESv2 -lEGL -lOpenSLES -llog -ldl -lz -lm -lc $rt
+    $RC_FLAGS -o build/ndk-libs/$abi/libonixretro.so jni/retro.c jni/cheevos.c $RC_SRC -lGLESv2 -lEGL -lOpenSLES -llog -ldl -lz -lm -lc $rt
   "$(dirname "$CLANG")/llvm-strip" --strip-unneeded build/ndk-libs/$abi/libonixretro.so 2>/dev/null || true
   echo "$abi: $(stat -c %s build/ndk-libs/$abi/libonixretro.so) bytes"
 done

@@ -7,6 +7,7 @@ const { app, BrowserWindow, WebContentsView, ipcMain, dialog, protocol, shell, M
 const path = require('path');
 const fs = require('fs');
 const store = require('./store');
+const conquistas = require('./conquistas');
 const covers = require('./covers');
 const updater = require('./updater');
 const retroarch = require('./retroarch');
@@ -49,12 +50,30 @@ const emit = (type, data, target) => {
   const wc = target || (win && win.webContents);
   if (wc && !wc.isDestroyed()) wc.send('onix:event', type, data === undefined ? null : data);
 };
+/* Conquista desbloqueada: o aviso aparece no jogo, se houver um aberto, senão no hub; o hub sempre atualiza o troféu. */
+function conquistaSaiu(list) {
+  const l = lang();
+  const items = list.map(d => ({ kind: d.kind, tier: d.tier, pts: d.pts, title: (l === 'es' ? d.es : d.pt)[0], desc: (l === 'es' ? d.es : d.pt)[1] }));
+  if (game && !game.webContents.isDestroyed()) emit('conquista', items, game.webContents);
+  else emit('conquista', items);
+  emit('conquistas');
+}
+/** A partida que está rolando agora (live) e a conquista que ela pode soltar. */
+function conquistaJogo(id, stat, value, seconds) {
+  const g = ok(id) && store.game(id);
+  if (!g) return false;
+  const live = { id, console: g.console, seconds: Math.max(0, Number(seconds) || 0) };
+  if (stat === 'session') conquistas.max('session', Math.max(0, Number(value) || 0), live);
+  else if (conquistas.COUNTERS.includes(stat)) conquistas.count(stat, live);
+  else conquistas.check(live);
+  return true;
+}
 
 /* ---------------- app://hub/ ----------------
    Só o que está nas listas abaixo; o resto é 404. */
 const TYPES = { html: 'text/html', js: 'text/javascript', css: 'text/css', txt: 'text/plain', wasm: 'application/wasm', jpg: 'image/jpeg', png: 'image/png' };
 const ROUTES = [
-  [/^\/(hub\.html|menu\.html|common\.js|common\.css|licenses\/[a-z0-9_]{1,40}\.txt)$/, m => path.join(ASSETS, m[1])],
+  [/^\/(hub\.html|menu\.html|common\.js|common\.css|conquista\.js|conquista\.css|conquista\.html|conquistas\.json|licenses\/[a-z0-9_]{1,40}\.txt)$/, m => path.join(ASSETS, m[1])],
   [/^\/(game\.html|game\.js|audio\.js|pc\.css)$/, m => path.join(WEB, m[1])],
   [/^\/cores\/(fceumm|snes9x|mgba|gpgx|pcsx_rearmed)\.(js|wasm)$/, m => path.join(CORES, m[1] + '.' + m[2])],
   [/^\/cover\/([0-9a-f]{16})\.jpg$/, m => store.coverFile(m[1])],
@@ -83,10 +102,12 @@ const HUB = {
     onix: false, onixSound: true, onixMotion: true, mobile: false, pc: true, folders: store.pcData().folders,
     consoles: store.CONSOLES.map(c => c.id),
   }),
-  library: () => JSON.stringify(store.list()),
+  library: () => { setImmediate(() => conquistas.check()); return JSON.stringify(store.list()); },   // a biblioteca mudou: "Colecionador"…
+  conquistas: () => conquistas.json(lang()),
+  setConquistasOn: on => conquistas.setOn(!!on),
   states: id => JSON.stringify(ok(id) ? statesOf(id) : []),
   play: (id, mode) => ok(id) && /^(resume|new|[1-4])$/.test(mode) && openGame(id, mode),
-  setFavorite: (id, fav) => ok(id) && store.setFavorite(id, !!fav),
+  setFavorite: (id, fav) => { const r = ok(id) && store.setFavorite(id, !!fav); if (r && fav) setImmediate(() => conquistas.check()); return r; },
   rename: (id, name) => {
     if (!ok(id) || typeof name !== 'string') return false;
     name = name.replace(/[\u0000-\u001f\u007f]/g, '').trim();
@@ -208,7 +229,7 @@ function openRetroArch(g, mode, retry) {
     error: msg => { log('[retroarch]', msg); emit('engine', { stage: 'error', console: c.id, msg }); },
     done: (secs, code) => {
       if (code) log('[retroarch] saiu com o código', code, 'depois de', secs, 's', o.renderer);
-      if (secs > 5) store.recordPlay(g.id, secs);
+      if (secs > 5) { store.recordPlay(g.id, secs); conquistas.count('plays'); if (conquistas.night()) conquistas.count('night'); }
       const quick = Date.now() - started < 8000 && code !== 0;
       // Vulkan escolhido no automático que não abriu neste PC: marca e abre de novo no OpenGL.
       if (quick && o.renderer === 'vulkan' && o.rendererAuto && !retry) {
@@ -293,7 +314,9 @@ const GAME = {
     else if (done) leaveGameFullscreen();
     return done;
   },
-  quit: (id, seconds) => { if (ok(id) && seconds > 5) store.recordPlay(id, seconds); setImmediate(closeGame); return true; },
+  quit: (id, seconds) => { if (ok(id) && seconds > 5) store.recordPlay(id, seconds); setImmediate(closeGame); setImmediate(() => conquistas.check()); return true; },
+  // Conquistas: o jogo conta (plays, saves, rewind, ffwd, multi, night), manda a partida mais longa (session) ou só confere.
+  conquista: (id, stat, value, seconds) => conquistaJogo(id, stat, value, seconds),
 };
 /* Disco (PS1): o jogo não cabe na memória da página; ela pede só os pedaços que o núcleo lê. Os
    arquivos ficam abertos enquanto o jogo está aberto. */
@@ -386,6 +409,8 @@ app.whenReady().then(() => {
     try { fs.cpSync(oldUserData, userData, { recursive: true }); } catch (_) { }
   }
   store.init(userData, ASSETS);
+  conquistas.init(store, ASSETS);
+  conquistas.setListener(conquistaSaiu);
   retroarch.init(userData);
   hardware.detect().then(h => log('[pc]', h.gpu || 'placa de vídeo desconhecida', '·', h.threads, 'threads ·', h.ramGB, 'GB · faixa', h.tier)).catch(() => { });
   logFile = path.join(userData, 'gamehub.log');

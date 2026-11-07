@@ -63,6 +63,16 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     private final boolean[] dpadStick = new boolean[4], cStick = new boolean[4];
     volatile boolean capture;   // menu → Atribuir botões: a próxima tecla vai para a página
     private long started, playedMs;
+    // Conquistas do Cobalt: o aviso, o que já foi contado nesta partida (cada coisa conta uma vez por partida)
+    // e a fila que grava em segundo plano (o arquivo é pequeno, mas o jogo não espera disco).
+    private ConquistaPopup conquistas;
+    private boolean cqFast, cqRewind, cqMulti, cqNight;
+    private final java.util.concurrent.ExecutorService cqBg = java.util.concurrent.Executors.newSingleThreadExecutor();
+    /** RetroAchievements: ligado neste jogo (conta conectada e console com conquistas); pedidos à internet em paralelo. */
+    private volatile boolean raOn;
+    private final java.util.concurrent.ExecutorService raNet = java.util.concurrent.Executors.newFixedThreadPool(2);
+    private JSONObject raGame;
+    private boolean raOffline;
     private int frames, sramTick;
     private long fpsAt;
 
@@ -176,6 +186,13 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         root.addView(toast, labelParams(Gravity.BOTTOM | Gravity.START));
         fps = label(Gravity.TOP | Gravity.END);
         root.addView(fps, labelParams(Gravity.TOP | Gravity.END));
+        conquistas = new ConquistaPopup(this, root, mobile, lang);
+        Conquistas.setListener(new Conquistas.Listener() {
+            @Override
+            public void unlocked(java.util.List<Conquistas.Def> list) {
+                if (conquistas != null && !quitting) conquistas.show(list);
+            }
+        });
         fps.setVisibility(settings.optBoolean("showFps") ? View.VISIBLE : View.GONE);
         setContentView(root);
         gamepads = new Gamepads(this, this);
@@ -219,7 +236,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
                     @Override
                     public void run() {
                         touchFast = on;
-                        Native.setHotkeys(ffHold || touchFast, rwHold);
+                        hotkeys(ffHold || touchFast, rwHold);
                     }
                 });
             }
@@ -268,7 +285,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
             @Override
             public void padFastForward(boolean on) {
                 touchFast = on;
-                Native.setHotkeys(ffHold || touchFast, rwHold);
+                hotkeys(ffHold || touchFast, rwHold);
             }
 
             @Override
@@ -514,6 +531,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
             }
         }
         String lib = getApplicationInfo().nativeLibraryDir + "/lib" + console.coreFor(rom.getName()) + ".so";
+        raStart(console.coreFor(rom.getName()));
         Native.setDevice(0, portDevice());
         Native.setDevice(1, portDevice());
         boolean ok = rom.isFile() && Native.load(lib, rom.getPath(), Files.system(this).getPath(), saveDir.getPath(),
@@ -545,6 +563,13 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         }
         Native.startAudio(rate, burst, settings.optInt("latency", 64));
         loaded = true;
+        ui.post(new Runnable() {
+            @Override
+            public void run() {
+                conquista("plays", 0);
+                ui.postDelayed(cqTick, 60000);
+            }
+        });
         if (menuOpen) Native.setPaused(true);
         else if (Gamepads.count() == 0 && !"resume".equals(mode)) ui.post(new Runnable() {
             @Override
@@ -595,6 +620,12 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     /** Salva no espaço (auto, 1–4) com a miniatura da tela. Chamar na thread do GL. */
     boolean saveStateNow(String slot) {
         boolean ok = Native.saveState(stateFile(slot).getPath());
+        if (ok && !"auto".equals(slot)) ui.post(new Runnable() {   // só quem salvou de propósito
+            @Override
+            public void run() {
+                conquista("saves", 0);
+            }
+        });
         if (ok) {
             int[] px = new int[1024 * 1024];
             int wh = Native.snapshot(px);
@@ -746,6 +777,12 @@ public class GameActivity extends Activity implements Gamepads.Listener {
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        ui.removeCallbacks(cqTick);
+        ui.removeCallbacks(raPoll);
+        raNet.shutdownNow();
+        if (conquistas != null) conquistas.release();
+        Conquistas.setListener(null);
+        cqBg.shutdown();
         if (gamepadServer != null) {
             gamepadServer.stop();
             gamepadServer = null;
@@ -935,12 +972,12 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         }
         if (b == Native.R2 && console.buttons.length > 0 && !uses(Native.R2)) {
             ffHold = down;
-            Native.setHotkeys(ffHold, rwHold);
+            hotkeys(ffHold, rwHold);
             return true;
         }
         if (b == Native.L2 && !uses(Native.L2)) {
             rwHold = down && settings.optBoolean("rewind");
-            Native.setHotkeys(ffHold, rwHold);
+            hotkeys(ffHold, rwHold);
             if (down && !settings.optBoolean("rewind")) toast(tr("Rebobinar está desligado (Configurações → Jogo).", "Rebobinar está apagado (Configuración → Juego)."));
             return true;
         }
@@ -991,7 +1028,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         if (ff != ffHold || rw != rwHold) {
             ffHold = ff;
             rwHold = rw;
-            Native.setHotkeys(ffHold, rwHold);
+            hotkeys(ffHold, rwHold);
         }
         push(port);
         return true;
@@ -1007,6 +1044,15 @@ public class GameActivity extends Activity implements Gamepads.Listener {
 
     private void push(int port) {
         int bits = keyBits[port] | hatBits[port] | stickBits[port] | webBits[port] | (port == 0 ? touchBits : 0);
+        if (port > 0 && bits != 0 && !cqMulti) {   // alguém apertou no 2º controle: "Dupla dinâmica"
+            cqMulti = true;
+            ui.post(new Runnable() {
+                @Override
+                public void run() {
+                    conquista("multi", 0);
+                }
+            });
+        }
         if (console.stick) {
             // N64, GameCube e Wii andam pelo analógico: a cruz (controle remoto, tela, Onix Controle)
             // empurra o analógico esquerdo até o fim. O analógico de verdade do controle continua.
@@ -1026,6 +1072,201 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         Native.setButtons(port, bits);
     }
 
+    /* ---------------- Conquistas do Cobalt ---------------- */
+
+    /** Acelerar e voltar no tempo passam todos por aqui: contam para "Pé no acelerador" e "Viajante do tempo". */
+    void hotkeys(boolean ff, boolean rw) {
+        Native.setHotkeys(ff, rw);
+        if (ff && !cqFast) {
+            cqFast = true;
+            conquista("ffwd", 0);
+        }
+        if (rw && !cqRewind) {
+            cqRewind = true;
+            conquista("rewind", 0);
+        }
+    }
+
+    /** Acelerar ligado pelo menu do jogo. */
+    void fastForwardOn() {
+        if (cqFast) return;
+        cqFast = true;
+        conquista("ffwd", 0);
+    }
+
+    /* ---------------- RetroAchievements ----------------
+       O motor (jni/cheevos.c) confere as conquistas a cada quadro; aqui só os pedidos à internet, o aviso e o
+       que fica guardado para a aba Conquistas. */
+
+    /** Na thread do GL, antes do Native.load. */
+    private void raStart(String core) {
+        JSONObject a = RetroAchievements.account(this, profile);
+        int con = RetroAchievements.consoleId(console.id, core);
+        raOn = a != null && con > 0 && Conquistas.enabled(this, profile);
+        if (!raOn) return;
+        RetroAchievements.init(getApplicationContext());
+        Native.raStart(a.optString("user"), a.optString("token"), con);
+        ui.post(raPoll);
+    }
+
+    /** A cada 250 ms: o que o motor pediu ou avisou. */
+    private final Runnable raPoll = new Runnable() {
+        @Override
+        public void run() {
+            if (isDestroyed()) return;
+            String s = Native.raPoll();
+            if (s != null) for (String line : s.split("\n")) {
+                try {
+                    if (!line.isEmpty()) raItem(new JSONObject(line));
+                } catch (Exception ignored) {
+                }
+            }
+            ui.postDelayed(this, 250);
+        }
+    };
+
+    private void raItem(final JSONObject o) {
+        final android.content.Context c = getApplicationContext();
+        switch (o.optString("t")) {
+            case "http":
+                raNet.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        final RetroAchievements.Response r = RetroAchievements.http(o.optString("url"),
+                                o.has("post") ? o.optString("post") : null, o.optString("type", null));
+                        queue(new Runnable() {
+                            @Override
+                            public void run() {
+                                Native.raResponse(o.optInt("id"), r.status, r.body);
+                            }
+                        });
+                    }
+                });
+                break;
+            case "game": {
+                boolean first = raGame == null;
+                raGame = o;
+                cqBg.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        RetroAchievements.saveGame(c, profile, id, o);
+                    }
+                });
+                if (first) raNet.execute(new Runnable() {   // os textos do jogo em português/espanhol, aos poucos
+                    @Override
+                    public void run() {
+                        Traducao.translateList(c, lang, o.optJSONArray("list"));
+                    }
+                });
+                if (first && o.optInt("total") > 0) toast("RetroAchievements: " + o.optInt("got") + tr(" de ", " de ") + o.optInt("total")
+                        + tr(" conquistas neste jogo", " logros en este juego"));
+                break;
+            }
+            case "unlock": {
+                JSONObject a = o.optJSONObject("a");
+                if (a == null) break;
+                double rarity = a.optDouble("rarity", 0);
+                boolean rare = rarity > 0 && rarity < 5;
+                String pct = String.format(java.util.Locale.ROOT, "%.1f", rarity).replace('.', ',');
+                raShow(a.optString("title"), a.optString("desc"), a.optInt("pts"), rare ? "rara" : "comum",
+                        rare ? tr("CONQUISTA RARA · " + pct + "% DOS JOGADORES", "LOGRO RARO · " + pct + "% DE LOS JUGADORES") : "RETROACHIEVEMENTS",
+                        a.optString("badge"), true);
+                break;
+            }
+            case "complete":
+                raShow(o.optString("title"), tr("Você pegou todas as conquistas deste jogo", "Conseguiste todos los logros de este juego"),
+                        raGame != null ? raGame.optInt("points") : 0, "platina", tr("JOGO 100% COMPLETO", "JUEGO 100% COMPLETADO"), o.optString("badge"), false);
+                break;
+            case "login":
+                cqBg.execute(new Runnable() {
+                    @Override
+                    public void run() {
+                        RetroAchievements.updateAccount(c, profile, o);
+                    }
+                });
+                break;
+            case "loginfail":
+                toast(tr("RetroAchievements: entre de novo na sua conta (Conquistas no GameHub)",
+                        "RetroAchievements: vuelve a entrar en tu cuenta (Logros en GameHub)"));
+                break;
+            case "offline":
+                if (!raOffline) toast(tr("RetroAchievements sem internet: as conquistas vão quando a conexão voltar",
+                        "RetroAchievements sin internet: los logros se envían cuando vuelva la conexión"));
+                raOffline = true;
+                break;
+            default:
+                break;
+        }
+    }
+
+    /** Baixa a imagem da conquista e mostra o aviso nativo (o mesmo das do Cobalt, com a imagem no lugar do emoji). */
+    private void raShow(String title, String desc, int pts, String tier, String kicker, final String badgeUrl, final boolean english) {
+        final Conquistas.Def d = new Conquistas.Def();
+        d.id = "ra";
+        d.tier = tier;
+        d.icon = "🏆";
+        d.pts = pts;
+        d.pt = d.es = new String[] { title, desc };
+        d.kicker = kicker;
+        raNet.execute(new Runnable() {
+            @Override
+            public void run() {
+                // Os textos vêm em inglês: traduz antes de mostrar (o que já foi traduzido sai na hora).
+                if (english) d.pt = d.es = new String[] { Traducao.translate(getApplicationContext(), lang, d.pt[0]), Traducao.translate(getApplicationContext(), lang, d.pt[1]) };
+                if (!badgeUrl.isEmpty()) {
+                    RetroAchievements.Response r = RetroAchievements.http(badgeUrl, null, null);
+                    if (r.status == 200) d.badge = android.graphics.BitmapFactory.decodeByteArray(r.body, 0, r.body.length);
+                }
+                ui.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (conquistas != null && !isDestroyed()) conquistas.show(java.util.Collections.singletonList(d));
+                    }
+                });
+            }
+        });
+    }
+
+    /** A partida de agora, que só vai para o played.json no fim. */
+    private Conquistas.Live live() {
+        Conquistas.Live l = new Conquistas.Live();
+        l.id = id;
+        l.console = console.id;
+        l.seconds = (playedMs + (menuOpen ? 0 : System.currentTimeMillis() - started)) / 1000;
+        return l;
+    }
+
+    /** Conta (stat) ou guarda o maior valor (session) em segundo plano; null só confere. Serve em qualquer thread. */
+    void conquista(final String stat, final long max) {
+        final Conquistas.Live l = live();
+        final android.content.Context c = getApplicationContext();
+        try {
+            cqBg.execute(new Runnable() {
+                @Override
+                public void run() {
+                    if (stat == null) Conquistas.check(c, profile, l);
+                    else if ("session".equals(stat)) Conquistas.max(c, profile, stat, max, l);
+                    else Conquistas.count(c, profile, stat, l);
+                }
+            });
+        } catch (Exception ignored) {   // fechando
+        }
+        if (!cqNight && Conquistas.night()) {
+            cqNight = true;
+            conquista("night", 0);
+        }
+    }
+
+    /** A cada minuto jogando: a partida mais longa ("Maratona") e o tempo total ("Uma hora", "Viciado"…). */
+    private final Runnable cqTick = new Runnable() {
+        @Override
+        public void run() {
+            if (quitting) return;
+            if (!menuOpen) conquista("session", live().seconds / 60);
+            ui.postDelayed(this, 60000);
+        }
+    };
+
     private static int dir(int bits, int minus, int plus) {
         return ((bits >> plus & 1) - (bits >> minus & 1)) * 32767;
     }
@@ -1041,7 +1282,7 @@ public class GameActivity extends Activity implements Gamepads.Listener {
         touchBits = 0;
         touchFast = false;
         if (pad != null) pad.release();
-        Native.setHotkeys(false, false);
+        hotkeys(false, false);
     }
 
     /* Configurações mudadas no menu: relê e aplica na hora. */

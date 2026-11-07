@@ -1,7 +1,7 @@
 {
   "name": "cobalt-gamehub",
   "productName": "Cobalt GameHub",
-  "version": "1.7.1",
+  "version": "2.0.0",
   "description": "Cobalt GameHub para PC: jogos clássicos (NES, SNES, GBA e Mega Drive) no visual do Onix",
   "main": "src/main.js",
   "private": true,

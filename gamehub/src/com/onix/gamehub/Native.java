@@ -81,6 +81,20 @@ final class Native {
     /** O jogo desenha em 3D (sem rebobinar nem run-ahead). */
     static native boolean hardware();
 
+    /* RetroAchievements (jni/cheevos.c) */
+
+    /** Antes do load(): liga o RetroAchievements com a conta (usuário + token) e o console (rc_consoles.h). */
+    static native void raStart(String user, String token, int console);
+
+    /** O "rcheevos/x.y" do User-Agent. */
+    static native String raAgent();
+
+    /** Pedidos e avisos na fila, uma linha JSON por item (ou null). Qualquer thread. */
+    static native String raPoll();
+
+    /** Resposta de um pedido (status 0 = sem internet). Thread do GL. */
+    static native void raResponse(int id, int status, byte[] body);
+
     /* Botões do RetroPad (libretro.h) */
     static final int B = 0, Y = 1, SELECT = 2, START = 3, UP = 4, DOWN = 5, LEFT = 6, RIGHT = 7,
             A = 8, X = 9, L = 10, R = 11, L2 = 12, R2 = 13, L3 = 14, R3 = 15;

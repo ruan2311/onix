@@ -63,7 +63,14 @@ final class HubBridge {
 
     @JavascriptInterface
     public String library() {
+        a.checkConquistas();   // a lista é relida quando a biblioteca muda: "Colecionador", "Biblioteca de respeito"
         return Library.list(a, a.profile, a.kids).toString();
+    }
+
+    /** Aba Conquistas: [{id, tier, pts, icon, title, desc, min, value, at}], pontos e quantas já saíram. */
+    @JavascriptInterface
+    public String conquistas() {
+        return Conquistas.json(a, a.profile, a.lang);
     }
 
     /** Estados salvos de um jogo: [{slot, time}] dos que existem. */
@@ -99,7 +106,9 @@ final class HubBridge {
 
     @JavascriptInterface
     public boolean setFavorite(String id, boolean fav) {
-        return id(id) && Library.setFavorite(a, a.profile, id, fav);
+        boolean ok = id(id) && Library.setFavorite(a, a.profile, id, fav);
+        if (ok && fav) a.checkConquistas();
+        return ok;
     }
 
     @JavascriptInterface
@@ -264,6 +273,98 @@ final class HubBridge {
     public String uploadStart() {
         if (a.kids) return "{}";
         return a.upload.start().toString();
+    }
+
+    /* ---------------- RetroAchievements ---------------- */
+
+    /** A conta conectada neste perfil ({user, score, avatar}) ou null. Nunca devolve o token. */
+    @JavascriptInterface
+    public String raAccount() {
+        JSONObject acc = RetroAchievements.account(a, a.profile);
+        if (acc == null) return null;
+        try {
+            return new JSONObject().put("user", acc.optString("user")).put("score", acc.optLong("score"))
+                    .put("avatar", acc.optString("avatar")).toString();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    /** TV: liga o servidor do celular na página de login (/ra) e devolve {url, ip, code} para o QR. */
+    @JavascriptInterface
+    public String raLoginStart() {
+        if (a.kids) return "{}";
+        JSONObject o = a.upload.start();
+        try {
+            String url = o.optString("url");
+            if (!url.isEmpty()) o.put("url", url.replace("/#k=", "/ra#k="));
+        } catch (Exception ignored) {
+        }
+        return o.toString();
+    }
+
+    /** Digitando na TV ou no celular: a resposta chega pelo evento "ra". */
+    @JavascriptInterface
+    public void raLogin(final String user, final String password) {
+        if (a.kids || user == null || password == null) return;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                a.raLogin(user, password);
+            }
+        }, "gamehub-ra-login").start();
+    }
+
+    /** Liga ou desliga todas as conquistas do perfil (Cobalt e RetroAchievements). */
+    @JavascriptInterface
+    public void setConquistasOn(boolean on) {
+        Conquistas.setEnabled(a, a.profile, on);
+        if (on) a.checkConquistas();
+    }
+
+    @JavascriptInterface
+    public void raLogout() {
+        RetroAchievements.logout(a, a.profile);
+        a.checkConquistas();   // as do Cobalt voltam a contar
+    }
+
+    /** O que cada jogo tem no RetroAchievements (o jogo guarda ao abrir e a cada conquista). */
+    @JavascriptInterface
+    public String raGames() {
+        final JSONObject games = RetroAchievements.games(a, a.profile);
+        translateLater(games);
+        return Traducao.apply(a, a.lang, games).toString();
+    }
+
+    private static volatile boolean translating;
+
+    /** Traduz em segundo plano o que ainda está em inglês e atualiza a aba quando termina. */
+    private void translateLater(final JSONObject games) {
+        if (translating) return;
+        translating = true;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    JSONObject before = Traducao.cache(a, a.lang);
+                    Runnable refresh = new Runnable() {
+                        @Override
+                        public void run() {
+                            Web.emit(a.web, "raTexts", null);
+                        }
+                    };
+                    JSONArray ids = games.names();
+                    for (int i = 0; ids != null && i < ids.length(); i++) {
+                        JSONObject g = games.optJSONObject(ids.getString(i));
+                        if (g != null) Traducao.translateList(a, a.lang, g.optJSONArray("list"), refresh);
+                    }
+                    if (Traducao.cache(a, a.lang).length() != before.length()) refresh.run();
+                } catch (Exception ignored) {
+                } finally {
+                    translating = false;
+                }
+            }
+        }, "gamehub-traducao").start();
     }
 
     @JavascriptInterface

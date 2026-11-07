@@ -87,7 +87,12 @@ final class Web {
         });
     }
 
+    /** As únicas imagens de fora: as do RetroAchievements (conquistas, jogos e foto da conta), guardadas no aparelho. */
+    private static final Pattern RA_IMAGE = Pattern.compile("^https://media\\.retroachievements\\.org/(Badge|Images|UserPic)/([A-Za-z0-9_.-]{1,80}\\.png)$");
+
     static WebResourceResponse serve(Context c, String url) {
+        Matcher ra = RA_IMAGE.matcher(url);
+        if (ra.matches()) return raImage(c, ra.group(1) + "-" + ra.group(2), url);
         if (!url.startsWith(BASE)) return new WebResourceResponse("text/plain", "utf-8", null);   // nada fora daqui
         String path = url.substring(BASE.length() - 1);
         int q = path.indexOf('?');
@@ -109,6 +114,29 @@ final class Web {
         if (Build.VERSION.SDK_INT >= 21) {
             r.setStatusCodeAndReasonPhrase(404, "Not Found");
         }
+        return r;
+    }
+
+    /** Baixa uma vez (fora da thread da tela: o WebView chama aqui numa thread dele) e depois serve do aparelho. */
+    private static WebResourceResponse raImage(Context c, String name, String url) {
+        File dir = new File(c.getCacheDir(), "ra-img"), f = new File(dir, name);
+        try {
+            boolean user = name.startsWith("UserPic-");   // a foto da conta pode mudar: baixa de novo depois de um dia
+            if (!f.isFile() || (user && System.currentTimeMillis() - f.lastModified() > 86400000L)) {
+                RetroAchievements.Response r = RetroAchievements.http(url, null, null);
+                if (r.status == 200 && r.body.length > 0 && r.body.length < 2 * 1024 * 1024) {
+                    //noinspection ResultOfMethodCallIgnored
+                    dir.mkdirs();
+                    java.io.FileOutputStream o = new java.io.FileOutputStream(f);
+                    o.write(r.body);
+                    o.close();
+                }
+            }
+            if (f.isFile()) return response("image/png", new FileInputStream(f));
+        } catch (Exception ignored) {
+        }
+        WebResourceResponse r = new WebResourceResponse("image/png", null, null);
+        r.setStatusCodeAndReasonPhrase(404, "Not Found");
         return r;
     }
 

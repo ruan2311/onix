@@ -132,6 +132,39 @@ if (document.readyState === 'loading') {
    Os textos são escritos em português; t() devolve a tradução do ES quando o idioma é espanhol. */
 let LANG = 'pt';
 const ES = {
+  // Conquistas do Cobalt
+  'Ganhe conquistas em cada jogo': 'Gana logros en cada juego',
+  'Desativar conquistas': 'Desactivar logros', 'Desativar as conquistas?': '¿Desactivar los logros?', 'Desativar': 'Desactivar',
+  'Nenhuma conquista vai contar neste perfil e os avisos não aparecem mais nos jogos. O que você já ganhou continua guardado, e dá para ativar de novo aqui.':
+    'Ningún logro va a contar en este perfil y los avisos ya no aparecen en los juegos. Lo que ya ganaste queda guardado y puedes activarlos de nuevo aquí.',
+  'Conquistas desativadas': 'Logros desactivados', 'Ativar conquistas': 'Activar logros', 'Conquistas ativadas': 'Logros activados',
+  'Nenhuma conquista conta neste perfil e os avisos não aparecem nos jogos. O que você já ganhou continua guardado.':
+    'Ningún logro cuenta en este perfil y los avisos no aparecen en los juegos. Lo que ya ganaste queda guardado.',
+  'Entre com a sua conta grátis do RetroAchievements: milhares de jogos têm conquistas próprias, e seus pontos ficam salvos na nuvem. As conquistas do Cobalt ficam pausadas enquanto a conta estiver conectada.':
+    'Entra con tu cuenta gratis de RetroAchievements: miles de juegos tienen logros propios y tus puntos quedan guardados en la nube. Los logros de Cobalt quedan en pausa mientras la cuenta esté conectada.',
+  'Entrar': 'Entrar', 'Usuário': 'Usuario', 'Senha': 'Contraseña', 'Entrando…': 'Entrando…', 'Fechar': 'Cerrar',
+  'Usuário ou senha errados.': 'Usuario o contraseña incorrectos.', 'Sem internet: confira a conexão e tente de novo.': 'Sin internet: revisa la conexión e inténtalo de nuevo.',
+  'Digite o usuário e a senha.': 'Escribe el usuario y la contraseña.', 'Não deu para entrar. Tente de novo.': 'No se pudo entrar. Inténtalo de nuevo.',
+  'Entrar no RetroAchievements': 'Entrar en RetroAchievements',
+  'A senha só serve para entrar: o GameHub guarda apenas uma chave de acesso da conta. Não tem conta? Crie grátis em retroachievements.org.':
+    'La contraseña solo sirve para entrar: GameHub guarda únicamente una clave de acceso de la cuenta. ¿No tienes cuenta? Créala gratis en retroachievements.org.',
+  'Entre pelo celular': 'Entra desde el celular', 'Sem rede: conecte a TV ao Wi-Fi.': 'Sin red: conecta la TV al Wi-Fi.',
+  'Aponte a câmera do celular para o QR code e digite o seu usuário e a senha do RetroAchievements na página que abrir. A TV entra sozinha.':
+    'Apunta la cámara del celular al código QR y escribe tu usuario y contraseña de RetroAchievements en la página que se abra. La TV entra sola.',
+  'O celular precisa estar no mesmo Wi-Fi da TV. Não tem conta? Crie grátis em retroachievements.org.': 'El celular tiene que estar en el mismo Wi-Fi que la TV. ¿No tienes cuenta? Créala gratis en retroachievements.org.',
+  'Digitar aqui na TV': 'Escribir aquí en la TV', 'Conta conectada: {u}': 'Cuenta conectada: {u}', '{n} pts': '{n} pts',
+  'Progresso: {p}': 'Progreso: {p}', 'jogos com conquistas': 'juegos con logros', 'jogos completos': 'juegos completos',
+  'Sair da conta': 'Cerrar sesión', 'Sair da conta {u}?': '¿Cerrar la sesión de {u}?',
+  'As conquistas que você ganhou continuam na sua conta do RetroAchievements. As do Cobalt voltam a contar neste perfil.':
+    'Los logros que ganaste siguen en tu cuenta de RetroAchievements. Los de Cobalt vuelven a contar en este perfil.',
+  'Seus jogos': 'Tus juegos', 'conquistas de cada jogo': 'logros de cada juego', '{n} de {m} conquistas': '{n} de {m} logros',
+  'Abra um jogo: o GameHub confere sozinho se ele tem conquistas no RetroAchievements. O jogo precisa ser a mesma versão que o site reconhece.':
+    'Abre un juego: GameHub revisa solo si tiene logros en RetroAchievements. El juego tiene que ser la misma versión que reconoce el sitio.',
+  'Conquistas': 'Logros', 'Conquistas do Cobalt': 'Logros de Cobalt', 'Seu perfil': 'Tu perfil', 'pontos': 'puntos', 'conquistas': 'logros',
+  'platina!': '¡platino!', 'até a platina': 'hasta el platino', 'Desbloqueadas recentemente': 'Desbloqueados recientemente',
+  'Todas as conquistas': 'Todos los logros', 'só neste aparelho, por perfil, sem conta': 'solo en este dispositivo, por perfil, sin cuenta',
+  'Comum': 'Común', 'Rara': 'Raro', 'Platina': 'Platino', 'Faltam {n} de {m}': 'Faltan {n} de {m}', 'Ainda não desbloqueada': 'Todavía no desbloqueado',
+  'Desbloqueada em {d}': 'Desbloqueado el {d}',
   'Navegador da TV': 'Navegador de la TV',
   'Início': 'Inicio', 'Adicionar jogos': 'Agregar juegos', 'Configurações': 'Configuración',
   'Continuar jogando': 'Seguir jugando', 'Continuar': 'Continuar', 'Jogar': 'Jugar', 'Jogar do começo': 'Jugar desde el inicio',
@@ -488,6 +521,7 @@ function svg(markup) {
   return d.firstChild;
 }
 const ICON = {
+  trophy: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>',
   play: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>',
   pad: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 8h10a5 5 0 0 1 4.6 7l-.6 1.4a2.5 2.5 0 0 1-4.2.6L15 15H9l-1.8 2a2.5 2.5 0 0 1-4.2-.6L2.4 15A5 5 0 0 1 7 8z"/><path d="M7 11v3M5.5 12.5h3"/><circle cx="15.5" cy="11.5" r=".6" fill="currentColor"/><circle cx="17.5" cy="13.5" r=".6" fill="currentColor"/></svg>',
   bt: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7l10 10-5 5V2l5 5L7 17"/></svg>',
@@ -709,7 +743,14 @@ let onBack = null;   // cada página define o que Voltar faz quando não há cam
 document.addEventListener('keydown', e => {
   const k = e.key;
   if (document.activeElement && document.activeElement.tagName === 'INPUT') {
-    if (k === 'Enter' || k === 'ArrowDown' || k === 'ArrowUp') { document.activeElement.blur(); e.preventDefault(); }
+    // Seta para cima/baixo: sai do campo e já vai para o próximo (na TV, antes ficava preso no mesmo campo).
+    // Enter: sai do campo e faz o "próximo passo" dele (_enter), se tiver.
+    const inp = document.activeElement;
+    if (k === 'Enter' || k === 'ArrowDown' || k === 'ArrowUp') {
+      inp.blur(); e.preventDefault();
+      if (k !== 'Enter') move(k === 'ArrowDown' ? 'down' : 'up');
+      else if (inp._enter) inp._enter();
+    }
     return;
   }
   if (k === 'ArrowLeft' && focused && focused._left) { e.preventDefault(); focused._left(); sfx('move'); return; }
@@ -824,7 +865,8 @@ window.onHub = (type, data) => { if (handlers[type]) handlers[type](data); };
 function coverEl(g, opts) {
   opts = opts || {};
   const c = consoleOf(g.console);
-  const el = h('div', { class: 'cover' });
+  const el = h('div', { class: 'cover', 'data-gid': g.id });
+  el._opts = opts;   // para trocar só a capa quando ela chega (handlers.cover)
   el.append(h('div', { class: 'ph', style: { background: 'linear-gradient(160deg,' + c.color + '55,#140c2c 70%)', color: c.color } },
     svg(CONSOLE_ART[c.id]), opts.title ? h('span', { style: { color: 'var(--ink)' }, text: g.name }) : null));
   if (g.cover) {

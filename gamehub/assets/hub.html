@@ -20,6 +20,68 @@ nav .tab.focus{background:rgba(255,255,255,.14);color:var(--ink)}
 .store-chip .mini i{display:block;height:100%;background:var(--grad)}
 .store-chip.low{color:#ffd27a;border-color:rgba(255,210,122,.35)}
 .covers-chip.busy svg{animation:spin 1s linear infinite}
+/* Conquistas */
+.trophy-chip{color:#ffd36b;border-color:rgba(255,211,107,.35)}
+.trophy-chip.cur{background:rgba(255,211,107,.14)}
+.cq-head{display:flex;align-items:center;gap:2rem;padding:1.6rem 2rem;border-radius:var(--r);background:linear-gradient(110deg,rgba(255,61,154,.12),rgba(61,225,255,.08) 60%,rgba(255,255,255,.03));border:1px solid var(--line)}
+.cq-head .cq-crown{width:6rem;height:6rem;border-radius:50%;flex:none;display:flex;align-items:center;justify-content:center;font-size:3rem;background:linear-gradient(135deg,#ff3d9a,#3de1ff)}
+.cq-head .cq-crown.off{filter:grayscale(1) brightness(.6)}
+.cq-head img.cq-crown{object-fit:cover;background:#1a1236}
+.cq .ic img{width:100%;height:100%;border-radius:inherit;object-fit:cover}
+.cq.off .ic img{filter:grayscale(1) brightness(.55)}
+.ra-banner{display:flex;align-items:center;gap:1.6rem;padding:1.3rem 1.8rem;border-radius:var(--r);background:linear-gradient(110deg,rgba(255,211,107,.14),rgba(255,61,154,.1) 55%,rgba(255,255,255,.03));border:1px solid rgba(255,211,107,.35)}
+.ra-banner .trophy{width:4.6rem;height:4.6rem;border-radius:1.2rem;flex:none;display:flex;align-items:center;justify-content:center;font-size:2.4rem;background:linear-gradient(135deg,#ffd27a,#ff3d9a)}
+.ra-banner .txt{flex:1;min-width:0}
+.ra-banner{margin-bottom:1.2rem}
+.ra-game .prog{display:block;height:.45rem;border-radius:99rem;background:rgba(255,255,255,.1);overflow:hidden;margin-top:.6rem}
+.ra-game .prog i{display:block;height:100%;background:var(--grad)}
+.ra-banner b{display:block;font-size:1.35rem}
+.ra-banner p{font-size:1.05rem;color:var(--dim);margin-top:.3rem;line-height:1.4}
+.ra-games{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.ra-game{display:flex;align-items:center;gap:1.2rem;padding:1rem 1.2rem;border-radius:var(--r);background:var(--glass);border:1px solid var(--line);min-width:0;text-align:left}
+.ra-game img{width:4.4rem;height:4.4rem;border-radius:.8rem;flex:none;object-fit:cover;background:#1a1236}
+.ra-game .t{flex:1;min-width:0}
+.ra-game b{display:block;font-size:1.15rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ra-game span{display:block;font-size:1rem;color:var(--dim);margin-top:.2rem}
+.ra-game.done b{color:#ffd36b}
+.ra-qr{display:flex;gap:2.4rem;align-items:center}
+.ra-qr .qrbox{width:20rem;height:20rem;flex:none}
+.ra-form{display:flex;flex-direction:column;gap:1rem}
+.ra-form .inp{font-size:1.4rem;padding:.9rem 1.2rem;border-radius:1rem;border:1px solid var(--line);background:rgba(255,255,255,.06);width:100%}
+.ra-err{color:#ffb4c4;min-height:1.4rem;font-size:1.1rem}
+.cq-head .t{flex:1;min-width:0}
+.cq-head small{display:block;font-size:.95rem;letter-spacing:.2em;font-weight:700;color:#ffd36b;text-transform:uppercase}
+.cq-head b{display:block;font-size:2.2rem;margin:.2rem 0 .5rem}
+.cq-nums{display:flex;flex-wrap:wrap;gap:.4rem 2.4rem;font-size:1.2rem;color:var(--dim)}
+.cq-nums span{white-space:nowrap}
+.cq-nums em{font-style:normal;font-size:1.6rem;font-weight:700;color:var(--ink);margin-right:.4rem}
+.cq-bar{height:.6rem;border-radius:99rem;background:rgba(255,255,255,.1);overflow:hidden;margin-top:1rem;max-width:40rem}
+.cq-bar i{display:block;height:100%;background:var(--grad)}
+.cq-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.cq-recent{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+.cq{display:flex;align-items:center;gap:1.2rem;padding:1.1rem 1.3rem;border-radius:var(--r);background:var(--glass);border:1px solid var(--line);min-width:0}
+.cq .ic{width:4.4rem;height:4.4rem;border-radius:.9rem;flex:none;display:flex;align-items:center;justify-content:center;font-size:2.2rem;background:linear-gradient(135deg,#205c58,#12283c)}
+.cq.rara .ic{background:linear-gradient(135deg,#ff3d9a,#7c5cff 55%,#3de1ff)}
+.cq.platina .ic{background:linear-gradient(135deg,#fff,#9fe8ff 45%,#ffd36b)}
+.cq .t{flex:1;min-width:0}
+.cq b{display:block;font-size:1.2rem}
+.cq span{display:block;font-size:1rem;color:var(--dim);margin-top:.2rem;line-height:1.3}
+.cq .tag{display:inline-block;margin-top:.5rem;font-size:.8rem;font-weight:700;letter-spacing:.08em;padding:.15rem .6rem;border-radius:99rem;white-space:nowrap;background:rgba(255,179,71,.16);color:#ffb347}
+.cq.rara .tag{background:rgba(74,222,128,.16);color:#4ade80}
+.cq.platina .tag{background:rgba(201,241,255,.18);color:#c9f1ff}
+.cq .prog{height:.4rem;border-radius:99rem;background:rgba(255,255,255,.1);overflow:hidden;margin-top:.6rem}
+.cq .prog i{display:block;height:100%;background:var(--grad)}
+.cq.off{background:rgba(255,255,255,.025)}
+.cq.off .ic{filter:grayscale(1) brightness(.45)}
+.cq.off b{color:var(--dim)}
+.cq.off .tag{filter:grayscale(1);opacity:.6}
+html.mobile .cq-grid,html.mobile .cq-recent{grid-template-columns:1fr}
+html.mobile .trophy-chip .n{display:none}
+html.mobile .ra-games{grid-template-columns:1fr}
+html.mobile .ra-banner{flex-wrap:wrap}
+html.mobile .cq-head .cq-crown{width:3.6rem;height:3.6rem;font-size:1.9rem}
+html.mobile .cq-head{flex-direction:column;align-items:flex-start;gap:1rem;padding:1.2rem}
+html.mobile .cq-nums{flex-wrap:wrap;gap:1rem}
 @keyframes spin{to{transform:rotate(-360deg)}}
 .clock{font-size:1.4rem;font-weight:600;color:var(--dim);text-align:right}
 .right{flex:none}
@@ -293,6 +355,7 @@ html.mobile .pnum{width:2rem;height:2rem;font-size:1rem}
   <header>
     <div class="brand" id="brand"></div>
     <div class="right">
+      <div id="trophyChip"></div>
       <div id="coversChip"></div>
       <div id="storeChip"></div>
       <div id="padChip"></div>
@@ -341,6 +404,12 @@ function renderChips() {
   // Atualizar capas, ao lado do armazenamento (o ícone gira enquanto baixa).
   $('#coversChip').replaceChildren(...(INFO.kids ? [] : [h('button', { class: 'f chip pill covers-chip' + (coversBusy ? ' busy' : ''),
     title: t('Atualizar capas'), 'aria-label': t('Atualizar capas'), act: refreshCovers }, icon('reset'))]));
+  // Conquistas do Cobalt: troféu com quantas já saíram, ao lado de Atualizar capas.
+  // Com o RetroAchievements conectado: os pontos da conta no lugar das do Cobalt.
+  const cq = json(call('conquistas'), null), ra = raAccount();
+  $('#trophyChip').replaceChildren(...(cq && cq.list ? [h('button', { class: 'f chip pill trophy-chip' + (PAGE === 'trophies' ? ' cur' : ''),
+    title: t('Conquistas'), 'aria-label': t('Conquistas'), act: () => show('trophies') }, icon('trophy'),
+    cq.off ? null : h('span', { class: 'n', text: ra ? t('{n} pts', { n: (ra.score || 0).toLocaleString(LANG === 'es' ? 'es' : 'pt-BR') }) : cq.got + '/' + cq.count }))] : []));
   const pads = json(call('gamepads'), INFO.gamepads || []);
   const clients = INFO.gamepadClients || 0;
   const chip = pads.length
@@ -380,6 +449,7 @@ function show(id, keepFocus) {
   if (PAGE === 'add' && id !== 'add') call('uploadStop');
   PAGE = id;
   renderNav();
+  if (id === 'trophies' || $('#trophyChip .cur')) renderChips();   // o troféu do topo fica marcado na aba
   renderStore();   // o espaço livre do topo acompanha o que saiu ou entrou (apagar um jogo, por exemplo)
   const main = $('#main');
   let page;
@@ -387,6 +457,7 @@ function show(id, keepFocus) {
   else if (id.startsWith('console:')) page = consolePage(id.slice(8));
   else if (id === 'add') page = addPage();
   else if (id === 'settings') page = settingsPage();
+  else if (id === 'trophies') page = trophiesPage();
   main.replaceChildren(page);
   if (!keepFocus) {
     const tab = $$('#nav .tab').find(b => b.dataset.tab === id);
@@ -394,6 +465,207 @@ function show(id, keepFocus) {
     focus(first || tab);
   } else ensureFocus();
 }
+
+/* ---------------- Conquistas do Cobalt ----------------
+   Locais, por perfil, sem conta: a lista vem de conquistas.json e o progresso da ponte (call('conquistas')).
+   Em cima, o resumo e a platina; depois as desbloqueadas recentemente e todas, com as que faltam em cinza. */
+const TIER = { comum: 'Comum', rara: 'Rara', platina: 'Platina' };
+function trophyCard(c) {
+  const off = !c.at;
+  const b = h('div', { class: 'f cq ' + c.tier + (off ? ' off' : ''), tabindex: '-1' },
+    h('span', { class: 'ic', text: c.icon }),
+    h('span', { class: 't' }, h('b', { text: c.title }), h('span', { text: c.desc }),
+      h('span', { class: 'tag', text: t(TIER[c.tier] || 'Comum') + ' · ' + c.pts + ' pts' }),
+      off && c.min > 1 ? h('span', { class: 'prog', title: c.value + '/' + c.min }, h('i', { style: { width: Math.round(c.value / c.min * 100) + '%' } })) : null));
+  b._act = () => toast(off ? (c.min > 1 ? t('Faltam {n} de {m}', { n: c.min - c.value, m: c.min }) : t('Ainda não desbloqueada')) : t('Desbloqueada em {d}', { d: new Date(c.at).toLocaleDateString(LANG === 'es' ? 'es' : 'pt-BR') }));
+  return b;
+}
+/* Desativar: nada conta (nem as do Cobalt, nem as do RetroAchievements) e nenhum aviso aparece. O que já saiu fica guardado. */
+function cqOffButton() {
+  return h('button', { class: 'f btn', text: t('Desativar conquistas'), act: () => ask(t('Desativar as conquistas?'),
+    t('Nenhuma conquista vai contar neste perfil e os avisos não aparecem mais nos jogos. O que você já ganhou continua guardado, e dá para ativar de novo aqui.'),
+    [[t('Desativar'), () => { call('setConquistasOn', false); renderChips(); show('trophies', true); }, 'primary'], [t('Cancelar')]]) });
+}
+function trophiesOffPage() {
+  const page = h('section', { class: 'page' });
+  page.append(h('div', { class: 'cq-head' }, h('span', { class: 'cq-crown off', text: '🏆' }),
+    h('div', { class: 't' }, h('small', { text: t('Conquistas') }), h('b', { text: t('Conquistas desativadas') }),
+      h('p', { style: { color: 'var(--dim)', fontSize: '1.15rem', lineHeight: 1.4 }, text: t('Nenhuma conquista conta neste perfil e os avisos não aparecem nos jogos. O que você já ganhou continua guardado.') })),
+    h('button', { class: 'f btn primary', act: () => { call('setConquistasOn', true); renderChips(); show('trophies', true); toast(t('Conquistas ativadas')); } }, icon('trophy'), t('Ativar conquistas'))));
+  return page;
+}
+function trophiesPage() {
+  const cq = json(call('conquistas'), { list: [] });
+  if (cq.off) return trophiesOffPage();
+  const acc = raAccount();
+  if (acc) return raPage(acc);
+  const page = h('section', { class: 'page' });
+  if (RA_OK && !INFO.kids) page.append(raBanner());
+  const list = cq.list || [];
+  const plat = list.find(c => c.tier === 'platina');
+  const pct = cq.count ? Math.round(cq.got / cq.count * 100) : 0;
+  page.append(h('div', { class: 'cq-head' },
+    h('span', { class: 'cq-crown' + (plat && plat.at ? '' : ' off'), text: '👑' }),
+    h('div', { class: 't' }, h('small', { text: t('Conquistas do Cobalt') }), h('b', { text: INFO.profileName || t('Seu perfil') }),
+      h('div', { class: 'cq-nums' }, h('span', null, h('em', { text: String(cq.points || 0) }), t('pontos')),
+        h('span', null, h('em', { text: (cq.got || 0) + '/' + (cq.count || 0) }), t('conquistas')),
+        h('span', null, h('em', { text: pct + '%' }), t(plat && plat.at ? 'platina!' : 'até a platina'))),
+      h('div', { class: 'cq-bar' }, h('i', { style: { width: pct + '%' } }))), cqOffButton()));
+  const recentList = list.filter(c => c.at).sort((a, b) => b.at - a.at).slice(0, 3);
+  if (recentList.length) page.append(h('div', { class: 'row-title' }, t('Desbloqueadas recentemente')), h('div', { class: 'cq-recent' }, ...recentList.map(trophyCard)));
+  page.append(h('div', { class: 'row-title' }, t('Todas as conquistas'), h('small', { text: t('só neste aparelho, por perfil, sem conta') })),
+    h('div', { class: 'cq-grid' }, ...list.map(trophyCard)));
+  return page;
+}
+handlers.conquistas = () => { renderChips(); if (PAGE === 'trophies') show('trophies', true); };
+
+/* ---------------- RetroAchievements ----------------
+   Conquistas de cada jogo, com conta grátis (retroachievements.org). Quem confere é o motor do jogo; aqui só a conta
+   (o login guarda um token, nunca a senha) e o que cada jogo já tem (guardado pelo jogo ao abrir).
+   Com a conta conectada, as conquistas do Cobalt param e a aba mostra as do RetroAchievements. */
+const RA_OK = !!(Hub && typeof Hub.raAccount === 'function');   // por enquanto, só na TV e no celular
+function raAccount() { return RA_OK ? json(call('raAccount'), null) : null; }
+const nf = n => Number(n || 0).toLocaleString(LANG === 'es' ? 'es' : 'pt-BR');
+function raBanner() {
+  return h('div', { class: 'ra-banner' },
+    h('div', { class: 'trophy', text: '🏆' }),
+    h('div', { class: 'txt' }, h('b', { text: t('Ganhe conquistas em cada jogo') }),
+      h('p', { text: t('Entre com a sua conta grátis do RetroAchievements: milhares de jogos têm conquistas próprias, e seus pontos ficam salvos na nuvem. As conquistas do Cobalt ficam pausadas enquanto a conta estiver conectada.') })),
+    h('button', { class: 'f btn primary', act: raLoginSheet }, icon('trophy'), t('Entrar')));
+}
+let raSheetErr = null;
+function raErrorText(e) {
+  return e === 'senha' ? t('Usuário ou senha errados.') : e === 'offline' ? t('Sem internet: confira a conexão e tente de novo.')
+    : e === 'vazio' ? t('Digite o usuário e a senha.') : t('Não deu para entrar. Tente de novo.');
+}
+/** Digitar usuário e senha (celular, PC ou "Digitar aqui na TV"). */
+function raTypeSheet() {
+  const user = h('input', { class: 'inp', placeholder: t('Usuário'), autocapitalize: 'none', autocomplete: 'username', maxlength: 40 });
+  const pass = h('input', { class: 'inp', placeholder: t('Senha'), type: 'password', autocomplete: 'current-password', maxlength: 100 });
+  raSheetErr = h('div', { class: 'ra-err' });
+  const go = h('button', { class: 'f btn primary', text: t('Entrar'), act: () => {
+    if (!user.value.trim() || !pass.value) { raSheetErr.textContent = raErrorText('vazio'); return; }
+    raSheetErr.textContent = t('Entrando…');
+    call('raLogin', user.value.trim(), pass.value);
+    pass.value = '';
+  } });
+  user._enter = () => { const it = pass.closest('.f'); if (it) focus(it, true); setTimeout(() => pass.focus(), 30); };
+  pass._enter = () => go._act();
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '46rem', maxWidth: '92vw' } },
+    h('h2', { text: t('Entrar no RetroAchievements') }),
+    h('div', { class: 'ra-form' }, h('button', { class: 'f item', act: () => user.focus() }, user), h('button', { class: 'f item', act: () => pass.focus() }, pass), raSheetErr),
+    h('p', { style: { color: 'var(--dim)', fontSize: '1.05rem', lineHeight: 1.4 }, text: t('A senha só serve para entrar: o GameHub guarda apenas uma chave de acesso da conta. Não tem conta? Crie grátis em retroachievements.org.') }),
+    h('div', { style: { display: 'flex', gap: '1rem' } }, go, h('button', { class: 'f btn', text: t('Cancelar'), act: closeLayer })))));
+  setTimeout(() => user.focus(), 50);
+}
+/** TV: QR code para entrar pelo celular (ou digitar aqui mesmo). */
+function raLoginSheet() {
+  if (INFO.mobile || INFO.pc) { raTypeSheet(); return; }
+  const info = json(call('raLoginStart'), { url: '' });
+  raSheetErr = h('div', { class: 'ra-err' });
+  const close = () => { call('uploadStop'); closeLayer(); };
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '64rem', maxWidth: '94vw' } },
+    h('h2', { text: t('Entre pelo celular') }),
+    h('div', { class: 'ra-qr' },
+      info.url ? h('div', { class: 'qrbox' }, qrSvg(info.url)) : h('div', { class: 'qrbox', style: { background: 'var(--glass)', color: 'var(--dim)', fontSize: '1.2rem', padding: '1rem' } }, t('Sem rede: conecte a TV ao Wi-Fi.')),
+      h('div', { class: 'col' },
+        h('p', { text: t('Aponte a câmera do celular para o QR code e digite o seu usuário e a senha do RetroAchievements na página que abrir. A TV entra sozinha.') }),
+        h('p', { style: { color: 'var(--dim)' }, text: t('O celular precisa estar no mesmo Wi-Fi da TV. Não tem conta? Crie grátis em retroachievements.org.') }),
+        info.ip ? h('p', { class: 'url', text: t('Ou digite no navegador: {u}', { u: 'http://' + info.ip + '/ra' }) }) : null,
+        info.ip && info.code ? h('p', null, t('Código para quem digitar o endereço:') + ' ', h('b', { class: 'code', text: info.code })) : null,
+        raSheetErr)),
+    h('div', { style: { display: 'flex', gap: '1rem' } },
+      h('button', { class: 'f btn', text: t('Digitar aqui na TV'), act: () => { close(); raTypeSheet(); } }),
+      h('button', { class: 'f btn', text: t('Cancelar'), act: close })))));
+}
+// Traduções novas (o GameHub traduz aos poucos): troca só os textos na tela, sem mexer no foco.
+handlers.raTexts = () => {
+  if (PAGE !== 'trophies') return;
+  const all = json(call('raGames'), {}), byId = {};
+  for (const g of Object.values(all)) for (const a of g.list || []) byId[a.id] = a;
+  document.querySelectorAll('[data-ra]').forEach(el => {
+    const a = byId[el.dataset.ra];
+    if (!a) return;
+    const tt = el.querySelector('.ra-t'), dd = el.querySelector('.ra-d');
+    if (tt && tt.textContent !== a.title) tt.textContent = a.title;
+    if (dd && dd.textContent !== a.desc) dd.textContent = a.desc;
+  });
+};
+handlers.ra = r => {
+  if (r && r.ok) {
+    call('uploadStop');
+    closeAllLayers();
+    toast(t('Conta conectada: {u}', { u: r.user }));
+    renderChips();
+    if (PAGE === 'trophies') show('trophies', true);
+    return;
+  }
+  if (raSheetErr) raSheetErr.textContent = raErrorText(r && r.error);
+};
+function raCard(a) {
+  const off = !a.at, rare = a.rarity > 0 && a.rarity < 5;
+  const b = h('div', { class: 'f cq ' + (rare ? 'rara' : 'comum') + (off ? ' off' : ''), tabindex: '-1', 'data-ra': String(a.id) },
+    h('span', { class: 'ic' }, a.badge ? h('img', { src: a.badge, alt: '', loading: 'lazy' }) : '🏆'),
+    h('span', { class: 't' }, h('b', { class: 'ra-t', text: a.title }), h('span', { class: 'ra-d', text: a.desc }),
+      h('span', { class: 'tag', text: a.pts + ' pts' + (a.rarity > 0 ? ' · ' + String(Math.round(a.rarity * 10) / 10).replace('.', ',') + '%' : '') })));
+  b._act = () => toast(off ? (a.progress ? t('Progresso: {p}', { p: a.progress }) : t('Ainda não desbloqueada')) : t('Desbloqueada em {d}', { d: new Date(a.at * 1000).toLocaleDateString(LANG === 'es' ? 'es' : 'pt-BR') }));
+  return b;
+}
+function raGameSheet(g) {
+  const list = (g.list || []).slice().sort((x, y) => (y.at ? 1 : 0) - (x.at ? 1 : 0) || y.at - x.at);
+  openLayer(h('div', { class: 'layer' }, h('div', { class: 'sheet', style: { width: '76rem', maxWidth: '94vw', maxHeight: '86vh', overflowY: 'auto' } },
+    h('h2', { text: g.title + ' · ' + g.got + '/' + g.total }),
+    h('div', { class: 'cq-grid', style: { gridTemplateColumns: INFO.mobile ? '1fr' : 'repeat(2,1fr)' } }, ...list.map(raCard)),
+    h('button', { class: 'f btn', text: t('Fechar'), act: closeLayer }))));
+}
+/** A foto da conta (a do login ou a do endereço padrão do site); se não abrir, o troféu. */
+function raAvatar(acc) {
+  const trophy = h('span', { class: 'cq-crown', text: '🏆' });
+  const url = acc.avatar && /^https:/.test(acc.avatar) ? acc.avatar : 'https://media.retroachievements.org/UserPic/' + encodeURIComponent(acc.user) + '.png';
+  const img = h('img', { class: 'cq-crown', src: url, alt: '' });
+  img.onerror = () => img.replaceWith(trophy);
+  return img;
+}
+function raPage(acc) {
+  const page = h('section', { class: 'page' });
+  const all = json(call('raGames'), {});
+  const games = Object.entries(all).map(([id, g]) => Object.assign({ gid: id }, g, { list: (g.list || []).filter(a => a.id !== 101000001) })).filter(g => g.total > 0).sort((a, b) => (b.at || 0) - (a.at || 0));
+  const done = games.filter(g => g.got >= g.total).length;
+  page.append(h('div', { class: 'cq-head' },
+    raAvatar(acc),
+    h('div', { class: 't' }, h('small', { text: 'RetroAchievements' }), h('b', { text: acc.user }),
+      h('div', { class: 'cq-nums' }, h('span', null, h('em', { text: nf(acc.score) }), t('pontos')),
+        h('span', null, h('em', { text: String(games.length) }), t('jogos com conquistas')),
+        h('span', null, h('em', { text: String(done) }), t('jogos completos')))),
+    h('button', { class: 'f btn', text: t('Sair da conta'), act: () => ask(t('Sair da conta {u}?', { u: acc.user }),
+      t('As conquistas que você ganhou continuam na sua conta do RetroAchievements. As do Cobalt voltam a contar neste perfil.'),
+      [[t('Sair da conta'), () => { call('raLogout'); renderChips(); show('trophies', true); }, 'primary'], [t('Cancelar')]]) }),
+    cqOffButton()));
+  const recentList = [].concat(...games.map(g => (g.list || []).filter(a => a.at))).sort((a, b) => b.at - a.at).slice(0, 3);
+  if (recentList.length) page.append(h('div', { class: 'row-title' }, t('Desbloqueadas recentemente')), h('div', { class: 'cq-recent' }, ...recentList.map(raCard)));
+  page.append(h('div', { class: 'row-title' }, t('Seus jogos'), h('small', { text: t('conquistas de cada jogo') })));
+  if (!games.length) page.append(h('p', { style: { color: 'var(--dim)', fontSize: '1.2rem', lineHeight: 1.5 }, text: t('Abra um jogo: o GameHub confere sozinho se ele tem conquistas no RetroAchievements. O jogo precisa ser a mesma versão que o site reconhece.') }));
+  else page.append(h('div', { class: 'ra-games' }, ...games.map(g => {
+    const b = h('button', { class: 'f ra-game' + (g.got >= g.total ? ' done' : '') }, h('img', { src: g.badge, alt: '', loading: 'lazy' }),
+      h('span', { class: 't' }, h('b', { text: g.title }), h('span', { text: t('{n} de {m} conquistas', { n: g.got, m: g.total }) }),
+        h('span', { class: 'prog' }, h('i', { style: { width: Math.round(g.got / g.total * 100) + '%' } }))));
+    b._act = () => raGameSheet(g);
+    return b;
+  })));
+  return page;
+}
+// PC: o aviso com os aliens (conquista.html) numa camada por cima do hub. Na TV e no celular o aviso é nativo.
+let cqLayer = null;
+handlers.conquista = list => {
+  if (!INFO.pc || !Array.isArray(list)) return;
+  if (!cqLayer) {
+    cqLayer = h('iframe', { src: 'conquista.html?lang=' + LANG, tabindex: '-1' });
+    cqLayer.style.cssText = 'position:fixed;inset:0;width:100%;height:100%;border:0;background:transparent;pointer-events:none;z-index:200';
+    document.body.append(cqLayer);
+  }
+  const go = () => cqLayer.contentWindow.showConquistas && cqLayer.contentWindow.showConquistas(list);
+  if (cqLayer.contentWindow && cqLayer.contentWindow.showConquistas) go(); else cqLayer.addEventListener('load', () => setTimeout(go, 50), { once: true });
+};
 
 function tile(g, onAct) {
   const b = h('button', { class: 'f tile' }, coverEl(g), h('span', { class: 'name', text: g.name }));
@@ -1512,9 +1784,13 @@ handlers.gamepadClients = r => {
     }
   } catch (_) {}
 };
-handlers.cover = () => {
+/* Uma capa chegou: troca só a dela. Redesenhar a página jogava a tela para o topo, e com muitos
+   jogos novos as capas chegam uma atrás da outra enquanto a pessoa desce a lista. */
+handlers.cover = id => {
   loadLibrary();
-  if (!layers.length && PAGE !== 'add' && PAGE !== 'settings') show(PAGE, true);
+  const g = LIB.find(x => x.id === id);
+  if (!g) return;
+  $$('.cover').filter(el => el.dataset.gid === id).forEach(old => old.replaceWith(coverEl(g, old._opts)));
 };
 /* Atualizar capas: baixa de novo todas, uma por vez; no fim chega o evento "covers". */
 let coversBusy = false;

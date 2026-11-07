@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conquista</title>
+<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="conquista.css">
+<style>html,body{background:transparent!important}.bg{display:none}</style>
+</head>
+<body>
+<!-- PC: o aviso de conquista por cima do jogo, numa camada transparente que não pega teclado nem mouse.
+     O game.js manda show([{kind, tier, pts, title, desc}]) quando uma conquista sai. -->
+<script src="common.js"></script>
+<script src="conquista.js"></script>
+<script>
+'use strict';
+LANG = new URLSearchParams(location.search).get('lang') === 'es' ? 'es' : 'pt';
+window.showConquistas = list => { for (const c of list) raPop(c.kind || 'trophy', c.title, c.desc, (c.tier === 'platina' ? '+' : '') + c.pts + ' pts', c.tier === 'platina' ? 'plat' : c.tier === 'rara' ? 'rare' : ''); };
+// Aquece os desenhos e os sons ao abrir (quase invisível): a primeira conquista aparece sem travar o jogo.
+setTimeout(raWarm, 1500);
+</script>
+</body>
+</html>

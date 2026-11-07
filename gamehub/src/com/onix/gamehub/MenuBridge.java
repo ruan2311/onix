@@ -134,6 +134,7 @@ final class MenuBridge {
     @JavascriptInterface
     public void setFastForward(boolean on) {
         Native.setFastForward(on);
+        if (on) g.fastForwardOn();
     }
 
     @JavascriptInterface

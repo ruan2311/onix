@@ -31,6 +31,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <zlib.h>
+#include "cheevos.h"
 #include <EGL/egl.h>
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
@@ -692,12 +693,14 @@ static bool environment(unsigned cmd, void *data) {
             return true;
         case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
         case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
-        case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
         case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
         case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS:
         case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
         case RETRO_ENVIRONMENT_SET_SUPPORT_ACHIEVEMENTS:
         case RETRO_ENVIRONMENT_SET_CONTENT_INFO_OVERRIDE:
+            return true;
+        case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:   /* onde fica cada pedaço da memória: para o RetroAchievements */
+            cheevos_set_mmap((const struct retro_memory_map *)data);
             return true;
         case RETRO_ENVIRONMENT_SET_ROTATION:
             /* Fliperamas de tela em pé (FBNeo): gira a imagem ao desenhar */
@@ -725,6 +728,10 @@ static bool environment(unsigned cmd, void *data) {
 
 #define SYM(name) do { *(void **)&core.name = dlsym(core.handle, "retro_" #name); if (!core.name) { LOGE("sem retro_" #name); return false; } } while (0)
 
+/* O cheevos.c lê a memória do núcleo por estes dois. */
+void *(*cheevos_core_memory_data)(unsigned);
+size_t (*cheevos_core_memory_size)(unsigned);
+
 static bool open_core(const char *path) {
     memset(&core, 0, sizeof(core));
     core.handle = dlopen(path, RTLD_NOW | RTLD_LOCAL);
@@ -734,6 +741,8 @@ static bool open_core(const char *path) {
     SYM(get_system_av_info); SYM(set_controller_port_device); SYM(reset); SYM(run); SYM(serialize_size);
     SYM(serialize); SYM(unserialize); SYM(cheat_reset); SYM(cheat_set); SYM(load_game); SYM(unload_game);
     SYM(get_memory_data); SYM(get_memory_size);
+    cheevos_core_memory_data = core.get_memory_data;
+    cheevos_core_memory_size = core.get_memory_size;
     return true;
 }
 
@@ -862,7 +871,11 @@ static double now_s(void) {
 static double last_time;
 
 static void step(void) {
-    if (!game_loaded || atomic_load(&paused)) { last_time = 0; return; }
+    if (!game_loaded || atomic_load(&paused)) {
+        last_time = 0;
+        if (game_loaded) cheevos_idle(now_s());   /* pausado: o RetroAchievements continua mandando o que ficou pendente */
+        return;
+    }
     double fps = av.timing.fps > 1 ? av.timing.fps : 60.0;
     int frames = 1;
     if (fabs(display_hz - fps) / fps > 0.02) {
@@ -888,6 +901,7 @@ static void step(void) {
     int n = fast_forwarding ? frames * (ff_speed > 1 ? ff_speed : 2) : frames;
     for (int i = 0; i < n; i++) {
         run_one(i == n - 1, !fast_forwarding);
+        cheevos_frame();   /* todo quadro de verdade, também os do avanço rápido */
         if (rewind_on) rewind_push();
     }
 }
@@ -1194,6 +1208,7 @@ JNI(jboolean, load)(JNIEnv *env, jclass c, jstring jcore, jstring jrom, jstring 
             core.get_system_av_info(&av);
             if (hw_on) hw_start();
             for (unsigned p = 0; p < 2; p++) core.set_controller_port_device(p, port_device[p]);
+            cheevos_loaded(rom, rom_data, rom_size);
             LOGI("jogo carregado: %ux%u %.3f fps %.0f Hz", av.geometry.base_width, av.geometry.base_height, av.timing.fps, av.timing.sample_rate);
         } else {
             LOGE("o núcleo recusou o jogo");
@@ -1205,6 +1220,7 @@ JNI(jboolean, load)(JNIEnv *env, jclass c, jstring jcore, jstring jrom, jstring 
 
 JNI(void, unload)(JNIEnv *env, jclass c) {
     audio_stop();
+    cheevos_unload();
     if (hw_ready && hw.context_destroy) hw.context_destroy();
     if (game_loaded) core.unload_game();
     if (hw_ready) hw_fbo_free();
@@ -1321,7 +1337,7 @@ JNI(void, frame)(JNIEnv *env, jclass c) {
     draw();
 }
 
-JNI(void, reset)(JNIEnv *env, jclass c) { if (game_loaded) core.reset(); }
+JNI(void, reset)(JNIEnv *env, jclass c) { if (game_loaded) { core.reset(); cheevos_reset(); } }
 
 JNI(jboolean, saveState)(JNIEnv *env, jclass c, jstring jpath) {
     if (!game_loaded) return JNI_FALSE;
@@ -1346,7 +1362,7 @@ JNI(jboolean, loadState)(JNIEnv *env, jclass c, jstring jpath) {
     bool ok = read_file(path, &buf, &n) && core.unserialize(buf, n);
     free(buf);
     free(path);
-    if (ok) rw_count = 0;   /* o rebobinar não volta para antes do estado carregado */
+    if (ok) { rw_count = 0; cheevos_state_loaded(); }   /* o rebobinar não volta para antes do estado carregado */
     return ok;
 }
 

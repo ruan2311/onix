@@ -13,6 +13,14 @@ Jogos clássicos de **Nintendinho (NES)**, **Super Nintendo**, **Game Boy Advanc
 
 O **mesmo APK** serve para a TV e para o celular: o GameHub percebe sozinho onde está e muda a interface.
 
+> 🏆 **Novo na 2.0.0: Conquistas do Cobalt.** São 15 conquistas (comuns, raras e a platina **Mestre do Cobalt**), na TV, no celular e no PC, sem precisar de conta: ficam salvas no aparelho, separadas por perfil. Quando uma sai, aparece um aviso animado com som por cima do jogo (com os aliens em volta da borda no PC). O troféu no topo do GameHub mostra quantas você já tem e abre a aba **Conquistas**, com os pontos, as recentes e o quanto falta para cada uma. O iPhone ainda não tem.
+
+> 🎖️ **Também na 2.0.0 (TV e celular): RetroAchievements.** Entre com a sua conta do [RetroAchievements](https://retroachievements.org) pela aba **Conquistas** (na TV, lendo o QR code com o celular) e ganhe as conquistas de cada jogo, as mesmas de milhares de jogadores no mundo, com a imagem de cada uma no aviso. Os textos aparecem traduzidos para o português (ou espanhol), e a aba mostra os seus pontos, os seus jogos e o que falta em cada um. Com a conta conectada, as conquistas do Cobalt ficam pausadas; dá também para **desativar as conquistas** no perfil. Por enquanto, no modo normal (softcore). O PC e o iPhone ainda não têm.
+
+> 🇪🇸 *También en la 2.0.0 (TV y celular): RetroAchievements. Entra con tu cuenta de RetroAchievements en la pestaña Logros (en la TV, leyendo el código QR con el celular) y gana los logros de cada juego, con la imagen de cada uno en el aviso. Los textos aparecen traducidos al español, y la pestaña muestra tus puntos y tus juegos. Con la cuenta conectada, los logros de Cobalt quedan en pausa; también se pueden desactivar los logros en el perfil. La PC y el iPhone todavía no lo tienen.*
+
+> 🇪🇸 *Nuevo en la 2.0.0: Logros de Cobalt. Son 15 logros (comunes, raros y el platino Maestro de Cobalt) en la TV, el celular y la PC, sin cuenta: quedan guardados en el aparato, por perfil. Cuando sale uno, aparece un aviso animado con sonido sobre el juego. El trofeo arriba del GameHub abre la pestaña Logros, con los puntos y lo que falta para cada uno. El iPhone todavía no lo tiene.*
+
 > 📲 **1.7.1:** o controle pelo celular (Onix Controle 1.0.7, iPhone e navegador) ganhou os botões de **Nintendo 64** (com os botões C), **DS**, **PSP**, **PS2**, **GameCube** e **Wii** (Wii Remote + Nunchuk e Classic Controller: o celular troca junto com o ⇄ da TV).
 
 > 🎮 **Novo na TV e no celular (1.7.0): Nintendo 64, Nintendo DS e PSP, e GameCube, Wii e PS2 em teste.** Os seis consoles que antes eram só do PC agora rodam dentro do GameHub no Android. O GameHub olha o processador, a memória e a placa de vídeo do aparelho, mostra só os consoles que ele aguenta e escolhe a resolução sozinho. Veja [Consoles 3D na TV e no celular](#-consoles-3d-na-tv-e-no-celular-170).

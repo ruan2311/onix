@@ -37,6 +37,7 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
     static final int REQ_GAME = 1, REQ_FOLDER = 2, REQ_FILES = 3;
 
     WebView web;
+    private ConquistaPopup conquistas;   // o aviso de conquista também aparece no hub (biblioteca, favorito…)
     HubBridge bridge;
     Gamepads gamepads;
     UploadServer upload;
@@ -86,8 +87,12 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
                 }
             });
             setContentView(box);
+            conquistas = new ConquistaPopup(this, box, true, lang);
         } else {
-            setContentView(web);
+            FrameLayout box = new FrameLayout(this);
+            box.addView(web, new FrameLayout.LayoutParams(-1, -1));
+            setContentView(box);
+            conquistas = new ConquistaPopup(this, box, false, lang);
         }
         web.requestFocus();
         web.loadUrl(Web.BASE + "hub.html");
@@ -358,6 +363,14 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         gamepads.start();
         startGamepadServer();
         Web.emit(web, "resume", null);
+        Conquistas.setListener(new Conquistas.Listener() {
+            @Override
+            public void unlocked(java.util.List<Conquistas.Def> list) {
+                conquistas.show(list);
+                Web.emit(web, "conquistas", null);   // a aba Conquistas, se estiver aberta, se atualiza
+            }
+        });
+        checkConquistas();
         // Pendrive: liga e tira com o GameHub aberto, e a volta da tela de permissão.
         try {
             IntentFilter media = new IntentFilter();
@@ -425,8 +438,21 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
         stopGamepadServer();
     }
 
+    /** Confere as conquistas em segundo plano (voltou de um jogo, a biblioteca mudou, marcou favorito…). */
+    void checkConquistas() {
+        final String p = profile;
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                Conquistas.check(getApplicationContext(), p, null);
+            }
+        }, "cobalt-conquistas").start();
+    }
+
     @Override
     protected void onDestroy() {
+        Conquistas.setListener(null);
+        conquistas.release();
         stopGamepadServer();
         Covers.listener = null;
         upload.stop();
@@ -505,6 +531,19 @@ public class HubActivity extends Activity implements Gamepads.Listener, UploadSe
     @Override
     public void event(JSONObject e) {
         Web.emit(web, "upload", e.toString());
+    }
+
+    /** RetroAchievements: entra (pelo celular ou digitando aqui) e avisa a página. Fora da thread da tela. */
+    @Override
+    public JSONObject raLogin(String user, String password) {
+        JSONObject r = user.trim().isEmpty() || password.isEmpty() ? null : RetroAchievements.login(this, profile, user, password);
+        if (r == null) try {
+            r = new JSONObject().put("ok", false).put("error", "vazio");
+        } catch (Exception ignored) {
+            r = new JSONObject();
+        }
+        Web.emit(web, "ra", r.toString());
+        return r;
     }
 
     @Override

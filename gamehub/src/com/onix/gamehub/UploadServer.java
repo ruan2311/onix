@@ -37,6 +37,9 @@ final class UploadServer {
     interface Host {
         /** {"type":"start|progress|done","name","size","sent", e o resultado do Importer no done} */
         void event(JSONObject e);
+
+        /** Login do RetroAchievements digitado no celular (página /ra): {ok, user} ou {ok:false, error}. */
+        JSONObject raLogin(String user, String password);
     }
 
     private static final int PORT = 8770, MAX_CONN = 4, MAX_HEADER = 8 * 1024;
@@ -62,7 +65,7 @@ final class UploadServer {
     private volatile int port;
     private volatile String key, code;
     private int codeFails;
-    private byte[] page;
+    private final java.util.HashMap<String, byte[]> pages = new java.util.HashMap<>();
 
     UploadServer(Context ctx, Host host) {
         this.ctx = ctx.getApplicationContext();
@@ -198,7 +201,11 @@ final class UploadServer {
                 else if (name.equals("x-key")) k = value;
             }
             if (method.equals("GET") && (path.equals("/") || path.equals("/index.html"))) {
-                send(c, 200, "text/html; charset=utf-8", page());
+                send(c, 200, "text/html; charset=utf-8", page("upload.html"));
+                return;
+            }
+            if (method.equals("GET") && path.equals("/ra")) {   // entrar no RetroAchievements pelo celular
+                send(c, 200, "text/html; charset=utf-8", page("ra-login.html"));
                 return;
             }
             if (!authorized(k)) {
@@ -210,6 +217,20 @@ final class UploadServer {
                 o.put("k", key);   // entrou pelo código: a página passa a usar a chave
                 o.put("es", "es".equals(Locale.getDefault().getLanguage()));
                 json(c, 200, o.toString());
+                return;
+            }
+            if (method.equals("POST") && path.equals("/api/ra-login")) {
+                if (length <= 0 || length > 4096) {
+                    json(c, 413, "{}");
+                    return;
+                }
+                byte[] b = new byte[(int) length];
+                int got = 0;
+                for (int n; got < b.length && (n = in.read(b, got, b.length - got)) > 0;) got += n;
+                JSONObject o = new JSONObject(new String(b, 0, got, "UTF-8"));
+                JSONObject r = host.raLogin(o.optString("user"), o.optString("pass"));
+                json(c, 200, r.toString());
+                if (r.optBoolean("ok")) stop();   // entrou: a TV fecha o servidor
                 return;
             }
             if (method.equals("PUT") && path.equals("/api/upload")) {
@@ -280,15 +301,17 @@ final class UploadServer {
         json(c, 200, r.toString());
     }
 
-    private synchronized byte[] page() throws Exception {
+    private synchronized byte[] page(String name) throws Exception {
+        byte[] page = pages.get(name);
         if (page == null) {
-            InputStream in = ctx.getAssets().open("upload.html");
+            InputStream in = ctx.getAssets().open(name);
             try {
                 ByteArrayOutputStream o = new ByteArrayOutputStream();
                 byte[] buf = new byte[16 * 1024];
                 int n;
                 while ((n = in.read(buf)) > 0) o.write(buf, 0, n);
                 page = o.toByteArray();
+                pages.put(name, page);
             } finally {
                 in.close();
             }

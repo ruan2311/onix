@@ -33,6 +33,25 @@ function toast(text) {
   toastTimer = setTimeout(() => { el.hidden = true; }, 2600);
 }
 
+/* ---------------- Conquistas do Cobalt ----------------
+   O jogo conta (plays, saves, rewind, ffwd, multi, night) e o processo principal confere; quando uma sai, o aviso
+   com os aliens (conquista.html) aparece numa camada transparente por cima. Não tem no iPhone (PC.mobile). */
+const CQ = !PC.mobile;
+const cqOnce = {};
+function conquista(stat, value) {
+  if (!CQ || !ID) return;
+  if (stat && stat !== 'session' && cqOnce[stat]) return;   // cada contador sobe uma vez por partida
+  if (stat && stat !== 'session') cqOnce[stat] = true;
+  const secs = (playedMs + (menuOpen || !loaded ? 0 : Date.now() - started)) / 1000;
+  setTimeout(() => PC.call('conquista', ID, stat || '', value || 0, secs), 0);
+}
+window.onHub = (type, data) => {
+  if (type !== 'conquista' || !Array.isArray(data)) return;
+  const w = $('#cq').contentWindow;
+  if (w && w.showConquistas) w.showConquistas(data);
+};
+if (CQ) $('#cq').src = 'conquista.html?lang=' + (ES ? 'es' : 'pt');
+
 /* ---------------- Imagem (WebGL 2) ----------------
    Um programa com os filtros da TV e os do PC; o quadro do núcleo (RGBA) vira uma textura. O
    "fundo ambiente" (a própria imagem, borrada, atrás do jogo) sai de reduções em etapas para
@@ -342,9 +361,11 @@ const usesTrigger = b => (CONSOLE_BUTTONS[INFO.console] || []).includes(b);
 let keyFf = false, keyRw = false, padFf = false, padRw = false;
 function hotkeys() {
   ffHold = keyFf || padFf || touchFast;
+  if (ffHold) conquista('ffwd');
   const want = keyRw || padRw;
   if (want && !rwHold && !S.rewind) toast(tr('Rebobinar está desligado (Configurações → Jogo).', 'Rebobinar está apagado (Configuración → Juego).'));
   rwHold = want && !!S.rewind;
+  if (rwHold) conquista('rewind');
 }
 
 window.addEventListener('keydown', e => {
@@ -414,6 +435,7 @@ function pollPads() {
     M._ox_set_analog(port, 0, axis(x, dz), axis(y, dz));
     M._ox_set_analog(port, 1, axis(rx, dz), axis(ry, dz));
     padBits[port] |= bits;
+    if (port > 0 && bits) conquista('multi');
   }
   if (selStart) { padBits.fill(0); openMenu(''); return; }
   hotkeys();
@@ -623,6 +645,9 @@ async function start() {
     await audioStart();
     loaded = true;
     $('#loading').classList.add('gone');
+    conquista('plays');
+    if (new Date().getHours() < 5) conquista('night');
+    setInterval(() => { if (loaded && !menuOpen) conquista('session', Math.floor((playedMs + Date.now() - started) / 60000)); }, 60000);
     if (!pads().length && MODE !== 'resume' && !PC.mobile) toast(INFO.console === 'ps1'
       ? tr('Teclado: setas, Z = ✕, X = ○, A = □, S = △, Q/W = L1/R1, Enter = Start. Esc abre o menu.', 'Teclado: flechas, Z = ✕, X = ○, A = □, S = △, Q/W = L1/R1, Enter = Start. Esc abre el menú.')
       : tr('Teclado: setas, X = A, Z = B, Enter = Start. Esc abre o menu.', 'Teclado: flechas, X = A, Z = B, Enter = Start. Esc abre el menú.'));
@@ -656,7 +681,7 @@ window.OnixMenu = {
   saveState: slot => {
     if (!/^[1-4]$/.test(slot) || !loaded) return false;
     saveState(slot).then(done => {
-      if (done) toast(tr('Estado salvo no espaço ' + slot, 'Estado guardado en el espacio ' + slot));
+      if (done) { toast(tr('Estado salvo no espaço ' + slot, 'Estado guardado en el espacio ' + slot)); conquista('saves'); }
       menuEmit('saved', { slot, ok: !!done, states: statesList() });
     });
     return true;
@@ -670,7 +695,7 @@ window.OnixMenu = {
     return true;
   },
   reset: () => { if (loaded) { M._ox_reset(); setTimeout(closeMenu, 0); } },
-  setFastForward: on => { if (loaded) M._ox_set_fast_forward(on ? 1 : 0); },
+  setFastForward: on => { if (loaded) M._ox_set_fast_forward(on ? 1 : 0); if (on) conquista('ffwd'); },
   setConfig: (scope, key, value) => {
     if (PC.mobile && VIEW_KEYS.includes(key) && value !== null) {
       if (upright()) key += 'Port';

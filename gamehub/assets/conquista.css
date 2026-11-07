@@ -1,0 +1,73 @@
+/* Conquistas: o aviso por cima do jogo. */
+.ra-pop{position:fixed;top:2.21rem;right:2.21rem;z-index:90;width:28.9rem;display:flex;align-items:center;gap:1.105rem;padding:0.935rem 1.19rem 0.935rem 0.935rem;
+  border-radius:1.275rem;background:rgba(14,9,32,.94);box-shadow:0 1.19rem 3.4rem rgba(0,0,0,.6),0 0 2.21rem rgba(255,61,154,.25);overflow:hidden}
+.ra-pop::before{content:"";position:absolute;inset:0;border-radius:1.275rem;padding:0.136rem;background:var(--grad);
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.ra-pop::after{content:"";position:absolute;top:0;bottom:0;left:-40%;width:30%;transform:skewX(-20deg);
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)}
+.ra-pop .badge{flex:none;width:4.59rem;height:4.59rem;border-radius:0.85rem;overflow:hidden;box-shadow:0 0 1.19rem rgba(255,210,122,.35)}
+.ra-pop .badge svg{width:100%;height:100%}
+.ra-pop .t{flex:1;min-width:0}
+.ra-pop small{display:flex;align-items:center;gap:0.425rem;font-size:0.722rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:#ffd27a}
+.ra-pop small svg{width:0.935rem;height:0.935rem;flex:none}
+.ra-pop b{display:block;font-size:1.147rem;font-weight:800;margin-top:0.212rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ra-pop span{display:block;font-size:0.867rem;color:var(--dim);margin-top:0.128rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ra-pop .pts{flex:none;align-self:flex-start;font-size:0.85rem;font-weight:800;color:#14082c;background:#ffd27a;border-radius:84.15rem;padding:0.212rem 0.595rem}
+.ra-pop.ok small{color:#4ade80}
+.ra-pop.ok .badge{box-shadow:0 0 1.19rem rgba(74,222,128,.35)}
+.ra-pop.local small{color:var(--cyan)}
+.ra-pop.local .pts{background:var(--cyan)}
+.ra-pop span{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.ra-pop::before,.ra-pop::after{display:none}
+.ra-pop{background:transparent;box-shadow:none;overflow:visible;padding:0.935rem 1.19rem 0.935rem 0.935rem}
+.ra-pop .bgp{position:absolute;inset:0;border-radius:1.275rem;background:rgba(14,9,32,.99);box-shadow:0 1.19rem 3.4rem rgba(0,0,0,.6),0 0 2.21rem var(--glow,rgba(255,61,154,.28))}
+.ra-pop .ring{position:absolute;inset:0;border-radius:1.275rem;padding:0.17rem;overflow:hidden;
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude}
+.ra-pop .shine{position:absolute;inset:0;border-radius:1.275rem;overflow:hidden;pointer-events:none}
+.ra-pop .shine i{position:absolute;top:0;bottom:0;left:0;width:30%;transform:skewX(-20deg);will-change:transform;background:linear-gradient(90deg,transparent,rgba(255,255,255,.13),transparent)}
+.ra-pop .badge,.ra-pop .t,.ra-pop .pts{position:relative;z-index:1}
+.ra-pop .fx{position:absolute;inset:0;pointer-events:none;z-index:2}
+.ra-pop .fx svg,.ra-pop .fx img{position:absolute;width:1.615rem;height:1.275rem;margin:-0.637rem 0 0 -0.807rem}
+.ra-pop .fx .ufo svg{filter:drop-shadow(0 0 0.34rem currentColor)}
+.ra-pop .fx b.px{position:absolute;width:0.297rem;height:0.297rem;margin:0;display:block}
+.ra-pop{--c1:#ff3d9a;--c2:#3de1ff;--c3:#a78bfa}
+.ra-pop.rare{width:35.7rem;--c1:#4ade80;--c2:#3de1ff;--c3:#a3ff5a;--glow:rgba(74,222,128,.35)}
+.ra-pop.rare small{color:#4ade80}
+.ra-pop.rare .pts{background:#4ade80}
+.ra-pop.plat{width:35.7rem;padding:1.36rem 1.53rem 1.36rem 1.275rem;gap:1.36rem;--c1:#ffffff;--c2:#9fe8ff;--c3:#ff9ad5;--glow:rgba(200,240,255,.5)}
+.ra-pop.plat .bgp{background:linear-gradient(120deg,rgb(40,30,80),rgb(14,9,32) 55%,rgb(30,50,80))}
+.ra-pop.plat .badge{width:5.95rem;height:5.95rem;border-radius:1.105rem;box-shadow:none}
+.ra-pop.plat small{color:#e6f7ff;font-size:0.807rem}
+.ra-pop.plat b{font-size:1.488rem}
+.ra-pop.plat span{font-size:0.935rem}
+.ra-pop.plat .pts{background:linear-gradient(90deg,#fff,#9fe8ff,#ff9ad5);font-size:0.935rem}
+.ra-pop small{white-space:nowrap}
+.ra-pop .ring i{position:absolute;left:50%;top:50%;background:conic-gradient(var(--c1),var(--c2),var(--c3),var(--c1));will-change:transform}
+.ra-pop .glow{position:absolute;z-index:0;border-radius:1.105rem;box-shadow:0 0 2.125rem rgba(200,240,255,.8);will-change:opacity}
+.ra-pop .fx .al,.ra-pop .fx .ufo,.ra-pop .fx b.px{position:absolute;left:0;top:0;will-change:transform}
+.ra-pop .fx .ufo{width:3.06rem;height:1.275rem}
+.ra-pop .fx .al img+img,.ra-pop .fx.f1 .al img:first-child{visibility:hidden}
+.ra-pop .fx.f1 .al img+img{visibility:visible}
+.ra-pop.plat .fx b.px{width:0.425rem;height:0.425rem;transform-origin:0 0}
+.ra-pop{transition:opacity .45s ease,transform .45s ease}
+.ra-pop.out{opacity:0;transform:translateY(-1.02rem)}
+.ra-pop.in{animation:ra-slide .55s cubic-bezier(.2,.9,.3,1) backwards}
+@keyframes ra-slide{0%{transform:translate3d(115%,0,0);opacity:0}15%{opacity:1}70%{transform:translate3d(-3%,0,0)}100%{transform:none}}
+.ra-pop.rare.in{animation:ra-pop .7s cubic-bezier(.3,.7,.4,1) backwards}
+@keyframes ra-pop{0%{transform:scale(.2) rotate(-8deg);opacity:0}25%{opacity:1}55%{transform:scale(1.1) rotate(2deg)}78%{transform:scale(.97) rotate(-.5deg)}100%{transform:none}}
+.ra-pop.rare.in .badge{animation:ra-badge .5s .3s cubic-bezier(.3,1.6,.5,1) backwards}
+@keyframes ra-badge{0%{transform:scale(0)}100%{transform:none}}
+.ra-pop.plat.in{animation:ra-stamp .55s .85s cubic-bezier(.2,.8,.3,1) backwards}
+@keyframes ra-stamp{0%{transform:scale(1.35);opacity:0}30%{transform:scale(.93);opacity:1}62%{transform:scale(1.03)}100%{transform:none}}
+.ra-pop.plat.in .badge{animation:ra-flip .7s 1.05s cubic-bezier(.3,1.3,.5,1) backwards}
+@keyframes ra-flip{0%{transform:perspective(34rem) rotateY(-540deg) scale(.3)}100%{transform:perspective(34rem) rotateY(0) scale(1)}}
+.ra-in{position:fixed;z-index:89;pointer-events:none;will-change:transform,opacity}
+.ra-in.burst{border-radius:1.275rem;border:0.212rem solid #4ade80;box-shadow:0 0 0 0.297rem rgba(74,222,128,.35),0 0 0 0.68rem rgba(74,222,128,.14);opacity:0;animation:ra-burst .7s .2s ease-out}
+.ra-in.burst.plat{border-color:#e6f7ff;box-shadow:0 0 0 0.34rem rgba(159,232,255,.35),0 0 0 0.765rem rgba(255,154,213,.16);animation:ra-burst .8s .85s ease-out}
+.ra-in.burst.plat.late{animation-delay:1s;animation-duration:1s;border-color:#ff9ad5}
+@keyframes ra-burst{0%{transform:scale(.6);opacity:1}100%{transform:scale(1.9);opacity:0}}
+.ra-in.charge{border-radius:50%;background:radial-gradient(circle,#fff 0,#c9f1ff 12%,rgba(159,232,255,.5) 30%,rgba(255,154,213,.25) 50%,transparent 70%);opacity:0;animation:ra-charge .95s ease-in}
+@keyframes ra-charge{0%{transform:scale(.1);opacity:0}20%{opacity:.7}88%{transform:scale(1.2);opacity:1}100%{transform:scale(1.8);opacity:0}}
+.ra-in.flash{top:0;right:0;width:62vw;height:60vh;background:radial-gradient(ellipse at 64% 20%,rgba(255,255,255,.55),rgba(200,240,255,.15) 45%,transparent 75%);opacity:0;animation:ra-flash .5s .85s ease-out}
+@keyframes ra-flash{0%{opacity:1}100%{opacity:0}}
+.ra-warm{opacity:.01!important;pointer-events:none}
