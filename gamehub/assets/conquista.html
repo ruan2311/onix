@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Conquista</title>
+<link rel="stylesheet" href="common.css">
+<link rel="stylesheet" href="conquista.css">
+<style>html,body{background:transparent}</style>
+</head>
+<body>
+<script src="common.js"></script>
+<script src="conquista.js"></script>
+<script>
+'use strict';
+// DEMONSTRAÇÃO: só a conquista, numa tela própria em metade da resolução (o Java amplia 2×).
+LANG = /[?&]lang=es/.test(location.search) ? 'es' : 'pt';
+handlers.conquista = () => {
+  const es = LANG === 'es';
+  raPop('sword', es ? 'Salto de fe' : 'Salto de fé', es ? 'Da el primer salto de Mario' : 'Dê o primeiro pulo do Mario', '50 pts', 'rare');
+};
+try { raPrepareSound('rare'); } catch (e) {}
+</script>
+</body>
+</html>
