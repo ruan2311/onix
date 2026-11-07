@@ -52,7 +52,7 @@ if (!isGame) {
   const Hub = {};
   for (const name of ['library', 'conquistas', 'setConquistasOn', 'states', 'play', 'setFavorite', 'rename', 'setKids', 'remove', 'deleteState', 'config', 'effective', 'setConfig',
     'coreOptions', 'cheats', 'setCheats', 'storage', 'uploadStart', 'uploadStop', 'editTouch', 'pickGames', 'folders', 'removeFolder', 'rescan',
-    'clearPad', 'openBluetooth', 'refreshCovers', 'openBios', 'raInfo', 'update', 'checkUpdate', 'installUpdate', 'fullscreen', 'exit']) {
+    'clearPad', 'openBluetooth', 'refreshCovers', 'openBios', 'raInfo', 'raAccount', 'raLogin', 'raLogout', 'raGames', 'update', 'checkUpdate', 'installUpdate', 'fullscreen', 'exit']) {
     Hub[name] = (...args) => hub(name, ...args);
   }
   Hub.init = () => JSON.stringify(Object.assign(JSON.parse(hub('init')), { gamepads: padList() }));

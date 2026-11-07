@@ -18,7 +18,9 @@ const BASE = process.env.COBALT_ENGINE_BASE || 'https://github.com/ruan2311/coba
 const SYSTEM = { dolphin: 'system-Dolphin.zip', ppsspp: 'system-PPSSPP.zip' };
 const MAX_DOWNLOAD = 400 * 1024 * 1024;
 
-let root = '', running = null;
+let root = '', running = null, cheevosAccount = () => null;
+/** A conta do RetroAchievements ({user, token}) para o RetroArch entrar sozinho; null = desligado. */
+const setCheevos = f => { cheevosAccount = f; };
 const dir = (...a) => path.join(root, ...a);
 const exe = () => dir('app', 'CobaltMotor.exe');   // o RetroArch com o nome e o ícone do GameHub (build-motor.js)
 function init(userData) { root = path.join(userData, 'retroarch'); }
@@ -194,6 +196,14 @@ function binds(o) {
 const vulkanBad = () => fs.existsSync(dir('vulkan-falhou'));
 function markVulkanBad() { try { fs.mkdirSync(root, { recursive: true }); fs.writeFileSync(dir('vulkan-falhou'), new Date().toISOString()); } catch { } }
 
+/* RetroAchievements: o RetroArch já tem o seu; entra com o token da conta do GameHub (sem senha), no modo normal. */
+function cheevosCfg() {
+  const a = cheevosAccount();
+  if (!a) return { cheevos_enable: false, cheevos_username: '', cheevos_token: '', cheevos_password: '' };
+  return { cheevos_enable: true, cheevos_username: a.user, cheevos_token: a.token, cheevos_password: '', cheevos_hardcore_mode_enable: false,
+    cheevos_richpresence_enable: true, cheevos_badges_enable: true, cheevos_unlock_sound_enable: true };
+}
+
 function writeConfig(c, mode, lang, o) {
   const test = !!process.env.COBALT_RA_TEST;
   const cfg = {
@@ -214,6 +224,7 @@ function writeConfig(c, mode, lang, o) {
     input_menu_toggle: 'tab', input_menu_toggle_gamepad_combo: 4, input_exit_emulator: 'escape', quit_press_twice: false,
     menu_show_online_updater: false, menu_show_core_updater: false, config_save_on_exit: false,
     ...binds(o),
+    ...cheevosCfg(),
   };
   fs.mkdirSync(root, { recursive: true });
   for (const d of ['saves', 'states', 'screenshots', 'logs', 'system', 'config']) fs.mkdirSync(dir(d), { recursive: true });
@@ -258,4 +269,4 @@ function launch(c, rom, mode, lang, o, hooks) {
   return true;
 }
 
-module.exports = { ENGINE, init, launch, resolve, markVulkanBad, AUTO_RES, VULKAN, states, biosDir, openBios, isRunning: () => !!running };
+module.exports = { ENGINE, init, setCheevos, launch, resolve, markVulkanBad, AUTO_RES, VULKAN, states, biosDir, openBios, isRunning: () => !!running };

@@ -12,6 +12,7 @@ const covers = require('./covers');
 const updater = require('./updater');
 const retroarch = require('./retroarch');
 const hardware = require('./hardware');
+const cheevos = require('./retroachievements');
 
 protocol.registerSchemesAsPrivileged([
   { scheme: 'app', privileges: { standard: true, secure: true, supportFetchAPI: true, corsEnabled: true } },
@@ -103,7 +104,23 @@ const HUB = {
     consoles: store.CONSOLES.map(c => c.id),
   }),
   library: () => { setImmediate(() => conquistas.check()); return JSON.stringify(store.list()); },   // a biblioteca mudou: "Colecionador"…
-  conquistas: () => conquistas.json(lang()),
+  conquistas: () => {
+    // A pontuação do RetroAchievements no site (no máximo uma vez por minuto): o troféu do topo se atualiza sozinho.
+    cheevos.refresh().then(changed => { if (changed) emit('conquistas'); }).catch(() => { });
+    return conquistas.json(lang());
+  },
+  // RetroAchievements (o mesmo que o HubBridge.java): a conta nunca sai daqui com o token.
+  raAccount: () => { const a = cheevos.account(); return a ? JSON.stringify({ user: a.user, score: a.score || 0, avatar: a.avatar || '' }) : null; },
+  raLogin: (user, pass) => {
+    if (typeof user !== 'string' || typeof pass !== 'string') return false;
+    cheevos.login(user, pass).then(r => emit('ra', r)).catch(() => emit('ra', { ok: false, error: 'erro' }));
+    return true;
+  },
+  raLogout: () => { cheevos.logout(); setImmediate(() => conquistas.check()); return true; },
+  raGames: () => {
+    cheevos.translateAll(lang(), () => emit('raTexts')).catch(() => { });
+    return JSON.stringify(cheevos.gamesTranslated(lang()));
+  },
   setConquistasOn: on => conquistas.setOn(!!on),
   states: id => JSON.stringify(ok(id) ? statesOf(id) : []),
   play: (id, mode) => ok(id) && /^(resume|new|[1-4])$/.test(mode) && openGame(id, mode),
@@ -296,6 +313,21 @@ const GAME = {
     });
   },
   discRead: (id, n, offset, len) => discRead(id, n, offset, len),
+  // RetroAchievements: a conta (com o token, só para o motor entrar) e o número do console; null se não for ligar.
+  raStart: (id, clause) => {
+    cheevos.setClause(clause);
+    const g = ok(id) && store.game(id), a = cheevos.account(), con = g ? cheevos.consoleId(g.console) : 0;
+    return a && con && conquistas.enabled() ? JSON.stringify({ user: a.user, token: a.token, console: con }) : null;
+  },
+  // O que o motor avisou: a lista do jogo (para a aba Conquistas) e a conta com os pontos novos.
+  raEvent: (type, data) => {
+    const o = typeof data === 'string' ? JSON.parse(data) : null;
+    if (!o) return false;
+    if (type === 'game') cheevos.saveGame(o);
+    else if (type === 'login') cheevos.updateAccount(o);
+    emit('conquistas');
+    return true;
+  },
   effective: id => { const g = ok(id) && store.game(id); return g ? JSON.stringify(store.effective(g.console, id)) : '{}'; },
   states: id => JSON.stringify(ok(id) ? store.states(id) : []),
   setConfig: (id, scope, key, value) => {
@@ -350,6 +382,13 @@ function discClose() {
 
 // Bytes (ROM, estados, memória do cartucho): pedidos assíncronos.
 const GAME_ASYNC = {
+  // Os pedidos à internet do motor (só para o retroachievements.org) e a tradução dos avisos.
+  raHttp: async (url, post, type) => (cheevos.allowed(url) ? cheevos.http(url, post == null ? null : String(post), type) : { status: 0, body: '' }),
+  raTranslate: async texts => {
+    const out = [];
+    for (const t of Array.isArray(texts) ? texts.slice(0, 4) : []) out.push(await cheevos.translate(lang(), String(t || '')));
+    return out;
+  },
   rom: async id => { const g = ok(id) && store.game(id); return g && !store.consoleById(g.console).disc ? fs.promises.readFile(store.romPath(g)) : null; },
   // BIOS que a pessoa pôs na pasta "system" (opcional: sem ela, o PS1 usa a BIOS livre do núcleo).
   bios: async () => {
@@ -410,8 +449,11 @@ app.whenReady().then(() => {
   }
   store.init(userData, ASSETS);
   conquistas.init(store, ASSETS);
+  cheevos.init(store, VERSION, userData);
+  conquistas.setPaused(() => cheevos.connected());   // com a conta do RetroAchievements, as do Cobalt ficam paradas
   conquistas.setListener(conquistaSaiu);
   retroarch.init(userData);
+  retroarch.setCheevos(() => { const a = cheevos.account(); return a && conquistas.enabled() ? { user: a.user, token: a.token } : null; });
   hardware.detect().then(h => log('[pc]', h.gpu || 'placa de vídeo desconhecida', '·', h.threads, 'threads ·', h.ramGB, 'GB · faixa', h.tier)).catch(() => { });
   logFile = path.join(userData, 'gamehub.log');
   protocol.handle('app', serve);

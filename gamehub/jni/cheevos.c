@@ -10,18 +10,23 @@
  * Tudo que mexe na biblioteca roda na thread GL (o Java manda por queueEvent), menos o raPoll, que só lê
  * a fila (com trava).
  */
-#include <jni.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <android/log.h>
 #include "libretro.h"
 #include "rc_client.h"
 #include "rc_libretro.h"
 #include "cheevos.h"
 
+/* O mesmo arquivo serve ao Android (JNI, lá embaixo) e ao PC (WebAssembly, pc/core/web.c: no lugar do Java, o game.js). */
+#ifdef __ANDROID__
+#include <jni.h>
+#include <android/log.h>
 #define LOGI(...) __android_log_print(ANDROID_LOG_INFO, "OnixRA", __VA_ARGS__)
+#else
+#define LOGI(...) (fprintf(stderr, "[RA] " __VA_ARGS__), fputc('\n', stderr))
+#endif
 
 static rc_client_t *client;
 static uint32_t console_id;
@@ -263,6 +268,59 @@ void cheevos_unload(void) {
 }
 bool cheevos_active(void) { return client != NULL; }
 
+/* ---------------- O que o Java (Android) e o game.js (PC) chamam ---------------- */
+
+/** Antes de abrir o jogo: liga o RetroAchievements (conta já conectada: usuário + token). */
+void cheevos_start(const char *user, const char *token, int console) {
+    cheevos_unload();
+    console_id = (uint32_t)console;
+    client = rc_client_create(read_memory, server_call);
+    if (client) {
+        rc_client_enable_logging(client, RC_CLIENT_LOG_LEVEL_WARN, log_message);
+        rc_client_set_event_handler(client, event_handler);
+        /* Softcore: enquanto o Cobalt não for validado pelo RetroAchievements, o servidor conta tudo como
+           softcore de qualquer jeito; assim os estados salvos, o voltar no tempo e os códigos continuam valendo. */
+        rc_client_set_hardcore_enabled(client, 0);
+        rc_client_begin_login_with_token(client, user ? user : "", token ? token : "", login_cb, NULL);
+    }
+}
+
+/** O "rcheevos/x.y" que vai no fim do User-Agent dos pedidos. */
+void cheevos_agent(char *buf, size_t n) {
+    buf[0] = 0;
+    rc_client_t *tmp = client ? client : rc_client_create(read_memory, server_call);
+    if (tmp) rc_client_get_user_agent_clause(tmp, buf, n);
+    if (tmp && tmp != client) rc_client_destroy(tmp);
+}
+
+/** Tudo o que está na fila (uma linha JSON por item), numa cópia para quem chamou liberar; ou NULL. */
+char *cheevos_poll(void) {
+    pthread_mutex_lock(&out_lock);
+    char *r = outbox.n ? strdup(outbox.s) : NULL;
+    outbox.n = 0;
+    if (outbox.s) outbox.s[0] = 0;
+    pthread_mutex_unlock(&out_lock);
+    return r;
+}
+
+/** A resposta de um pedido. status 0 = sem internet. */
+void cheevos_response(int id, int status, const char *body, size_t n) {
+    for (int i = 0; i < MAX_PENDING; i++) {
+        if (pending[i].id != id) continue;
+        pending_t p = pending[i];
+        pending[i].id = 0;
+        char *copy = malloc(n + 1);
+        if (!copy) return;
+        if (n) memcpy(copy, body, n);
+        copy[n] = 0;
+        rc_api_server_response_t r = { copy, n, status > 0 ? status : RC_API_SERVER_RESPONSE_RETRYABLE_CLIENT_ERROR };
+        p.cb(&r, p.data);
+        free(copy);
+        return;
+    }
+}
+
+#ifdef __ANDROID__
 /* ---------------- Java ---------------- */
 #define JNI(ret, name) JNIEXPORT ret JNICALL Java_com_onix_gamehub_Native_##name
 
@@ -274,56 +332,33 @@ static char *jcopy(JNIEnv *env, jstring s) {
     return r;
 }
 
-/** Antes do load(): liga o RetroAchievements para este jogo (conta já conectada: usuário + token). */
 JNI(void, raStart)(JNIEnv *env, jclass c, jstring juser, jstring jtoken, jint console) {
-    cheevos_unload();
     char *user = jcopy(env, juser), *token = jcopy(env, jtoken);
-    console_id = (uint32_t)console;
-    client = rc_client_create(read_memory, server_call);
-    if (client) {
-        rc_client_enable_logging(client, RC_CLIENT_LOG_LEVEL_WARN, log_message);
-        rc_client_set_event_handler(client, event_handler);
-        /* Softcore: enquanto o Cobalt não for validado pelo RetroAchievements, o servidor conta tudo como
-           softcore de qualquer jeito; assim os estados salvos, o voltar no tempo e os códigos continuam valendo. */
-        rc_client_set_hardcore_enabled(client, 0);
-        rc_client_begin_login_with_token(client, user, token, login_cb, NULL);
-    }
+    cheevos_start(user, token, console);
     free(user); free(token);
 }
 
-/** O "rcheevos/x.y" que vai no fim do User-Agent dos pedidos. */
 JNI(jstring, raAgent)(JNIEnv *env, jclass c) {
-    char buf[64] = "";
-    rc_client_t *tmp = client ? client : rc_client_create(read_memory, server_call);
-    if (tmp) rc_client_get_user_agent_clause(tmp, buf, sizeof(buf));
-    if (tmp && tmp != client) rc_client_destroy(tmp);
+    char buf[64];
+    cheevos_agent(buf, sizeof(buf));
     return (*env)->NewStringUTF(env, buf);
 }
 
-/** Tudo o que está na fila (uma linha JSON por item), ou null. Pode ser chamado de qualquer thread. */
+/* Pode ser chamado de qualquer thread. */
 JNI(jstring, raPoll)(JNIEnv *env, jclass c) {
-    pthread_mutex_lock(&out_lock);
-    jstring r = outbox.n ? (*env)->NewStringUTF(env, outbox.s) : NULL;
-    outbox.n = 0;
-    if (outbox.s) outbox.s[0] = 0;
-    pthread_mutex_unlock(&out_lock);
+    char *s = cheevos_poll();
+    jstring r = s ? (*env)->NewStringUTF(env, s) : NULL;
+    free(s);
     return r;
 }
 
-/** A resposta de um pedido (na thread GL). status 0 = sem internet. */
+/* Na thread GL. */
 JNI(void, raResponse)(JNIEnv *env, jclass c, jint id, jint status, jbyteArray jbody) {
-    for (int i = 0; i < MAX_PENDING; i++) {
-        if (pending[i].id != id) continue;
-        pending_t p = pending[i];
-        pending[i].id = 0;
-        jsize n = jbody ? (*env)->GetArrayLength(env, jbody) : 0;
-        char *body = malloc((size_t)n + 1);
-        if (!body) return;
-        if (n) (*env)->GetByteArrayRegion(env, jbody, 0, n, (jbyte *)body);
-        body[n] = 0;
-        rc_api_server_response_t r = { body, (size_t)n, status > 0 ? status : RC_API_SERVER_RESPONSE_RETRYABLE_CLIENT_ERROR };
-        p.cb(&r, p.data);
-        free(body);
-        return;
-    }
+    jsize n = jbody ? (*env)->GetArrayLength(env, jbody) : 0;
+    char *body = malloc((size_t)n + 1);
+    if (!body) return;
+    if (n) (*env)->GetByteArrayRegion(env, jbody, 0, n, (jbyte *)body);
+    cheevos_response(id, status, body, (size_t)n);
+    free(body);
 }
+#endif

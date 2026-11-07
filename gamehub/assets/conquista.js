@@ -221,20 +221,21 @@ function spriteTile(m, color, unit) {   // { cv: canvas pronto no tamanho certo,
 }
 const raQueue = [];
 let RA_SIZE = 0.85;   // a tela da conquista pode ser menor (metade da resolução): as medidas em px acompanham   // tamanho dos avisos (o CSS do aviso já está nessa escala)
-function raPop(kind, title, sub, pts, cls, warm) {
+// img: a imagem da conquista (RetroAchievements), no lugar do selo desenhado; kick: o texto de cima, se for outro.
+function raPop(kind, title, sub, pts, cls, warm, img, kick) {
   RA_SIZE = 0.85 * Math.min(1, (innerWidth || 960) / 960);
   if (warm && document.querySelector('.ra-pop:not(.ra-warm)')) return;   // nunca atrapalha uma conquista de verdade
   // Fila: se já tem uma conquista na tela, a nova espera ela sair (ex.: a última conquista do jogo e a platina juntas).
-  if (!warm && document.querySelector('.ra-pop:not(.ra-warm)') && !/[?&](t|enter)=/.test(location.search)) { raQueue.push([kind, title, sub, pts, cls]); return; }
+  if (!warm && document.querySelector('.ra-pop:not(.ra-warm)') && !/[?&](t|enter)=/.test(location.search)) { raQueue.push([kind, title, sub, pts, cls, false, img, kick]); return; }
   document.querySelectorAll('.ra-pop').forEach(e => e.remove());
   const tier = cls || 'normal';
-  const kicker = tier === 'ok' ? t('Conta conectada') : tier === 'local' ? t('Conquista do Cobalt') : tier === 'rare' ? t('Conquista rara')
+  const kicker = kick ? kick : tier === 'ok' ? t('Conta conectada') : tier === 'local' ? t('Conquista do Cobalt') : tier === 'rare' ? t('Conquista rara')
     : tier === 'plat' ? t('Platina · 100% completo') : t('Conquista desbloqueada');
   const bg = { ok: '#4ade80', local: '#3de1ff', rare: '#4ade80', plat: '#c9f1ff' }[tier] || '#ffb347';
   const fx = h('div', { class: 'fx' }), spin = h('i'), ring = h('div', { class: 'ring' }, spin), shine = h('div', { class: 'shine' }, h('i'));
   const glow = tier === 'plat' ? h('div', { class: 'glow' }) : null;
   const el = h('div', { class: 'ra-pop ' + tier + (warm ? ' ra-warm' : '') }, h('div', { class: 'bgp' }), ring, shine, glow,
-    h('div', { class: 'badge' }, badge(kind, bg)),
+    h('div', { class: 'badge' }, img ? h('img', { src: img, alt: '' }) : badge(kind, bg)),
     h('div', { class: 't' }, h('small', null, icon(tier === 'ok' ? 'star' : 'trophy'), kicker), h('b', { text: title }), h('span', { text: sub })),
     pts ? h('div', { class: 'pts', text: pts }) : null, fx);
   document.body.append(el);

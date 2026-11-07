@@ -13,4 +13,9 @@ void cheevos_reset(void);
 void cheevos_state_loaded(void);    /* carregou um estado salvo */
 void cheevos_unload(void);
 bool cheevos_active(void);
+/* O que o Java (JNI) e o game.js (PC) chamam. */
+void cheevos_start(const char *user, const char *token, int console);
+void cheevos_agent(char *buf, size_t n);
+char *cheevos_poll(void);           /* liberar com free() */
+void cheevos_response(int id, int status, const char *body, size_t n);
 #endif

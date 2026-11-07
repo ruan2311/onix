@@ -46,12 +46,31 @@ emmake_core() { # nome pasta-do-makefile makefile pasta-do-repositório (os .o p
   find "$repo" -name '*.o' -print0 | xargs -0 emar rcs "$LIB/lib$name.a"
 }
 
+# RetroAchievements: a biblioteca rcheevos (../jni/rcheevos) e a ligação ../jni/cheevos.c, a mesma do Android.
+# O md5 da rcheevos ganha outro nome: o FCEUmm tem um md5_* igual, e aqui tudo vira um arquivo só.
+RC_FLAGS="-I../jni -I../jni/rcheevos/include -I../jni/rcheevos/src -DRC_CLIENT_SUPPORTS_HASH -Dmd5_init=rc_md5_init -Dmd5_append=rc_md5_append -Dmd5_finish=rc_md5_finish"
+build_rcheevos() {
+  [ -f "$LIB/librcheevos.a" ] && [ "$LIB/librcheevos.a" -nt ../jni/cheevos.c ] && return 0
+  local o=$LIB/rcheevos
+  rm -rf "$o"; mkdir -p "$o"
+  local n=0
+  for f in $(find ../jni/rcheevos/src -name '*.c' | sort) ../jni/cheevos.c; do
+    n=$((n + 1))
+    # shellcheck disable=SC2086
+    emcc -O2 -std=gnu11 $RC_FLAGS -c "$f" -o "$o/$n-$(basename "$f" .c).o"
+  done
+  rm -f "$LIB/librcheevos.a"
+  emar rcs "$LIB/librcheevos.a" "$o"/*.o
+}
+
 link_core() { # nome
   local extra=''
   case $1 in pcsx_rearmed) extra='-sUSE_ZLIB=1' ;; esac
-  emcc -O3 -std=gnu11 -I../jni -c core/web.c -o "$LIB/web.o"
+  build_rcheevos
   # shellcheck disable=SC2086
-  em++ -O3 "$LIB/web.o" "$LIB/lib$1.a" $extra -o "$OUT/$1.js" \
+  emcc -O3 -std=gnu11 $RC_FLAGS -c core/web.c -o "$LIB/web.o"
+  # shellcheck disable=SC2086
+  em++ -O3 "$LIB/web.o" "$LIB/lib$1.a" "$LIB/librcheevos.a" $extra -o "$OUT/$1.js" \
     -sMODULARIZE=1 -sEXPORT_NAME=OnixCore -sALLOW_MEMORY_GROWTH=1 -sINITIAL_MEMORY=67108864 -sSTACK_SIZE=1048576 \
     -sENVIRONMENT=web -sFORCE_FILESYSTEM=1 -sEXPORTED_FUNCTIONS=_malloc,_free \
     -sEXPORTED_RUNTIME_METHODS=FS,UTF8ToString,stringToNewUTF8,HEAPU8,HEAPU16,HEAP16 \

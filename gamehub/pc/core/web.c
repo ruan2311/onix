@@ -20,6 +20,7 @@
 #include <string.h>
 
 #include "libretro.h"
+#include "cheevos.h"
 
 #define API EMSCRIPTEN_KEEPALIVE
 
@@ -391,9 +392,11 @@ static bool environment(unsigned cmd, void *data) {
         case RETRO_ENVIRONMENT_GET_FASTFORWARDING:
             *(bool *)data = fast_forwarding;
             return true;
+        case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:   /* o mapa da memória, para o RetroAchievements */
+            cheevos_set_mmap((const struct retro_memory_map *)data);
+            return true;
         case RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS:
         case RETRO_ENVIRONMENT_SET_CONTROLLER_INFO:
-        case RETRO_ENVIRONMENT_SET_MEMORY_MAPS:
         case RETRO_ENVIRONMENT_SET_SUBSYSTEM_INFO:
         case RETRO_ENVIRONMENT_SET_SERIALIZATION_QUIRKS:
         case RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL:
@@ -476,12 +479,14 @@ static void run_one(bool video, bool audio) {
                 retro_unserialize(ra_buf, ra_size);
             }
             av_enable = 3;
+            cheevos_frame();
             return;
         }
     }
     av_enable = (video ? 1 : 0) | (audio ? 2 : 0);
     retro_run();
     av_enable = 3;
+    cheevos_frame();   /* RetroAchievements: confere as conquistas a cada quadro de verdade */
 }
 
 /* Um quadro da tela: now em segundos, hz = taxa da tela medida pelo JS. Retorna os quadros rodados. */
@@ -630,12 +635,14 @@ API int ox_load(const char *path, int lang) {
     }
     if (!retro_load_game(&gi)) return 0;
     game_loaded = true;
+    cheevos_loaded(path, rom_data, rom_size);
     retro_get_system_av_info(&av);
     for (unsigned p = 0; p < 2; p++) retro_set_controller_port_device(p, RETRO_DEVICE_JOYPAD);
     return 1;
 }
 
 API void ox_unload(void) {
+    cheevos_unload();
     if (game_loaded) retro_unload_game();
     if (loaded) retro_deinit();
     game_loaded = loaded = false;
@@ -706,7 +713,7 @@ API void ox_set_turbo(int mask, int period) {
 API void ox_set_fast_forward(int on) { ff_toggle = on != 0; }
 API int ox_fast_forward(void) { return ff_toggle; }
 
-API void ox_reset(void) { if (game_loaded) retro_reset(); }
+API void ox_reset(void) { if (game_loaded) { retro_reset(); cheevos_reset(); } }
 
 /* Estados: o JS lê e grava os bytes do buffer devolvido. */
 static uint8_t *state_buf;
@@ -729,6 +736,7 @@ API int ox_unserialize(const uint8_t *data, int len) {
     if (!game_loaded || !data || len <= 0) return 0;
     if (!retro_unserialize(data, (size_t)len)) return 0;
     rw_count = 0;   /* o rebobinar não volta para antes do estado carregado */
+    cheevos_state_loaded();
     return 1;
 }
 
@@ -737,3 +745,18 @@ API int ox_sram_size(void) { return game_loaded ? (int)retro_get_memory_size(RET
 
 API void ox_cheat_reset(void) { if (game_loaded) retro_cheat_reset(); }
 API void ox_cheat_set(int index, int on, const char *code) { if (game_loaded) retro_cheat_set((unsigned)index, on != 0, code); }
+
+/* ---------------- RetroAchievements (jni/cheevos.c; o game.js faz o papel do Java) ---------------- */
+void *(*cheevos_core_memory_data)(unsigned) = retro_get_memory_data;
+size_t (*cheevos_core_memory_size)(unsigned) = retro_get_memory_size;
+
+/* Antes do ox_load. */
+API void ox_ra_start(const char *user, const char *token, int console) { cheevos_start(user, token, console); }
+static char ra_agent_buf[64];
+API const char *ox_ra_agent(void) { cheevos_agent(ra_agent_buf, sizeof(ra_agent_buf)); return ra_agent_buf; }
+/* A fila (linhas JSON) ou NULL; o texto vale até a próxima chamada. */
+static char *ra_polled;
+API const char *ox_ra_poll(void) { free(ra_polled); ra_polled = cheevos_poll(); return ra_polled; }
+API void ox_ra_response(int id, int status, const char *body, int len) { cheevos_response(id, status, body, len > 0 ? (size_t)len : 0); }
+/* Pausado (menu aberto): a biblioteca continua mandando o "ainda jogando" e os pedidos atrasados. */
+API void ox_ra_idle(double now) { cheevos_idle(now); }

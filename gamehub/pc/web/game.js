@@ -51,6 +51,71 @@ window.onHub = (type, data) => {
   if (w && w.showConquistas) w.showConquistas(data);
 };
 if (CQ) $('#cq').src = 'conquista.html?lang=' + (ES ? 'es' : 'pt');
+function showConquista(c) {
+  const w = $('#cq').contentWindow;
+  if (w && w.showConquistas) w.showConquistas([c]);
+}
+
+/* ---------------- RetroAchievements ----------------
+   O motor (jni/cheevos.c, dentro do WebAssembly) confere as conquistas a cada quadro. Os pedidos à internet e os
+   avisos passam por aqui, como o GameActivity.java faz no Android: o processo principal faz o HTTPS. */
+let raOn = false, raGame = null, raFirst = true, raOffline = false;
+function raStart() {
+  if (!CQ || !M._ox_ra_start) return;
+  const a = json(PC.call('raStart', ID, M.UTF8ToString(M._ox_ra_agent())), null);
+  if (!a) return;
+  const u = M.stringToNewUTF8(a.user), k = M.stringToNewUTF8(a.token);
+  M._ox_ra_start(u, k, a.console);
+  M._free(u); M._free(k);
+  raOn = true;
+  setInterval(raPoll, 250);
+}
+function raPoll() {
+  if (!M || !raOn || quitting) return;
+  if (loaded && menuOpen) M._ox_ra_idle(performance.now() / 1000);   // pausado: o "ainda jogando" e os pedidos atrasados
+  const p = M._ox_ra_poll();
+  if (!p) return;
+  for (const line of M.UTF8ToString(p).split('\n')) { const o = json(line, null); if (o) raItem(o); }
+}
+async function raHttp(o) {
+  const r = await PC.async('raHttp', o.url, o.post == null ? null : o.post, o.type || null) || { status: 0, body: '' };
+  if (!M || quitting) return;
+  const bytes = new TextEncoder().encode(r.body || ''), ptr = M._malloc(bytes.length + 1);
+  M.HEAPU8.set(bytes, ptr);
+  M._ox_ra_response(o.id, r.status | 0, ptr, bytes.length);
+  M._free(ptr);
+}
+async function raShow(title, desc, pts, tier, kicker, badge, english) {
+  if (english) [title, desc] = await PC.async('raTranslate', [title, desc]) || [title, desc];
+  showConquista({ title, desc, pts, tier, kicker, badge });
+}
+function raItem(o) {
+  switch (o.t) {
+    case 'http': raHttp(o); break;
+    case 'game':
+      raGame = o;
+      PC.call('raEvent', 'game', JSON.stringify(o));
+      if (raFirst && o.total > 0) toast('RetroAchievements: ' + o.got + ' de ' + o.total + tr(' conquistas neste jogo', ' logros en este juego'));
+      raFirst = false;
+      break;
+    case 'unlock': {
+      const a = o.a || {}, rare = a.rarity > 0 && a.rarity < 5, pct = String(Math.round(a.rarity * 10) / 10).replace('.', ',');
+      raShow(a.title, a.desc, a.pts, rare ? 'rara' : 'comum', rare ? tr('Conquista rara · ' + pct + '% dos jogadores', 'Logro raro · ' + pct + '% de los jugadores') : 'RetroAchievements', a.badge, true);
+      break;
+    }
+    case 'complete':
+      raShow(o.title, tr('Você pegou todas as conquistas deste jogo', 'Conseguiste todos los logros de este juego'), raGame ? raGame.points : 0, 'platina',
+        tr('Jogo 100% completo', 'Juego 100% completado'), o.badge, false);
+      break;
+    case 'login': PC.call('raEvent', 'login', JSON.stringify(o)); break;
+    case 'loginfail': toast(tr('RetroAchievements: entre de novo na sua conta (Conquistas no GameHub)', 'RetroAchievements: vuelve a entrar en tu cuenta (Logros en GameHub)')); break;
+    case 'offline':
+      if (!raOffline) toast(tr('RetroAchievements sem internet: as conquistas vão quando a conexão voltar', 'RetroAchievements sin internet: los logros se envían cuando vuelva la conexión'));
+      raOffline = true;
+      break;
+    case 'online': raOffline = false; break;
+  }
+}
 
 /* ---------------- Imagem (WebGL 2) ----------------
    Um programa com os filtros da TV e os do PC; o quadro do núcleo (RGBA) vira uma textura. O
@@ -632,6 +697,7 @@ async function start() {
       M.FS.writeFile(file, new Uint8Array(rom));
     }
     for (const [k, v] of Object.entries(S.core || {})) setOption(k, v);
+    raStart();   // antes do ox_load: o motor reconhece o jogo assim que o núcleo abre
     const p = M.stringToNewUTF8(file);
     const okLoad = M._ox_load(p, ES ? 3 : 7);
     M._free(p);

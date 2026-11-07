@@ -16,7 +16,7 @@
 <script>
 'use strict';
 LANG = new URLSearchParams(location.search).get('lang') === 'es' ? 'es' : 'pt';
-window.showConquistas = list => { for (const c of list) raPop(c.kind || 'trophy', c.title, c.desc, (c.tier === 'platina' ? '+' : '') + c.pts + ' pts', c.tier === 'platina' ? 'plat' : c.tier === 'rara' ? 'rare' : ''); };
+window.showConquistas = list => { for (const c of list) raPop(c.kind || 'trophy', c.title, c.desc, (c.tier === 'platina' ? '+' : '') + c.pts + ' pts', c.tier === 'platina' ? 'plat' : c.tier === 'rara' ? 'rare' : '', false, c.badge || '', c.kicker || ''); };
 // Aquece os desenhos e os sons ao abrir (quase invisível): a primeira conquista aparece sem travar o jogo.
 setTimeout(raWarm, 1500);
 </script>

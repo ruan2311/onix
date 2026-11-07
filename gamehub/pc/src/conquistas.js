@@ -6,7 +6,7 @@
 const fs = require('fs');
 const path = require('path');
 
-let store = null, defs = [], listener = null;
+let store = null, defs = [], listener = null, paused = () => false;
 const COUNTERS = ['plays', 'saves', 'rewind', 'ffwd', 'multi', 'night', 'session'];
 
 function init(s, assets) {
@@ -15,6 +15,8 @@ function init(s, assets) {
 }
 /** Quem mostra o aviso: recebe a lista das que acabaram de sair. */
 const setListener = l => { listener = l; };
+/** Com a conta do RetroAchievements conectada, as do Cobalt param de contar (voltam ao sair da conta). */
+const setPaused = f => { paused = f; };
 const file = () => path.join(store.p('profiles', 'default'), 'conquistas.json');
 
 /** Os valores de cada "stat", com a partida que está rolando somada (live = { id, console, seconds }). */
@@ -45,7 +47,7 @@ function values(stats, live) {
 function update(stat, value, max, live) {
   if (!store) return [];
   const all = store.readJson(file(), {});
-  if (all.off) return [];   // desativadas pela pessoa (aba Conquistas)
+  if (all.off || paused()) return [];   // desativadas pela pessoa (aba Conquistas) ou RetroAchievements conectado
   const stats = all.stats || {}, unlocked = all.unlocked || {};
   let dirty = false;
   if (stat && COUNTERS.includes(stat)) {
@@ -90,7 +92,10 @@ function setOn(on) {
   return true;
 }
 
+/** Ligadas no perfil (o botão Desativar conquistas vale para o RetroAchievements também). */
+const enabled = () => !store.readJson(file(), {}).off;
+
 /** 0 h às 4h59: a "Coruja". */
 const night = () => new Date().getHours() < 5;
 
-module.exports = { init, setListener, count, max, check, json, setOn, night, COUNTERS };
+module.exports = { init, setListener, setPaused, count, max, check, json, setOn, enabled, night, COUNTERS };
