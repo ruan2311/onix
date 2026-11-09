@@ -1,0 +1,472 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Onix Anúncio</title>
+<style>
+:root{--bg:#0d0f13;--card:#171a21;--line:rgba(255,255,255,.1);--txt:#f2f4f7;--mute:#9aa1ad;--verde:#7fe6b0;--erro:#ff8a8a}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--txt);font:15px/1.45 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:.7rem;padding:14px 16px;background:rgba(13,15,19,.94);border-bottom:1px solid var(--line)}
+header h1{flex:1;margin:0;font-size:1.15rem}
+header small{color:var(--mute);font-weight:400}
+main{padding:16px 16px 120px;max-width:720px;margin:0 auto}
+h2{font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mute);margin:26px 0 10px;font-weight:600}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+label{display:block;font-size:.85rem;color:var(--mute);margin:12px 0 5px}
+label:first-child{margin-top:0}
+input[type=text],input[type=url],input[type=password],textarea{width:100%;padding:11px 12px;border-radius:10px;border:1px solid var(--line);background:#0f1116;color:var(--txt);font:inherit}
+textarea{min-height:112px;resize:vertical}
+input:focus,textarea:focus{outline:2px solid var(--verde);outline-offset:-1px}
+.conta{float:right;font-size:.75rem;color:var(--mute)}
+button{font:inherit;font-weight:600;border:1px solid var(--line);background:#222631;color:var(--txt);padding:10px 16px;border-radius:999px}
+button.pri{background:var(--verde);color:#08231a;border-color:transparent}
+button:disabled{opacity:.5}
+.linha{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.chave{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.switch{position:relative;width:52px;height:30px;flex:none}
+.switch input{opacity:0;width:0;height:0}
+.switch span{position:absolute;inset:0;border-radius:999px;background:#333846;transition:.2s}
+.switch span::after{content:"";position:absolute;left:3px;top:3px;width:24px;height:24px;border-radius:50%;background:#fff;transition:.2s}
+.switch input:checked+span{background:var(--verde)}
+.switch input:checked+span::after{transform:translateX(22px)}
+.cores{display:flex;gap:14px}
+.cores label{margin-top:0}
+input[type=color]{width:64px;height:40px;border:1px solid var(--line);border-radius:10px;background:none;padding:2px}
+.imgs{display:flex;gap:14px;max-width:380px;margin:0 auto}
+.slot{flex:1;text-align:center}
+.slot .foto{aspect-ratio:9/20;border-radius:14px;border:1px dashed rgba(255,255,255,.25);background:#0f1116 center/cover no-repeat;display:grid;place-items:center;color:var(--mute);font-size:.85rem;margin-bottom:8px}
+.slot .linha{justify-content:center}
+.slot button{padding:7px 12px;font-size:.85rem}
+.dica{color:var(--mute);font-size:.85rem;margin:8px 0 0}
+/* Prévia: o banner do destaque do Onix em miniatura. */
+.previa{position:relative;overflow:hidden;border-radius:18px;border:1px solid rgba(255,255,255,.14);background:#1a1c22;aspect-ratio:1554/328;container-type:inline-size}
+.previa .bg{position:absolute;inset:0;opacity:.4;background:radial-gradient(70% 120% at 85% 30%,var(--c2),transparent 70%),radial-gradient(60% 90% at 60% 110%,var(--c1),transparent 70%)}
+.previa .tx{position:absolute;left:2.9cqw;bottom:2.4cqw;width:60%}
+.previa .k{font-size:1.1cqw;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:.6cqw}
+.previa .t{font-size:3cqw;font-weight:700;line-height:1.1;margin-bottom:.8cqw}
+.previa .d{font-size:1.3cqw;color:#a3a9b5;margin-bottom:1.5cqw;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:3;overflow:hidden}
+.previa .b{display:inline-block;background:#fff;color:#111;font-weight:700;font-size:1.25cqw;padding:1cqw 2.2cqw;border-radius:99px}
+.previa .b2{display:inline-block;margin-left:.7cqw;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);font-weight:700;font-size:1.25cqw;padding:1cqw 2.2cqw;border-radius:99px}
+.previa .art{position:absolute;right:2.6cqw;top:50%;width:13.4cqw;height:16.7cqw;margin-top:-9.4cqw}
+.previa .art i{position:absolute;top:0;left:0;width:7.2cqw;height:16cqw;border-radius:1.2cqw;background:#0f1116 center/cover no-repeat;border:1px solid rgba(255,255,255,.25)}
+.previa .art i+i{top:.8cqw;left:auto;right:0}
+.previa.off{filter:grayscale(1);opacity:.45}
+.abas{display:flex;gap:6px;margin-bottom:12px}
+.abas button{flex:1;padding:8px}
+.abas button.on{background:#2f3542;border-color:rgba(255,255,255,.3)}
+#barra{position:fixed;left:0;right:0;bottom:0;padding:12px 16px calc(12px + env(safe-area-inset-bottom));background:rgba(13,15,19,.96);border-top:1px solid var(--line);display:flex;gap:10px;align-items:center}
+#barra .st{flex:1;font-size:.85rem;color:var(--mute)}
+#barra .st.erro{color:var(--erro)}
+#barra .st.ok{color:var(--verde)}
+[hidden]{display:none!important}
+ol{padding-left:1.2rem;margin:.4rem 0 0}
+ol li{margin:.35rem 0}
+a{color:var(--verde)}
+#aviso{position:fixed;left:16px;right:16px;bottom:86px;z-index:9;padding:12px 14px;border-radius:12px;background:#2a2f3a;border:1px solid var(--line);font-size:.9rem;display:none}
+#aviso.on{display:block}
+</style>
+</head>
+<body>
+<header><h1>Onix Anúncio <small id="ver"></small></h1><button id="btConfig">Chave</button></header>
+
+<!-- Tela da chave do GitHub -->
+<main class="tela" id="telaChave" hidden>
+  <h2>Chave do GitHub</h2>
+  <div class="card">
+    <p style="margin-top:0">O anúncio fica no site do Project Gems. Para publicar daqui, o app precisa de uma chave do GitHub com permissão só para o repositório do site. Ela fica guardada só neste celular.</p>
+    <ol>
+      <li>Toque em <b>Criar chave</b> (abre o GitHub no navegador).</li>
+      <li>Em <b>Resource owner</b>, escolha <b>projectgems</b>.</li>
+      <li>Em <b>Repository access</b>, escolha <b>Only select repositories</b> → <b>projectgems.github.io</b>.</li>
+      <li>Em <b>Permissions → Repository permissions → Contents</b>, escolha <b>Read and write</b>.</li>
+      <li>Toque em <b>Generate token</b>, copie a chave e cole aqui embaixo.</li>
+    </ol>
+    <div class="linha" style="margin:14px 0 4px"><button id="btCriar">Criar chave</button></div>
+    <label for="chave">Chave (começa com github_pat_ ou ghp_)</label>
+    <input type="password" id="chave" autocomplete="off" spellcheck="false">
+    <div class="linha" style="margin-top:12px"><button class="pri" id="btSalvarChave">Salvar e testar</button><button id="btSairChave">Voltar</button></div>
+  </div>
+</main>
+
+<!-- Editor -->
+<main class="tela" id="telaEditor" hidden>
+  <h2>Como fica na TV</h2>
+  <div class="previa" id="previa">
+    <div class="bg"></div>
+    <div class="art" id="pvArt"><i></i><i></i></div>
+    <div class="tx"><div class="k" id="pvK"></div><div class="t" id="pvT"></div><div class="d" id="pvD"></div><span class="b" id="pvB"></span><span class="b2">Próxima ›</span></div>
+  </div>
+  <p class="dica">O anúncio é o primeiro banner do destaque no Onix (Google TV). A TV busca a versão nova em até 1 hora, ou na hora pelo botão <b>Atualizar</b> do Onix.</p>
+
+  <h2>Anúncio</h2>
+  <div class="card chave"><div><b>Mostrar o anúncio</b><div class="dica" style="margin:2px 0 0">Desligado, o banner some de todas as TVs.</div></div>
+    <label class="switch"><input type="checkbox" id="ativo"><span></span></label></div>
+
+  <h2>Textos</h2>
+  <div class="card">
+    <div class="abas"><button id="abaPt" class="on">Português</button><button id="abaEs">Espanhol</button></div>
+    <div id="campos"></div>
+    <div class="linha" style="margin-top:12px" id="linhaTraduzir"><button id="btTraduzir">Traduzir do português</button></div>
+  </div>
+
+  <h2>Imagens (até 2, em pé)</h2>
+  <div class="card">
+    <div class="imgs" id="imgs"></div>
+    <p class="dica">Prints de celular ficam melhores. A imagem é reduzida e convertida sozinha.</p>
+    <input type="file" id="arquivo" accept="image/*" hidden>
+  </div>
+
+  <h2>QR code e cores</h2>
+  <div class="card">
+    <label for="link">Link do QR code (Saiba mais)</label>
+    <input type="url" id="link" spellcheck="false" placeholder="https://projectgems.github.io/">
+    <div class="cores" style="margin-top:14px">
+      <div><label for="cor1">Cor 1</label><input type="color" id="cor1"></div>
+      <div><label for="cor2">Cor 2</label><input type="color" id="cor2"></div>
+    </div>
+  </div>
+</main>
+
+<div id="aviso"></div>
+<div id="barra"><span class="st" id="st">Carregando…</span><button id="btRecarregar">Desfazer</button><button class="pri" id="btPublicar">Publicar</button></div>
+
+<script>
+'use strict';
+const REPO = 'projectgems/projectgems.github.io', BRANCH = 'master', DIR = 'onix/anuncio';
+const API = 'https://api.github.com/repos/' + REPO + '/contents/';
+const CAMPOS = [
+  ['kicker', 'Linha de cima (pequena)', 60],
+  ['titulo', 'Título', 60],
+  ['texto', 'Texto', 240, true],
+  ['botao', 'Botão (no lugar de "Assistir na…")', 24],
+  ['qr', 'Texto ao lado do QR code', 240, true],
+];
+const PADRAO = {
+  ativo: true,
+  pt: { kicker: 'Project Gems · Novidades do Ruan', titulo: '', texto: '', botao: 'Saiba mais', qr: '' },
+  es: { kicker: '', titulo: '', texto: '', botao: 'Más información', qr: '' },
+  link: 'https://projectgems.github.io/', cor1: '#7fe6b0', cor2: '#0f5c3d', imagens: [],
+};
+const $ = s => document.querySelector(s);
+let chave = '';
+try { chave = localStorage.getItem('chave') || ''; } catch (_) {}
+let dados = null, sha = null, lingua = 'pt', mudou = false;
+// imagens: [{nome, url (prévia), nova: {b64, dataUrl} | null}]
+let imgs = [];
+let slotEscolhendo = 0;
+
+/* ---------- Avisos ---------- */
+function status(txt, tipo) { const e = $('#st'); e.textContent = txt; e.className = 'st' + (tipo ? ' ' + tipo : ''); }
+let avisoT = 0;
+function aviso(txt) { const e = $('#aviso'); e.textContent = txt; e.classList.add('on'); clearTimeout(avisoT); avisoT = setTimeout(() => e.classList.remove('on'), 4200); }
+
+/* ---------- GitHub ---------- */
+async function gh(caminho, opcoes) {
+  opcoes = opcoes || {};
+  const r = await fetch(API + caminho + (opcoes.method ? '' : '?ref=' + BRANCH + '&t=' + Date.now()), {
+    method: opcoes.method || 'GET',
+    headers: { Authorization: 'Bearer ' + chave, Accept: 'application/vnd.github+json', 'Content-Type': 'application/json' },
+    body: opcoes.body ? JSON.stringify(opcoes.body) : undefined,
+    cache: 'no-store',
+  });
+  if (r.status === 404 && !opcoes.method) return null;
+  if (!r.ok) {
+    let msg = 'GitHub respondeu ' + r.status;
+    if (r.status === 401) msg = 'Chave inválida ou vencida. Toque em Chave e cole uma nova.';
+    if (r.status === 403 || r.status === 404) msg = 'A chave não tem permissão de escrita no repositório do site (Contents: Read and write).';
+    if (r.status === 409) msg = 'O anúncio mudou em outro lugar. Toque em Desfazer para carregar a versão nova.';
+    throw new Error(msg);
+  }
+  return r.status === 204 ? null : r.json();
+}
+function paraBase64(bytes) {
+  let s = '';
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+const textoParaBase64 = t => paraBase64(new TextEncoder().encode(t));
+const base64ParaTexto = b => new TextDecoder().decode(Uint8Array.from(atob(b.replace(/\s/g, '')), c => c.charCodeAt(0)));
+
+/* ---------- Carregar ---------- */
+async function carregar() {
+  status('Carregando o anúncio do site…');
+  try {
+    const f = await gh(DIR + '/anuncio.json');
+    const d = f ? JSON.parse(base64ParaTexto(f.content)) : {};
+    sha = f ? f.sha : null;
+    dados = Object.assign({}, PADRAO, d);
+    dados.pt = Object.assign({}, PADRAO.pt, d.pt || {});
+    dados.es = Object.assign({}, PADRAO.es, d.es || {});
+    imgs = (Array.isArray(dados.imagens) ? dados.imagens : []).slice(0, 2).map(n => ({
+      nome: n, url: 'https://raw.githubusercontent.com/' + REPO + '/' + BRANCH + '/' + DIR + '/' + encodeURIComponent(n) + '?t=' + Date.now(), nova: null,
+    }));
+    mudou = false;
+    preencher();
+    status(f ? 'Anúncio carregado. Edite e toque em Publicar.' : 'Ainda não há anúncio no site: crie o primeiro.');
+  } catch (e) {
+    status(e.message, 'erro');
+    if (!dados) { dados = JSON.parse(JSON.stringify(PADRAO)); preencher(); }
+  }
+}
+
+/* ---------- Formulário ---------- */
+function preencher() {
+  $('#ativo').checked = !!dados.ativo;
+  $('#link').value = dados.link || '';
+  $('#cor1').value = dados.cor1 || PADRAO.cor1;
+  $('#cor2').value = dados.cor2 || PADRAO.cor2;
+  montarCampos();
+  montarImagens();
+  previa();
+}
+function montarCampos() {
+  const box = $('#campos');
+  box.replaceChildren();
+  const t = dados[lingua];
+  for (const [k, nome, max, grande] of CAMPOS) {
+    const lb = document.createElement('label');
+    lb.htmlFor = 'f_' + k;
+    lb.textContent = nome;
+    const conta = document.createElement('span');
+    conta.className = 'conta';
+    lb.append(conta);
+    const el = document.createElement(grande ? 'textarea' : 'input');
+    if (!grande) el.type = 'text';
+    el.id = 'f_' + k;
+    el.maxLength = max;
+    el.value = t[k] || '';
+    if (lingua === 'es') el.placeholder = dados.pt[k] || '';
+    const atualizar = () => { conta.textContent = el.value.length + '/' + max; };
+    el.addEventListener('input', () => { t[k] = el.value; atualizar(); marcar(); previa(); });
+    atualizar();
+    box.append(lb, el);
+  }
+  $('#abaPt').classList.toggle('on', lingua === 'pt');
+  $('#abaEs').classList.toggle('on', lingua === 'es');
+  $('#linhaTraduzir').hidden = lingua !== 'es';
+}
+function montarImagens() {
+  const box = $('#imgs');
+  box.replaceChildren();
+  for (let i = 0; i < 2; i++) {
+    const im = imgs[i];
+    const slot = document.createElement('div');
+    slot.className = 'slot';
+    const foto = document.createElement('div');
+    foto.className = 'foto';
+    if (im) foto.style.backgroundImage = 'url("' + (im.nova ? im.nova.dataUrl : im.url) + '")';
+    else foto.textContent = 'Sem imagem';
+    const linha = document.createElement('div');
+    linha.className = 'linha';
+    const trocar = document.createElement('button');
+    trocar.textContent = im ? 'Trocar' : 'Escolher';
+    trocar.onclick = () => { slotEscolhendo = Math.min(i, imgs.length); $('#arquivo').value = ''; $('#arquivo').click(); };
+    linha.append(trocar);
+    if (im) {
+      const tirar = document.createElement('button');
+      tirar.textContent = 'Tirar';
+      tirar.onclick = () => { imgs.splice(i, 1); marcar(); montarImagens(); previa(); };
+      linha.append(tirar);
+    }
+    slot.append(foto, linha);
+    box.append(slot);
+  }
+}
+function previa() {
+  const t = Object.assign({}, dados.pt);
+  const p = $('#previa');
+  p.style.setProperty('--c1', $('#cor1').value);
+  p.style.setProperty('--c2', $('#cor2').value);
+  p.classList.toggle('off', !$('#ativo').checked);
+  const es = lingua === 'es' ? dados.es : null;
+  const v = k => (es && es[k]) || t[k] || '';
+  $('#pvK').textContent = v('kicker');
+  $('#pvT').textContent = v('titulo') || 'Título do anúncio';
+  $('#pvD').textContent = v('texto');
+  $('#pvB').textContent = v('botao') || 'Saiba mais';
+  const fotos = $('#pvArt').children;
+  for (let i = 0; i < 2; i++) {
+    const im = imgs[i];
+    fotos[i].style.display = im ? '' : 'none';
+    if (im) fotos[i].style.backgroundImage = 'url("' + (im.nova ? im.nova.dataUrl : im.url) + '")';
+  }
+}
+function marcar() { mudou = true; status('Alterações ainda não publicadas.'); }
+
+/* ---------- Imagens: reduz para no máximo 720 px de altura, em WebP ---------- */
+$('#arquivo').addEventListener('change', async () => {
+  const f = $('#arquivo').files[0];
+  if (!f) return;
+  $('#btPublicar').disabled = true;
+  try {
+    status('Preparando a imagem…');
+    const bmp = await createImageBitmap(f);
+    const esc = Math.min(1, 800 / bmp.height, 400 / bmp.width);
+    const w = Math.round(bmp.width * esc), h = Math.round(bmp.height * esc);
+    const c = document.createElement('canvas');
+    c.width = w; c.height = h;
+    c.getContext('2d').drawImage(bmp, 0, 0, w, h);
+    let q = 0.86, blob;
+    do {
+      blob = await new Promise(r => c.toBlob(r, 'image/webp', q));
+      q -= 0.12;
+    } while (blob && blob.size > 300 * 1024 && q > 0.3);
+    if (!blob || blob.type !== 'image/webp') throw new Error('Este celular não conseguiu converter a imagem.');
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+    const b64 = paraBase64(bytes);
+    const nova = { b64, dataUrl: 'data:image/webp;base64,' + b64 };
+    if (imgs[slotEscolhendo]) imgs[slotEscolhendo].nova = nova;
+    else imgs.push({ nome: null, url: null, nova });
+    marcar();
+    montarImagens();
+    previa();
+  } catch (e) {
+    status(e.message || 'Não deu para abrir a imagem.', 'erro');
+  }
+  $('#btPublicar').disabled = false;
+});
+
+/* ---------- Tradução (MyMemory, grátis) ---------- */
+$('#btTraduzir').onclick = async () => {
+  const b = $('#btTraduzir');
+  b.disabled = true;
+  status('Traduzindo…');
+  try {
+    for (const [k] of CAMPOS) {
+      const txt = (dados.pt[k] || '').trim();
+      if (!txt) continue;
+      const r = await fetch('https://api.mymemory.translated.net/get?langpair=pt-BR|es&q=' + encodeURIComponent(txt));
+      const j = await r.json();
+      const tr = j && j.responseData && j.responseData.translatedText;
+      if (tr && j.responseStatus == 200) dados.es[k] = tr.slice(0, CAMPOS.find(c => c[0] === k)[2]);
+    }
+    marcar();
+    montarCampos();
+    previa();
+    status('Tradução pronta. Confira antes de publicar.');
+  } catch (e) {
+    status('Não deu para traduzir agora (sem internet?).', 'erro');
+  }
+  b.disabled = false;
+};
+
+/* ---------- Publicar ---------- */
+$('#btPublicar').onclick = async () => {
+  if (!chave) { abrirChave(); return; }
+  const link = $('#link').value.trim();
+  if (!/^https:\/\/[A-Za-z0-9.-]{1,80}(\/[^\s"'<>]{0,200})?$/.test(link)) { status('O link precisa começar com https://', 'erro'); return; }
+  if (!dados.pt.titulo.trim()) { lingua = 'pt'; montarCampos(); status('Escreva o título em português.', 'erro'); return; }
+  const b = $('#btPublicar');
+  b.disabled = true;
+  try {
+    const marca = Date.now().toString(36);
+    const nomes = [];
+    for (let i = 0; i < imgs.length; i++) {
+      const im = imgs[i];
+      if (im.nova) {
+        // nome novo a cada troca: as TVs e o cache do site nunca mostram a imagem velha
+        const nome = 'imagem-' + (i + 1) + '-' + marca + '.webp';
+        status('Enviando a imagem ' + (i + 1) + '…');
+        await gh(DIR + '/' + nome, { method: 'PUT', body: { message: 'Anúncio do Onix: imagem ' + (i + 1), content: im.nova.b64, branch: BRANCH } });
+        im.nome = nome;
+        im.url = im.nova.dataUrl;
+        im.nova = null;
+      }
+      nomes.push(im.nome);
+    }
+    const limpo = o => { const r = {}; for (const [k] of CAMPOS) r[k] = (o[k] || '').trim(); return r; };
+    const final = {
+      ativo: $('#ativo').checked,
+      pt: limpo(dados.pt),
+      es: limpo(dados.es),
+      link, cor1: $('#cor1').value, cor2: $('#cor2').value,
+      imagens: nomes,
+    };
+    if (!final.es.titulo) delete final.es;
+    status('Publicando o anúncio…');
+    const r = await gh(DIR + '/anuncio.json', { method: 'PUT', body: Object.assign({
+      message: 'Anúncio do Onix: ' + (final.ativo ? final.pt.titulo : 'desligado'),
+      content: textoParaBase64(JSON.stringify(final, null, 2) + '\n'), branch: BRANCH,
+    }, sha ? { sha } : {}) });
+    sha = r.content.sha;
+    dados = Object.assign({}, dados, final, { es: Object.assign({}, PADRAO.es, final.es || {}) });
+    // apaga as imagens que não são mais usadas
+    try {
+      const lista = await gh(DIR) || [];
+      for (const f of lista) {
+        if (f.type !== 'file' || f.name === 'anuncio.json' || nomes.indexOf(f.name) >= 0 || !/^imagem-/.test(f.name)) continue;
+        await gh(DIR + '/' + f.name, { method: 'DELETE', body: { message: 'Anúncio do Onix: tira imagem antiga', sha: f.sha, branch: BRANCH } });
+      }
+    } catch (_) {}
+    mudou = false;
+    status('Publicado! O site atualiza em 1 a 2 minutos; as TVs, em até 1 hora.', 'ok');
+    montarImagens();
+  } catch (e) {
+    status(e.message, 'erro');
+  }
+  b.disabled = false;
+};
+$('#btRecarregar').onclick = () => { if (!mudou || confirm('Descartar as alterações e carregar o anúncio publicado?')) carregar(); };
+
+/* ---------- Abas, campos soltos ---------- */
+$('#abaPt').onclick = () => { lingua = 'pt'; montarCampos(); previa(); };
+$('#abaEs').onclick = () => { lingua = 'es'; montarCampos(); previa(); };
+for (const id of ['#link', '#cor1', '#cor2']) $(id).addEventListener('input', () => { dados[id.slice(1)] = $(id).value; marcar(); previa(); });
+$('#ativo').addEventListener('change', () => { dados.ativo = $('#ativo').checked; marcar(); previa(); });
+
+/* ---------- Chave ---------- */
+function abrirChave() {
+  $('#telaChave').hidden = false;
+  $('#telaEditor').hidden = true;
+  $('#barra').style.display = 'none';
+  $('#chave').value = chave;
+  $('#btSairChave').hidden = !chave;
+}
+function fecharChave() {
+  $('#telaChave').hidden = true;
+  $('#telaEditor').hidden = false;
+  $('#barra').style.display = '';
+}
+async function usarChave(c) {
+  chave = c.trim();
+  status('Testando a chave…');
+  try {
+    // precisa conseguir ler o repositório; a escrita é conferida ao publicar
+    const r = await fetch('https://api.github.com/repos/' + REPO, { headers: { Authorization: 'Bearer ' + chave, Accept: 'application/vnd.github+json' }, cache: 'no-store' });
+    if (r.status === 401) throw new Error('Chave inválida. Confira se colou inteira.');
+    if (!r.ok) throw new Error('A chave não enxerga o repositório projectgems.github.io.');
+    const j = await r.json();
+    if (j.permissions && !j.permissions.push) throw new Error('A chave só lê: em Contents, escolha Read and write.');
+    try { localStorage.setItem('chave', chave); } catch (_) {}
+    fecharChave();
+    aviso('Chave salva neste celular.');
+    carregar();
+  } catch (e) {
+    status(e.message, 'erro');
+    aviso(e.message);
+  }
+}
+$('#btConfig').onclick = abrirChave;
+$('#btSairChave').onclick = fecharChave;
+$('#btSalvarChave').onclick = () => { if ($('#chave').value.trim()) usarChave($('#chave').value); };
+$('#btCriar').onclick = () => {
+  const url = 'https://github.com/settings/personal-access-tokens/new';
+  if (window.Nativo) Nativo.abrirLink(url); else window.open(url);
+};
+// Chave mandada pelo adb (configuração feita de fora, uma vez).
+window.chaveDoAdb = () => { const c = window.Nativo ? Nativo.chaveAdb() : ''; if (c) usarChave(c); };
+// Botão Voltar do Android: sai da tela da chave antes de fechar o app.
+window.voltar = () => { if (!$('#telaChave').hidden && chave) { fecharChave(); return true; } return false; };
+
+/* ---------- Início ---------- */
+dados = JSON.parse(JSON.stringify(PADRAO));
+preencher();
+const doAdb = window.Nativo ? Nativo.chaveAdb() : '';
+if (doAdb) { $('#telaEditor').hidden = false; usarChave(doAdb); }
+else if (!chave) abrirChave();
+else { $('#telaEditor').hidden = false; carregar(); }
+</script>
+</body>
+</html>

@@ -225,6 +225,13 @@ public class AndroidBridge {
         return picks.json();
     }
 
+    /** Anúncio do Project Gems: {"pt":{…},"es":{…},"link","cor1","cor2","imagens":["data:…"]} ou {} (sem banner). */
+    @JavascriptInterface
+    public String getProjectAd() {
+        if (!trusted) return "{}";
+        return Anuncio.get(activity).json();
+    }
+
     @JavascriptInterface
     public String getGameNews() {
         if (!trusted) return "[]";

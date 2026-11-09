@@ -139,6 +139,11 @@ html.on-games .top-right .chips{flex-direction:column;align-items:flex-end;gap:.
 .hero.is-offline .hero-art{width:11rem;height:11rem;margin-top:-5.5rem;opacity:.7}
 /* Capa um pouco acima do centro: abre espaço para os pontinhos logo abaixo dela. */
 .hero.is-pick .hero-art{width:8.7rem;height:13rem;margin-top:-7.3rem}
+/* Anúncio do Project Gems: dois prints de celular no lugar da capa, na mesma altura dela. */
+.hero.is-ad .hero-art{width:10.4rem;height:13rem;margin-top:-7.3rem}
+.hero-art .ad-duo{position:relative;width:100%;height:100%}
+.hero-art .ad-duo img{position:absolute;top:0;left:0;width:5.6rem;height:12.4rem;border-radius:.9rem}
+.hero-art .ad-duo img+img{top:.6rem;left:auto;right:0}
 .hero-art img{width:100%;height:100%;object-fit:cover;border-radius:.8rem;border:1px solid rgba(255,255,255,.25);box-shadow:0 .5rem 1.2rem rgba(0,0,0,.5)}
 .hero-content{position:relative;z-index:1;max-width:60%;transition:opacity .35s}
 .hero.swap .hero-content{opacity:0}
@@ -154,6 +159,8 @@ html.on-games .top-right .chips{flex-direction:column;align-items:flex-end;gap:.
 /* Pontinhos centralizados na coluna da arte (mesma largura e mesmo "right" do .hero-art). */
 .dots{position:absolute;z-index:1;right:2rem;bottom:1rem;width:15rem;display:flex;justify-content:center;gap:.4rem}
 .hero.is-pick .dots{width:8.7rem}
+.hero.is-ad .dots{width:10.4rem}
+.hero.is-ad #heroOpen svg{display:none}
 .dots i{width:.5rem;height:.5rem;border-radius:1rem;background:rgba(255,255,255,.35);transition:background .3s}
 .dots i.on{width:1.4rem;background:#fff}
 
@@ -378,6 +385,7 @@ html.on-games .top-right .chips{flex-direction:column;align-items:flex-end;gap:.
   border:1px solid var(--glass-border);box-shadow:var(--glass-hi),0 2rem 4rem rgba(0,0,0,.5);animation:kittyIn .6s cubic-bezier(.34,1.4,.64,1) both!important}
 #support .sp-text,#gamepadModal .sp-text{flex:1;min-width:0}
 #support .sp-free{display:inline-block;padding:.35rem .9rem;border-radius:999px;background:rgba(126,240,176,.12);border:1px solid rgba(126,240,176,.35);color:#9ff5c6;font-weight:700;font-size:.95rem}
+#gamepadModal .sp-free.ad{background:rgba(127,230,176,.14);border-color:rgba(127,230,176,.4);color:#7fe6b0}
 #gamepadModal .sp-free{display:inline-block;padding:.35rem .9rem;border-radius:999px;background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.35);color:#c4b5fd;font-weight:700;font-size:.95rem}
 #support h2,#gamepadModal h2{font-size:2.3rem;margin:.9rem 0 .7rem}
 #support p,#gamepadModal p{font-size:1.2rem;line-height:1.5;color:rgba(245,246,248,.82);margin:0 0 .8rem}
@@ -926,7 +934,7 @@ html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="input
   .hero-content{max-width:100%}
   .hero-art{width:9rem;height:9rem;top:1rem;right:.6rem;margin-top:0;opacity:.85}
   .hero h1{font-size:1.7rem;padding-right:6rem}
-  .dots,.hero.is-pick .dots{width:auto;right:1.4rem}
+  .dots,.hero.is-pick .dots,.hero.is-ad .dots{width:auto;right:1.4rem}
   .chips .chip:not(:first-child){display:none}
   #reader{padding:1rem}
   .reader-body{padding:1.2rem}
@@ -1981,6 +1989,8 @@ if (!Array.prototype.at) Object.defineProperty(Array.prototype, 'at', { value(i)
   O nativo pode chamar  Launcher.onAppsChanged()  quando apps forem instalados/removidos,
   Launcher.onInputsChanged()  quando a lista de entradas mudar, Launcher.onMessage(texto) para um aviso,
   Launcher.onNewsChanged()  quando as notícias dos games forem atualizadas,
+  Launcher.onAdChanged()  quando o anúncio do Project Gems mudar (AndroidBridge.getProjectAd() ->
+                          {"pt":{kicker,titulo,texto,botao,qr},"es":{…},"link","cor1","cor2","imagens":["data:…"]} ou {}),
   Launcher.onBack()  (true = tratado pela página) na tecla Voltar do controle
   e  Launcher.onSettingsKey() na tecla de configurações do controle.
   Launcher.onResume()  ao voltar para o launcher (zera a contagem da tela de descanso).
@@ -2021,10 +2031,10 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '17.1.3'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '17.2.0'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
-  pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, autoUpdate: true,
+  pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, projectAd: true, autoUpdate: true,
   anim: 'suave', heroFx: 'fade', tabFx: false, lang: 'auto', remote: true, remoteQr: true, soundFx: 'chime', homeStyle: 'glass', navPos: 'left',
   theme: 'dark', font: 'system', clock: 'thin' });
 // Opções de escolha (OK passa para a próxima): valor salvo -> nome na tela.
@@ -2820,6 +2830,8 @@ const ES = Object.freeze({
   "Indicações do Disney+.": "Recomendaciones de Disney+.",
   "Indicações da HBO Max.": "Recomendaciones de HBO Max.",
   "Indicações do Globoplay.": "Recomendaciones de Globoplay.",
+  "Novidades do Project Gems": "Novedades de Project Gems",
+  "Primeiro banner do destaque, com os apps novos do criador do Onix. Desligado, o destaque mostra só as indicações.": "Primer banner del destacado, con las apps nuevas del creador de Onix. Desactivado, el destacado muestra solo las recomendaciones.",
   "Atualizações": "Actualizaciones",
   "Procurar atualizações": "Buscar actualizaciones",
   "Confere no GitHub se saiu uma versão nova do Onix.": "Revisa en GitHub si salió una versión nueva de Onix.",
@@ -2873,6 +2885,7 @@ const ES = Object.freeze({
   "sistema para TVs": "sistema para TV",
   "karaokê para Windows": "karaoke para Windows",
   "bot para WhatsApp": "bot para WhatsApp",
+  "tela inicial para celulares Android": "pantalla de inicio para celulares Android",
   "Vidro escuro e espacial": "Vidrio oscuro y espacial",
   "Ruan imaginou o Onix como um vidro escuro e espacial, que passasse profissionalismo e conforto ao mesmo tempo. E queria que ele chegasse a todas as TVs: Google TV, Android TV, Samsung e LG.": "Ruan imaginó Onix como un vidrio oscuro y espacial, que transmitiera profesionalismo y comodidad al mismo tiempo. Y quería que llegara a todas las TV: Google TV, Android TV, Samsung y LG.",
   "O começo": "El comienzo",
@@ -3244,7 +3257,7 @@ const ES = Object.freeze({
   "*Onix Controle renovado:* o app de controle pelo celular teve um rebrand para integrar com o Cobalt GameHub, com novo ícone do Saturno cósmico e conexão direta para jogar os clássicos na TV.": "*Onix Controle renovado:* la app de control desde el celular tuvo un rebrand para integrarse con Cobalt GameHub, con nuevo ícono del Saturno cósmico y conexión directa para jugar a los clásicos en la TV.",
   "*Ícone do Onix Controle na aba Jogos:* o botão de baixar o controle e o cartão com QR code agora exibem o ícone oficial do Onix Controle.": "*Ícono de Onix Controle en la pestaña Juegos:* el botón para descargar el control y la tarjeta con código QR ahora muestran el ícono oficial de Onix Controle.",
   "*Trajetória do Onix:* o slide das pedras preciosas atualizado com a gema Cobalt GameHub.": "*Trayectoria de Onix:* la diapositiva de las piedras preciosas actualizada con la gema Cobalt GameHub.",
-  "Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Ao lado dele estão o Cobalt GameHub, o Amethyst e o Opala, formando a família Project Gems.": "Los proyectos de Ruan tienen nombres en clave de piedras preciosas, como Onix. A su lado están Cobalt GameHub, Amethyst y Opala, formando la familia Project Gems.",
+  "Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Ao lado dele estão o Cobalt GameHub, o Amethyst, o Opala e o Emerald, formando a família Project Gems.": "Los proyectos de Ruan tienen nombres en clave de piedras preciosas, como Onix. A su lado están Cobalt GameHub, Amethyst, Opala y Emerald, formando la familia Project Gems.",
   "Cobalt GameHub": "Cobalt GameHub",
   "Baixando o Cobalt GameHub…": "Descargando Cobalt GameHub…",
   "· Cobalt GameHub · OK volta de onde parou": "· Cobalt GameHub · OK vuelve donde lo dejaste",
@@ -3253,6 +3266,9 @@ const ES = Object.freeze({
   "O Cobalt GameHub ainda não foi publicado. Ele chega numa próxima atualização.": "Cobalt GameHub todavía no fue publicado. Llega en una próxima actualización.",
   "Não deu para baixar o Cobalt GameHub. Confira a internet e tente de novo.": "No se pudo descargar Cobalt GameHub. Revisa internet e inténtalo de nuevo.",
   "Não deu para abrir o Cobalt GameHub": "No se pudo abrir Cobalt GameHub",
+  // Onix 17.2.0: novidades do Project Gems no destaque e Emerald na Trajetória
+  "*Novidades do Project Gems no destaque:* o primeiro banner do destaque da tela inicial agora mostra as novidades dos outros apps do criador do Onix, começando pelo *Emerald*, a nova tela inicial para celulares Android. *Saiba mais* abre um QR code que leva ao site do Project Gems. Quem não quiser ver pode desligar em *Configurações → Indicações → Novidades do Project Gems*. Só na versão para Google TV.": "*Novedades de Project Gems en el destacado:* el primer banner del destacado de la pantalla de inicio ahora muestra las novedades de las otras apps del creador de Onix, empezando por *Emerald*, la nueva pantalla de inicio para celulares Android. *Más información* abre un código QR que lleva al sitio de Project Gems. Quien no quiera verlo puede desactivarlo en *Configuración → Recomendaciones → Novedades de Project Gems*. Solo en la versión para Google TV.",
+  "*Emerald na Trajetória:* o capítulo *Pedras preciosas* da Trajetória do Onix ganhou o Emerald, ao lado do Onix, do Cobalt GameHub, do Amethyst e do Opala.": "*Emerald en la Trayectoria:* el capítulo *Piedras preciosas* de la Trayectoria de Onix ahora incluye Emerald, junto a Onix, Cobalt GameHub, Amethyst y Opala.",
   // Onix 17.1.3: aba Jogos sem demora e foco no Cobalt
   "*Aba Jogos sem demora:* a página de Jogos aparece na hora. Antes, o Onix esperava o Cobalt GameHub responder (e, se ele estivesse fechado, esperava ele abrir) para trocar de tela. Agora ela mostra os últimos jogos guardados e os números novos chegam em seguida, sozinhos.": "*Pestaña Juegos sin demora:* la página de Juegos aparece al instante. Antes, Onix esperaba que Cobalt GameHub respondiera (y, si estaba cerrado, que se abriera) para cambiar de pantalla. Ahora muestra los últimos juegos guardados y los números nuevos llegan enseguida, solos.",
   "*Foco no tema Cobalt:* os botões do cartão do Cobalt GameHub (como *Abrir o GameHub* e *Baixar controle*) não mostravam a borda ao passar o foco por eles. Agora ganham a borda ciano do tema.": "*Foco en el tema Cobalt:* los botones de la tarjeta de Cobalt GameHub (como *Abrir GameHub* y *Descargar control*) no mostraban el borde al pasar el foco por ellos. Ahora tienen el borde cian del tema.",
@@ -3408,6 +3424,14 @@ const Bridge = (() => {
     openInput(id) {
       if (!native || typeof b.openInput !== 'function') return false;
       try { return b.openInput(id) === true; } catch (e) { console.warn('openInput falhou', e); return false; }
+    },
+    getAd() {
+      if (!native || typeof b.getProjectAd !== 'function') return null;
+      try {
+        const raw = b.getProjectAd();
+        if (typeof raw !== 'string' || raw.length > 2 * 1024 * 1024) return null;
+        return sanitizeAd(JSON.parse(raw));
+      } catch (e) { console.warn('getProjectAd falhou', e); return null; }
     },
     getNews() {
       if (!native || typeof b.getGameNews !== 'function') return [];
@@ -3617,6 +3641,24 @@ function sanitizePicks(list) {
 }
 
 const NEWS_LINK_RE = /^https:\/\/([a-z0-9.-]{1,80})\/[^\s"'<>]{0,400}$/i;
+// Anúncio do Project Gems (projectgems.github.io/onix/anuncio, editado pelo app Onix Anúncio).
+const AD_LINK_RE = /^https:\/\/[A-Za-z0-9.-]{1,80}(\/[^\s"'<>]{0,200})?$/, AD_COLOR_RE = /^#[0-9a-fA-F]{6}$/;
+function sanitizeAd(o) {
+  if (!o || typeof o !== 'object' || !o.pt || typeof o.pt !== 'object') return null;
+  const txt = x => {
+    if (!x || typeof x !== 'object' || typeof x.titulo !== 'string') return null;
+    const s = (v, n) => typeof v === 'string' ? cleanText(v, n) : '';
+    const r = { kicker: s(x.kicker, 60), titulo: s(x.titulo, 60), texto: s(x.texto, 240), botao: s(x.botao, 24) || 'Saiba mais', qr: s(x.qr, 240) };
+    return r.titulo ? r : null;
+  };
+  const pt = txt(o.pt);
+  if (!pt || typeof o.link !== 'string' || !AD_LINK_RE.test(o.link)) return null;
+  const imgs = Array.isArray(o.imagens) ? o.imagens.filter(i => typeof i === 'string' && i.length <= MAX_ICON && ICON_RE.test(i)).slice(0, 2) : [];
+  return {
+    pt, es: txt(o.es), link: o.link, imagens: imgs,
+    cor1: AD_COLOR_RE.test(o.cor1) ? o.cor1 : '#7fe6b0', cor2: AD_COLOR_RE.test(o.cor2) ? o.cor2 : '#0f5c3d',
+  };
+}
 function sanitizeNews(list) {
   if (!Array.isArray(list)) return [];
   const out = [];
@@ -3804,7 +3846,10 @@ const PICK_PROVIDERS = Object.freeze({
 });
 let picks = [];
 let netOnline = null;   // null = o Android ainda não disse
-function loadPicks() { picks = Bridge.getPicks(); }
+function loadPicks() { picks = Bridge.getPicks(); loadAd(); }
+let projectAd = null;
+function loadAd() { projectAd = Bridge.getAd(); }
+const adText = () => (LANG === 'es' && projectAd.es) || projectAd.pt;
 function openPick(p) {
   const pv = PICK_PROVIDERS[p.provider];
   if (!Bridge.native) { toast(pv ? t('Abriria {0} {1} (simulação no navegador)', p.title, t(pv.em)) : t('Buscaria onde assistir {0} (simulação no navegador)', p.title)); return; }
@@ -3815,8 +3860,18 @@ function openPick(p) {
   else if (r === 'search') toast(t('Procurando onde assistir {0}…', p.title));
   else toast(pv ? t('{0} não está instalado nesta TV', pv.name) : 'Busca indisponível nesta TV');
 }
-// Itens do destaque: indicações da semana; sem nada em cache, um aviso (sem conexão ou baixando).
+// Itens do destaque: o anúncio do Project Gems (se houver) e as indicações da semana;
+// sem indicações em cache, um aviso (sem conexão ou baixando).
 function heroItems() {
+  const items = pickItems();
+  if (!projectAd || !settings.projectAd) return items;
+  const a = adText();
+  return [{
+    kicker: a.kicker, title: a.titulo, desc: a.texto, h1: projectAd.cor1, h2: projectAd.cor2,
+    poster: null, ad: projectAd.imagens.length ? projectAd.imagens : null, label: a.botao, act: openAdCard,
+  }].concat(items);
+}
+function pickItems() {
   if (picks.length) return picks.map(p => {
     const pv = PICK_PROVIDERS[p.provider];
     const em = pv ? t(pv.em).charAt(0).toUpperCase() + t(pv.em).slice(1) : t('Indicação da semana');
@@ -3853,12 +3908,14 @@ function renderHero(animate) {
     hero.style.setProperty('--h1', f.h1);
     hero.style.setProperty('--h2', f.h2);
     hero.classList.toggle('is-pick', !!f.poster);
+    hero.classList.toggle('is-ad', !!f.ad);
     hero.classList.toggle('is-offline', !!f.offline);
     $('#heroNext').hidden = heroList.length < 2;
-    const artKey = f.poster || (f.offline ? 'offline' : 'svg');   // o SVG padrão pega as cores das variáveis --h1/--h2
+    const artKey = f.poster || (f.ad ? f.ad.join('') : f.offline ? 'offline' : 'svg');   // o SVG padrão pega as cores das variáveis --h1/--h2
     if (artKey !== heroArtKey) {
       heroArtKey = artKey;
-      $('#heroArt').replaceChildren(f.poster ? h('img', { src: f.poster, alt: '', draggable: 'false', decoding: 'async' }) : svgFrom(f.offline ? OFFLINE_ART : HERO_ART));
+      const img = src => h('img', { src, alt: '', draggable: 'false', decoding: 'async' });
+      $('#heroArt').replaceChildren(f.poster ? img(f.poster) : f.ad ? h('div', { class: 'ad-duo' }, ...f.ad.map(img)) : svgFrom(f.offline ? OFFLINE_ART : HERO_ART));
     }
     $('#heroKicker').textContent = t(f.kicker);
     $('#heroTitle').textContent = t(f.title);
@@ -5576,6 +5633,7 @@ const OPTIONS = [
   { key: 'pickDisney',    service: 'disney',    name: 'Disney+',   desc: 'Indicações do Disney+.' },
   { key: 'pickMax',       service: 'max',       name: 'HBO Max',   desc: 'Indicações da HBO Max.' },
   { key: 'pickGloboplay', service: 'globoplay', name: 'Globoplay', desc: 'Indicações do Globoplay.' },
+  { key: 'projectAd', name: 'Novidades do Project Gems', desc: 'Primeiro banner do destaque, com os apps novos do criador do Onix. Desligado, o destaque mostra só as indicações.' },
   { group: 'Atualizações' },
   { act: 'update', name: 'Procurar atualizações', desc: 'Confere no GitHub se saiu uma versão nova do Onix.' },
   { key: 'autoUpdate', name: 'Atualizar automaticamente', desc: 'Baixa as versões novas sozinho e abre a confirmação de instalação quando você volta ao Onix.' },
@@ -5591,6 +5649,10 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '17.2.0', date: 'novembro de 2026', items: [
+    ['new', '*Novidades do Project Gems no destaque:* o primeiro banner do destaque da tela inicial agora mostra as novidades dos outros apps do criador do Onix, começando pelo *Emerald*, a nova tela inicial para celulares Android. *Saiba mais* abre um QR code que leva ao site do Project Gems. Quem não quiser ver pode desligar em *Configurações → Indicações → Novidades do Project Gems*. Só na versão para Google TV.'],
+    ['new', '*Emerald na Trajetória:* o capítulo *Pedras preciosas* da Trajetória do Onix ganhou o Emerald, ao lado do Onix, do Cobalt GameHub, do Amethyst e do Opala.'],
+  ] },
   { version: '17.1.3', date: 'novembro de 2026', items: [
     ['fix', '*Aba Jogos sem demora:* a página de Jogos aparece na hora. Antes, o Onix esperava o Cobalt GameHub responder (e, se ele estivesse fechado, esperava ele abrir) para trocar de tela. Agora ela mostra os últimos jogos guardados e os números novos chegam em seguida, sozinhos.'],
     ['bug', '*Foco no tema Cobalt:* os botões do cartão do Cobalt GameHub (como *Abrir o GameHub* e *Baixar controle*) não mostravam a borda ao passar o foco por eles. Agora ganham a borda ciano do tema.'],
@@ -5800,6 +5862,7 @@ function setOption(key, on) {
       : t('Indicações: {0}', PICK_KEYS.filter(o => settings[o.key]).map(o => o.name).join(', ')));
   }
   if (key === 'autoUpdate') Bridge.setAutoUpdate(on);
+  if (key === 'projectAd') { heroIdx = 0; heroArtKey = null; renderHero(false); }
   if (key === 'remote') { Bridge.remoteSetEnabled(on); setTimeout(renderRemoteQr, 300); }
   if (key === 'remoteQr') renderRemoteQr();
   if (PROFILE_PREFS.indexOf(key) >= 0) storeProfilePrefs();
@@ -5917,7 +5980,7 @@ function hideKitty() {
    Configurações → Sobre. OK (ou ▶) passa o slide, ◀ volta e Voltar fecha. Desenhos em SVG fixo. */
 const STORY_SATURN = (x, y, k) => `<g transform="translate(${x} ${y}) scale(${k})" stroke="#fff" stroke-width="2.2" stroke-linecap="round" fill="none">
   <g transform="rotate(-20)"><path d="M-21 0A21 6 0 0 1 21 0"/></g><circle r="10" fill="#050608"/><g transform="rotate(-20)"><path d="M21 0A21 6 0 0 1 -21 0"/></g></g>`;
-// Logos do Onix, do Amethyst e do Opala (o mesmo traço: pedra e anel inclinado), size×size centradas em (x, y).
+// Logos do Onix, do Amethyst, do Opala e do Emerald (o mesmo traço: pedra e anel inclinado), size×size centradas em (x, y).
 const STORY_LOGO = (x, y, color, id, body, size = 60) => `<svg x="${x - size / 2}" y="${y - size / 2}" width="${size}" height="${size}" viewBox="0 0 48 48" fill="none" stroke="${color}" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
   <defs><mask id="${id}B" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/>${body.back}</mask>
   <mask id="${id}G" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><path d="M45 24A21 6 0 0 1 3 24" stroke="#000" stroke-width="6" transform="rotate(-20 24 24)"/></mask></defs>
@@ -5931,6 +5994,9 @@ const LOGO_OPALA = { back: '<ellipse cx="24" cy="24" rx="11" ry="13" transform="
     + '<path d="M27 15.6l.7 1.6 1.6.7-1.6.7-.7 1.6-.7-1.6-1.6-.7 1.6-.7z" fill="#ffc08a" stroke="#ffc08a" stroke-width=".8"/>'
     + '<path d="M21.4 27.4l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z" fill="#ff8a55" stroke="#ff8a55" stroke-width=".8"/>'
     + '<path d="M29.6 26l.4.9.9.4-.9.4-.4.9-.4-.9-.9-.4.9-.4z" fill="#ffe2c4" stroke="#ffe2c4" stroke-width=".7"/>' };
+// Emerald: pedra em pé com a lapidação em degraus, como o ícone do launcher.
+const LOGO_EMERALD = { back: '<path d="M19 10H29L34 15V33L29 38H19L14 33V15Z" fill="#000" stroke="#000" stroke-width="3"/>',
+  stone: '<path d="M19 10H29L34 15V33L29 38H19L14 33V15Z"/><path d="M20.5 15H27.5L29.5 17V31L27.5 33H20.5L18.5 31V17Z" stroke-width="1.4" opacity=".7"/>' };
 const STORY = [
   { c1: 'rgba(124,108,255,.35)', c2: 'rgba(80,220,140,.25)', kicker: 'Capítulo 1', title: 'O começo',
     body: 'Ruan começou na programação criando bots para o Discord e o WhatsApp.',
@@ -5998,24 +6064,28 @@ const STORY = [
     <circle class="twinkle" cx="370" cy="230" r="2.5" style="--d:.9s"/><circle class="twinkle" cx="30" cy="220" r="2" style="--d:.3s"/></g>
 </svg>` },
   { c1: 'rgba(178,139,255,.3)', c2: 'rgba(224,138,76,.24)', kicker: 'Capítulo 6', title: 'Pedras preciosas',
-    body: 'Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Ao lado dele estão o Cobalt GameHub, o Amethyst e o Opala, formando a família Project Gems.',
+    body: 'Os projetos do Ruan têm codinomes de pedras preciosas, como o Onix. Ao lado dele estão o Cobalt GameHub, o Amethyst, o Opala e o Emerald, formando a família Project Gems.',
     art: () => `<svg viewBox="0 0 400 260" fill="none" stroke-linecap="round">
-  <g class="pop" style="--d:.2s">${STORY_LOGO(50, 34, '#fff', 'stOn', LOGO_ONIX, 50)}</g>
-  <path class="draw" style="--d:.5s" d="M80 34h70" stroke="rgba(255,255,255,.5)" stroke-width="2.5"/>
-  <g class="fade" style="--d:.9s" font-family="system-ui,sans-serif"><text x="162" y="31" fill="#fff" font-size="22" font-weight="700">Onix</text>
-    <text x="162" y="52" fill="rgba(245,246,248,.65)" font-size="15">${t('sistema para TVs')}</text></g>
-  <g class="pop" style="--d:1s">${HUB_MARK.replace('<svg ', '<svg x="29" y="77" width="42" height="42" ')}</g>
-  <path class="draw" style="--d:1.3s" d="M80 98h70" stroke="#ff6fb5" stroke-width="2.5"/>
-  <g class="fade" style="--d:1.7s" font-family="system-ui,sans-serif"><text x="162" y="95" fill="#ffb3d9" font-size="22" font-weight="700">Cobalt GameHub</text>
-    <text x="162" y="116" fill="rgba(245,246,248,.65)" font-size="15">${t('jogos retrô para TV, celular e PC')}</text></g>
-  <g class="pop" style="--d:1.8s">${STORY_LOGO(50, 162, '#d9c6ff', 'stAm', LOGO_AMETHYST, 50)}</g>
-  <path class="draw" style="--d:2.1s" d="M80 162h70" stroke="#b28bff" stroke-width="2.5"/>
-  <g class="fade" style="--d:2.5s" font-family="system-ui,sans-serif"><text x="162" y="159" fill="#d9c6ff" font-size="22" font-weight="700">Amethyst</text>
-    <text x="162" y="180" fill="rgba(245,246,248,.65)" font-size="15">${t('karaokê para Windows')}</text></g>
-  <g class="pop" style="--d:2.6s">${STORY_LOGO(50, 226, '#e08a4c', 'stOp', LOGO_OPALA, 50)}</g>
-  <path class="draw" style="--d:2.9s" d="M80 226h70" stroke="#e08a4c" stroke-width="2.5"/>
-  <g class="fade" style="--d:3.3s" font-family="system-ui,sans-serif"><text x="162" y="223" fill="#f0a46b" font-size="22" font-weight="700">Opala</text>
-    <text x="162" y="244" fill="rgba(245,246,248,.65)" font-size="15">${t('bot para WhatsApp')}</text></g>
+  <g class="pop" style="--d:0.2s">${STORY_LOGO(50, 26, '#fff', 'stOn', LOGO_ONIX, 42)}</g>
+  <path class="draw" style="--d:0.5s" d="M80 26h70" stroke="rgba(255,255,255,.5)" stroke-width="2.5"/>
+  <g class="fade" style="--d:0.8s" font-family="system-ui,sans-serif"><text x="162" y="23" fill="#fff" font-size="20" font-weight="700">Onix</text>
+    <text x="162" y="42" fill="rgba(245,246,248,.65)" font-size="14">${t('sistema para TVs')}</text></g>
+  <g class="pop" style="--d:0.9s">${HUB_MARK.replace('<svg ', '<svg x="32" y="60" width="36" height="36" ')}</g>
+  <path class="draw" style="--d:1.2s" d="M80 78h70" stroke="#ff6fb5" stroke-width="2.5"/>
+  <g class="fade" style="--d:1.5s" font-family="system-ui,sans-serif"><text x="162" y="75" fill="#ffb3d9" font-size="20" font-weight="700">Cobalt GameHub</text>
+    <text x="162" y="94" fill="rgba(245,246,248,.65)" font-size="14">${t('jogos retrô para TV, celular e PC')}</text></g>
+  <g class="pop" style="--d:1.6s">${STORY_LOGO(50, 130, '#d9c6ff', 'stAm', LOGO_AMETHYST, 42)}</g>
+  <path class="draw" style="--d:1.9s" d="M80 130h70" stroke="#b28bff" stroke-width="2.5"/>
+  <g class="fade" style="--d:2.2s" font-family="system-ui,sans-serif"><text x="162" y="127" fill="#d9c6ff" font-size="20" font-weight="700">Amethyst</text>
+    <text x="162" y="146" fill="rgba(245,246,248,.65)" font-size="14">${t('karaokê para Windows')}</text></g>
+  <g class="pop" style="--d:2.3s">${STORY_LOGO(50, 182, '#e08a4c', 'stOp', LOGO_OPALA, 42)}</g>
+  <path class="draw" style="--d:2.6s" d="M80 182h70" stroke="#e08a4c" stroke-width="2.5"/>
+  <g class="fade" style="--d:2.9s" font-family="system-ui,sans-serif"><text x="162" y="179" fill="#f0a46b" font-size="20" font-weight="700">Opala</text>
+    <text x="162" y="198" fill="rgba(245,246,248,.65)" font-size="14">${t('bot para WhatsApp')}</text></g>
+  <g class="pop" style="--d:3.0s">${STORY_LOGO(50, 234, '#7fe6b0', 'stEm', LOGO_EMERALD, 42)}</g>
+  <path class="draw" style="--d:3.3s" d="M80 234h70" stroke="#4fcf8f" stroke-width="2.5"/>
+  <g class="fade" style="--d:3.6s" font-family="system-ui,sans-serif"><text x="162" y="231" fill="#9ff0c6" font-size="20" font-weight="700">Emerald</text>
+    <text x="162" y="250" fill="rgba(245,246,248,.65)" font-size="14">${t('tela inicial para celulares Android')}</text></g>
 </svg>` },
   { end: true, c1: 'rgba(255,158,196,.3)', c2: 'rgba(178,139,255,.3)', title: 'Obrigado por fazer parte disso!',
     body: 'Cada vez que você liga a TV, essa trajetória continua. O próximo capítulo a gente escreve junto.',
@@ -6139,6 +6209,26 @@ function openGamepadCard(from) {
           controleIcon('width:1.4rem;height:1.4rem;flex:none;'),
           h('b', { text: 'Onix Controle' })),
         h('span', { class: 'sp-key', text: 'github.com/ruan2311/onix' }))),
+    h('div', { class: 'sp-hint' }, h('b', { text: 'OK' }), h('span', { text: t('para fechar') })));
+  $('#gamepadModal').hidden = false;
+  sfx('select');
+}
+// "Saiba mais" do anúncio: QR code para o link do anúncio (a TV não abre o navegador).
+function openAdCard() {
+  if (!projectAd) return;
+  const a = adText();
+  gamepadCard = { from: current };
+  const qr = qrSvg(projectAd.link);
+  $('#gamepadModal').replaceChildren(
+    h('div', { class: 'sp-card' },
+      h('div', { class: 'sp-text' },
+        a.kicker ? h('span', { class: 'sp-free ad', text: a.kicker }) : '',
+        h('h2', { text: a.titulo }),
+        a.texto ? h('p', { text: a.texto }) : '',
+        a.qr ? h('p', { class: 'sp-thanks', text: a.qr }) : ''),
+      h('div', { class: 'sp-qr' }, qr || '',
+        h('b', { text: 'Project Gems' }),
+        h('span', { class: 'sp-key', text: projectAd.link.replace(/^https:\/\//, '').replace(/\/$/, '') }))),
     h('div', { class: 'sp-hint' }, h('b', { text: 'OK' }), h('span', { text: t('para fechar') })));
   $('#gamepadModal').hidden = false;
   sfx('select');
@@ -7884,6 +7974,7 @@ function onRefreshed(newsOk, picksOk) {
   $('#refreshBtn span').textContent = t('Atualizar');
   if (newsOk) refreshNews();
   if (picksOk) refreshPicks();
+  else { loadAd(); renderHero(false); }
   toast(newsOk || picksOk ? 'Tudo atualizado' : 'Sem conexão com os sites: mantive o que já estava salvo');
 }
 // Botão "Limpar memória": o Android fecha os apps parados em segundo plano (nunca o Onix) e conta o que voltou.
@@ -7929,7 +8020,7 @@ function resync() {
 }
 // Gancho para o lado nativo chamar via evaluateJavascript.
 Object.defineProperty(window, 'Launcher', {
-  value: Object.freeze({ onAppsChanged: () => { refreshApps(); renderHub(); }, onGameHub: () => renderHub(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onScreenOff: () => lockProfile(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); kidsTick(); refreshWeather(false); renderHub(); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync(), onWeather: j => onWeather(j), onCities: (j, q) => onCities(j, q), onRemote: j => onRemote(j), onRemoteInfo: e => onRemoteInfo(e), onSettingsKey: () => settingsKey() }),
+  value: Object.freeze({ onAppsChanged: () => { refreshApps(); renderHub(); }, onGameHub: () => renderHub(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onAdChanged: () => { loadAd(); renderHero(false); }, onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onScreenOff: () => lockProfile(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); kidsTick(); refreshWeather(false); renderHub(); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync(), onWeather: j => onWeather(j), onCities: (j, q) => onCities(j, q), onRemote: j => onRemote(j), onRemoteInfo: e => onRemoteInfo(e), onSettingsKey: () => settingsKey() }),
   writable: false, configurable: false,
 });
 

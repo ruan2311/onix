@@ -219,6 +219,23 @@ public class MainActivity extends Activity {
         }, "onix-news").start();
     }
 
+    /** Anúncio do Project Gems (primeiro banner do destaque): no máximo a cada 1 h. */
+    private void refreshAnuncio(final boolean networkBack) {
+        final Anuncio ad = Anuncio.get(this);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (!ad.refreshIfStale(networkBack)) return;
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        if (webView != null) webView.evaluateJavascript("window.Launcher&&Launcher.onAdChanged&&Launcher.onAdChanged()", null);
+                    }
+                });
+            }
+        }, "onix-anuncio").start();
+    }
+
     /**
      * Botão "Atualizar": baixa notícias e indicações agora (sem esperar os prazos) e refaz a lista
      * de apps. No fim avisa a página com o que deu certo: Launcher.onRefreshed(notícias, indicações).
@@ -231,6 +248,7 @@ public class MainActivity extends Activity {
             public void run() {
                 final boolean n = news.refresh(true, true);
                 final boolean p = picks.refresh(true, true);
+                Anuncio.get(MainActivity.this).refresh(true, true);
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
@@ -459,6 +477,7 @@ public class MainActivity extends Activity {
         if (cameBack) {   // internet voltou: baixa na hora o que faltou
             refreshPicks(true);
             refreshNews(true);
+            refreshAnuncio(true);
         }
     }
 
@@ -595,6 +614,7 @@ public class MainActivity extends Activity {
         if (appsDirty) appsChanged.run();
         refreshPicks(false);
         refreshNews(false);
+        refreshAnuncio(false);
         registerNetworkCallback();
         ui.removeCallbacks(netTick);
         ui.postDelayed(netTick, NET_CHECK_MS);

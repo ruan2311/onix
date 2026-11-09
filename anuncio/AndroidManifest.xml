@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Onix Anúncio: app de celular do Ruan para editar o anúncio do Project Gems que aparece como primeiro
+  banner do destaque no Onix. Publica onix/anuncio/ (anuncio.json + imagens) no repositório do site
+  pela API do GitHub, com a chave guardada só no aparelho. INTERNET: GitHub e tradução (MyMemory).
+-->
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.onix.anuncio"
+    android:versionCode="1"
+    android:versionName="1.0.0">
+
+    <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="35" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:label="Onix Anúncio"
+        android:icon="@mipmap/icon"
+        android:allowBackup="false"
+        android:hardwareAccelerated="true"
+        android:theme="@android:style/Theme.Material.NoActionBar">
+
+        <activity
+            android:name="com.onix.anuncio.MainActivity"
+            android:exported="true"
+            android:launchMode="singleTask"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout|keyboard|keyboardHidden|navigation|uiMode"
+            android:windowSoftInputMode="adjustResize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>

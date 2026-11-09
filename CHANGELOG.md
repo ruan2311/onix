@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 17.2.0 (novembro de 2026)
+
+- **Novidades do Project Gems no destaque:** o primeiro banner do destaque da tela inicial agora mostra as novidades dos outros apps do criador do Onix, começando pelo **Emerald**, a nova tela inicial para celulares Android. **Saiba mais** abre um QR code que leva ao site do Project Gems. Quem não quiser ver pode desligar em **Configurações → Indicações → Novidades do Project Gems**. Só na versão para Google TV.
+- **Emerald na Trajetória:** o capítulo **Pedras preciosas** da Trajetória do Onix ganhou o Emerald, ao lado do Onix, do Cobalt GameHub, do Amethyst e do Opala.
+
 ## 17.1.3 (novembro de 2026)
 
 - **Aba Jogos sem demora:** a página de Jogos aparece na hora. Antes, o Onix esperava o Cobalt GameHub responder (e, se ele estivesse fechado, esperava ele abrir) para trocar de tela. Agora ela mostra os últimos jogos guardados e os números novos chegam em seguida, sozinhos.

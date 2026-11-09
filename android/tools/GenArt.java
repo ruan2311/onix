@@ -24,6 +24,10 @@ public class GenArt {
             controle(res);
             return;
         }
+        if (args.length > 1 && args[1].equals("anuncio")) {
+            anuncio(res);
+            return;
+        }
         ImageIO.write(banner(), "png", new File(res, "drawable-xhdpi/banner.png"));
         ImageIO.write(icon(), "png", new File(res, "drawable-xxxhdpi/icon.png"));
     }
@@ -50,6 +54,51 @@ public class GenArt {
         all.add(new Area(line.createStrokedShape(new Line2D.Float(20.5f, 34, 27.5f, 34))));   // volume
         all.add(new Area(line.createStrokedShape(new Line2D.Float(20.5f, 39, 27.5f, 39))));
         return all.createTransformedArea(t);
+    }
+
+    /** Banner (grade 48x48): o cartão do destaque com o Saturno e as linhas de texto. */
+    static Area banner(float cx, float cy, float size) {
+        float k = size / 48f;
+        AffineTransform t = new AffineTransform();
+        t.translate(cx - 24 * k, cy - 24 * k);
+        t.scale(k, k);
+        BasicStroke line = new BasicStroke(2.2f, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
+        Area all = new Area(line.createStrokedShape(new RoundRectangle2D.Float(4, 11, 40, 26, 8, 8)));
+        all.add(new Area(line.createStrokedShape(new Line2D.Float(10, 20, 22, 20))));
+        all.add(new Area(line.createStrokedShape(new Line2D.Float(10, 25, 19, 25))));
+        all.add(new Area(new RoundRectangle2D.Float(9.5f, 29, 9, 3.6f, 3.6f, 3.6f)));
+        Area mark = new Area();
+        saturnArea(mark, 33, 24, 16);
+        all.add(mark);
+        return all.createTransformedArea(t);
+    }
+
+    /** Ícone do Onix Anúncio (editor do banner do Project Gems): banner verde-menta no fundo preto. */
+    static void anuncio(File res) throws Exception {
+        new File(res, "mipmap-xxxhdpi").mkdirs();
+        new File(res, "mipmap-anydpi-v26").mkdirs();
+        new File(res, "values").mkdirs();
+        Color menta = new Color(0x7fe6b0);
+        BufferedImage icon = new BufferedImage(192, 192, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D g = g(icon);
+        g.setColor(BG);
+        g.fill(new RoundRectangle2D.Float(0, 0, 192, 192, 44, 44));
+        g.setColor(menta);
+        g.fill(banner(96, 96, 160));
+        g.dispose();
+        ImageIO.write(icon, "png", new File(res, "mipmap-xxxhdpi/icon.png"));
+        BufferedImage fg = new BufferedImage(432, 432, BufferedImage.TYPE_INT_ARGB);
+        g = g(fg);
+        g.setColor(menta);
+        g.fill(banner(216, 216, 260));
+        g.dispose();
+        ImageIO.write(fg, "png", new File(res, "mipmap-xxxhdpi/icon_fg.png"));
+        write(new File(res, "values/colors.xml"), "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n<resources>\n"
+                + "    <color name=\"icon_bg\">#0a0a0b</color>\n</resources>\n");
+        write(new File(res, "mipmap-anydpi-v26/icon.xml"), "<?xml version=\"1.0\" encoding=\"utf-8\"?>\n"
+                + "<adaptive-icon xmlns:android=\"http://schemas.android.com/apk/res/android\">\n"
+                + "    <background android:drawable=\"@color/icon_bg\" />\n"
+                + "    <foreground android:drawable=\"@mipmap/icon_fg\" />\n</adaptive-icon>\n");
     }
 
     static void controle(File res) throws Exception {

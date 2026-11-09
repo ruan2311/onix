@@ -27,6 +27,10 @@ onix-webos.ipk
 controle/build/
 onix-controle.apk
 
+# Saída do build do Onix Anúncio (anuncio/build.sh)
+anuncio/build/
+onix-anuncio.apk
+
 # Saída do build do Cobalt Game Hub (gamehub/build.sh e gamehub/cores.sh)
 gamehub/build/
 onix-gamehub.apk
