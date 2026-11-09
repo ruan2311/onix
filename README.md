@@ -56,7 +56,7 @@ As versões anteriores estão no [CHANGELOG.md](CHANGELOG.md) e na [página de R
 | | |
 |---|---|
 | **Início** | Três estilos (**Onix Glass**, **Clean Glass** e **Onix Cosmos**), destaque rotativo com as indicações da semana, fileira com os seus apps favoritos, botões **Atualizar** e **Limpar memória** |
-| **Indicações da semana** | Títulos populares no Brasil (JustWatch + iTunes), renovados toda segunda. A **Netflix** é o padrão; **Disney+**, **HBO Max** e **Globoplay** entram quando você abre o app mais de 3 vezes pelo Onix (ou escolha em **Configurações → Indicações**). **Assistir no…** abre o título direto no app |
+| **Indicações da semana** | Títulos populares no Brasil (JustWatch + iTunes), renovados toda segunda. A **Netflix** é o padrão; **Disney+**, **HBO Max**, **Globoplay**, **Prime Video** e **Paramount+** entram quando você abre o app mais de 3 vezes pelo Onix (ou escolha em **Configurações → Indicações**). **Assistir no…** abre o título direto no app |
 | **Apps** | Grade com todos os apps instalados, separados em **Recentes** e **Não usados** |
 | **Jogos** | O cartão do [Cobalt GameHub](#cobalt-gamehub-jogos-clássicos) e quatro minijogos com fases e recorde: **Pong**, **Pinball**, **Tijolos** e **Cobrinha**. Na Samsung e na LG, um hub de jogos na nuvem (Game Pass e apps de cloud gaming) |
 | **Notícias dos games** | Adrenaline e Eurogamer.pt, a cada 3 horas. **OK** abre o resumo; um QR code leva à matéria no celular |
@@ -181,7 +181,7 @@ tizen install -n Onix.wgt -t NOME_DA_TV -- onix
 |---|---|
 | Apps, Jogos, Notícias, Tela de descanso | ✅ Igual ao Android |
 | Aba Jogos | 🎮 Hub de jogos na nuvem (Game Pass e apps de cloud gaming) no lugar do Cobalt GameHub |
-| Indicações + **Assistir na Netflix** | ✅ Abre o título. Disney+, HBO Max e Globoplay abrem o app, nem sempre direto no título |
+| Indicações + **Assistir na Netflix** | ✅ Abre o título. Disney+, HBO Max, Globoplay, Prime Video e Paramount+ abrem o app, nem sempre direto no título |
 | Entradas TV e HDMI | ⚠️ Em tela cheia **dentro do Onix**; Voltar ou OK retorna. Para jogar, prefira o botão de fontes do controle (o Modo Jogo pode não ligar) |
 | Ligar a TV no Onix | ✅ Pelo [Executar último app](docs/samsung-tela-inicial.md) |
 | Botão Home | ❌ Continua abrindo o Smart Hub; dá para pôr o Onix em primeiro na barra |

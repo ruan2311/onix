@@ -52,7 +52,14 @@ input[type=color]{width:64px;height:40px;border:1px solid var(--line);border-rad
 .previa .art{position:absolute;right:2.6cqw;top:50%;width:13.4cqw;height:16.7cqw;margin-top:-9.4cqw}
 .previa .art i{position:absolute;top:0;left:0;width:7.2cqw;height:16cqw;border-radius:1.2cqw;background:#0f1116 center/cover no-repeat;border:1px solid rgba(255,255,255,.25)}
 .previa .art i+i{top:.8cqw;left:auto;right:0}
+.previa .art.h1{width:27.6cqw;height:16.7cqw}
+.previa .art.h1 i{width:100%;height:15.5cqw;top:.6cqw}
+.previa .art.h2{width:28.4cqw}
+.previa .art.h2 i{width:20.6cqw;height:11.6cqw}
+.previa .art.h2 i+i{top:4.6cqw}
 .previa.off{filter:grayscale(1);opacity:.45}
+.imgs.deitadas{flex-direction:column;max-width:none}
+.imgs.deitadas .slot .foto{aspect-ratio:16/9}
 .abas{display:flex;gap:6px;margin-bottom:12px}
 .abas button{flex:1;padding:8px}
 .abas button.on{background:#2f3542;border-color:rgba(255,255,255,.3)}
@@ -111,10 +118,11 @@ a{color:var(--verde)}
     <div class="linha" style="margin-top:12px" id="linhaTraduzir"><button id="btTraduzir">Traduzir do português</button></div>
   </div>
 
-  <h2>Imagens (até 2, em pé)</h2>
+  <h2>Imagens</h2>
   <div class="card">
+    <div class="abas" id="formatos"><button data-l="v2">2 em pé</button><button data-l="h1">1 deitada</button><button data-l="h2">2 deitadas</button></div>
     <div class="imgs" id="imgs"></div>
-    <p class="dica">Prints de celular ficam melhores. A imagem é reduzida e convertida sozinha.</p>
+    <p class="dica" id="dicaImgs"></p>
     <input type="file" id="arquivo" accept="image/*" hidden>
   </div>
 
@@ -147,8 +155,15 @@ const PADRAO = {
   ativo: true,
   pt: { kicker: 'Project Gems · Novidades do Ruan', titulo: '', texto: '', botao: 'Saiba mais', qr: '' },
   es: { kicker: '', titulo: '', texto: '', botao: 'Más información', qr: '' },
-  link: 'https://projectgems.github.io/', cor1: '#7fe6b0', cor2: '#0f5c3d', imagens: [],
+  link: 'https://projectgems.github.io/', cor1: '#7fe6b0', cor2: '#0f5c3d', imagens: [], layout: 'v2',
 };
+// Formatos das imagens (o Onix 17.2.1 em diante entende os três; v2 é o padrão).
+const FORMATOS = {
+  v2: { qtd: 2, deitada: false, dica: 'Duas imagens em pé, como prints de celular. Elas são reduzidas e convertidas sozinhas.' },
+  h1: { qtd: 1, deitada: true, dica: 'Uma imagem deitada (16:9), como um print de TV ou de PC. Ela é reduzida e convertida sozinha.' },
+  h2: { qtd: 2, deitada: true, dica: 'Duas imagens deitadas (16:9), uma sobre a outra na diagonal. Elas são reduzidas e convertidas sozinhas.' },
+};
+const formato = () => FORMATOS[dados.layout] || FORMATOS.v2;
 const $ = s => document.querySelector(s);
 let chave = '';
 try { chave = localStorage.getItem('chave') || ''; } catch (_) {}
@@ -199,6 +214,7 @@ async function carregar() {
     dados = Object.assign({}, PADRAO, d);
     dados.pt = Object.assign({}, PADRAO.pt, d.pt || {});
     dados.es = Object.assign({}, PADRAO.es, d.es || {});
+    if (!FORMATOS[dados.layout]) dados.layout = 'v2';
     imgs = (Array.isArray(dados.imagens) ? dados.imagens : []).slice(0, 2).map(n => ({
       nome: n, url: 'https://raw.githubusercontent.com/' + REPO + '/' + BRANCH + '/' + DIR + '/' + encodeURIComponent(n) + '?t=' + Date.now(), nova: null,
     }));
@@ -250,7 +266,11 @@ function montarCampos() {
 function montarImagens() {
   const box = $('#imgs');
   box.replaceChildren();
-  for (let i = 0; i < 2; i++) {
+  const fm = formato();
+  box.classList.toggle('deitadas', fm.deitada);
+  $('#dicaImgs').textContent = fm.dica;
+  for (const b of $('#formatos').children) b.classList.toggle('on', b.dataset.l === dados.layout);
+  for (let i = 0; i < fm.qtd; i++) {
     const im = imgs[i];
     const slot = document.createElement('div');
     slot.className = 'slot';
@@ -287,8 +307,9 @@ function previa() {
   $('#pvD').textContent = v('texto');
   $('#pvB').textContent = v('botao') || 'Saiba mais';
   const fotos = $('#pvArt').children;
+  $('#pvArt').className = 'art ' + dados.layout;
   for (let i = 0; i < 2; i++) {
-    const im = imgs[i];
+    const im = i < formato().qtd ? imgs[i] : null;
     fotos[i].style.display = im ? '' : 'none';
     if (im) fotos[i].style.backgroundImage = 'url("' + (im.nova ? im.nova.dataUrl : im.url) + '")';
   }
@@ -303,7 +324,7 @@ $('#arquivo').addEventListener('change', async () => {
   try {
     status('Preparando a imagem…');
     const bmp = await createImageBitmap(f);
-    const esc = Math.min(1, 800 / bmp.height, 400 / bmp.width);
+    const esc = formato().deitada ? Math.min(1, 540 / bmp.height, 960 / bmp.width) : Math.min(1, 800 / bmp.height, 400 / bmp.width);
     const w = Math.round(bmp.width * esc), h = Math.round(bmp.height * esc);
     const c = document.createElement('canvas');
     c.width = w; c.height = h;
@@ -363,6 +384,7 @@ $('#btPublicar').onclick = async () => {
   try {
     const marca = Date.now().toString(36);
     const nomes = [];
+    imgs = imgs.slice(0, formato().qtd);
     for (let i = 0; i < imgs.length; i++) {
       const im = imgs[i];
       if (im.nova) {
@@ -383,6 +405,7 @@ $('#btPublicar').onclick = async () => {
       es: limpo(dados.es),
       link, cor1: $('#cor1').value, cor2: $('#cor2').value,
       imagens: nomes,
+      layout: dados.layout,
     };
     if (!final.es.titulo) delete final.es;
     status('Publicando o anúncio…');
@@ -411,6 +434,11 @@ $('#btPublicar').onclick = async () => {
 $('#btRecarregar').onclick = () => { if (!mudou || confirm('Descartar as alterações e carregar o anúncio publicado?')) carregar(); };
 
 /* ---------- Abas, campos soltos ---------- */
+for (const b of $('#formatos').children) b.onclick = () => {
+  if (dados.layout === b.dataset.l) return;
+  dados.layout = b.dataset.l;
+  marcar(); montarImagens(); previa();
+};
 $('#abaPt').onclick = () => { lingua = 'pt'; montarCampos(); previa(); };
 $('#abaEs').onclick = () => { lingua = 'es'; montarCampos(); previa(); };
 for (const id of ['#link', '#cor1', '#cor2']) $(id).addEventListener('input', () => { dados[id.slice(1)] = $(id).value; marcar(); previa(); });

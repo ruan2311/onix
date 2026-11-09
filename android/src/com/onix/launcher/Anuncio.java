@@ -123,9 +123,14 @@ final class Anuncio {
         out.put("link", LINK.matcher(link).matches() ? link : "https://projectgems.github.io/");
         out.put("cor1", cor(src.optString("cor1"), "#7fe6b0"));
         out.put("cor2", cor(src.optString("cor2"), "#0f5c3d"));
+        // v2 = duas imagens em pé (padrão), h1 = uma deitada, h2 = duas deitadas
+        String layout = src.optString("layout", "v2");
+        if (!layout.equals("h1") && !layout.equals("h2")) layout = "v2";
+        out.put("layout", layout);
+        int max = layout.equals("h1") ? 1 : MAX_IMGS;
         JSONArray imgs = new JSONArray();
         JSONArray nomes = src.optJSONArray("imagens");
-        for (int i = 0; nomes != null && i < nomes.length() && imgs.length() < MAX_IMGS; i++) {
+        for (int i = 0; nomes != null && i < nomes.length() && imgs.length() < max; i++) {
             String nome = nomes.optString(i, "");
             if (!IMG_NAME.matcher(nome).matches()) continue;
             byte[] b = WeeklyPicks.download(BASE + nome + "?t=" + System.currentTimeMillis() / 60000, MAX_IMG);

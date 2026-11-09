@@ -165,6 +165,12 @@ const PROVIDERS = [   // ordem = desempate; a Netflix é o padrão e entra mesmo
     link: /^https:\/\/play\.(?:hbo)?max\.com\/(?:video\/watch|show|movie)\/[0-9a-f-]{36}(?:\/[0-9a-f-]{36})?$/ },
   { key: 'globoplay', jw: 'gop', name: /^globoplay$/i, ids: P.serviceIds.globoplay || [],
     link: /^https:\/\/globoplay\.globo\.com\/(?:[a-z0-9-]{1,120}\/t\/[A-Za-z0-9]{1,20}\/?|v\/\d{1,12}\/?)$/ },
+  // O título vem no ?gti= (bestLink guarda só ele).
+  { key: 'prime', jw: 'prv', name: /^(amazon\s*)?prime\s*video$/i, ids: P.serviceIds.prime || [],
+    link: /^https:\/\/app\.primevideo\.com\/detail\?gti=amzn1\.dv\.gti\.[0-9a-f-]{36}$/ },
+  // Séries chegam pelo 1º episódio (/shows/<série>/video/<id>/<nome>); filmes, por /movies/<nome>/<id>.
+  { key: 'paramount', jw: 'pmp', name: /^paramount\s*(\+|plus)$/i, ids: P.serviceIds.paramount || [],
+    link: /^https:\/\/www\.paramountplus\.com\/(?:shows\/[a-z0-9_-]{1,100}\/video\/[A-Za-z0-9_-]{8,40}\/[A-Za-z0-9_-]{0,160}|movies\/[a-z0-9_-]{1,100}\/[A-Za-z0-9_-]{8,40})\/?$/ },
 ];
 const NETFLIX = PROVIDERS[0];
 const providerByKey = key => PROVIDERS.find(p => p.key === key) || null;
@@ -204,7 +210,7 @@ function activeProviders() {
 }
 const signature = list => list.map(p => p.key).join(',');
 /**
- * Disney+, HBO Max e Globoplay: tenta abrir o link do título no app; as TVs não documentam
+ * Disney+, HBO Max, Globoplay, Prime Video e Paramount+: tenta abrir o link do título no app; as TVs não documentam
  * deep links desses apps, então, se não der, abre só o app (e a página pede para procurar o título).
  */
 function openServiceLink(appId, link) {
@@ -295,7 +301,10 @@ async function putPoster(it, jpg) {
 function bestLink(p, offers) {
   let best = null;
   for (const o of offers || []) {
-    const u = String(o && o.standardWebURL || '').split('?')[0];   // tira utm_source & cia.
+    // Tira utm_source & cia.; no Prime Video, o título é o ?gti=, então fica só ele.
+    const [base, query] = String(o && o.standardWebURL || '').split('?');
+    const gti = p.jw === 'prv' && /(?:^|&)gti=(amzn1\.dv\.gti\.[0-9a-f-]{36})(?:&|$)/.exec(query || '');
+    const u = base + (gti ? '?gti=' + gti[1] : '');
     if (!p.link.test(u)) continue;
     if (!best || (u.indexOf('/t/') >= 0 && best.indexOf('/t/') < 0)) best = u;
   }

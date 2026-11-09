@@ -35,7 +35,8 @@ import javax.net.ssl.HttpsURLConnection;
 
 /**
  * "Indicações da semana": populares no JustWatch de cada serviço que a pessoa usa (a Netflix
- * sempre, e Disney+, HBO Max e Globoplay quando abertos mais de 3 vezes na última semana; ver
+ * sempre, e Disney+, HBO Max, Globoplay, Prime Video e Paramount+ quando abertos mais de 3 vezes
+ * na última semana; ver
  * AppUsage), com o link do título para abrir direto no app. Completa com o ranking da iTunes
  * Store Brasil se faltar. Nenhuma das fontes exige chave de API.
  * Sorteio com semente = semana ISO, então a seleção muda toda segunda-feira (ou quando os
@@ -84,7 +85,16 @@ final class WeeklyPicks {
             new Provider("globoplay", "gop",
                     Pattern.compile("^https://globoplay\\.globo\\.com/(?:[a-z0-9-]{1,120}/t/[A-Za-z0-9]{1,20}/?|v/\\d{1,12}/?)$"),
                     "com.globo.globotv"),
+            // O título vem no ?gti= (bestLink guarda só ele).
+            new Provider("prime", "prv",
+                    Pattern.compile("^https://app\\.primevideo\\.com/detail\\?gti=amzn1\\.dv\\.gti\\.[0-9a-f-]{36}$"),
+                    "com.amazon.amazonvideo.livingroom", "com.amazon.avod.thirdpartyclient"),
+            // Séries chegam pelo 1º episódio (/shows/<série>/video/<id>/<nome>); filmes, por /movies/<nome>/<id>.
+            new Provider("paramount", "pmp",
+                    Pattern.compile("^https://www\\.paramountplus\\.com/(?:shows/[a-z0-9_-]{1,100}/video/[A-Za-z0-9_-]{8,40}/[A-Za-z0-9_-]{0,160}|movies/[a-z0-9_-]{1,100}/[A-Za-z0-9_-]{8,40})/?$"),
+                    "com.cbs.ca", "com.cbs.ott", "com.cbs.app"),
     };
+    static final Pattern PRIME_GTI = Pattern.compile("[?&]gti=(amzn1\\.dv\\.gti\\.[0-9a-f-]{36})(?:&|$)");
 
     static Provider provider(String key) {
         for (Provider p : PROVIDERS) if (p.key.equals(key)) return p;
@@ -375,7 +385,11 @@ final class WeeklyPicks {
             if (o == null) continue;
             String u = o.optString("standardWebURL");
             int q = u.indexOf('?');
-            if (q >= 0) u = u.substring(0, q);   // tira utm_source & cia.
+            if (q >= 0) {
+                // Tira utm_source & cia.; no Prime Video, o título é o ?gti=, então fica só ele.
+                java.util.regex.Matcher g = PRIME_GTI.matcher(u.substring(q));
+                u = u.substring(0, q) + ("prv".equals(p.jw) && g.find() ? "?gti=" + g.group(1) : "");
+            }
             if (!p.link.matcher(u).matches()) continue;
             if (best == null || (u.contains("/t/") && !best.contains("/t/"))) best = u;
         }

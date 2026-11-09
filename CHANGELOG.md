@@ -2,6 +2,11 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 17.3.0 (novembro de 2026)
+
+- **Prime Video e Paramount+ nas indicações:** as indicações da semana agora também trazem os títulos populares do Prime Video e do Paramount+, com o ícone de cada serviço na capa. Eles entram sozinhos quando você abre o app mais de 3 vezes pelo Onix, ou você marca em **Configurações → Indicações**. **Assistir** abre o título no app.
+- **Banner do Project Gems com imagens deitadas:** as novidades do Project Gems no destaque podem mostrar uma imagem larga ou duas sobrepostas, além das duas em pé de antes.
+
 ## 17.2.0 (novembro de 2026)
 
 - **Novidades do Project Gems no destaque:** o primeiro banner do destaque da tela inicial agora mostra as novidades dos outros apps do criador do Onix, começando pelo **Emerald**, a nova tela inicial para celulares Android. **Saiba mais** abre um QR code que leva ao site do Project Gems. Quem não quiser ver pode desligar em **Configurações → Indicações → Novidades do Project Gems**. Só na versão para Google TV.

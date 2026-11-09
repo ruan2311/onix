@@ -71,7 +71,7 @@ return {
   self: SELF,
   version: '@VERSION@',   // o build troca pela versão do APK
   updateHint: 'Na LG, baixe o onix-webos.ipk no GitHub e instale de novo pelo webOS Dev Manager ou pelo Homebrew Channel.',
-  serviceIds: { netflix: ['netflix'], disney: ['com.disney.disneyplus-prod'], globoplay: ['com.globo.globoplay'] },
+  serviceIds: { netflix: ['netflix'], disney: ['com.disney.disneyplus-prod'], globoplay: ['com.globo.globoplay'], prime: ['amazon'] },
   keys: { back: 461, exit: -1 },
 
   scanApps(done) {

@@ -239,7 +239,8 @@ public class AndroidBridge {
     }
 
     /**
-     * Abre uma indicação no app do serviço (Netflix, Disney+, HBO Max ou Globoplay), direto no
+     * Abre uma indicação no app do serviço (Netflix, Disney+, HBO Max, Globoplay, Prime Video ou
+     * Paramount+), direto no
      * título; se o app não aceitar o link, abre só o app; sem o app (ou indicação da iTunes), cai
      * na busca da TV. O link nunca vem do JS: é lido da seleção baixada pelo próprio app.
      * Retorna "title", "app", "search" ou "" (falhou).
@@ -252,9 +253,13 @@ public class AndroidBridge {
             PackageManager pm = activity.getPackageManager();
             // Netflix: https://www.netflix.com/title/<id> abre direto na página do título no app da TV
             // (testado na Philips); netflix://title só abre a Netflix, então fica como reserva.
-            // Disney+, HBO Max e Globoplay aceitam o próprio link web do título.
+            // Disney+, HBO Max, Globoplay e Prime Video aceitam o próprio link web do título.
+            // Paramount+: o app da TV usa o esquema pplusintl:// (pplus:// no app dos EUA), como no
+            // deep link de Android TV do JustWatch; o link web fica de reserva.
             String[] uris = pick.netflixId != null
                     ? new String[]{"https://www.netflix.com/title/" + pick.netflixId, "netflix://title/" + pick.netflixId}
+                    : "paramount".equals(pick.provider.key)
+                    ? new String[]{pick.link.replaceFirst("^https://", "pplusintl://"), pick.link.replaceFirst("^https://", "pplus://"), pick.link}
                     : new String[]{pick.link};
             for (String pkg : pick.provider.pkgs) {
                 if (pm.getLaunchIntentForPackage(pkg) == null && pm.getLeanbackLaunchIntentForPackage(pkg) == null) continue;
