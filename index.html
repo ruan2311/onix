@@ -1342,171 +1342,280 @@ html.th-rubi .nav-theme{display:block}
 .rb-bulbs1{animation:pxTwinkle 1.6s steps(1) infinite}
 .rb-bulbs2{animation:pxTwinkle 1.6s steps(1) .8s infinite}
 
-/* === Onix Safira: fundo do mar, raios de luz e bolhas === */
-html.th-safira{--bg:#020e1f;--text:#eef7ff;--muted:rgba(190,220,255,.62);
-  --glass:linear-gradient(135deg,rgba(90,180,255,.14),rgba(60,110,255,.05) 60%,rgba(255,255,255,.05)),linear-gradient(rgba(3,18,40,.6),rgba(3,18,40,.6));
-  --glass-border:rgba(120,200,255,.22);--glass-hi:inset 0 1px 0 rgba(190,230,255,.3);
-  --focus-glow:0 0 0 .14rem #6fd6ff,0 .5rem 1.6rem rgba(60,170,255,.32);--neon:#6fd6ff;--clock-accent:#6fd6ff}
-html.th-safira body{background:linear-gradient(180deg,#06264a 0%,#031630 45%,#010812 100%) var(--bg)}
-html.th-safira .glass-blur{background:linear-gradient(180deg,#041a36,#020a17)}
-html.th-safira #sidebar{border-right-color:rgba(111,214,255,0.14)}
-html.th-safira .nav-item.active{background:rgba(111,214,255,0.09);border-color:rgba(111,214,255,0.18)}
-html.th-safira .nav-item.is-focused,html.th-safira .nav-item.me.is-focused{color:#02132a;background:linear-gradient(100deg,#8fe4ff,#5aa2ff);border-color:transparent}
+/* === Onix Safira: fundo do mar com recife, cardume, águas-vivas e safiras no chão === */
+html.th-safira{--bg:#020e1f;--text:#eef7ff;--muted:rgba(190,220,255,.64);
+  --glass:linear-gradient(135deg,rgba(110,200,255,.16),rgba(60,110,255,.05) 55%,rgba(150,230,255,.07)),linear-gradient(rgba(3,20,44,.62),rgba(3,20,44,.62));
+  --glass-border:rgba(130,210,255,.24);--glass-hi:inset 0 1px 0 rgba(200,240,255,.34),inset 0 -1px 0 rgba(0,0,0,.22);--shadow:0 .45rem 1.1rem rgba(0,0,0,.45);
+  --focus-glow:0 0 0 .14rem #6fd6ff,0 0 0 .34rem rgba(111,214,255,.22),0 .6rem 1.8rem rgba(60,170,255,.42);--neon:#6fd6ff;--clock-accent:#6fd6ff}
+html.th-safira body{background:radial-gradient(60% 45% at 70% 0%,rgba(90,190,255,.22),transparent 70%),radial-gradient(50% 40% at 10% 100%,rgba(20,90,160,.25),transparent 70%),linear-gradient(180deg,#07305a 0%,#04193a 40%,#020b1c 75%,#010610 100%) var(--bg)}
+html.th-safira .glass-blur{background:linear-gradient(180deg,#05203f,#020a17)}
+html.th-safira #sidebar{background:linear-gradient(180deg,rgba(8,44,84,.5),rgba(2,10,22,.72));border-right-color:rgba(111,214,255,.16)}
+html.th-safira .brand-mark,html.th-safira .layer-brand svg{stroke:#bfeaff}
+html.th-safira .nav-item.active{background:rgba(111,214,255,.1);border-color:rgba(111,214,255,.2)}
+html.th-safira .nav-item.is-focused,html.th-safira .nav-item.me.is-focused{color:#02132a;background:linear-gradient(100deg,#c4f1ff,#6fd6ff 45%,#3f8cff);border-color:transparent;box-shadow:0 .5rem 1.4rem rgba(60,170,255,.42),inset 0 1px 0 rgba(255,255,255,.4)}
 html.th-safira .nav-item.me.is-focused .me-name{color:#02132a}
-html.th-safira .f.is-focused,html.th-safira .tile.is-focused .tile-art{border-color:rgba(111,214,255,0.88)}
-html.th-safira .tile.is-focused .tile-label{color:#6fd6ff}
-html.th-safira .btn.primary{background:linear-gradient(100deg,#8fe4ff,#5aa2ff);color:#02132a;border-color:transparent}
+html.th-safira .f.is-focused,html.th-safira .tile.is-focused .tile-art{border-color:rgba(111,214,255,.9)}
+html.th-safira .tile.is-focused .tile-label{color:#6fd6ff;font-weight:600}
+html.th-safira .btn.primary{background:linear-gradient(100deg,#c4f1ff,#6fd6ff 45%,#3f8cff);color:#02132a;border-color:transparent;box-shadow:0 .4rem 1.2rem rgba(60,170,255,.24),inset 0 1px 0 rgba(255,255,255,.4)}
 html.th-safira .kicker{color:#6fd6ff}
 html.th-safira .hero-bg{opacity:.3}
-html.th-safira .dots i.on{background:#6fd6ff}
-html.th-safira .row-title::before{content:"";display:inline-block;margin-right:.7rem;width:.6rem;height:.6rem;border-radius:50%;border:2px solid #6fd6ff;vertical-align:.1rem}
+html.th-safira .dots i.on{background:#6fd6ff;box-shadow:0 0 .6rem #6fd6ff}
+html.th-safira .row-title::before{content:"";display:inline-block;width:.62rem;height:.62rem;margin-right:.8rem;border-radius:.12rem;transform:rotate(45deg);background:linear-gradient(135deg,#e2f8ff,#6fd6ff 35%,#2f6dff 70%,#0a2a6b);box-shadow:0 0 .7rem rgba(111,214,255,.8);vertical-align:.1rem}
 html.th-safira .switch.on{background:#2f8cff}
-html.th-safira .opt.is-focused,html.th-safira .row-opt.is-focused{background:linear-gradient(100deg,#8fe4ff,#5aa2ff);color:#02132a}
-html.th-safira .opt.is-focused .opt-desc,html.th-safira .row-opt.is-focused .opt-desc{color:rgba(2,19,42,0.72)}
+html.th-safira .opt.is-focused,html.th-safira .row-opt.is-focused{background:linear-gradient(100deg,#c4f1ff,#6fd6ff 45%,#3f8cff);color:#02132a}
+html.th-safira .opt.is-focused .opt-desc,html.th-safira .row-opt.is-focused .opt-desc{color:rgba(2,19,42,.72)}
 html.th-safira .tile-art{background:#04172e}
 html.th-safira .tile-art img{background:#062240}
-html.th-safira #toast{background:#041b36;border-color:rgba(111,214,255,0.3)}
-html.th-safira .reader-panel,html.th-safira .wx-card{background:linear-gradient(170deg,#08284c,#03101f 70%);border-color:rgba(111,214,255,0.2)}
-html.th-safira .layer{background:radial-gradient(70% 60% at 50% 0%,rgba(80,170,255,.2),transparent 70%),linear-gradient(180deg,#06264a,#010812)}
-html.th-safira .pf.is-focused .av{box-shadow:0 0 0 .2rem #6fd6ff,0 .8rem 2rem rgba(60,170,255,.35)}
+html.th-safira #toast{background:linear-gradient(135deg,#072b52,#031428);border-color:rgba(130,210,255,.24);box-shadow:0 .8rem 2rem rgba(0,0,0,.5),0 0 1.4rem rgba(60,170,255,.24)}
+html.th-safira .reader-panel,html.th-safira .wx-card{background:linear-gradient(170deg,#0a2e56,#03101f 70%);border-color:rgba(130,210,255,.24)}
+html.th-safira .layer{background:radial-gradient(70% 60% at 50% 0%,rgba(80,170,255,.24),transparent 70%),linear-gradient(180deg,#07305a,#010812)}
+html.th-safira .pf.is-focused .av{box-shadow:0 0 0 .2rem #6fd6ff,0 .8rem 2rem rgba(60,170,255,.42)}
 html.th-safira .kb-key.is-focused,html.th-safira .pin-key.is-focused,html.th-safira .svc.is-focused{background:#6fd6ff;color:#02132a;border-color:#6fd6ff}
 html.th-safira .clk-flip .card i{background:linear-gradient(180deg,rgba(111,214,255,.16) 0,rgba(111,214,255,.16) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}
-html.th-safira .clk-analog circle.face{fill:rgba(111,214,255,0.07)}
-html.th-safira .cz-orbit i{background:#6fd6ff;box-shadow:0 0 .9rem rgba(60,170,255,.9)}
+html.th-safira .clk-analog circle.face{fill:rgba(111,214,255,.07)}
+html.th-safira .clk{text-shadow:0 0 2.2rem rgba(60,170,255,.24)}
+html.th-safira .cz-orbit i{background:#6fd6ff;box-shadow:0 0 .9rem rgba(60,170,255,.42)}
 html.th-safira.home-cosmos .kicker{color:#9fb4ff}
 html.th-safira .nav-art{display:none}
 html.th-safira .nav-theme{display:block}
 @media (min-width:761px),(orientation:landscape){
-  html.th-safira.nav-top #sidebar{background:linear-gradient(180deg,#041a36,#020a17)}
-  html.th-safira.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(8,40,76,.94),rgba(2,12,26,.95));border-color:rgba(111,214,255,0.24)}
+  html.th-safira.nav-top #sidebar{background:linear-gradient(180deg,#05203f,#020a17);border-bottom-color:rgba(111,214,255,.16)}
+  html.th-safira.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(8,40,76,.94),rgba(2,12,26,.95));border-color:rgba(111,214,255,.2)}
   html.th-safira.nav-top .nav-item.active::before,html.th-safira.nav-bottom .nav-item.active::before{background:#6fd6ff;box-shadow:0 0 .7rem #6fd6ff}
 }
-/* === Onix Esmeralda: floresta à noite com vaga-lumes === */
-html.th-esmeralda{--bg:#03100a;--text:#effff4;--muted:rgba(200,235,210,.6);
-  --glass:linear-gradient(135deg,rgba(80,230,140,.12),rgba(220,255,140,.04) 60%,rgba(255,255,255,.05)),linear-gradient(rgba(3,22,12,.62),rgba(3,22,12,.62));
-  --glass-border:rgba(110,240,160,.2);--glass-hi:inset 0 1px 0 rgba(200,255,220,.28);
-  --focus-glow:0 0 0 .14rem #5fe89a,0 .5rem 1.6rem rgba(80,230,140,.32);--neon:#d9f56a;--clock-accent:#5fe89a}
-html.th-esmeralda body{background:radial-gradient(90% 70% at 80% 0%,#0d3a24 0%,#062014 45%,#020805 100%) var(--bg)}
+/* === Onix Esmeralda: floresta à noite com névoa, cogumelos, vaga-lumes e esmeraldas === */
+html.th-esmeralda{--bg:#03100a;--text:#effff4;--muted:rgba(200,235,210,.62);
+  --glass:linear-gradient(135deg,rgba(80,230,140,.14),rgba(220,255,140,.04) 55%,rgba(170,255,210,.06)),linear-gradient(rgba(3,22,12,.64),rgba(3,22,12,.64));
+  --glass-border:rgba(110,240,160,.22);--glass-hi:inset 0 1px 0 rgba(200,255,220,.3),inset 0 -1px 0 rgba(0,0,0,.22);--shadow:0 .45rem 1.1rem rgba(0,0,0,.45);
+  --focus-glow:0 0 0 .14rem #5fe89a,0 0 0 .34rem rgba(95,232,154,.22),0 .6rem 1.8rem rgba(80,230,140,.4);--neon:#d9f56a;--clock-accent:#5fe89a}
+html.th-esmeralda body{background:radial-gradient(55% 50% at 85% 0%,rgba(150,255,200,.16),transparent 70%),radial-gradient(60% 50% at 0% 100%,rgba(20,90,50,.35),transparent 70%),linear-gradient(180deg,#0b3321 0%,#06200f 45%,#020a05 100%) var(--bg)}
 html.th-esmeralda .glass-blur{background:linear-gradient(180deg,#05190e,#020805)}
-html.th-esmeralda #sidebar{border-right-color:rgba(95,232,154,0.14)}
-html.th-esmeralda .nav-item.active{background:rgba(95,232,154,0.09);border-color:rgba(95,232,154,0.18)}
-html.th-esmeralda .nav-item.is-focused,html.th-esmeralda .nav-item.me.is-focused{color:#03200f;background:linear-gradient(100deg,#7cf0ac,#c9f26a);border-color:transparent}
+html.th-esmeralda #sidebar{background:linear-gradient(180deg,rgba(12,52,32,.5),rgba(2,10,6,.74));border-right-color:rgba(95,232,154,.15)}
+html.th-esmeralda .brand-mark,html.th-esmeralda .layer-brand svg{stroke:#c9ffdf}
+html.th-esmeralda .nav-item.active{background:rgba(95,232,154,.1);border-color:rgba(95,232,154,.2)}
+html.th-esmeralda .nav-item.is-focused,html.th-esmeralda .nav-item.me.is-focused{color:#03200f;background:linear-gradient(100deg,#b4ffd2,#5fe89a 50%,#c9f26a);border-color:transparent;box-shadow:0 .5rem 1.4rem rgba(80,230,140,.4),inset 0 1px 0 rgba(255,255,255,.4)}
 html.th-esmeralda .nav-item.me.is-focused .me-name{color:#03200f}
-html.th-esmeralda .f.is-focused,html.th-esmeralda .tile.is-focused .tile-art{border-color:rgba(95,232,154,0.88)}
-html.th-esmeralda .tile.is-focused .tile-label{color:#5fe89a}
-html.th-esmeralda .btn.primary{background:linear-gradient(100deg,#7cf0ac,#c9f26a);color:#03200f;border-color:transparent}
+html.th-esmeralda .f.is-focused,html.th-esmeralda .tile.is-focused .tile-art{border-color:rgba(95,232,154,.9)}
+html.th-esmeralda .tile.is-focused .tile-label{color:#5fe89a;font-weight:600}
+html.th-esmeralda .btn.primary{background:linear-gradient(100deg,#b4ffd2,#5fe89a 50%,#c9f26a);color:#03200f;border-color:transparent;box-shadow:0 .4rem 1.2rem rgba(80,230,140,.22),inset 0 1px 0 rgba(255,255,255,.4)}
 html.th-esmeralda .kicker{color:#5fe89a}
 html.th-esmeralda .hero-bg{opacity:.3}
-html.th-esmeralda .dots i.on{background:#5fe89a}
-html.th-esmeralda .row-title::before{content:"";display:inline-block;margin-right:.7rem;width:.5rem;height:.5rem;border-radius:50%;background:#d9f56a;box-shadow:0 0 .6rem #d9f56a;vertical-align:.14rem}
+html.th-esmeralda .dots i.on{background:#5fe89a;box-shadow:0 0 .6rem #5fe89a}
+html.th-esmeralda .row-title::before{content:"";display:inline-block;width:.52rem;height:.7rem;margin-right:.8rem;background:linear-gradient(160deg,#d6ffe6,#5fe89a 40%,#1fa860 75%,#0d6b3a);-webkit-clip-path:polygon(28% 0,72% 0,100% 20%,100% 80%,72% 100%,28% 100%,0 80%,0 20%);clip-path:polygon(28% 0,72% 0,100% 20%,100% 80%,72% 100%,28% 100%,0 80%,0 20%);vertical-align:.02rem}
 html.th-esmeralda .switch.on{background:#2fc47a}
-html.th-esmeralda .opt.is-focused,html.th-esmeralda .row-opt.is-focused{background:linear-gradient(100deg,#7cf0ac,#c9f26a);color:#03200f}
-html.th-esmeralda .opt.is-focused .opt-desc,html.th-esmeralda .row-opt.is-focused .opt-desc{color:rgba(3,32,15,0.72)}
+html.th-esmeralda .opt.is-focused,html.th-esmeralda .row-opt.is-focused{background:linear-gradient(100deg,#b4ffd2,#5fe89a 50%,#c9f26a);color:#03200f}
+html.th-esmeralda .opt.is-focused .opt-desc,html.th-esmeralda .row-opt.is-focused .opt-desc{color:rgba(3,32,15,.72)}
 html.th-esmeralda .tile-art{background:#05170d}
 html.th-esmeralda .tile-art img{background:#082414}
-html.th-esmeralda #toast{background:#061c10;border-color:rgba(95,232,154,0.3)}
-html.th-esmeralda .reader-panel,html.th-esmeralda .wx-card{background:linear-gradient(170deg,#0a2c1a,#03100a 70%);border-color:rgba(95,232,154,0.2)}
-html.th-esmeralda .layer{background:radial-gradient(70% 60% at 70% 0%,rgba(90,230,140,.16),transparent 70%),linear-gradient(180deg,#0d3a24,#020805)}
-html.th-esmeralda .pf.is-focused .av{box-shadow:0 0 0 .2rem #5fe89a,0 .8rem 2rem rgba(80,230,140,.35)}
+html.th-esmeralda #toast{background:linear-gradient(135deg,#0a2c1a,#04140b);border-color:rgba(110,240,160,.22);box-shadow:0 .8rem 2rem rgba(0,0,0,.5),0 0 1.4rem rgba(80,230,140,.22)}
+html.th-esmeralda .reader-panel,html.th-esmeralda .wx-card{background:linear-gradient(170deg,#0c321e,#03100a 70%);border-color:rgba(110,240,160,.22)}
+html.th-esmeralda .layer{background:radial-gradient(70% 60% at 70% 0%,rgba(90,230,140,.18),transparent 70%),linear-gradient(180deg,#0d3a24,#020805)}
+html.th-esmeralda .pf.is-focused .av{box-shadow:0 0 0 .2rem #5fe89a,0 .8rem 2rem rgba(80,230,140,.4)}
 html.th-esmeralda .kb-key.is-focused,html.th-esmeralda .pin-key.is-focused,html.th-esmeralda .svc.is-focused{background:#5fe89a;color:#03200f;border-color:#5fe89a}
 html.th-esmeralda .clk-flip .card i{background:linear-gradient(180deg,rgba(95,232,154,.15) 0,rgba(95,232,154,.15) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}
-html.th-esmeralda .clk-analog circle.face{fill:rgba(95,232,154,0.07)}
-html.th-esmeralda .cz-orbit i{background:#5fe89a;box-shadow:0 0 .9rem rgba(80,230,140,.9)}
+html.th-esmeralda .clk-analog circle.face{fill:rgba(95,232,154,.07)}
+html.th-esmeralda .clk{text-shadow:0 0 2.2rem rgba(80,230,140,.22)}
+html.th-esmeralda .cz-orbit i{background:#5fe89a;box-shadow:0 0 .9rem rgba(80,230,140,.4)}
 html.th-esmeralda.home-cosmos .kicker{color:#d9f56a}
 html.th-esmeralda .nav-art{display:none}
 html.th-esmeralda .nav-theme{display:block}
 @media (min-width:761px),(orientation:landscape){
-  html.th-esmeralda.nav-top #sidebar{background:linear-gradient(180deg,#05190e,#020805)}
-  html.th-esmeralda.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(10,44,26,.94),rgba(2,10,6,.95));border-color:rgba(95,232,154,0.24)}
+  html.th-esmeralda.nav-top #sidebar{background:linear-gradient(180deg,#05190e,#020805);border-bottom-color:rgba(95,232,154,.15)}
+  html.th-esmeralda.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(10,44,26,.94),rgba(2,10,6,.95));border-color:rgba(95,232,154,.2)}
   html.th-esmeralda.nav-top .nav-item.active::before,html.th-esmeralda.nav-bottom .nav-item.active::before{background:#5fe89a;box-shadow:0 0 .7rem #5fe89a}
 }
-/* === Onix Âmbar: pôr do sol retrô, com sol listrado e grade neon === */
-html.th-ambar{--bg:#14061c;--text:#fff4ec;--muted:rgba(255,214,200,.62);
-  --glass:linear-gradient(135deg,rgba(255,150,70,.14),rgba(255,70,160,.06) 60%,rgba(255,255,255,.05)),linear-gradient(rgba(26,8,30,.62),rgba(26,8,30,.62));
-  --glass-border:rgba(255,170,120,.22);--glass-hi:inset 0 1px 0 rgba(255,220,190,.28);
-  --focus-glow:0 0 0 .14rem #ffb347,0 .5rem 1.6rem rgba(255,140,70,.32);--neon:#ff5ea8;--clock-accent:#ffb347}
-html.th-ambar body{background:linear-gradient(180deg,#1c0a33 0%,#3a0f3c 48%,#5a1a32 72%,#200812 100%) var(--bg)}
+/* === Onix Âmbar: pôr do sol retrô, com sol listrado, nuvens, palmeiras e a grade neon === */
+html.th-ambar{--bg:#14061c;--text:#fff4ec;--muted:rgba(255,214,200,.64);
+  --glass:linear-gradient(135deg,rgba(255,150,70,.15),rgba(255,70,160,.06) 55%,rgba(255,210,150,.06)),linear-gradient(rgba(26,8,32,.64),rgba(26,8,32,.64));
+  --glass-border:rgba(255,170,120,.24);--glass-hi:inset 0 1px 0 rgba(255,220,190,.3),inset 0 -1px 0 rgba(0,0,0,.22);--shadow:0 .45rem 1.1rem rgba(0,0,0,.45);
+  --focus-glow:0 0 0 .14rem #ffb347,0 0 0 .34rem rgba(255,179,71,.22),0 .6rem 1.8rem rgba(255,140,70,.42);--neon:#ff5ea8;--clock-accent:#ffb347}
+html.th-ambar body{background:linear-gradient(180deg,#12052a 0%,#2a0b3e 45%,#4a1440 70%,#14061c 100%) var(--bg)}
 html.th-ambar .glass-blur{background:linear-gradient(180deg,#22092c,#0e0410)}
-html.th-ambar #sidebar{border-right-color:rgba(255,179,71,0.14)}
-html.th-ambar .nav-item.active{background:rgba(255,179,71,0.09);border-color:rgba(255,179,71,0.18)}
-html.th-ambar .nav-item.is-focused,html.th-ambar .nav-item.me.is-focused{color:#2a0c00;background:linear-gradient(100deg,#ffd36b,#ff8a3d 55%,#ff5ea8);border-color:transparent}
+html.th-ambar #sidebar{background:linear-gradient(180deg,rgba(30,8,52,.6),rgba(40,8,30,.78));border-right-color:rgba(255,94,168,.18)}
+html.th-ambar .brand-mark,html.th-ambar .layer-brand svg{stroke:#ffd9b0}
+html.th-ambar .nav-item.active{background:rgba(255,179,71,.1);border-color:rgba(255,179,71,.2)}
+html.th-ambar .nav-item.is-focused,html.th-ambar .nav-item.me.is-focused{color:#2a0c00;background:linear-gradient(100deg,#ffd36b,#ff8a3d 55%,#ff5ea8);border-color:transparent;box-shadow:0 .5rem 1.4rem rgba(255,140,70,.42),inset 0 1px 0 rgba(255,255,255,.4)}
 html.th-ambar .nav-item.me.is-focused .me-name{color:#2a0c00}
-html.th-ambar .f.is-focused,html.th-ambar .tile.is-focused .tile-art{border-color:rgba(255,179,71,0.88)}
-html.th-ambar .tile.is-focused .tile-label{color:#ffb347}
-html.th-ambar .btn.primary{background:linear-gradient(100deg,#ffd36b,#ff8a3d 55%,#ff5ea8);color:#2a0c00;border-color:transparent}
+html.th-ambar .f.is-focused,html.th-ambar .tile.is-focused .tile-art{border-color:rgba(255,179,71,.9)}
+html.th-ambar .tile.is-focused .tile-label{color:#ffb347;font-weight:600}
+html.th-ambar .btn.primary{background:linear-gradient(100deg,#ffd36b,#ff8a3d 55%,#ff5ea8);color:#2a0c00;border-color:transparent;box-shadow:0 .4rem 1.2rem rgba(255,110,120,.24),inset 0 1px 0 rgba(255,255,255,.4)}
 html.th-ambar .kicker{color:#ffb347}
 html.th-ambar .hero-bg{opacity:.3}
-html.th-ambar .dots i.on{background:#ffb347}
-html.th-ambar .row-title::before{content:"";display:inline-block;margin-right:.7rem;width:1.2rem;height:.5rem;border-radius:0;background:linear-gradient(180deg,#ffd36b 0 30%,transparent 30% 45%,#ff8a3d 45% 70%,transparent 70% 82%,#ff5ea8 82%);vertical-align:.16rem}
+html.th-ambar .dots i.on{background:#ffb347;box-shadow:0 0 .6rem #ffb347}
+html.th-ambar .row-title::before{content:"";display:inline-block;width:1.15rem;height:.58rem;margin-right:.7rem;border-radius:1.2rem 1.2rem 0 0;background:linear-gradient(180deg,#ffe27a 0 34%,transparent 34% 46%,#ff9a3d 46% 66%,transparent 66% 76%,#ff5ea8 76%);vertical-align:.1rem}
 html.th-ambar .switch.on{background:#ff7a3d}
 html.th-ambar .opt.is-focused,html.th-ambar .row-opt.is-focused{background:linear-gradient(100deg,#ffd36b,#ff8a3d 55%,#ff5ea8);color:#2a0c00}
-html.th-ambar .opt.is-focused .opt-desc,html.th-ambar .row-opt.is-focused .opt-desc{color:rgba(42,12,0,0.72)}
+html.th-ambar .opt.is-focused .opt-desc,html.th-ambar .row-opt.is-focused .opt-desc{color:rgba(42,12,0,.72)}
 html.th-ambar .tile-art{background:#1d0920}
 html.th-ambar .tile-art img{background:#2a0d2c}
-html.th-ambar #toast{background:#24092a;border-color:rgba(255,179,71,0.3)}
-html.th-ambar .reader-panel,html.th-ambar .wx-card{background:linear-gradient(170deg,#36103a,#140616 70%);border-color:rgba(255,179,71,0.2)}
-html.th-ambar .layer{background:radial-gradient(60% 60% at 50% 100%,rgba(255,120,60,.18),transparent 70%),linear-gradient(180deg,#1c0a33,#200812)}
-html.th-ambar .pf.is-focused .av{box-shadow:0 0 0 .2rem #ffb347,0 .8rem 2rem rgba(255,140,70,.35)}
+html.th-ambar #toast{background:linear-gradient(135deg,#3a0f3c,#1a0620);border-color:rgba(255,170,120,.24);box-shadow:0 .8rem 2rem rgba(0,0,0,.5),0 0 1.4rem rgba(255,110,120,.24)}
+html.th-ambar .reader-panel,html.th-ambar .wx-card{background:linear-gradient(170deg,#3a1140,#140616 70%);border-color:rgba(255,170,120,.24)}
+html.th-ambar .layer{background:radial-gradient(60% 60% at 50% 100%,rgba(255,120,60,.22),transparent 70%),linear-gradient(180deg,#1c0a33,#200812)}
+html.th-ambar .pf.is-focused .av{box-shadow:0 0 0 .2rem #ffb347,0 .8rem 2rem rgba(255,140,70,.42)}
 html.th-ambar .kb-key.is-focused,html.th-ambar .pin-key.is-focused,html.th-ambar .svc.is-focused{background:#ffb347;color:#2a0c00;border-color:#ffb347}
 html.th-ambar .clk-flip .card i{background:linear-gradient(180deg,rgba(255,179,71,.15) 0,rgba(255,179,71,.15) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}
-html.th-ambar .clk-analog circle.face{fill:rgba(255,179,71,0.07)}
-html.th-ambar .cz-orbit i{background:#ffb347;box-shadow:0 0 .9rem rgba(255,140,70,.9)}
+html.th-ambar .clk-analog circle.face{fill:rgba(255,179,71,.07)}
+html.th-ambar .clk{text-shadow:0 0 2.2rem rgba(255,110,120,.24)}
+html.th-ambar .cz-orbit i{background:#ffb347;box-shadow:0 0 .9rem rgba(255,140,70,.42)}
 html.th-ambar.home-cosmos .kicker{color:#ff8fc4}
 html.th-ambar .nav-art{display:none}
 html.th-ambar .nav-theme{display:block}
 @media (min-width:761px),(orientation:landscape){
-  html.th-ambar.nav-top #sidebar{background:linear-gradient(180deg,#22092c,#0e0410)}
-  html.th-ambar.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(54,16,58,.94),rgba(20,6,22,.95));border-color:rgba(255,179,71,0.24)}
+  html.th-ambar.nav-top #sidebar{background:linear-gradient(180deg,#22092c,#0e0410);border-bottom-color:rgba(255,94,168,.18)}
+  html.th-ambar.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(54,16,58,.94),rgba(20,6,22,.95));border-color:rgba(255,179,71,.2)}
   html.th-ambar.nav-top .nav-item.active::before,html.th-ambar.nav-bottom .nav-item.active::before{background:#ffb347;box-shadow:0 0 .7rem #ffb347}
 }
-/* === Onix Quartzo Rosa: jardim japonês com lua cheia e cerejeiras === */
-html.th-quartzo{--bg:#140a12;--text:#fff2f6;--muted:rgba(255,215,228,.6);
-  --glass:linear-gradient(135deg,rgba(255,170,205,.13),rgba(255,255,255,.04) 60%,rgba(255,220,235,.06)),linear-gradient(rgba(28,12,22,.6),rgba(28,12,22,.6));
-  --glass-border:rgba(255,180,210,.22);--glass-hi:inset 0 1px 0 rgba(255,225,238,.3);
-  --focus-glow:0 0 0 .14rem #ffa8c8,0 .5rem 1.6rem rgba(255,150,195,.32);--neon:#ff8fbe;--clock-accent:#ffa8c8}
-html.th-quartzo body{background:radial-gradient(80% 70% at 85% 10%,#3a1a2e 0%,#1f0e1a 50%,#0a0408 100%) var(--bg)}
+/* === Onix Quartzo Rosa: jardim japonês com lua cheia, pagode, lago e cerejeiras === */
+html.th-quartzo{--bg:#140a12;--text:#fff2f6;--muted:rgba(255,215,228,.62);
+  --glass:linear-gradient(135deg,rgba(255,170,205,.15),rgba(255,255,255,.04) 55%,rgba(255,220,235,.07)),linear-gradient(rgba(30,12,24,.62),rgba(30,12,24,.62));
+  --glass-border:rgba(255,180,210,.24);--glass-hi:inset 0 1px 0 rgba(255,225,238,.32),inset 0 -1px 0 rgba(0,0,0,.22);--shadow:0 .45rem 1.1rem rgba(0,0,0,.45);
+  --focus-glow:0 0 0 .14rem #ffa8c8,0 0 0 .34rem rgba(255,168,200,.22),0 .6rem 1.8rem rgba(255,150,195,.4);--neon:#ff8fbe;--clock-accent:#ffa8c8}
+html.th-quartzo body{background:radial-gradient(55% 50% at 88% 62%,rgba(255,190,215,.14),transparent 70%),linear-gradient(180deg,#2a1226 0%,#1d0c1a 50%,#0b050a 100%) var(--bg)}
 html.th-quartzo .glass-blur{background:linear-gradient(180deg,#1f0e1a,#0b050a)}
-html.th-quartzo #sidebar{border-right-color:rgba(255,168,200,0.14)}
-html.th-quartzo .nav-item.active{background:rgba(255,168,200,0.09);border-color:rgba(255,168,200,0.18)}
-html.th-quartzo .nav-item.is-focused,html.th-quartzo .nav-item.me.is-focused{color:#2a0a18;background:linear-gradient(100deg,#ffe0ec,#ffa8c8);border-color:transparent}
+html.th-quartzo #sidebar{background:linear-gradient(180deg,rgba(52,22,44,.5),rgba(12,5,10,.74));border-right-color:rgba(255,168,200,.15)}
+html.th-quartzo .brand-mark,html.th-quartzo .layer-brand svg{stroke:#ffe0ec}
+html.th-quartzo .nav-item.active{background:rgba(255,168,200,.1);border-color:rgba(255,168,200,.2)}
+html.th-quartzo .nav-item.is-focused,html.th-quartzo .nav-item.me.is-focused{color:#2a0a18;background:linear-gradient(100deg,#fff0f5,#ffc2d8 45%,#ff8fbe);border-color:transparent;box-shadow:0 .5rem 1.4rem rgba(255,150,195,.4),inset 0 1px 0 rgba(255,255,255,.4)}
 html.th-quartzo .nav-item.me.is-focused .me-name{color:#2a0a18}
-html.th-quartzo .f.is-focused,html.th-quartzo .tile.is-focused .tile-art{border-color:rgba(255,168,200,0.88)}
-html.th-quartzo .tile.is-focused .tile-label{color:#ffa8c8}
-html.th-quartzo .btn.primary{background:linear-gradient(100deg,#ffe0ec,#ffa8c8);color:#2a0a18;border-color:transparent}
+html.th-quartzo .f.is-focused,html.th-quartzo .tile.is-focused .tile-art{border-color:rgba(255,168,200,.9)}
+html.th-quartzo .tile.is-focused .tile-label{color:#ffa8c8;font-weight:600}
+html.th-quartzo .btn.primary{background:linear-gradient(100deg,#fff0f5,#ffc2d8 45%,#ff8fbe);color:#2a0a18;border-color:transparent;box-shadow:0 .4rem 1.2rem rgba(255,150,195,.22),inset 0 1px 0 rgba(255,255,255,.4)}
 html.th-quartzo .kicker{color:#ffa8c8}
 html.th-quartzo .hero-bg{opacity:.3}
-html.th-quartzo .dots i.on{background:#ffa8c8}
-html.th-quartzo .row-title::before{content:"";display:inline-block;margin-right:.7rem;width:.62rem;height:.62rem;border-radius:50% 0;border:2px solid #ffa8c8;transform:rotate(45deg);vertical-align:.08rem}
+html.th-quartzo .dots i.on{background:#ffa8c8;box-shadow:0 0 .6rem #ffa8c8}
+html.th-quartzo .row-title::before{content:"";display:inline-block;width:.62rem;height:.62rem;margin-right:.8rem;border-radius:50% 0;transform:rotate(45deg);background:linear-gradient(135deg,#fff0f5,#ffa8c8 55%,#e0608e);box-shadow:0 0 .6rem rgba(255,150,195,.6);vertical-align:.08rem}
 html.th-quartzo .switch.on{background:#ff7fb0}
-html.th-quartzo .opt.is-focused,html.th-quartzo .row-opt.is-focused{background:linear-gradient(100deg,#ffe0ec,#ffa8c8);color:#2a0a18}
-html.th-quartzo .opt.is-focused .opt-desc,html.th-quartzo .row-opt.is-focused .opt-desc{color:rgba(42,10,24,0.72)}
+html.th-quartzo .opt.is-focused,html.th-quartzo .row-opt.is-focused{background:linear-gradient(100deg,#fff0f5,#ffc2d8 45%,#ff8fbe);color:#2a0a18}
+html.th-quartzo .opt.is-focused .opt-desc,html.th-quartzo .row-opt.is-focused .opt-desc{color:rgba(42,10,24,.72)}
 html.th-quartzo .tile-art{background:#1c0c17}
 html.th-quartzo .tile-art img{background:#2a1222}
-html.th-quartzo #toast{background:#231020;border-color:rgba(255,168,200,0.3)}
-html.th-quartzo .reader-panel,html.th-quartzo .wx-card{background:linear-gradient(170deg,#331a2b,#120810 70%);border-color:rgba(255,168,200,0.2)}
-html.th-quartzo .layer{background:radial-gradient(60% 60% at 70% 0%,rgba(255,170,205,.14),transparent 70%),radial-gradient(80% 70% at 85% 10%,#3a1a2e,#0a0408)}
-html.th-quartzo .pf.is-focused .av{box-shadow:0 0 0 .2rem #ffa8c8,0 .8rem 2rem rgba(255,150,195,.35)}
+html.th-quartzo #toast{background:linear-gradient(135deg,#341a2c,#160912);border-color:rgba(255,180,210,.24);box-shadow:0 .8rem 2rem rgba(0,0,0,.5),0 0 1.4rem rgba(255,150,195,.22)}
+html.th-quartzo .reader-panel,html.th-quartzo .wx-card{background:linear-gradient(170deg,#361c2e,#120810 70%);border-color:rgba(255,180,210,.24)}
+html.th-quartzo .layer{background:radial-gradient(60% 60% at 70% 0%,rgba(255,170,205,.16),transparent 70%),linear-gradient(180deg,#2a1226,#0a0408)}
+html.th-quartzo .pf.is-focused .av{box-shadow:0 0 0 .2rem #ffa8c8,0 .8rem 2rem rgba(255,150,195,.4)}
 html.th-quartzo .kb-key.is-focused,html.th-quartzo .pin-key.is-focused,html.th-quartzo .svc.is-focused{background:#ffa8c8;color:#2a0a18;border-color:#ffa8c8}
 html.th-quartzo .clk-flip .card i{background:linear-gradient(180deg,rgba(255,168,200,.14) 0,rgba(255,168,200,.14) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}
-html.th-quartzo .clk-analog circle.face{fill:rgba(255,168,200,0.07)}
-html.th-quartzo .cz-orbit i{background:#ffa8c8;box-shadow:0 0 .9rem rgba(255,150,195,.9)}
+html.th-quartzo .clk-analog circle.face{fill:rgba(255,168,200,.07)}
+html.th-quartzo .clk{text-shadow:0 0 2.2rem rgba(255,150,195,.22)}
+html.th-quartzo .cz-orbit i{background:#ffa8c8;box-shadow:0 0 .9rem rgba(255,150,195,.4)}
 html.th-quartzo.home-cosmos .kicker{color:#ffe0ec}
 html.th-quartzo .nav-art{display:none}
 html.th-quartzo .nav-theme{display:block}
 @media (min-width:761px),(orientation:landscape){
-  html.th-quartzo.nav-top #sidebar{background:linear-gradient(180deg,#1f0e1a,#0b050a)}
-  html.th-quartzo.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(52,24,42,.94),rgba(14,6,12,.95));border-color:rgba(255,168,200,0.24)}
+  html.th-quartzo.nav-top #sidebar{background:linear-gradient(180deg,#1f0e1a,#0b050a);border-bottom-color:rgba(255,168,200,.15)}
+  html.th-quartzo.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(52,24,42,.94),rgba(14,6,12,.95));border-color:rgba(255,168,200,.2)}
   html.th-quartzo.nav-top .nav-item.active::before,html.th-quartzo.nav-bottom .nav-item.active::before{background:#ffa8c8;box-shadow:0 0 .7rem #ffa8c8}
 }
-/* Animações dos 4 temas: só transform e opacity, devagar (a TV continua a 60 FPS). */
+/* === Onix Opala: a noite quentinha do Opala, com estrelinhas laranja, nuvens e a opala de fogo === */
+html.th-opala{--bg:#0f0907;--text:#fff7f0;--muted:rgba(255,236,222,.62);
+  --glass:linear-gradient(135deg,rgba(255,170,110,.15),rgba(255,255,255,.03) 55%,rgba(255,170,110,.07)),linear-gradient(rgba(26,14,10,.62),rgba(26,14,10,.62));
+  --glass-border:rgba(255,180,120,.22);--glass-hi:inset 0 1px 0 rgba(255,220,190,.3),inset 0 -1px 0 rgba(0,0,0,.22);--shadow:0 .45rem 1.1rem rgba(0,0,0,.45);
+  --focus-glow:0 0 0 .14rem #ff9a4d,0 0 0 .34rem rgba(255,154,77,.22),0 .6rem 1.8rem rgba(255,122,61,.42);--neon:#ff9a4d;--clock-accent:#ffc58f}
+html.th-opala body{background:radial-gradient(50% 42% at 80% 14%,rgba(255,138,61,.24),transparent 70%),radial-gradient(42% 38% at 6% 92%,rgba(242,90,106,.16),transparent 70%),radial-gradient(60% 50% at 50% 50%,rgba(120,50,20,.18),transparent 80%),linear-gradient(180deg,#140b08,#0b0605) var(--bg)}
+html.th-opala .glass-blur{background:linear-gradient(180deg,#1a0f0b,#0b0605)}
+html.th-opala #sidebar{background:linear-gradient(180deg,rgba(40,20,12,.5),rgba(12,7,5,.74));border-right-color:rgba(255,180,120,.15)}
+html.th-opala .brand-mark,html.th-opala .layer-brand svg{stroke:#ffd3ad}
+html.th-opala .nav-item.active{background:rgba(255,154,77,.1);border-color:rgba(255,154,77,.2)}
+html.th-opala .nav-item.is-focused,html.th-opala .nav-item.me.is-focused{color:#2a1206;background:linear-gradient(100deg,#ffc58f,#ff9a4d 40%,#ff7a3d 70%,#f25a6a);border-color:transparent;box-shadow:0 .5rem 1.4rem rgba(255,122,61,.42),inset 0 1px 0 rgba(255,255,255,.4)}
+html.th-opala .nav-item.me.is-focused .me-name{color:#2a1206}
+html.th-opala .f.is-focused,html.th-opala .tile.is-focused .tile-art{border-color:rgba(255,154,77,.9)}
+html.th-opala .tile.is-focused .tile-label{color:#ff9a4d;font-weight:600}
+html.th-opala .btn.primary{background:linear-gradient(100deg,#ffc58f,#ff9a4d 40%,#ff7a3d 70%,#f25a6a);color:#2a1206;border-color:transparent;box-shadow:0 .4rem 1.2rem rgba(255,122,61,.24),inset 0 1px 0 rgba(255,255,255,.4)}
+html.th-opala .kicker{color:#ff9a4d}
+html.th-opala .hero-bg{opacity:.3}
+html.th-opala .dots i.on{background:#ff9a4d;box-shadow:0 0 .6rem #ff9a4d}
+html.th-opala .row-title::before{content:"";display:inline-block;width:.8rem;height:.8rem;margin-right:.7rem;background:linear-gradient(135deg,#ffe2c4,#ff9a4d 50%,#f25a6a);-webkit-clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);clip-path:polygon(50% 0,61% 39%,100% 50%,61% 61%,50% 100%,39% 61%,0 50%,39% 39%);vertical-align:.02rem}
+html.th-opala .switch.on{background:#ff7a3d}
+html.th-opala .opt.is-focused,html.th-opala .row-opt.is-focused{background:linear-gradient(100deg,#ffc58f,#ff9a4d 40%,#ff7a3d 70%,#f25a6a);color:#2a1206}
+html.th-opala .opt.is-focused .opt-desc,html.th-opala .row-opt.is-focused .opt-desc{color:rgba(42,18,6,.72)}
+html.th-opala .tile-art{background:#1a110c}
+html.th-opala .tile-art img{background:#24170f}
+html.th-opala #toast{background:linear-gradient(135deg,#2a1810,#140b08);border-color:rgba(255,180,120,.22);box-shadow:0 .8rem 2rem rgba(0,0,0,.5),0 0 1.4rem rgba(255,122,61,.24)}
+html.th-opala .reader-panel,html.th-opala .wx-card{background:linear-gradient(170deg,#2a1810,#110a07 70%);border-color:rgba(255,180,120,.22)}
+html.th-opala .layer{background:radial-gradient(60% 55% at 80% 10%,rgba(255,138,61,.2),transparent 70%),radial-gradient(50% 50% at 10% 100%,rgba(242,90,106,.12),transparent 70%),#0f0907}
+html.th-opala .pf.is-focused .av{box-shadow:0 0 0 .2rem #ff9a4d,0 .8rem 2rem rgba(255,122,61,.42)}
+html.th-opala .kb-key.is-focused,html.th-opala .pin-key.is-focused,html.th-opala .svc.is-focused{background:#ff9a4d;color:#2a1206;border-color:#ff9a4d}
+html.th-opala .clk-flip .card i{background:linear-gradient(180deg,rgba(255,154,77,.15) 0,rgba(255,154,77,.15) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}
+html.th-opala .clk-analog circle.face{fill:rgba(255,154,77,.07)}
+html.th-opala .clk{text-shadow:0 0 2.2rem rgba(255,122,61,.24)}
+html.th-opala .cz-orbit i{background:#ff9a4d;box-shadow:0 0 .9rem rgba(255,122,61,.42)}
+html.th-opala.home-cosmos .kicker{color:#ffc58f}
+html.th-opala .nav-art{display:none}
+html.th-opala .nav-theme{display:block}
+html.th-opala .btn,html.th-opala .chip,html.th-opala .opt-val{border-radius:999px}
+@media (min-width:761px),(orientation:landscape){
+  html.th-opala.nav-top #sidebar{background:linear-gradient(180deg,#1a0f0b,#0b0605);border-bottom-color:rgba(255,180,120,.15)}
+  html.th-opala.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(42,24,16,.94),rgba(14,8,6,.95));border-color:rgba(255,154,77,.2)}
+  html.th-opala.nav-top .nav-item.active::before,html.th-opala.nav-bottom .nav-item.active::before{background:#ff9a4d;box-shadow:0 0 .7rem #ff9a4d}
+}
+/* === Onix Amethyst: o palco do Amethyst, com o buraco de minhoca, cristais de ametista e notas musicais === */
+html.th-amethyst{--bg:#060709;--text:#f5f6f8;--muted:rgba(232,234,240,.6);
+  --glass:linear-gradient(135deg,rgba(255,255,255,.12),rgba(140,110,255,.05) 55%,rgba(255,45,85,.05)),linear-gradient(rgba(12,11,20,.56),rgba(12,11,20,.56));
+  --glass-border:rgba(200,185,255,.17);--glass-hi:inset 0 1px 0 rgba(235,228,255,.28),inset 0 -1px 0 rgba(0,0,0,.22);--shadow:0 .45rem 1.1rem rgba(0,0,0,.45);
+  --focus-glow:0 0 0 .14rem #c9b8ff,0 0 0 .34rem rgba(124,92,255,.32),0 .6rem 1.8rem rgba(91,44,255,.48);--neon:#ff2d55;--clock-accent:#c9b8ff}
+html.th-amethyst body{background:radial-gradient(55% 45% at 82% 18%,rgba(124,92,255,.24),transparent 70%),radial-gradient(45% 40% at 4% 96%,rgba(255,45,85,.14),transparent 70%),linear-gradient(180deg,#0a0a10,#050507) var(--bg)}
+html.th-amethyst .glass-blur{background:linear-gradient(180deg,#0e0d16,#050507)}
+html.th-amethyst #sidebar{background:linear-gradient(180deg,rgba(28,22,52,.45),rgba(6,6,9,.74));border-right-color:rgba(201,184,255,.12)}
+html.th-amethyst .brand-mark,html.th-amethyst .layer-brand svg{stroke:#d9c6ff}
+html.th-amethyst .nav-item.active{background:rgba(201,184,255,.09);border-color:rgba(201,184,255,.18)}
+html.th-amethyst .nav-item.is-focused,html.th-amethyst .nav-item.me.is-focused{color:#fff;background:linear-gradient(100deg,#ff2d55,#a63cff 55%,#5b2cff);border-color:transparent;box-shadow:0 .5rem 1.4rem rgba(91,44,255,.48),inset 0 1px 0 rgba(255,255,255,.4)}
+html.th-amethyst .nav-item.me.is-focused .me-name{color:#fff}
+html.th-amethyst .f.is-focused,html.th-amethyst .tile.is-focused .tile-art{border-color:rgba(201,184,255,.9)}
+html.th-amethyst .tile.is-focused .tile-label{color:#c9b8ff;font-weight:600}
+html.th-amethyst .btn.primary{background:linear-gradient(100deg,#ff2d55,#a63cff 55%,#5b2cff);color:#fff;border-color:transparent;box-shadow:0 .4rem 1.2rem rgba(124,92,255,.26),inset 0 1px 0 rgba(255,255,255,.4)}
+html.th-amethyst .kicker{color:#c9b8ff}
+html.th-amethyst .hero-bg{opacity:.3}
+html.th-amethyst .dots i.on{background:#c9b8ff;box-shadow:0 0 .6rem #c9b8ff}
+html.th-amethyst .row-title::before{content:"";display:inline-block;width:.6rem;height:.72rem;margin-right:.8rem;background:linear-gradient(160deg,#f0e8ff,#b48cff 40%,#5b2cff 80%);-webkit-clip-path:polygon(22% 0,78% 0,100% 33%,50% 100%,0 33%);clip-path:polygon(22% 0,78% 0,100% 33%,50% 100%,0 33%);vertical-align:.02rem}
+html.th-amethyst .switch.on{background:#7c5cff}
+html.th-amethyst .opt.is-focused,html.th-amethyst .row-opt.is-focused{background:linear-gradient(100deg,#ff2d55,#a63cff 55%,#5b2cff);color:#fff}
+html.th-amethyst .opt.is-focused .opt-desc,html.th-amethyst .row-opt.is-focused .opt-desc{color:rgba(255,255,255,.76)}
+html.th-amethyst .tile-art{background:#101016}
+html.th-amethyst .tile-art img{background:#16151f}
+html.th-amethyst #toast{background:linear-gradient(135deg,#1c1730,#0b0a10);border-color:rgba(200,185,255,.17);box-shadow:0 .8rem 2rem rgba(0,0,0,.5),0 0 1.4rem rgba(124,92,255,.26)}
+html.th-amethyst .reader-panel,html.th-amethyst .wx-card{background:linear-gradient(170deg,#1c1730,#08080c 70%);border-color:rgba(200,185,255,.17)}
+html.th-amethyst .layer{background:radial-gradient(60% 55% at 80% 15%,rgba(124,92,255,.24),transparent 70%),radial-gradient(45% 45% at 5% 95%,rgba(255,45,85,.12),transparent 70%),#060709}
+html.th-amethyst .pf.is-focused .av{box-shadow:0 0 0 .2rem #c9b8ff,0 .8rem 2rem rgba(91,44,255,.48)}
+html.th-amethyst .kb-key.is-focused,html.th-amethyst .pin-key.is-focused,html.th-amethyst .svc.is-focused{background:#c9b8ff;color:#fff;border-color:#c9b8ff}
+html.th-amethyst .clk-flip .card i{background:linear-gradient(180deg,rgba(201,184,255,.14) 0,rgba(201,184,255,.14) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}
+html.th-amethyst .clk-analog circle.face{fill:rgba(124,92,255,.08)}
+html.th-amethyst .clk{text-shadow:0 0 2.2rem rgba(124,92,255,.26)}
+html.th-amethyst .cz-orbit i{background:#c9b8ff;box-shadow:0 0 .9rem rgba(91,44,255,.48)}
+html.th-amethyst.home-cosmos .kicker{color:#ff7a9a}
+html.th-amethyst .nav-art{display:none}
+html.th-amethyst .nav-theme{display:block}
+html.th-amethyst .btn.primary{color:#fff}
+html.th-amethyst .kb-key.is-focused,html.th-amethyst .pin-key.is-focused,html.th-amethyst .svc.is-focused{background:#7c5cff;border-color:#c9b8ff}
+@media (min-width:761px),(orientation:landscape){
+  html.th-amethyst.nav-top #sidebar{background:linear-gradient(180deg,#0e0d16,#050507);border-bottom-color:rgba(201,184,255,.12)}
+  html.th-amethyst.nav-bottom #sidebar{background:linear-gradient(180deg,rgba(26,22,44,.94),rgba(8,8,12,.95));border-color:rgba(201,184,255,.18)}
+  html.th-amethyst.nav-top .nav-item.active::before,html.th-amethyst.nav-bottom .nav-item.active::before{background:#c9b8ff;box-shadow:0 0 .7rem #c9b8ff}
+}
+/* Animações dos temas de pedra: só transform e opacity, devagar (a TV continua a 60 FPS). */
+.gm-tw{transform-box:fill-box;transform-origin:center;animation:gmTw 3.4s ease-in-out infinite}
+@keyframes gmTw{0%,100%{opacity:.18;transform:scale(.65)}50%{opacity:1;transform:scale(1.1)}}
+.gm-float{animation:gmFloat 7s ease-in-out infinite alternate}
+@keyframes gmFloat{to{transform:translateY(-18px)}}
+.gm-sway{transform-box:fill-box;transform-origin:50% 100%;animation:gmSway 6s ease-in-out infinite alternate}
+@keyframes gmSway{from{transform:rotate(-2.5deg)}to{transform:rotate(2.5deg)}}
+.gm-drift{animation:gmDrift 30s ease-in-out infinite alternate}
+@keyframes gmDrift{to{transform:translateX(70px)}}
 .sf-ray{animation:auGlow 9s ease-in-out infinite alternate}
 .sf-ray2{animation:auGlow 13s ease-in-out -5s infinite alternate-reverse}
+.sf-cau{animation:sfCau 14s ease-in-out infinite alternate}
+@keyframes sfCau{to{transform:translateX(-60px)}}
 .sf-up{animation:sfUp 26s linear infinite}
 .sf-up2{animation:sfUp 34s linear -12s infinite}
 .sf-up3{animation:sfUp 21s linear -7s infinite}
 @keyframes sfUp{from{transform:translateY(0)}to{transform:translateY(-1200px)}}
 .sf-jelly{animation:sfJelly 9s ease-in-out infinite alternate}
+.sf-swim{animation:sfSwim 5s ease-in-out infinite alternate}
+@keyframes sfSwim{to{transform:translate(-5px,-4px)}}
+.sf-flap{transform-box:fill-box;transform-origin:center;animation:sfFlap 2.4s ease-in-out infinite alternate}
+@keyframes sfFlap{from{transform:scaleY(1)}to{transform:scaleY(.72)}}
 @keyframes sfJelly{to{transform:translateY(-46px)}}
+.sf-fish{animation:sfFish 90s linear -38s infinite}
+@keyframes sfFish{from{transform:translateX(0)}to{transform:translateX(-2700px)}}
 .es-fly1{animation:pxTwinkle 3.4s ease-in-out infinite}
 .es-fly2{animation:pxTwinkle 4.6s ease-in-out 1.3s infinite}
 .es-fly3{animation:pxTwinkle 2.8s ease-in-out .6s infinite}
@@ -1515,14 +1624,26 @@ html.th-quartzo .nav-theme{display:block}
 .es-drift{animation:esDrift 16s ease-in-out infinite alternate}
 .es-drift2{animation:esDrift 22s ease-in-out -8s infinite alternate-reverse}
 @keyframes esDrift{to{transform:translate(28px,-22px)}}
+.es-beam{animation:auGlow 10s ease-in-out infinite alternate}
 .am-sun{animation:auGlow 6s ease-in-out infinite alternate}
 .am-tw{animation:pxTwinkle 4s ease-in-out infinite}
+.am-cloud{animation:gmDrift 40s ease-in-out infinite alternate-reverse}
+.am-shoot{opacity:0;animation:amShoot 11s ease-in 3s infinite}
+@keyframes amShoot{0%{opacity:0;transform:translate(0,0)}3%{opacity:1}10%,100%{opacity:0;transform:translate(-420px,190px)}}
 .qz-fall1{animation:qzFall 24s linear infinite}
 .qz-fall2{animation:qzFall 31s linear -11s infinite}
 .qz-fall3{animation:qzFall 27s linear -19s infinite}
 @keyframes qzFall{from{transform:translate(0,0)}to{transform:translate(-520px,1220px)}}
 .qz-sway{transform-box:fill-box;transform-origin:center;animation:qzSway 3s ease-in-out infinite alternate}
 @keyframes qzSway{from{transform:rotate(-24deg)}to{transform:rotate(30deg)}}
+.qz-shim{animation:pxTwinkle 3.2s ease-in-out infinite}
+.op-up{animation:sfUp 46s linear -20s infinite}
+.ay-spot{animation:auGlow 7s ease-in-out infinite alternate}
+.ay-spot2{animation:auGlow 9s ease-in-out -4s infinite alternate-reverse}
+.ay-worm{transform-box:fill-box;transform-origin:center;animation:ayWorm 18s ease-in-out infinite alternate}
+@keyframes ayWorm{from{transform:rotate(-3deg) scale(.98)}to{transform:rotate(3deg) scale(1.03)}}
+.ay-bar{transform-box:fill-box;transform-origin:50% 100%;animation:ayBar 1.2s ease-in-out infinite alternate}
+@keyframes ayBar{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
 
 /* Desenho do menu (no vão entre Jogos e Entradas) de cada tema; o padrão é o .nav-art. */
 .nav-theme{display:none;width:78%;max-height:100%;opacity:.95}
@@ -2043,7 +2164,7 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '17.3.0'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '17.4.0'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, pickPrime: false, pickParamount: false, projectAd: true, autoUpdate: true,
@@ -2057,7 +2178,7 @@ const CHOICES = Object.freeze({
   soundFx: [['chime', 'Onix Chime'], ['crystal', 'Crystal'], ['sharp', 'Sharpness'], ['velvet', 'Velvet'], ['pulse', 'Pulse']],
   homeStyle: [['glass', 'Onix Glass'], ['clean', 'Clean Glass'], ['cosmos', 'Onix Cosmos']],
   navPos: [['left', 'Lateral'], ['top', 'Em cima'], ['bottom', 'Embaixo']],
-  theme: [['dark', 'Onix Escuro'], ['cobalt', 'Onix Cobalt'], ['aurora', 'Onix Aurora'], ['rubi', 'Onix Rubi Cinema'], ['safira', 'Onix Safira'], ['esmeralda', 'Onix Esmeralda'], ['ambar', 'Onix Âmbar'], ['quartzo', 'Onix Quartzo Rosa'], ['white', 'Onix White']],   // o claro por último, para ninguém passar por ele de surpresa
+  theme: [['dark', 'Onix Escuro'], ['cobalt', 'Onix Cobalt'], ['aurora', 'Onix Aurora'], ['rubi', 'Onix Rubi Cinema'], ['safira', 'Onix Safira'], ['esmeralda', 'Onix Esmeralda'], ['ambar', 'Onix Âmbar'], ['quartzo', 'Onix Quartzo Rosa'], ['opala', 'Onix Opala'], ['amethyst', 'Onix Amethyst'], ['white', 'Onix White']],   // o claro por último, para ninguém passar por ele de surpresa
   font: [['system', 'Sistema'], ['bodoni', 'Bodoni Moda'], ['cinzel', 'Cinzel'], ['butler', 'Butler'], ['playfair', 'Playfair Display'], ['montserrat', 'Montserrat'],
     ['poppins', 'Poppins'], ['bebas', 'Bebas Neue'], ['orbitron', 'Orbitron'], ['quicksand', 'Quicksand'], ['pressstart', 'Press Start 2P']],
   clock: [['thin', 'Fino'], ['bold', 'Negrito'], ['stack', 'Empilhado'], ['analog', 'Analógico'], ['digital', 'Digital'], ['flip', 'Flip'], ['words', 'Por extenso'], ['neon', 'Neon']],
@@ -2182,6 +2303,73 @@ function navScene(p, defs, inner) {
   return SVG_NAV + '<defs>' + fade('V', 0, 1) + fade('H', 1, 0) + defs + '</defs>'
     + '<g mask="url(#' + p + 'V)"><g mask="url(#' + p + 'H)">' + inner + '</g></g></svg>';
 }
+// ---------- Pedras dos temas (Safira, Esmeralda, Âmbar, Quartzo Rosa, Opala e Amethyst) ----------
+const n1 = v => (+v).toFixed(1);
+// Brilho de 4 pontas (as estrelinhas ✦ do Opala), centrado em (x, y).
+function spark(x, y, r, fill, attrs) {
+  const k = r * .14;
+  return '<path d="M' + n1(x) + ' ' + n1(y - r) + 'Q' + n1(x + k) + ' ' + n1(y - k) + ' ' + n1(x + r) + ' ' + n1(y) + 'Q' + n1(x + k) + ' ' + n1(y + k) + ' ' + n1(x) + ' ' + n1(y + r)
+    + 'Q' + n1(x - k) + ' ' + n1(y + k) + ' ' + n1(x - r) + ' ' + n1(y) + 'Q' + n1(x - k) + ' ' + n1(y - k) + ' ' + n1(x) + ' ' + n1(y - r) + 'z" fill="' + fill + '"' + (attrs || '') + '/>';
+}
+// Pisca devagar (cresce e some), cada um no seu ritmo.
+const twinkle = (svg, dur, delay) => '<g class="gm-tw" style="animation-duration:' + n1(dur) + 's;animation-delay:-' + n1(delay) + 's">' + svg + '</g>';
+// Faces de uma pedra oval lapidada: a mesa no meio e as facetas em estrela até a borda.
+function ovalFacets(cx, cy, rx, ry, tx, ty) {
+  const P = (a, x, y) => n1(cx + x * Math.cos(a)) + ' ' + n1(cy + y * Math.sin(a));
+  let star = '', table = '';
+  for (let k = 0; k < 8; k++) {
+    const a = k * Math.PI / 4, b = a + Math.PI / 8, c = a + Math.PI / 4;
+    star += 'M' + P(a, tx, ty) + 'L' + P(b, rx, ry) + 'L' + P(c, tx, ty);
+    table += (k ? 'L' : 'M') + P(a, tx, ty);
+  }
+  return { star, table: table + 'z' };
+}
+// Esmeralda: lapidação retangular de cantos cortados, com os degraus e a mesa.
+function emeraldCut(cx, cy, w, h, rot, fill, stroke, sw) {
+  const oct = k => { const W = w * k / 2, H = h * k / 2, c = Math.min(w, h) * .26 * k;
+    return [[-W + c, -H], [W - c, -H], [W, -H + c], [W, H - c], [W - c, H], [-W + c, H], [-W, H - c], [-W, -H + c]]; };
+  const path = pts => 'M' + pts.map(p => n1(cx + p[0]) + ' ' + n1(cy + p[1])).join('L') + 'z';
+  const o = oct(1), m = oct(.7), t = oct(.42);
+  let corners = '';
+  for (let i = 0; i < 8; i++) corners += 'M' + n1(cx + o[i][0]) + ' ' + n1(cy + o[i][1]) + 'L' + n1(cx + t[i][0]) + ' ' + n1(cy + t[i][1]);
+  return '<g transform="rotate(' + rot + ' ' + cx + ' ' + cy + ')"><path d="' + path(o) + '" fill="' + fill + '"/>'
+    + '<path d="' + corners + path(m) + '" stroke="' + stroke + '" stroke-width="' + n1(sw * .5) + '" opacity=".55"/>'
+    + '<path d="' + path(t) + '" stroke="' + stroke + '" stroke-width="' + n1(sw * .6) + '" opacity=".8" fill="#fff" fill-opacity=".08"/>'
+    + '<path d="' + path(o) + '" stroke="' + stroke + '" stroke-width="' + n1(sw) + '"/>'
+    + '<path d="M' + n1(cx - w * .36) + ' ' + n1(cy - h * .2) + 'V' + n1(cy - h * .36) + 'L' + n1(cx - w * .2) + ' ' + n1(cy - h * .46) + '" stroke="#fff" stroke-width="' + n1(sw * .8) + '" opacity=".85"/></g>';
+}
+// Cristal em pé (ametista, safira, esmeralda): prisma com ponta, face clara de um lado e escura do outro.
+function crystal(x, base, w, h, tilt, fill, stroke, sw) {
+  const p = (dx, dy) => n1(x + dx) + ' ' + n1(base + dy);
+  return '<g transform="rotate(' + tilt + ' ' + x + ' ' + base + ')"><path d="M' + p(-w / 2, 0) + 'L' + p(-w / 2, -h * .72) + 'L' + p(0, -h) + 'L' + p(w / 2, -h * .72) + 'L' + p(w / 2, 0) + 'z" fill="' + fill + '" stroke="' + stroke + '" stroke-width="' + sw + '"/>'
+    + '<path d="M' + p(0, -h) + 'L' + p(w * .08, -h * .66) + 'V' + n1(base) + 'M' + p(-w / 2, -h * .72) + 'L' + p(w * .08, -h * .66) + 'L' + p(w / 2, -h * .72) + '" stroke="' + stroke + '" stroke-width="' + n1(sw * .55) + '" opacity=".6"/>'
+    + '<path d="M' + p(-w * .32, -h * .1) + 'V' + n1(base - h * .62) + '" stroke="#fff" stroke-width="' + n1(sw * .7) + '" opacity=".55"/></g>';
+}
+// Nota musical (colcheia), em (x, y) = a cabeça.
+const noteSvg = (x, y, s, c) => '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><ellipse rx="6" ry="4.4" transform="rotate(-22)" fill="' + c + '"/><path d="M5.2-1.6V-28q8 3 11 11" stroke="' + c + '" stroke-width="2.6" fill="none"/></g>';
+const notes2Svg = (x, y, s, c) => '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')" fill="' + c + '"><ellipse rx="6" ry="4.4" transform="rotate(-22)"/><ellipse cx="22" cy="-5" rx="6" ry="4.4" transform="rotate(-22 22 -5)"/><path d="M5.2-1.6V-28L27.2-33V-6.6" stroke="' + c + '" stroke-width="2.6" fill="none"/><path d="M5.2-28L27.2-33V-27L5.2-22z"/></g>';
+const heartSvg = (x, y, s, c, stroke) => '<path transform="translate(' + x + ' ' + y + ') scale(' + s + ')" d="M0 9s-9-5.5-11.5-11C-13.3-6.2-10.8-11-6.3-11c2.6 0 4.3 1.5 5.1 2.9.8-1.4 2.5-2.9 5.1-2.9 4.5 0 7 4.8 5.2 9C9 3.5 0 9 0 9z"'
+  + (stroke ? ' fill="none" stroke="' + c + '" stroke-width="' + n1(1.8 / s) + '"' : ' fill="' + c + '"') + '/>';
+// Pinheiro em camadas (silhueta), com a base em b.
+const pine = (x, b, h, w) => 'M' + n1(x) + ' ' + n1(b - h) + [[.22, .3], [.12, .3], [.36, .58], [.2, .58], [.5, .92], [.06, .92], [.06, 1], [-.06, 1], [-.06, .92], [-.5, .92], [-.2, .58], [-.36, .58], [-.12, .3], [-.22, .3]]
+  .map(([dx, dy]) => 'L' + n1(x + w * dx) + ' ' + n1(b - h + h * dy)).join('') + 'z';
+
+/* Símbolo do menu dos temas de pedra (no vão entre Jogos e Entradas): igual ao planeta do Onix Escuro, em traço,
+   com órbitas pontilhadas e estrelinhas, mas com a pedra do tema no lugar do planeta. Sem fundo: fica solto no menu.
+   o.stone = a pedra (centro 80, 86); o.clip = o contorno dela, para o corte do anel na frente. */
+function navGem(o) {
+  const arc = 'A46 12.5 0 0 0 ', rot = ' transform="rotate(-18 80 86)"';
+  return SVG_NAV + '<defs><radialGradient id="' + o.p + 'H"><stop offset="0" stop-color="' + o.glow + '" stop-opacity=".42"/><stop offset=".55" stop-color="' + o.glow + '" stop-opacity=".1"/><stop offset="1" stop-color="' + o.glow + '" stop-opacity="0"/></radialGradient>'
+      + '<clipPath id="' + o.p + 'C">' + o.clip + '</clipPath>' + (o.defs || '') + '</defs>'
+    + '<circle cx="80" cy="86" r="62" fill="url(#' + o.p + 'H)"/>'
+    + '<g stroke="' + o.c + '"><circle cx="80" cy="86" r="52" stroke-width="1.2" stroke-dasharray="0 5" opacity=".5"/><circle cx="80" cy="86" r="74" stroke-width="1" stroke-dasharray="0 6.5" opacity=".28"/>'
+    + '<circle cx="80" cy="86" r="52" stroke-width="1.5" stroke-dasharray="20 320" stroke-dashoffset="-60" opacity=".7"/>'
+    + (o.ring === false ? '' : '<path d="M126 86' + arc + '34 86"' + rot + ' stroke-width="2.4" opacity=".8"/>') + '</g>'
+    + o.stone
+    + (o.ring === false ? '' : '<g clip-path="url(#' + o.p + 'C)"><path d="M34 86' + arc + '126 86"' + rot + ' stroke="' + o.gap + '" stroke-width="7"/></g>'
+      + '<path d="M34 86' + arc + '126 86"' + rot + ' stroke="' + o.c + '" stroke-width="2.6"/>')
+    + o.extra + '</svg>';
+}
 const THEME_ART = {
   // Onix White: manchas de cor bem suaves, o planeta do Onix em traço cinza, nuvens e um aviãozinho de papel.
   white: { bg: () => SVG_BG + '<defs>'
@@ -2302,56 +2490,109 @@ const THEME_ART = {
       + '</g><path d="M128 20l3.5 8.5 8.5 3.5-8.5 3.5-3.5 8.5-3.5-8.5-8.5-3.5 8.5-3.5z" fill="#ffd27a"/><circle cx="28" cy="140" r="2.5" fill="#ffe3a3"/><circle cx="142" cy="66" r="2" fill="#ffe3a3"/></svg>',
   },
 
-  // Onix Safira: fundo do mar. Raios de luz vindos de cima, bolhas subindo, águas-vivas de linha e algas no chão.
+  // Onix Safira: fundo do mar em camadas. Luz da superfície e raios vindos de cima, uma raia-manta passando,
+  // um cardume, águas-vivas, bolhas, algas balançando, corais de leque e um ninho de safiras brilhando no chão.
   safira: {
     bg: () => {
       const rnd = rng(31);
-      // Cada leva de bolhas sobe 1200 px e recomeça; a cópia 1200 px acima deixa a volta sem salto.
       const bubbles = n => { let s = ''; for (let i = 0; i < n; i++) { const x = 340 + rnd() * 1580 | 0, y = 1100 + rnd() * 1200 | 0, r = (2 + rnd() * 9).toFixed(1); s += '<circle cx="' + x + '" cy="' + y + '" r="' + r + '"/><circle cx="' + x + '" cy="' + (y - 1200) + '" r="' + r + '"/>'; } return s; };
+      // Ondas de luz da superfície (cáusticas): linhas onduladas que andam devagar.
+      let cau = '';
+      for (const [y, a, w] of [[26, 9, 70], [58, 7, 54], [92, 6, 82], [128, 4, 64]]) {
+        let d = 'M-120 ' + y; for (let x = -120, k = 0; x < 2080; x += w, k++) d += 'q' + (w / 2) + ' ' + (k % 2 ? a : -a) * (.6 + rnd() * .8) + ' ' + w + ' 0';
+        cau += '<path d="' + d + '"/>';
+      }
+      // Leque de coral: galhos que se dividem até a ponta.
+      const fan = (x, y, len, ang, depth) => {
+        if (!depth) return '';
+        const ex = x + Math.cos(ang) * len, ey = y + Math.sin(ang) * len;
+        return '<path d="M' + n1(x) + ' ' + n1(y) + 'L' + n1(ex) + ' ' + n1(ey) + '" stroke-width="' + n1(depth * 1.3) + '"/>'
+          + fan(ex, ey, len * .74, ang - .34 - rnd() * .12, depth - 1) + fan(ex, ey, len * .74, ang + .34 + rnd() * .12, depth - 1);
+      };
       const weed = (x, h, k) => 'M' + x + ' 1080c' + (k * 26) + ' -' + (h * .25 | 0) + ' ' + (-k * 22) + ' -' + (h * .5 | 0) + ' ' + (k * 6) + ' -' + (h * .75 | 0) + 's' + (-k * 18) + ' -' + (h * .2 | 0) + ' ' + (k * 4) + ' -' + (h * .25 | 0);
-      let weeds = '';
-      for (const [x, h, k] of [[1660, 230, 1], [1700, 320, -1], [1742, 190, 1], [1860, 280, -1], [1890, 170, 1], [380, 210, -1], [420, 150, 1]]) weeds += '<path d="' + weed(x, h, k) + '"/>';
+      let kelp = '';
+      for (const [x, h, k, d] of [[1660, 300, 1, 0], [1712, 420, -1, 2], [1760, 240, 1, 1], [1868, 380, -1, 3], [1900, 220, 1, 1.5], [392, 260, -1, .8], [436, 180, 1, 2.4]]) {
+        let leaves = '';
+        for (let i = 1; i < 6; i++) { const yy = 1080 - h * i / 6, s = i % 2 ? 1 : -1; leaves += 'M' + (x + k * 6) + ' ' + (yy | 0) + 'q' + (s * 22) + ' -8 ' + (s * 30) + ' -30'; }
+        kelp += '<g class="gm-sway" style="animation-duration:' + (5 + d) + 's;animation-delay:-' + d + 's"><path d="' + weed(x, h, k) + '" stroke-width="7"/><path d="' + leaves + '" stroke-width="3.6"/></g>';
+      }
       const jelly = (x, y, s, delay) => '<g class="sf-jelly" style="animation-delay:' + delay + 's"><g transform="translate(' + x + ' ' + y + ') scale(' + s + ')">'
-        + '<circle r="90" fill="url(#sfJ)" stroke="none"/>'
-        + '<path d="M-60 0C-60-78 60-78 60 0Q45 12 30 0Q15 12 0 0Q-15 12-30 0Q-45 12-60 0z" stroke-width="3"/>'
-        + '<path d="M-34-26C-26-46 6-54 22-46" stroke-width="2.4" opacity=".55"/>'
-        + '<path d="M-40 6c-10 30 12 54-4 90M-14 8c8 34-12 64 6 104M14 8c-8 32 12 58-2 96M40 6c10 28-10 52 6 84" stroke-width="2.2" opacity=".75"/></g></g>';
+        + '<circle r="110" fill="url(#sfJ)" stroke="none"/>'
+        + '<path d="M-60 0C-60-78 60-78 60 0Q45 12 30 0Q15 12 0 0Q-15 12-30 0Q-45 12-60 0z" fill="url(#sfBell)" stroke-width="3"/>'
+        + '<path d="M-44-8C-44-50 44-50 44-8" stroke-width="1.6" opacity=".45"/><path d="M-34-30C-26-48 6-54 22-48" stroke-width="2.6" opacity=".7"/>'
+        + '<path d="M-14 6c-6 18 10 30 0 46s8 26 0 40M14 6c6 18-10 30 0 46s-8 26 0 40" stroke-width="4" opacity=".55"/>'
+        + '<path d="M-48 8c-10 30 12 54-4 90M-30 10c6 34-12 64 6 104M30 10c-6 32 12 58-2 96M48 8c10 28-10 52 6 84" stroke-width="2" opacity=".7"/></g></g>';
+      let fish = '';
+      for (let i = 0; i < 20; i++) {
+        const x = 1980 + rnd() * 520 | 0, y = 300 + rnd() * 170 + Math.sin(i) * 20 | 0, s = (.6 + rnd() * .6).toFixed(2);
+        fish += '<path transform="translate(' + x + ' ' + y + ') scale(' + s + ')" d="M0 0c8-7 20-7 28 0-8 7-20 7-28 0zm27 0l10-7v14z"/>';
+      }
+      let sand = '';
+      for (let i = 0; i < 9; i++) { const x = 360 + rnd() * 1500 | 0, y = 1046 + rnd() * 28 | 0, w = 40 + rnd() * 90 | 0; sand += 'M' + x + ' ' + y + 'q' + (w / 2 | 0) + ' -6 ' + w + ' 0'; }
+      let gems = '';
+      for (const [x, b, w, h, t] of [[1420, 1072, 34, 120, -14], [1462, 1076, 44, 168, 4], [1508, 1074, 30, 104, 20], [1388, 1080, 22, 64, -32], [1540, 1080, 20, 56, 34]]) gems += crystal(x, b, w, h, t, 'url(#sfC)', '#c4f1ff', 2.4);
       return SVG_BG + '<defs>'
+        + '<linearGradient id="sfS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fe3ff" stop-opacity=".2"/><stop offset="1" stop-color="#9fe3ff" stop-opacity="0"/></linearGradient>'
         + '<linearGradient id="sfR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fdcff" stop-opacity=".22"/><stop offset=".7" stop-color="#6fb8ff" stop-opacity=".05"/><stop offset="1" stop-color="#6fb8ff" stop-opacity="0"/></linearGradient>'
         + '<radialGradient id="sfJ"><stop offset="0" stop-color="#6fd6ff" stop-opacity=".22"/><stop offset="1" stop-color="#6fd6ff" stop-opacity="0"/></radialGradient>'
-        + '<linearGradient id="sfB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#041a33"/><stop offset="1" stop-color="#010812"/></linearGradient></defs>'
-        + '<g class="sf-ray"><path d="M760 0h150l320 1080H930z" fill="url(#sfR)"/><path d="M1300 0h90l250 1080h-190z" fill="url(#sfR)"/></g>'
+        + '<radialGradient id="sfBell" cx=".5" cy=".2" r=".9"><stop offset="0" stop-color="#cdf3ff" stop-opacity=".45"/><stop offset="1" stop-color="#3a8fd0" stop-opacity=".06"/></radialGradient>'
+        + '<radialGradient id="sfFog"><stop offset="0" stop-color="#4fb0ff" stop-opacity=".1"/><stop offset="1" stop-color="#4fb0ff" stop-opacity="0"/></radialGradient>'
+        + '<radialGradient id="sfG"><stop offset="0" stop-color="#5aa8ff" stop-opacity=".5"/><stop offset=".5" stop-color="#2f6dff" stop-opacity=".14"/><stop offset="1" stop-color="#2f6dff" stop-opacity="0"/></radialGradient>'
+        + '<linearGradient id="sfC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d8f6ff"/><stop offset=".35" stop-color="#5aa8ff"/><stop offset=".75" stop-color="#1d4fd0"/><stop offset="1" stop-color="#0a2366"/></linearGradient>'
+        + '<linearGradient id="sfB" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#05213f"/><stop offset="1" stop-color="#010812"/></linearGradient></defs>'
+        + '<rect width="1920" height="230" fill="url(#sfS)"/>'
+        + '<g class="sf-cau" stroke="#c4f1ff" stroke-width="2.2" opacity=".18">' + cau + '</g>'
+        + '<g class="sf-ray"><path d="M760 0h150l320 1080H930z" fill="url(#sfR)"/><path d="M1300 0h90l250 1080h-190z" fill="url(#sfR)"/><path d="M520 0h60l200 1080H660z" fill="url(#sfR)"/></g>'
         + '<g class="sf-ray2"><path d="M1040 0h70l140 1080h-120z" fill="url(#sfR)"/><path d="M1560 0h140l220 900v180h-120z" fill="url(#sfR)"/></g>'
-        + softStars(70, 1920, 1080, 33, 1080)
+        + '<ellipse cx="1260" cy="780" rx="900" ry="180" fill="url(#sfFog)"/>'
+        + '<g opacity=".7">' + softStars(80, 1920, 1080, 33, 1080) + '</g>'
+        // Raia-manta planando no vão entre o relógio e os botões.
+        + '<g class="gm-float" style="animation-duration:9s"><g transform="translate(990 150) scale(.78)" fill="#0b3a66" fill-opacity=".55" stroke="#8fd3ff" stroke-opacity=".5" stroke-width="2">'
+        + '<path d="M-62 0C-58-14-40-24-20-30-8-48 14-72 44-86 44-66 46-48 54-32 60-20 68-10 78-4L82 0 78 4C68 10 60 20 54 32 46 48 44 66 44 86 14 72-8 48-20 30-40 24-58 14-62 0z"/><path d="M76 0H170" stroke-width="2.6"/><path d="M-60-6c-8-4-14-2-15 4M-60 6c-8 4-14 2-15-4" stroke-width="2.4"/>'
+        + '<path d="M-16-26C8-20 30-12 56-4M-16 26C8 20 30 12 56 4" stroke-opacity=".3" fill="none"/></g></g>'
+        + '<g class="sf-fish" fill="#8fdcff" fill-opacity=".42">' + fish + '</g>'
         + '<g stroke="#a8e6ff" stroke-width="2" opacity=".5"><g class="sf-up">' + bubbles(9) + '</g><g class="sf-up2">' + bubbles(8) + '</g><g class="sf-up3">' + bubbles(7) + '</g></g>'
-        + '<g stroke="#9fd8ff" opacity=".7">' + jelly(1730, 620, 1, 0) + jelly(1480, 860, .55, -4) + '</g>'
-        + '<path d="M0 1080V1032c220-26 420 10 640-6s460-34 700-8 380 6 580-14V1080z" fill="url(#sfB)"/>'
-        + '<g stroke="#2a7fa6" stroke-width="7" opacity=".55">' + weeds + '</g></svg>';
+        + '<g stroke="#9fd8ff" opacity=".72">' + jelly(1740, 600, 1, 0) + jelly(1490, 850, .55, -4) + jelly(1870, 250, .32, -2) + '</g>'
+        // Recife ao fundo, depois o do meio, depois a areia.
+        + '<path d="M270 1080V930c80-40 150-10 220-34s120 10 190-8 130-60 230-30 150 6 230-14 160 20 250-10 170-40 240 0 120-10 160 6V1080z" fill="#062a4f" fill-opacity=".65"/>'
+        + '<path d="M270 1080V990c120-30 210 10 330-14s240 4 360-12 220-26 340-6 260 10 340-18 160-10 280 6V1080z" fill="#041b36"/>'
+        + '<g stroke="#2f8fd0" opacity=".5" fill="none">' + fan(1610, 1004, 70, -1.5, 5) + fan(1820, 994, 58, -1.7, 5) + fan(520, 1010, 46, -1.4, 4) + '</g>'
+        + '<g stroke="#2f8fd0" stroke-width="2.4" opacity=".45"><path d="M1240 1000a44 30 0 0 1 88 0M1252 1000a32 20 0 0 1 64 0M1264 1000a20 11 0 0 1 40 0"/><path d="M660 1012a36 24 0 0 1 72 0M672 1012a24 14 0 0 1 48 0"/></g>'
+        + '<path d="M0 1080V1036c220-26 420 10 640-6s460-34 700-8 380 6 580-14V1080z" fill="url(#sfB)"/>'
+        + '<path d="' + sand + '" stroke="#4f9fd0" stroke-width="2" opacity=".28"/>'
+        + '<g stroke="#2a9fbf" opacity=".55">' + kelp + '</g>'
+        + '<ellipse cx="1462" cy="1010" rx="170" ry="120" fill="url(#sfG)"/>' + gems
+        + twinkle(spark(1472, 940, 14, '#e2f8ff'), 3.2, 1) + twinkle(spark(1404, 1004, 9, '#bfeaff'), 4, 2.2) + twinkle(spark(1530, 990, 8, '#ffffff'), 2.7, .4)
+        + '</svg>';
     },
-    nav: () => navScene('ns', '<linearGradient id="nsS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0e4c82"/><stop offset=".45" stop-color="#06264a"/><stop offset="1" stop-color="#020c1c"/></linearGradient>'
-        + '<linearGradient id="nsR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdeeff" stop-opacity=".4"/><stop offset="1" stop-color="#6fb8ff" stop-opacity="0"/></linearGradient>'
-        + '<radialGradient id="nsB" cx=".5" cy=".25" r=".8"><stop offset="0" stop-color="#bff0ff" stop-opacity=".55"/><stop offset="1" stop-color="#3a8fd0" stop-opacity=".12"/></radialGradient>'
-        + '<radialGradient id="nsH"><stop offset="0" stop-color="#6fd6ff" stop-opacity=".32"/><stop offset="1" stop-color="#6fd6ff" stop-opacity="0"/></radialGradient>',
-      '<rect width="160" height="170" fill="url(#nsS)"/>'
-        + '<g class="sf-ray" fill="url(#nsR)"><path d="M36 0h22l34 170H58z"/><path d="M100 0h14l28 170h-26z"/></g><g class="sf-ray2" fill="url(#nsR)"><path d="M70 0h10l10 170H76z"/></g>'
-        + '<path d="M0 20q10-4 20 0t20 0 20 0 20 0 20 0 20 0 20 0 20 0" stroke="#cdeeff" stroke-width="1.2" stroke-opacity=".4"/>'
-        + '<circle cx="80" cy="66" r="46" fill="url(#nsH)"/>'
-        + '<g stroke="#bfeaff"><path d="M50 70C50 34 110 34 110 70Q102.5 77 95 70Q87.5 77 80 70Q72.5 77 65 70Q57.5 77 50 70z" fill="url(#nsB)" stroke-width="2"/>'
-        + '<path d="M60 52c5-9 18-13 28-10" stroke="#fff" stroke-width="2" stroke-opacity=".7"/><path d="M58 64c8-11 36-11 44 0" stroke-width="1.2" stroke-opacity=".4"/>'
-        + '<path d="M72 75c-4 10 6 16 0 26s4 14 0 22M88 75c4 10-6 16 0 26s-4 14 0 22" stroke-width="2.6" stroke-opacity=".85"/>'
-        + '<path d="M54 74c-4 16 6 30-2 48M64 76c2 18-6 32 2 54M96 76c-2 18 6 32-2 54M106 74c4 16-6 30 2 48" stroke-width="1.2" stroke-opacity=".6"/>'
-        + '<g stroke-width="1.4" stroke-opacity=".75"><circle cx="122" cy="46" r="4"/><circle cx="130" cy="32" r="2.6"/><circle cx="125" cy="22" r="1.8"/><circle cx="34" cy="96" r="3.4"/><circle cx="40" cy="84" r="2"/></g></g>'
-        + '<g fill="#6fd6ff"><path d="M112 100c6-5 14-5 18 0-4 5-12 5-18 0zm18 0l6-4v8z" fill-opacity=".55"/><path d="M42 62c-4-3.5-10-3.5-13 0 3 3.5 9 3.5 13 0zm-13 0l-4-3v6z" fill-opacity=".4"/></g>'
-        + '<path d="M0 170v-24c24-8 46-4 70-8s52-6 90 2v30z" fill="#041a33"/><path d="M8 146c22-6 44-4 62-7" stroke="#6fb8ff" stroke-width="1" stroke-opacity=".3"/>'
-        + '<g stroke="#2a9fbf" stroke-width="3.2"><path d="M22 150c6-10-4-20 2-32s-2-18 4-26"/><path d="M32 152c-4-10 4-18-1-28"/><path d="M134 142c-6-10 4-18-2-30s2-16-3-22"/></g>'
-        + '<path d="M112 144v-14m0 7l-6-7m6 3l6-9m-6-1v0" stroke="#4fc3e8" stroke-width="2.2" stroke-opacity=".8"/>'),
+    // No menu: três raias-manta nadando juntas, cada uma do seu tamanho, no seu ângulo e no seu ritmo
+    // (as asas sobem e descem), com a luz vinda de cima e bolhas. Sem fundo: fica solto no menu.
+    nav: () => {
+      const ray = (x, y, s, rot, d, op) => '<g transform="translate(' + x + ' ' + y + ') rotate(' + rot + ') scale(' + s + ')" opacity="' + op + '">'
+        + '<g class="sf-swim" style="animation-duration:' + (4 + d) + 's;animation-delay:-' + d + 's"><g class="sf-flap" style="animation-duration:' + (2.2 + d * .4).toFixed(1) + 's;animation-delay:-' + d + 's">'
+        + '<path d="M-62 0C-58-14-40-24-20-30-8-48 14-72 44-86 44-66 46-48 54-32 60-20 68-10 78-4L82 0 78 4C68 10 60 20 54 32 46 48 44 66 44 86 14 72-8 48-20 30-40 24-58 14-62 0z" fill="url(#nsF)" stroke="#bfeaff" stroke-width="' + (1.7 / s).toFixed(1) + '"/>'
+        + '<path d="M-54 0C-40-13 40-13 68 0-40 13-40 13-54 0z" fill="#061a3a" fill-opacity=".35"/>'
+        + '<path d="M-16-26C8-20 30-12 56-4M-16 26C8 20 30 12 56 4M-50 0H64" stroke="#cdeeff" stroke-width="' + (1 / s).toFixed(1) + '" opacity=".45"/>'
+        + '<path d="M-40-14C-22-22 0-34 20-56" stroke="#fff" stroke-width="' + (1.4 / s).toFixed(1) + '" opacity=".6"/></g>'
+        + '<path d="M-60-6c-8-4-14-2-15 4M-60 6c-8 4-14 2-15-4" stroke="#bfeaff" stroke-width="' + (1.5 / s).toFixed(1) + '"/>'
+        + '<path d="M80 0C102 2 126-2 152 3" stroke="#9fe3ff" stroke-width="' + (1.3 / s).toFixed(1) + '"/></g></g>';
+      return SVG_NAV + '<defs><radialGradient id="nsH"><stop offset="0" stop-color="#4fb0ff" stop-opacity=".34"/><stop offset=".6" stop-color="#4fb0ff" stop-opacity=".08"/><stop offset="1" stop-color="#4fb0ff" stop-opacity="0"/></radialGradient>'
+        + '<linearGradient id="nsR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cdeeff" stop-opacity=".22"/><stop offset="1" stop-color="#cdeeff" stop-opacity="0"/></linearGradient>'
+        + '<linearGradient id="nsF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#6fc4ff"/><stop offset=".45" stop-color="#1f5fc0"/><stop offset="1" stop-color="#061a3a"/></linearGradient></defs>'
+        + '<circle cx="80" cy="88" r="70" fill="url(#nsH)"/>'
+        + '<g class="sf-ray" fill="url(#nsR)"><path d="M58 0h14l34 170H84z"/><path d="M104 0h8l22 170h-14z"/></g>'
+        + ray(112, 46, .27, -22, 1.6, .75) + ray(80, 96, .42, -10, 0, 1) + ray(42, 142, .21, 10, 2.8, .65)
+        + '<g stroke="#bfeaff" stroke-width="1.4" opacity=".7"><circle cx="30" cy="86" r="3.6"/><circle cx="24" cy="72" r="2.4"/><circle cx="28" cy="61" r="1.6"/><circle cx="140" cy="120" r="3"/><circle cx="146" cy="108" r="1.8"/></g>'
+        + twinkle(spark(36, 30, 5, '#e2f8ff'), 3.4, 1) + twinkle(spark(140, 150, 4, '#9fe3ff'), 2.8, 2)
+        + '<circle cx="132" cy="80" r="1.3" fill="#9fe3ff" opacity=".6"/><circle cx="70" cy="22" r="1.2" fill="#fff" opacity=".5"/></svg>';
+    },
   },
 
-  // Onix Esmeralda: floresta à noite. Luz da lua entre as folhas, samambaias de linha e vaga-lumes piscando.
+  // Onix Esmeralda: floresta à noite em três camadas de pinheiros com névoa entre elas, a lua no vão do topo,
+  // feixes de luar, cipós, samambaias, cogumelos que brilham, cristais de esmeralda e vaga-lumes.
   esmeralda: {
     bg: () => {
       const rnd = rng(47);
-      // Samambaia: um talo curvo com folhinhas dos dois lados, que diminuem até a ponta.
       const fern = (x0, y0, len, ang, n) => {
         let stem = 'M' + x0 + ' ' + y0, leaves = '';
         for (let i = 1; i <= n; i++) {
@@ -2361,134 +2602,300 @@ const THEME_ART = {
         }
         return '<path d="' + stem + '" stroke-width="5"/><path d="' + leaves + '" stroke-width="3.2"/>';
       };
+      const ridge = (x0, x1, base, hMin, hMax, wk) => { let d = ''; for (let x = x0; x < x1;) { const h = hMin + rnd() * (hMax - hMin), w = h * wk; d += pine(x, base + rnd() * 14, h, w); x += w * (.42 + rnd() * .3); } return d; };
       const flies = ['', '', ''];
       for (let i = 0; i < 30; i++) { const x = 340 + rnd() * 1580 | 0, y = 260 + rnd() * 800 | 0; flies[i % 3] += '<circle cx="' + x + '" cy="' + y + '" r="16" fill="url(#esF)"/><circle cx="' + x + '" cy="' + y + '" r="2.6" fill="#f4ffb0"/>'; }
+      let vines = '', leaves = '';
+      for (const [x, len, bend] of [[1560, 260, 30], [1640, 380, -24], [1720, 200, 18], [1790, 330, -30], [1870, 240, 22]]) {
+        vines += 'M' + x + ' 0c' + bend + ' ' + (len * .3 | 0) + ' ' + (-bend) + ' ' + (len * .6 | 0) + ' ' + (bend / 3 | 0) + ' ' + len;
+        for (let i = 1; i < 6; i++) { const y = len * i / 6, xx = x + Math.sin(i * 1.7) * bend * .4, s = i % 2 ? 1 : -1; leaves += '<ellipse cx="' + n1(xx + s * 10) + '" cy="' + n1(y) + '" rx="11" ry="5" transform="rotate(' + (s * 30) + ' ' + n1(xx + s * 10) + ' ' + n1(y) + ')"/>'; }
+      }
+      let shrooms = '';
+      for (const [x, b, r, h] of [[1580, 1062, 34, 54], [1632, 1070, 22, 34], [1534, 1072, 18, 26], [1680, 1074, 14, 20], [600, 1068, 20, 30], [636, 1074, 13, 18]]) {
+        shrooms += '<circle cx="' + x + '" cy="' + (b - h) + '" r="' + (r * 2.2) + '" fill="url(#esMu)"/>'
+          + '<path d="M' + (x - r * .22) + ' ' + b + 'q' + (r * .1) + ' ' + (-h * .5) + ' 0 ' + (-h) + 'h' + (r * .44) + 'q' + (-r * .1) + ' ' + (h * .5) + ' 0 ' + h + 'z" fill="#cfeedd" fill-opacity=".55"/>'
+          + '<path d="M' + (x - r) + ' ' + (b - h) + 'a' + r + ' ' + (r * .72) + ' 0 0 1 ' + (r * 2) + ' 0z" fill="#0f4a30" stroke="#7cf0ac" stroke-width="2.4"/>'
+          + '<g fill="#d9f56a"><circle cx="' + (x - r * .4) + '" cy="' + (b - h - r * .3) + '" r="' + n1(r * .1) + '"/><circle cx="' + (x + r * .3) + '" cy="' + (b - h - r * .45) + '" r="' + n1(r * .08) + '"/><circle cx="' + (x + r * .05) + '" cy="' + (b - h - r * .18) + '" r="' + n1(r * .06) + '"/></g>';
+      }
+      let gems = '';
+      for (const [x, b, w, h, t] of [[1260, 1076, 30, 110, -12], [1298, 1078, 40, 150, 6], [1338, 1078, 26, 90, 22], [1228, 1082, 18, 56, -30]]) gems += crystal(x, b, w, h, t, 'url(#esC)', '#c9ffdf', 2.4);
       return SVG_BG + '<defs>'
-        + '<radialGradient id="esM"><stop offset="0" stop-color="#b8ffd6" stop-opacity=".2"/><stop offset="1" stop-color="#b8ffd6" stop-opacity="0"/></radialGradient>'
+        + '<radialGradient id="esM"><stop offset="0" stop-color="#b8ffd6" stop-opacity=".22"/><stop offset="1" stop-color="#b8ffd6" stop-opacity="0"/></radialGradient>'
         + '<radialGradient id="esF"><stop offset="0" stop-color="#e6ff8a" stop-opacity=".55"/><stop offset="1" stop-color="#e6ff8a" stop-opacity="0"/></radialGradient>'
-        + '<radialGradient id="esG"><stop offset="0" stop-color="#5fe89a" stop-opacity=".35"/><stop offset="1" stop-color="#5fe89a" stop-opacity="0"/></radialGradient></defs>'
-        + '<circle cx="1640" cy="-40" r="620" fill="url(#esM)"/>'
-        + '<g stroke="#2f9a5e" opacity=".55">' + fern(1920, 1080, 520, -2.5, 9) + fern(1800, 1090, 420, -1.95, 8) + fern(1560, 1100, 300, -1.5, 6)
-        + fern(300, 1090, 360, -1.2, 7) + fern(1920, 0, 460, 2.55, 8) + '</g>'
-        + '<g stroke="#3fbf78" stroke-width="2.4" opacity=".4"><path d="M1240 0c10 120-26 200-8 320"/><path d="M1340 0c-14 90 20 150 4 250"/><path d="M1232 160l-22 14M1234 230l20 10M1342 120l22 10M1338 190l-20 12"/></g>'
-        + esGems(16, 1560, 1000, 340, 40, 5, 'esG', 53)
+        + '<radialGradient id="esG"><stop offset="0" stop-color="#5fe89a" stop-opacity=".35"/><stop offset="1" stop-color="#5fe89a" stop-opacity="0"/></radialGradient>'
+        + '<radialGradient id="esMu"><stop offset="0" stop-color="#7cf0ac" stop-opacity=".28"/><stop offset="1" stop-color="#7cf0ac" stop-opacity="0"/></radialGradient>'
+        + '<radialGradient id="esCg"><stop offset="0" stop-color="#5fe89a" stop-opacity=".45"/><stop offset=".5" stop-color="#2fd47a" stop-opacity=".12"/><stop offset="1" stop-color="#2fd47a" stop-opacity="0"/></radialGradient>'
+        + '<linearGradient id="esL" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#d9ffe8" stop-opacity=".12"/><stop offset="1" stop-color="#d9ffe8" stop-opacity="0"/></linearGradient>'
+        + '<linearGradient id="esFog" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9fe8c0" stop-opacity="0"/><stop offset=".6" stop-color="#9fe8c0" stop-opacity=".09"/><stop offset="1" stop-color="#9fe8c0" stop-opacity="0"/></linearGradient>'
+        + '<linearGradient id="esC" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#d6ffe6"/><stop offset=".35" stop-color="#5fe89a"/><stop offset=".75" stop-color="#1fa860"/><stop offset="1" stop-color="#0a4f2a"/></linearGradient></defs>'
+        + '<circle cx="1010" cy="140" r="520" fill="url(#esM)"/>'
+        + softStars(60, 1920, 1080, 49, 520)
+        + '<circle cx="1010" cy="140" r="68" fill="#d9ffe8" fill-opacity=".06"/><circle cx="1010" cy="140" r="40" fill="#effff4" fill-opacity=".92"/>'
+        + '<g fill="#bfe8cf" fill-opacity=".5"><circle cx="997" cy="131" r="7"/><circle cx="1023" cy="151" r="4.6"/><circle cx="1019" cy="125" r="3.2"/></g>'
+        + '<g class="es-beam"><path d="M960 160L1120 160 1520 1080H1120z" fill="url(#esL)"/><path d="M1040 160h40l560 920h-160z" fill="url(#esL)"/></g>'
+        + '<path fill="#0e3d28" fill-opacity=".75" d="' + ridge(280, 1960, 800, 120, 230, .42) + '"/>'
+        + '<rect y="640" width="1920" height="220" fill="url(#esFog)"/>'
+        + '<path fill="#082a19" d="' + ridge(280, 1960, 900, 180, 320, .4) + '"/>'
+        + '<g class="es-drift2"><rect x="200" y="800" width="1900" height="160" fill="url(#esFog)"/></g>'
+        + '<path fill="#03100a" d="' + pine(1880, 1100, 860, 300) + pine(1760, 1100, 620, 230) + pine(330, 1100, 560, 220) + '"/>'
+        + '<g stroke="#2f9a5e" stroke-width="3" opacity=".55"><path d="' + vines + '"/></g><g fill="#3fbf78" opacity=".45">' + leaves + '</g>'
+        + '<g stroke="#2f9a5e" opacity=".6">' + fern(1920, 1080, 520, -2.5, 9) + fern(1800, 1090, 420, -1.95, 8) + fern(300, 1090, 360, -1.2, 7) + '</g>'
+        + shrooms
+        + '<ellipse cx="1290" cy="1030" rx="150" ry="110" fill="url(#esCg)"/>' + gems
+        + twinkle(spark(1300, 928, 12, '#e6ffd0'), 3.4, 1) + twinkle(spark(1236, 1010, 8, '#d9f56a'), 2.8, 2)
+        + esGems(10, 1560, 900, 340, 120, 5, 'esG', 53)
         + '<g class="es-drift"><g class="es-fly1">' + flies[0] + '</g></g><g class="es-drift2"><g class="es-fly2">' + flies[1] + '</g></g><g class="es-fly3">' + flies[2] + '</g></svg>';
     },
-    nav: () => {
-      const tree = (x, b, h, w) => 'M' + x + ' ' + (b - h) + 'L' + [[.28, .62], [.14, .62], [.4, .3], [.22, .3], [.5, 0]].map(([dx, dy]) => (x + w * dx) + ' ' + (b - h * dy)).join(' ')
-        + ' ' + [[-.5, 0], [-.22, .3], [-.4, .3], [-.14, .62], [-.28, .62]].map(([dx, dy]) => (x + w * dx) + ' ' + (b - h * dy)).join(' ') + 'z';
-      const fern = (x0, y0, len, ang, n) => {
-        let stem = 'M' + x0 + ' ' + y0, leaves = '';
-        for (let i = 1; i <= n; i++) {
-          const t = i / n, a = ang + t * .5, x = x0 + Math.cos(a) * len * t, y = y0 + Math.sin(a) * len * t, sz = 18 * (1 - t * .75);
-          stem += 'L' + x.toFixed(1) + ' ' + y.toFixed(1);
-          for (const sd of [-1, 1]) { const b = a + sd * 1.05, ex = x + Math.cos(b) * sz, ey = y + Math.sin(b) * sz, mx = (x + ex) / 2 + Math.cos(a) * sz * .25, my = (y + ey) / 2 + Math.sin(a) * sz * .25; leaves += 'M' + x.toFixed(1) + ' ' + y.toFixed(1) + 'Q' + mx.toFixed(1) + ' ' + my.toFixed(1) + ' ' + ex.toFixed(1) + ' ' + ey.toFixed(1); }
-        }
-        return '<path d="' + stem + '" stroke-width="2.2"/><path d="' + leaves + '" stroke-width="1.6"/>';
-      };
-      const fly = (c, x, y, r) => '<g class="' + c + '"><circle cx="' + x + '" cy="' + y + '" r="' + r + '" fill="url(#neF)"/><circle cx="' + x + '" cy="' + y + '" r="1.7" fill="#f4ffb0"/></g>';
-      return navScene('ne', '<linearGradient id="neS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#0f3d28"/><stop offset=".55" stop-color="#072217"/><stop offset="1" stop-color="#030e08"/></linearGradient>'
-        + '<radialGradient id="neM"><stop offset="0" stop-color="#d9ffe8" stop-opacity=".4"/><stop offset="1" stop-color="#d9ffe8" stop-opacity="0"/></radialGradient>'
-        + '<radialGradient id="neF"><stop offset="0" stop-color="#e6ff8a" stop-opacity=".7"/><stop offset="1" stop-color="#e6ff8a" stop-opacity="0"/></radialGradient>'
-        + '<radialGradient id="neG"><stop offset="0" stop-color="#7cf0ac" stop-opacity=".45"/><stop offset="1" stop-color="#7cf0ac" stop-opacity="0"/></radialGradient>'
-        + '<radialGradient id="neN"><stop offset="0" stop-color="#cfffe4" stop-opacity=".16"/><stop offset="1" stop-color="#cfffe4" stop-opacity="0"/></radialGradient>',
-        '<rect width="160" height="170" fill="url(#neS)"/>' + softStars(10, 160, 170, 47, 70)
-        + '<circle cx="110" cy="42" r="36" fill="url(#neM)"/><circle cx="110" cy="42" r="11" fill="#effff4" fill-opacity=".95"/>'
-        + '<path fill="#0e3d28" d="' + tree(24, 128, 46, 24) + tree(46, 126, 56, 26) + tree(70, 128, 40, 22) + tree(96, 126, 52, 26) + tree(122, 128, 44, 24) + tree(144, 126, 54, 26) + '"/>'
-        + '<ellipse cx="80" cy="128" rx="78" ry="12" fill="url(#neN)"/>'
-        + '<path d="M0 170v-36c30-6 60 2 90-2s50-4 70 0v38z" fill="#04150b"/>'
-        + '<path fill="#031009" d="' + tree(6, 156, 100, 40) + tree(156, 158, 92, 38) + '"/>'
-        + '<g stroke="#5fe89a" stroke-opacity=".9">' + fern(50, 166, 62, -1.35, 7) + fern(112, 168, 44, -1.95, 6) + '</g>'
-        + esGems(5, 0, 0, 0, 0, 3, 'neG', 7, [[26, 50], [118, 70], [66, 36], [88, 92], [40, 100]])
-        + fly('es-fly1', 124, 92, 9) + fly('es-fly2', 36, 70, 8) + fly('es-fly3', 84, 104, 7) + fly('es-fly2', 140, 66, 6) + fly('es-fly1', 62, 52, 6));
-    },
+    // No menu: o ícone do Emerald, o mesmo do site Project Gems (img/emerald.svg), ampliado e solto no menu,
+    // com o halo verde, as órbitas pontilhadas e brilhinhos, como o planeta do Onix Escuro.
+    nav: () => SVG_NAV + '<defs><radialGradient id="neH"><stop offset="0" stop-color="#5fe89a" stop-opacity=".38"/><stop offset=".55" stop-color="#5fe89a" stop-opacity=".09"/><stop offset="1" stop-color="#5fe89a" stop-opacity="0"/></radialGradient></defs>'
+      + '<circle cx="80" cy="86" r="66" fill="url(#neH)"/>'
+      + '<g stroke="#9af5c6"><circle cx="80" cy="86" r="60" stroke-width="1.2" stroke-dasharray="0 5" opacity=".42"/><circle cx="80" cy="86" r="78" stroke-width="1" stroke-dasharray="0 6.5" opacity=".22"/>'
+      + '<circle cx="80" cy="86" r="60" stroke-width="1.5" stroke-dasharray="20 360" stroke-dashoffset="-70" opacity=".65"/></g>'
+      + '<svg x="18" y="24" width="124" height="124" viewBox="0 0 48 48" fill="none" stroke-linecap="round" stroke-linejoin="round">'
+      + '<defs><linearGradient id="neAn" x1="3" y1="0" x2="45" y2="0" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#3fbf80"/><stop offset=".5" stop-color="#7fe6b0"/><stop offset="1" stop-color="#c4ffe0"/></linearGradient><radialGradient id="neLuz" cx="24" cy="24" r="12" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#8ff0c0" stop-opacity=".55"/><stop offset="1" stop-color="#8ff0c0" stop-opacity="0"/></radialGradient><linearGradient id="neMeio" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#c9f7e0" stop-opacity=".35"/><stop offset="1" stop-color="#3fbf86" stop-opacity=".08"/></linearGradient><mask id="neBack" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><path d="M18.1 11.5H29.9L34.5 16.1V31.9L29.9 36.5H18.1L13.5 31.9V16.1Z" fill="#000" stroke="#000" stroke-width="2.3"/></mask><mask id="neGap" maskUnits="userSpaceOnUse" x="0" y="0" width="48" height="48"><rect width="48" height="48" fill="#fff"/><path d="M45 24A21 6.2 0 0 1 3 24" stroke="#000" stroke-width="3.31" transform="rotate(-21 24 24)"/></mask></defs><g mask="url(#neGap)"><circle cx="24" cy="24" r="12" fill="url(#neLuz)"/><path d="M21.65 17.8H26.35L28.2 19.65V28.35L26.35 30.2H21.65L19.8 28.35V19.65Z" fill="url(#neMeio)"/><path d="M18.1 11.5H29.9L34.5 16.1V31.9L29.9 36.5H18.1L13.5 31.9V16.1Z" stroke="#9af5c6" stroke-width="1.58"/><path d="M18.1 11.5L21.65 17.8M29.9 11.5L26.35 17.8M34.5 16.1L28.2 19.65M34.5 31.9L28.2 28.35M29.9 36.5L26.35 30.2M18.1 36.5L21.65 30.2M13.5 31.9L19.8 28.35M13.5 16.1L19.8 19.65" stroke="#5fd39a" stroke-width="0.76" opacity=".55"/><path d="M19.9 14.7H28.1L31.3 17.9V30.1L28.1 33.3H19.9L16.7 30.1V17.9Z" stroke="#7fe6b0" stroke-width="1.04" opacity=".78"/><path d="M21.65 17.8H26.35L28.2 19.65V28.35L26.35 30.2H21.65L19.8 28.35V19.65Z" stroke="#5fd39a" stroke-width="0.83" opacity=".6"/></g><g transform="rotate(-21 24 24)" stroke="url(#neAn)" stroke-width="1.66"><path d="M3 24A21 6.2 0 0 1 45 24" mask="url(#neBack)"/><path d="M45 24A21 6.2 0 0 1 3 24"/></g><path d="M38.6 9.2l.5 1.2 1.2.5-1.2.5-.5 1.2-.5-1.2-1.2-.5 1.2-.5z" fill="#c4ffe0" stroke="#c4ffe0" stroke-width="0.29"/></svg>'
+      + twinkle(spark(30, 46, 6, '#c4ffe0'), 3.4, 1) + twinkle(spark(136, 136, 5, '#9af5c6'), 2.8, 2) + twinkle(spark(26, 132, 3.6, '#fff'), 3.9, .3)
+      + '<circle cx="20" cy="92" r="1.3" fill="#d9f56a" opacity=".6"/><circle cx="146" cy="60" r="1.2" fill="#fff" opacity=".5"/></svg>',
   },
-
-  // Onix Âmbar: pôr do sol retrô. Sol listrado no horizonte, montanhas de linha e a grade neon em perspectiva.
+  // Onix Âmbar: pôr do sol retrô. Céu em degradê, sol listrado atrás de faixas de nuvem, duas cadeias de montanhas
+  // em linhas neon, palmeiras, o reflexo do sol no chão e a grade em perspectiva até o horizonte.
   ambar: {
     bg: () => {
-      const hz = 760, vx = 1320;
-      let grid = '', stripes = '';
-      for (let i = 1; i <= 9; i++) { const y = hz + Math.pow(i / 9, 2) * 330; grid += 'M0 ' + (y | 0) + 'H1920'; }
-      for (let i = -14; i <= 14; i++) grid += 'M' + vx + ' ' + hz + 'L' + (vx + i * 190) + ' 1080';
-      for (let i = 0; i < 6; i++) { const y = 560 + i * 34 + i * i * 2; stripes += '<rect x="1100" y="' + y + '" width="700" height="' + (3 + i * 3) + '"/>'; }
+      const rnd = rng(43), hz = 780, sx = 1420;
+      let grid = '', stripes = '', refl = '';
+      for (let i = 1; i <= 10; i++) { const y = hz + Math.pow(i / 10, 2) * 300; grid += 'M0 ' + (y | 0) + 'H1920'; }
+      for (let i = -16; i <= 16; i++) grid += 'M' + sx + ' ' + hz + 'L' + (sx + i * 170) + ' 1080';
+      for (let i = 0; i < 7; i++) { const y = hz - 150 + i * 26 + i * i * 2.4; stripes += '<rect x="' + (sx - 300) + '" y="' + n1(y) + '" width="600" height="' + n1(3 + i * 2.6) + '"/>'; }
+      for (let i = 0; i < 9; i++) { const y = hz + 8 + i * 13 + i * i * 2, w = 420 - i * 40; refl += '<rect x="' + (sx - w / 2) + '" y="' + y + '" width="' + w + '" height="' + (3 + i * .8).toFixed(1) + '" rx="2" opacity="' + (.5 - i * .05).toFixed(2) + '"/>'; }
+      // Montanhas: contorno e as linhas de dentro (de cada pico até os vales), como num desenho de arame.
+      const range = (pts, fill, edge, ew, wire) => {
+        let d = 'M' + pts[0][0] + ' ' + hz, w = '';
+        for (const p of pts) d += 'L' + p[0] + ' ' + p[1];
+        d += 'L' + pts[pts.length - 1][0] + ' ' + hz + 'z';
+        for (let i = 1; i < pts.length - 1; i++) if (pts[i][1] < pts[i - 1][1] && pts[i][1] < pts[i + 1][1]) {
+          w += 'M' + pts[i][0] + ' ' + pts[i][1] + 'L' + (pts[i][0] - 30) + ' ' + hz + 'M' + pts[i][0] + ' ' + pts[i][1] + 'L' + (pts[i][0] + 46) + ' ' + hz
+            + 'M' + pts[i][0] + ' ' + pts[i][1] + 'L' + ((pts[i][0] + pts[i - 1][0]) / 2 | 0) + ' ' + ((hz + pts[i][1]) / 2 | 0);
+        }
+        return '<path d="' + d + '" fill="' + fill + '" stroke="' + edge + '" stroke-width="' + ew + '" stroke-opacity=".8"/><path d="' + w + '" stroke="' + edge + '" stroke-width="1.4" opacity="' + wire + '"/>';
+      };
+      const back = [[760, hz], [860, 700], [940, 730], [1040, 620], [1140, 690], [1210, 660], [1330, 720], [1600, 700], [1700, 600], [1790, 670], [1860, 640], [1920, 690]];
+      const front = [[280, hz], [360, 720], [430, 744], [520, 660], [620, 730], [700, 700], [790, hz]];
+      const front2 = [[1560, hz], [1660, 716], [1720, 738], [1800, 650], [1880, 712], [1960, 690], [1960, hz]];
+      // Palmeira: tronco curvo em gomos e folhas em forma de foice.
+      const palm = (x, h, lean) => {
+        const tx = x + lean, ty = hz - h;
+        let trunk = '<path d="M' + (x - 9) + ' ' + hz + 'Q' + (x + lean * .2) + ' ' + (hz - h * .5) + ' ' + (tx - 4) + ' ' + ty + 'h8Q' + (x + lean * .2 + 12) + ' ' + (hz - h * .5) + ' ' + (x + 9) + ' ' + hz + 'z"/>', fr = '';
+        for (const [a, l] of [[-2.9, 120], [-2.4, 140], [-1.9, 100], [-.6, 130], [-.15, 140], [.35, 110], [-1.3, 80]]) {
+          const ex = tx + Math.cos(a) * l, ey = ty + Math.sin(a) * l * .55 + l * .35, mx = tx + Math.cos(a) * l * .5, my = ty + Math.sin(a) * l * .5 - 26;
+          fr += '<path d="M' + tx + ' ' + ty + 'Q' + n1(mx) + ' ' + n1(my) + ' ' + n1(ex) + ' ' + n1(ey) + 'Q' + n1(mx + 4) + ' ' + n1(my + 16) + ' ' + tx + ' ' + (ty + 6) + 'z"/>';
+        }
+        return trunk + fr;
+      };
+      let clouds = '';
+      for (const [x, y, w, h, c, o] of [[1080, 560, 420, 10, '#ff8fc4', .55], [1240, 600, 520, 8, '#ff6aa8', .5], [1500, 640, 380, 12, '#c23a7a', .7], [1000, 672, 300, 7, '#ff8fc4', .4],
+        [1640, 540, 260, 7, '#ffb37a', .45], [700, 610, 340, 6, '#ff8fc4', .3], [1700, 690, 240, 9, '#9a2a6a', .7]]) clouds += '<rect x="' + x + '" y="' + y + '" width="' + w + '" height="' + h + '" rx="' + (h / 2) + '" fill="' + c + '" opacity="' + o + '"/>';
       return SVG_BG + '<defs>'
-        + '<linearGradient id="amS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset=".55" stop-color="#ff8a3d"/><stop offset="1" stop-color="#ff4f9a"/></linearGradient>'
-        + '<radialGradient id="amG"><stop offset="0" stop-color="#ff8a3d" stop-opacity=".28"/><stop offset="1" stop-color="#ff4f9a" stop-opacity="0"/></radialGradient>'
-        + '<linearGradient id="amF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0b2c"/><stop offset="1" stop-color="#0c0310"/></linearGradient>'
-        + '<mask id="amM"><rect x="1100" y="0" width="700" height="' + hz + '" fill="#fff"/><g fill="#000">' + stripes + '</g></mask></defs>'
-        + softStars(80, 1920, 1080, 41, 520, 'am-tw')
-        + '<circle class="am-sun" cx="1450" cy="' + hz + '" r="520" fill="url(#amG)"/>'
-        + '<circle cx="1450" cy="' + (hz - 20) + '" r="250" fill="url(#amS)" mask="url(#amM)" opacity=".6"/>'
-        + '<path d="M860 ' + hz + 'l120-70 80 40 110-90 90 60 70-30 120 80 70-40 90 50 110-100 130 90 100-40 80 50V' + hz + 'z" fill="#1c0828" stroke="#ff5ea8" stroke-width="2.4" stroke-opacity=".7"/>'
+        + '<linearGradient id="amK" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#12052a"/><stop offset=".42" stop-color="#36104e"/><stop offset=".74" stop-color="#8a2458"/><stop offset=".92" stop-color="#d8486a"/><stop offset="1" stop-color="#ff8a5a"/></linearGradient>'
+        + '<linearGradient id="amS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a0"/><stop offset=".45" stop-color="#ffb347"/><stop offset=".75" stop-color="#ff7a3d"/><stop offset="1" stop-color="#ff4f9a"/></linearGradient>'
+        + '<radialGradient id="amG"><stop offset="0" stop-color="#ff9a4a" stop-opacity=".42"/><stop offset=".5" stop-color="#ff5a8a" stop-opacity=".14"/><stop offset="1" stop-color="#ff4f9a" stop-opacity="0"/></radialGradient>'
+        + '<linearGradient id="amF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a0c3a"/><stop offset=".3" stop-color="#1c0620"/><stop offset="1" stop-color="#08020a"/></linearGradient>'
+        + '<linearGradient id="amMt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#5a1a6a"/><stop offset="1" stop-color="#26093a"/></linearGradient>'
+        + '<linearGradient id="amH" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffb347" stop-opacity="0"/><stop offset=".5" stop-color="#ffd36b" stop-opacity=".9"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></linearGradient>'
+        + '<linearGradient id="amT" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity=".9"/></linearGradient>'
+        + '<mask id="amM"><rect x="' + (sx - 300) + '" y="0" width="600" height="' + hz + '" fill="#fff"/><g fill="#000">' + stripes + '</g></mask></defs>'
+        + '<rect width="1920" height="' + hz + '" fill="url(#amK)"/>'
+        + softStars(110, 1920, 1080, 41, 480, 'am-tw')
+        + '<g class="am-shoot"><path d="M1180 90l-260 120" stroke="url(#amT)" stroke-width="3"/></g>'
+        + '<circle class="am-sun" cx="' + sx + '" cy="' + hz + '" r="620" fill="url(#amG)"/>'
+        + '<circle cx="' + sx + '" cy="' + (hz - 40) + '" r="270" fill="url(#amS)" mask="url(#amM)" opacity=".75"/>'
+        + '<g class="am-cloud">' + clouds + '</g>'
+        + range(back, 'url(#amMt)', '#ff5ea8', 2.4, .22)
+        + range(front, '#12041a', '#ff5ea8', 2.6, .3) + range(front2, '#12041a', '#ff5ea8', 2.6, .3)
+        + '<g fill="#0a0210">' + palm(316, 280, 30) + palm(372, 200, -24) + palm(1860, 340, -50) + '</g>'
         + '<rect y="' + hz + '" width="1920" height="' + (1080 - hz) + '" fill="url(#amF)"/>'
-        + '<path d="' + grid + '" stroke="#ff5ea8" stroke-width="2" opacity=".32"/>'
-        + '<path d="M0 ' + hz + 'H1920" stroke="#ffb347" stroke-width="2.4" opacity=".5"/></svg>';
+        + '<g class="am-sun" fill="#ff9a4d">' + refl + '</g>'
+        + '<path d="' + grid + '" stroke="#ff5ea8" stroke-width="2" opacity=".34"/>'
+        + '<rect y="' + (hz - 4) + '" width="1920" height="8" fill="url(#amH)" opacity=".7"/><path d="M0 ' + hz + 'H1920" stroke="#ffb347" stroke-width="2.4" opacity=".7"/></svg>';
     },
+    // No menu: uma pedra de âmbar redonda com o pôr do sol dentro (sol listrado, montanha e a grade).
     nav: () => {
       let grid = '', stripes = '';
-      for (let i = 1; i <= 6; i++) grid += 'M0 ' + (104 + Math.pow(i / 6, 2) * 62).toFixed(1) + 'H160';
-      for (let k = -7; k <= 7; k++) grid += 'M80 104L' + (80 + k * 26) + ' 170';
-      for (let i = 0; i < 5; i++) stripes += '<rect y="' + (80 + i * 5 + i * i * .6).toFixed(1) + '" width="160" height="' + (1 + i * .9).toFixed(1) + '"/>';
-      return navScene('nm', '<linearGradient id="nmK" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#1a0630"/><stop offset=".45" stop-color="#4a0f4a"/><stop offset=".85" stop-color="#b8306a"/><stop offset="1" stop-color="#ff7a4a"/></linearGradient>'
-        + '<linearGradient id="nmS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe27a"/><stop offset=".55" stop-color="#ff8a3d"/><stop offset="1" stop-color="#ff4f9a"/></linearGradient>'
-        + '<radialGradient id="nmG"><stop offset="0" stop-color="#ff9a4a" stop-opacity=".55"/><stop offset="1" stop-color="#ff4f9a" stop-opacity="0"/></radialGradient>'
-        + '<linearGradient id="nmF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2e0b30"/><stop offset="1" stop-color="#0c0310"/></linearGradient>'
-        + '<mask id="nmM"><rect width="160" height="104" fill="#fff"/><g fill="#000">' + stripes + '</g></mask>',
-        '<rect width="160" height="104" fill="url(#nmK)"/>' + softStars(14, 160, 60, 41, 56, 'am-tw')
-        + '<circle class="am-sun" cx="80" cy="98" r="62" fill="url(#nmG)"/><circle cx="80" cy="98" r="36" fill="url(#nmS)" mask="url(#nmM)"/>'
-        + '<path d="M0 104l18-14 14 8 22-22 18 16 14-8 20 16 22-20 16 14 16-8V104z" fill="#3a0f40" fill-opacity=".85"/>'
-        + '<path d="M0 104l28-20 18 12 20-14 20 22zM98 104l26-24 16 10 20-8V104z" fill="#1c0828" stroke="#ff5ea8" stroke-width="1.3"/>'
-        + '<g stroke="#12041a" stroke-width="2.4"><path d="M30 104c-2-14 2-26 8-36" stroke-width="3"/><path d="M38 68c-8-4-16-2-22 4M38 68c-6-8-14-10-22-8M38 68c2-8 10-12 18-10M38 68c8-2 16 2 20 10M38 68c0 6-4 12-8 16"/></g>'
-        + '<rect y="104" width="160" height="66" fill="url(#nmF)"/>'
-        + '<path d="' + grid + '" stroke="#ff5ea8" stroke-width="1.2" stroke-opacity=".6"/>'
-        + '<path d="M0 104H160" stroke="#ffb347" stroke-width="2"/>');
+      for (const y of [99, 103, 108.5, 115]) grid += 'M50 ' + y + 'H110';
+      for (let k = -4; k <= 4; k++) grid += 'M80 96L' + (80 + k * 11) + ' 118';
+      for (const [y, h] of [[86, 1.2], [90, 1.8], [93.6, 2.4]]) stripes += '<rect x="60" y="' + y + '" width="40" height="' + h + '" fill="#8a2458"/>';
+      return navGem({ p: 'nm', c: '#ffc27a', glow: '#ff8a3d', gap: '#2a0b30', ring: false,
+        defs: '<linearGradient id="nmK" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a0b40"/><stop offset=".5" stop-color="#8a2458"/><stop offset="1" stop-color="#ff8a5a"/></linearGradient>'
+          + '<linearGradient id="nmS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff0a0"/><stop offset=".6" stop-color="#ff9a3d"/><stop offset="1" stop-color="#ff4f9a"/></linearGradient>'
+          + '<radialGradient id="nmV" cx=".35" cy=".3" r=".8"><stop offset="0" stop-color="#ffe6b0" stop-opacity=".35"/><stop offset=".6" stop-color="#ffb347" stop-opacity="0"/><stop offset="1" stop-color="#3a0c00" stop-opacity=".45"/></radialGradient>',
+        clip: '<circle cx="80" cy="86" r="27"/>',
+        stone: '<g transform="translate(80 86) scale(1.34) translate(-80 -86)"><g clip-path="url(#nmC)"><rect x="50" y="56" width="60" height="40" fill="url(#nmK)"/><circle cx="80" cy="96" r="15" fill="url(#nmS)"/>' + stripes
+          + '<path d="M50 96l9-7 6 4 8-8 7 6 6-4 9 6 6-3 9 6z" fill="#3a0f40" stroke="#ff5ea8" stroke-width=".9"/>'
+          + '<rect x="50" y="96" width="60" height="26" fill="#1c0620"/><path d="' + grid + '" stroke="#ff5ea8" stroke-width=".9" opacity=".8"/><path d="M50 96H110" stroke="#ffd36b" stroke-width="1.4"/>'
+          + '<circle cx="80" cy="86" r="27" fill="url(#nmV)"/></g>'
+          + '<circle cx="80" cy="86" r="26" stroke="#ffb347" stroke-width="2"/><circle cx="80" cy="86" r="29.5" stroke="#ff5ea8" stroke-width=".8" opacity=".55"/><path d="M60 74a24 24 0 0 1 14-12" stroke="#fff6dc" stroke-width="1.8" opacity=".9"/></g>',
+        extra: twinkle(spark(126, 40, 6, '#ffd36b'), 3.2, .5) + twinkle(spark(32, 130, 5.4, '#ff8fc4'), 3.8, 1.6) + twinkle(spark(140, 120, 3.6, '#fff'), 2.8, 2)
+          + '<path d="M28 44v6M25 47h6" stroke="#ff8fc4" stroke-width="1.3" opacity=".6"/><circle cx="118" cy="64" r="2.4" fill="#ffd36b" opacity=".8"/><circle cx="22" cy="92" r="1.2" fill="#fff" opacity=".5"/>' });
     },
   },
 
-  // Onix Quartzo Rosa: jardim japonês. Lua cheia, o monte ao fundo, galho de cerejeira em flor e pétalas caindo.
+  // Onix Quartzo Rosa: jardim japonês à noite. Lua cheia com halo, cordilheira ao longe, o monte com neve, névoa,
+  // um pagode, o portal torii, uma lanterna de pedra, o lago com o reflexo da lua e o galho de cerejeira no alto.
   quartzo: {
     bg: () => {
       const rnd = rng(59);
-      const flower = (x, y, r) => { let s = ''; for (let i = 0; i < 5; i++) { const a = i * 1.2566 - 1.57; s += '<circle cx="' + (x + Math.cos(a) * r).toFixed(1) + '" cy="' + (y + Math.sin(a) * r).toFixed(1) + '" r="' + (r * .8).toFixed(1) + '"/>'; } return s; };
-      let flowers = '', centers = '';
-      for (const [x, y, r] of [[1900, 30, 11], [1850, 44, 9], [1790, 28, 12], [1730, 52, 9], [1670, 30, 10], [1610, 58, 11], [1550, 40, 9], [1490, 64, 10],
-        [1430, 46, 8], [1370, 60, 9], [1310, 42, 8], [1250, 56, 7], [1760, 92, 9], [1700, 108, 8], [1580, 100, 9], [1200, 36, 7], [1880, 84, 8]]) {
-        flowers += flower(x, y, r); centers += '<circle cx="' + x + '" cy="' + y + '" r="' + (r * .35).toFixed(1) + '"/>';
+      const flower = (x, y, r) => { let s = ''; for (let i = 0; i < 5; i++) { const a = i * 1.2566 - 1.57; s += '<circle cx="' + n1(x + Math.cos(a) * r) + '" cy="' + n1(y + Math.sin(a) * r) + '" r="' + n1(r * .8) + '"/>'; } return s; };
+      let flowers = '', centers = '', buds = '';
+      for (const [x, y, r] of [[1180, 34, 10], [1130, 58, 12], [1080, 44, 9], [1040, 78, 11], [990, 64, 9], [950, 98, 12], [900, 84, 9], [860, 116, 10], [820, 100, 8], [780, 132, 9],
+        [1010, 112, 8], [930, 136, 9], [1240, 22, 8], [1320, 12, 7], [1420, 10, 8], [1560, 8, 7], [1700, 6, 8], [1840, 10, 7]]) {
+        flowers += flower(x, y, r); centers += '<circle cx="' + x + '" cy="' + y + '" r="' + n1(r * .35) + '"/>';
       }
+      for (const [x, y] of [[1066, 96], [970, 124], [880, 146], [1160, 80], [812, 150]]) buds += '<circle cx="' + x + '" cy="' + y + '" r="4"/>';
       const petal = (x, y) => '<g transform="translate(' + x + ' ' + y + ')"><path class="qz-sway" d="M0 0c6-9 18-7 16 4-2 9-12 11-16-4z"/></g>';
       const fall = n => { let s = ''; for (let i = 0; i < n; i++) { const x = 760 + rnd() * 1360 | 0, y = -120 + rnd() * 1200 | 0; s += petal(x, y) + petal(x + 520, y - 1220); } return s; };
+      // Pagode de 4 andares: telhados com as pontas viradas para cima e janelas acesas.
+      let pag = '', win = '';
+      for (let i = 0; i < 4; i++) {
+        const w = 150 - i * 26, y = 992 - i * 62, x = 1300;
+        pag += '<rect x="' + (x - w * .32) + '" y="' + (y - 64) + '" width="' + (w * .64) + '" height="64"/>'
+          + '<path d="M' + (x - w / 2 - 20) + ' ' + (y - 46) + 'q14 6 30 4h' + (w - 20) + 'q16 2 30-4l-8 10q-12 6-26 6H' + (x - w / 2 + 4) + 'q-14 0-26-6z"/>';
+        win += '<rect x="' + (x - 6) + '" y="' + (y - 30) + '" width="12" height="16" rx="2"/>';
+      }
+      pag += '<path d="M1296 750h8v-60h-8z"/><circle cx="1300" cy="688" r="5"/><path d="M1210 1000h180v-10h-180z"/>';
+      let shim = '';
+      for (let i = 0; i < 8; i++) { const y = 1000 + i * 10, w = 70 - i * 6 + rnd() * 20 | 0; shim += 'M' + (1720 - w / 2) + ' ' + y + 'h' + w; }
       return SVG_BG + '<defs>'
-        + '<radialGradient id="qzM"><stop offset="0" stop-color="#ffe6ef" stop-opacity=".55"/><stop offset=".7" stop-color="#f6b8cf" stop-opacity=".3"/><stop offset="1" stop-color="#f6b8cf" stop-opacity=".18"/></radialGradient>'
-        + '<radialGradient id="qzH"><stop offset="0" stop-color="#ffb7d0" stop-opacity=".22"/><stop offset="1" stop-color="#ffb7d0" stop-opacity="0"/></radialGradient></defs>'
-        + softStars(50, 1920, 1080, 61, 600)
-        + '<circle cx="1730" cy="700" r="400" fill="url(#qzH)"/><circle cx="1730" cy="700" r="150" fill="url(#qzM)" stroke="#ffe0ec" stroke-width="2" stroke-opacity=".35"/>'
-        + '<path d="M1020 1080L1430 700c40-34 80-34 120 0l370 330V1080z" fill="#22101d" stroke="#ffa8c8" stroke-width="2.4" stroke-opacity=".35"/>'
-        + '<path d="M1430 700c40-34 80-34 120 0l-28 24-22-16-26 22-20-14z" fill="#3a2232" stroke="#ffe0ec" stroke-width="2" stroke-opacity=".45"/>'
+        + '<radialGradient id="qzM" cx=".42" cy=".38" r=".7"><stop offset="0" stop-color="#fff6fa"/><stop offset=".7" stop-color="#ffd6e6"/><stop offset="1" stop-color="#f6b8cf"/></radialGradient>'
+        + '<radialGradient id="qzH"><stop offset="0" stop-color="#ffb7d0" stop-opacity=".28"/><stop offset=".5" stop-color="#ffb7d0" stop-opacity=".08"/><stop offset="1" stop-color="#ffb7d0" stop-opacity="0"/></radialGradient>'
+        + '<linearGradient id="qzF" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a2a42"/><stop offset=".5" stop-color="#2a1426"/><stop offset="1" stop-color="#160a13"/></linearGradient>'
+        + '<linearGradient id="qzMist" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffd6e6" stop-opacity="0"/><stop offset=".5" stop-color="#ffd6e6" stop-opacity=".1"/><stop offset="1" stop-color="#ffd6e6" stop-opacity="0"/></linearGradient>'
+        + '<linearGradient id="qzW" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2a1426"/><stop offset="1" stop-color="#0a0408"/></linearGradient>'
+        + '<radialGradient id="qzL"><stop offset="0" stop-color="#ffd27a" stop-opacity=".5"/><stop offset="1" stop-color="#ffd27a" stop-opacity="0"/></radialGradient></defs>'
+        + softStars(70, 1920, 1080, 61, 640)
+        + '<circle cx="1720" cy="600" r="420" fill="url(#qzH)"/><circle cx="1720" cy="600" r="196" stroke="#ffe0ec" stroke-width="1.4" stroke-opacity=".18" stroke-dasharray="2 10"/>'
+        + '<circle cx="1720" cy="600" r="150" fill="url(#qzM)" fill-opacity=".85"/>'
+        + '<g fill="#e9a6c2" fill-opacity=".28"><circle cx="1676" cy="560" r="26"/><circle cx="1760" cy="640" r="18"/><circle cx="1740" cy="548" r="10"/><circle cx="1680" cy="652" r="12"/></g>'
+        + '<path d="M300 880l120-60 90 30 140-70 120 50 110-30 140 60 100-20 160 50V1080H300z" fill="#2c1428" fill-opacity=".6"/>'
+        + '<path d="M1020 1080L1430 700c40-34 80-34 120 0l370 330V1080z" fill="url(#qzF)" stroke="#ffa8c8" stroke-width="2.4" stroke-opacity=".3"/>'
+        + '<path d="M1430 700c40-34 80-34 120 0l60 54-30-8-24 22-22-26-26 30-22-24-30 22-26-20-30 14z" fill="#f3d7e4" fill-opacity=".85"/>'
+        + '<path d="M1490 690l-40 150M1490 690l60 170M1490 690l-110 120" stroke="#ffe0ec" stroke-width="1.6" opacity=".14"/>'
+        + '<g class="es-drift"><rect x="300" y="820" width="1700" height="140" fill="url(#qzMist)"/></g>'
         + '<path d="M300 1080c260-90 520-70 760-20s520 40 860-40V1080z" fill="#160a13"/>'
-        + '<path d="M300 1036c200-50 420-50 620-10M980 1050c220-40 460-40 700-16" stroke="#ffa8c8" stroke-width="2" stroke-dasharray="2 12" opacity=".4"/>'
-        + '<g stroke="#4a2636" fill="none"><path d="M1940 20C1820 50 1700 24 1580 54S1340 66 1180 40" stroke-width="10"/><path d="M1760 40c-6 26-20 50-50 70" stroke-width="5"/><path d="M1600 54c-10 20-14 34-20 50" stroke-width="4"/></g>'
-        + '<g fill="#ffb7d0" opacity=".85">' + flowers + '</g><g fill="#ff7fb0">' + centers + '</g>'
+        + '<g fill="#0e050b">' + pag + '</g><g fill="#ffc2d8" opacity=".55">' + win + '</g>'
+        + '<rect y="990" width="1920" height="90" fill="url(#qzW)"/>'
+        + '<g class="qz-shim" stroke="#ffe0ec" stroke-width="3" opacity=".45"><path d="' + shim + '"/></g>'
+        + '<path d="M300 1030c200-30 420-30 620-6M980 1050c220-30 460-30 700-10" stroke="#ffa8c8" stroke-width="2" stroke-dasharray="2 12" opacity=".4"/>'
+        // Portal torii e lanterna de pedra (com a chama acesa).
+        + '<g fill="#c8485a" fill-opacity=".9"><rect x="394" y="900" width="14" height="110"/><rect x="474" y="900" width="14" height="110"/><path d="M370 884q71-16 142 0l6-12q-77-20-154 0z"/><rect x="380" y="912" width="122" height="10"/></g>'
+        + '<circle cx="1110" cy="986" r="60" fill="url(#qzL)"/><g fill="#1e0d18" stroke="#ffa8c8" stroke-opacity=".3" stroke-width="1.4"><path d="M1090 1040h40l-6-12h-28z"/><rect x="1104" y="1004" width="12" height="24"/><path d="M1094 976h32v28h-32z"/><path d="M1082 976l28-16 28 16z"/></g>'
+        + '<rect x="1102" y="982" width="16" height="16" fill="#ffd27a" opacity=".75"/>'
+        + '<g stroke="#4a2636" fill="none"><path d="M1960 -6C1700 20 1420 4 1220 30S980 70 760 140" stroke-width="10"/><path d="M1060 64c-10 20-6 40-20 56M920 98c6 16 4 30-2 44M1300 22c-6 20-20 34-36 46" stroke-width="5"/></g>'
+        + '<g fill="#ffb7d0" opacity=".88">' + flowers + '</g><g fill="#ff7fb0">' + centers + '</g><g fill="#ff9cc0">' + buds + '</g>'
         + '<g fill="#ffc2d8" opacity=".8"><g class="qz-fall1">' + fall(4) + '</g><g class="qz-fall2">' + fall(4) + '</g><g class="qz-fall3">' + fall(3) + '</g></g></svg>';
     },
+    // No menu: um quartzo rosa lapidado em coração, com o anel, pétalas caindo e brilhinhos.
     nav: () => {
-      const flower = (x, y, r) => { let s = ''; for (let i = 0; i < 5; i++) { const a = i * 1.2566 - 1.57; s += '<circle cx="' + (x + Math.cos(a) * r).toFixed(1) + '" cy="' + (y + Math.sin(a) * r).toFixed(1) + '" r="' + (r * .8).toFixed(1) + '"/>'; } return s; };
-      const fl = [[64, 31, 4.6], [78, 35, 3.8], [96, 28, 4.8], [110, 46, 4.2], [126, 22, 4.8], [140, 30, 3.8], [86, 50, 3.6], [150, 20, 3.4], [52, 38, 3.4]];
-      const petal = (x, y) => '<g transform="translate(' + x + ' ' + y + ')"><path class="qz-sway" d="M0 0c4-6 12-5 11 3-1 6-8 7-11-3z"/></g>';
-      return navScene('nq', '<linearGradient id="nqS" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4a2040"/><stop offset=".6" stop-color="#2a1226"/><stop offset="1" stop-color="#160a13"/></linearGradient>'
-        + '<radialGradient id="nqM"><stop offset="0" stop-color="#fff4f8"/><stop offset="1" stop-color="#f6b8cf"/></radialGradient>'
-        + '<radialGradient id="nqH"><stop offset="0" stop-color="#ffb7d0" stop-opacity=".38"/><stop offset="1" stop-color="#ffb7d0" stop-opacity="0"/></radialGradient>',
-        '<rect width="160" height="170" fill="url(#nqS)"/>' + softStars(10, 160, 170, 61, 90)
-        + '<circle cx="104" cy="70" r="42" fill="url(#nqH)"/><circle cx="104" cy="70" r="18" fill="url(#nqM)" fill-opacity=".92"/>'
-        + '<path d="M8 136L62 98c8-6 16-6 24 0l62 38z" fill="#2c1426" stroke="#ffa8c8" stroke-width="1.2" stroke-opacity=".35"/>'
-        + '<path d="M62 98c8-6 16-6 24 0l-6 5-5-4-6 5-4-3z" fill="#f3d7e4" fill-opacity=".8"/>'
-        + '<rect y="134" width="160" height="36" fill="#1a0b16"/>'
-        + '<path d="M30 142h44M58 150h60M88 158h40" stroke="#ffa8c8" stroke-width="1.2" stroke-opacity=".35" stroke-dasharray="2 6"/><path d="M96 141h16M99 147h10" stroke="#ffe0ec" stroke-width="1.4" stroke-opacity=".5"/>'
-        + '<g stroke="#c8485a" stroke-opacity=".9"><path d="M20 136v-26M38 136v-26" stroke-width="3"/><path d="M12 108q17-5 34 0" stroke-width="3.4"/><path d="M16 116h26" stroke-width="2"/></g>'
-        + '<g stroke="#1e0a15"><path d="M164 24C142 30 128 20 108 24S80 36 46 34" stroke-width="4"/><path d="M120 24c-4 10-2 16-8 22M88 32c2 8 0 12-2 18" stroke-width="2.2"/></g>'
-        + '<g fill="#ffb7d0">' + fl.map(f => flower(...f)).join('') + '</g><g fill="#ff7fb0">' + fl.map(([x, y, r]) => '<circle cx="' + x + '" cy="' + y + '" r="' + (r * .4).toFixed(1) + '"/>').join('') + '</g>'
-        + '<g fill="#ffc2d8" fill-opacity=".85">' + petal(40, 62) + petal(58, 84) + petal(132, 96) + petal(26, 92) + '</g>');
+      const heart = 'M80 114C60 100 52 88 54 75C56 62 71 58 80 70C89 58 104 62 106 75C108 88 100 100 80 114Z';
+      const petal = (x, y, r) => '<g transform="translate(' + x + ' ' + y + ') rotate(' + r + ')"><path class="qz-sway" d="M0 0c4-6 12-5 11 3-1 6-8 7-11-3z" fill="#ffc2d8"/></g>';
+      return navGem({ p: 'nq', c: '#ffc2d8', glow: '#ff8fbe', gap: '#3a0f26',
+        defs: '<linearGradient id="nqF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff0f5"/><stop offset=".3" stop-color="#ffa8c8"/><stop offset=".7" stop-color="#d05a8a"/><stop offset="1" stop-color="#5a1a38"/></linearGradient>',
+        clip: '<path d="' + heart + '"/>',
+        stone: '<path d="' + heart + '" fill="url(#nqF)"/>'
+          + '<path d="' + heart + '" transform="translate(80 86) scale(.48) translate(-80 -86)" stroke="#fff0f5" stroke-width="2.8" opacity=".85" fill="#fff" fill-opacity=".08"/>'
+          + '<path d="M80 70V78M80 114V100M54 75L68 81M106 75L92 81M64 62L72 75M96 62L88 75M60 98L70 92M100 98L90 92" stroke="#ffe0ec" stroke-width="1" opacity=".6"/>'
+          + '<path d="' + heart + '" stroke="#ffc2d8" stroke-width="2.4"/><path d="M60 74c0-6 4-10 9-11" stroke="#fff" stroke-width="2.2" opacity=".9"/>',
+        extra: petal(32, 44, -20) + petal(130, 132, 30) + petal(124, 30, 10) + petal(24, 118, 50)
+          + twinkle(spark(140, 72, 6, '#fff0f5'), 3.2, .8) + twinkle(spark(36, 82, 4.6, '#ffa8c8'), 3.8, 2) + twinkle(spark(70, 146, 3.6, '#fff'), 2.9, 1.2)
+          + '<circle cx="104" cy="152" r="1.3" fill="#ffc2d8" opacity=".6"/><circle cx="56" cy="24" r="1.2" fill="#fff" opacity=".5"/>' });
     },
+  },
+  // Onix Opala: a noite quentinha do site do Opala. Céu cheio de estrelinhas laranja ✦ piscando, uma constelação,
+  // a lua crescente, nuvens fofas, coraçõezinhos subindo e brilhinhos maiores no canto.
+  opala: {
+    bg: () => {
+      const rnd = rng(71), cols = ['#ff9a4d', '#ffc58f', '#ff7a6b', '#ffe2c4'];
+      let still = '', anim = '', dots = '';
+      // Menos estrelinhas e mais fracas no meio da tela, onde ficam os textos; as grandes vão para as bordas.
+      for (let i = 0; i < 56; i++) {
+        const x = 300 + rnd() * 1620, y = rnd() * 1080, edge = x > 1500 || y < 170 || y > 940, big = rnd(), r = big > .86 && edge ? 12 + rnd() * 8 : big > .6 ? 6 + rnd() * 4 : 3 + rnd() * 3, c = cols[rnd() * 4 | 0];
+        if (i % 3 === 0) anim += twinkle(spark(x, y, r, c, edge ? '' : ' opacity=".55"'), 2.4 + rnd() * 2.6, rnd() * 4);
+        else still += spark(x, y, r, c, ' opacity="' + ((edge ? .3 : .14) + rnd() * .3).toFixed(2) + '"');
+      }
+      for (let i = 0; i < 80; i++) dots += '<circle cx="' + (300 + rnd() * 1620 | 0) + '" cy="' + (rnd() * 1080 | 0) + '" r="' + (.8 + rnd() * 1.6).toFixed(1) + '" opacity="' + (.2 + rnd() * .5).toFixed(2) + '"/>';
+      const con = [[680, 118], [748, 160], [830, 132], [902, 176], [968, 146], [1010, 196]];
+      let conL = 'M' + con.map(p => p.join(' ')).join('L'), conS = '';
+      for (const [x, y] of con) conS += spark(x, y, 7, '#ffe2c4');
+      const cloud = (x, y, s) => '<g transform="translate(' + x + ' ' + y + ') scale(' + s + ')"><path d="M-90 30a30 30 0 0 1 20-52 40 40 0 0 1 72-16 34 34 0 0 1 58 18 26 26 0 0 1 22 50z" fill="#1c100b" fill-opacity=".72" stroke="#ffb58a" stroke-opacity=".32" stroke-width="2.4"/>'
+        + '<path d="M-56-14a26 26 0 0 1 26-14" stroke="#ffd3ad" stroke-opacity=".3" stroke-width="2.4"/></g>';
+      let hearts = '';
+      for (let i = 0; i < 9; i++) { const x = 360 + rnd() * 1520 | 0, y = 1100 + rnd() * 1200 | 0, s = (.9 + rnd() * 1.2).toFixed(2), c = i % 2 ? '#ff7a8a' : '#ffb07a'; hearts += heartSvg(x, y, s, c, i % 3 === 0) + heartSvg(x, y - 1200, s, c, i % 3 === 0); }
+      return SVG_BG + '<defs>'
+        + '<radialGradient id="opMo"><stop offset="0" stop-color="#ffc58f" stop-opacity=".35"/><stop offset="1" stop-color="#ffc58f" stop-opacity="0"/></radialGradient>'
+        + '</defs>'
+        + '<g fill="#ffd3ad">' + dots + '</g>' + still + anim
+        + '<path d="' + conL + '" stroke="#ffc58f" stroke-width="1.6" stroke-dasharray="3 8" opacity=".4"/><g opacity=".85">' + conS + '</g>'
+        + '<circle cx="1100" cy="126" r="100" fill="url(#opMo)"/><path d="M1116 88a40 40 0 1 0 6 74 32 32 0 1 1-6-74z" fill="#ffd3ad" fill-opacity=".92"/>'
+        + '<g class="gm-drift">' + cloud(560, 1010, 1.1) + cloud(1300, 1040, .9) + '</g>'
+        + '<g class="op-up" opacity=".55">' + hearts + '</g>'
+        + twinkle(spark(1520, 700, 18, '#ffc58f'), 3, .4) + twinkle(spark(1880, 760, 12, '#ff9a4d'), 3.6, 1.6) + '</svg>';
+    },
+    // No menu: a opala de fogo do ícone do Opala, com o anel, as estrelinhas laranja e um coraçãozinho.
+    nav: () => navGem({ p: 'no', c: '#ffc08a', glow: '#ff8a3d', gap: '#4a1a0a',
+      defs: '<radialGradient id="noF" cx=".36" cy=".3" r=".8"><stop offset="0" stop-color="#ffe2c4"/><stop offset=".3" stop-color="#ffb066"/><stop offset=".65" stop-color="#e0662a"/><stop offset="1" stop-color="#4a1a0a"/></radialGradient>',
+      clip: '<ellipse cx="80" cy="86" rx="23" ry="27" transform="rotate(28 80 86)"/>',
+      stone: '<ellipse cx="80" cy="86" rx="22" ry="26" transform="rotate(28 80 86)" fill="url(#noF)"/>'
+        + '<g clip-path="url(#noC)"><ellipse cx="88" cy="94" rx="9" ry="5" fill="#5fe0c8" opacity=".3" transform="rotate(-30 88 94)"/><ellipse cx="72" cy="96" rx="7" ry="4" fill="#ff4f8a" opacity=".35"/></g>'
+        + spark(88, 76, 5, '#ffc08a') + spark(74, 94, 3.6, '#ff8a55') + spark(91, 94, 2.6, '#ffe2c4')
+        + '<ellipse cx="80" cy="86" rx="22" ry="26" transform="rotate(28 80 86)" stroke="#ffb07a" stroke-width="2.4"/><path d="M63 80a19 23 0 0 1 11-16" stroke="#fff3e6" stroke-width="2" opacity=".9"/>',
+      extra: twinkle(spark(130, 40, 8, '#ff9a4d'), 2.8, .3) + twinkle(spark(30, 128, 6.5, '#ffc58f'), 3.4, 1.4) + twinkle(spark(136, 128, 4.4, '#ff7a6b'), 2.4, 2) + twinkle(spark(36, 44, 4, '#ffe2c4'), 3.8, .9)
+        + heartSvg(118, 150, .55, '#ff7a8a', false) + '<circle cx="22" cy="92" r="1.3" fill="#ffd3ad" opacity=".6"/><circle cx="146" cy="84" r="1.2" fill="#ffd3ad" opacity=".6"/><circle cx="60" cy="18" r="1.2" fill="#ffc58f" opacity=".6"/>' }),
+  },
+
+  // Onix Amethyst: o palco do karaokê Amethyst. Grafite com brilho violeta, dois canhões de luz, o buraco de minhoca
+  // em linhas brancas, notas musicais subindo e o equalizador pulsando no chão.
+  amethyst: {
+    bg: () => {
+      const rnd = rng(83), wx = 1580, wy = 640;
+      let worm = '', ribs = '';
+      for (let i = 0; i < 17; i++) {
+        const t = i / 16, rx = 540 * Math.pow(1 - t, 1.5) + 8, ry = rx * .6, cx = wx + 130 * Math.pow(t, 1.2), cy = wy - 70 * t;
+        worm += '<ellipse cx="' + n1(cx) + '" cy="' + n1(cy) + '" rx="' + n1(rx) + '" ry="' + n1(ry) + '" opacity="' + (.07 + .3 * t).toFixed(2) + '"/>';
+      }
+      for (let k = 0; k < 20; k++) { const a = k / 20 * Math.PI * 2; ribs += 'M' + n1(wx + Math.cos(a) * 548) + ' ' + n1(wy + Math.sin(a) * 329) + 'L' + n1(wx + 130 + Math.cos(a) * 10) + ' ' + n1(wy - 70 + Math.sin(a) * 6); }
+      let notes = '';
+      for (let i = 0; i < 10; i++) {
+        const x = 900 + rnd() * 1000 | 0, y = 1100 + rnd() * 1200 | 0, s = (.9 + rnd() * .9).toFixed(2), c = ['#ff7a9a', '#c9b8ff', '#ff2d55'][i % 3], f = i % 2 ? noteSvg : notes2Svg;
+        notes += f(x, y, s, c) + f(x, y - 1200, s, c);
+      }
+      let bars = '';
+      for (let i = 0; i < 38; i++) {
+        const x = 300 + i * 43, h = 36 + rnd() * 100 | 0;
+        bars += '<rect class="ay-bar" x="' + x + '" y="' + (1080 - h) + '" width="16" height="' + h + '" rx="8" style="animation-duration:' + (.8 + rnd()).toFixed(2) + 's;animation-delay:-' + (rnd() * 2).toFixed(2) + 's"/>';
+      }
+      return SVG_BG + '<defs>'
+        + '<radialGradient id="ayW"><stop offset="0" stop-color="#7c5cff" stop-opacity=".45"/><stop offset=".4" stop-color="#5b2cff" stop-opacity=".12"/><stop offset="1" stop-color="#5b2cff" stop-opacity="0"/></radialGradient>'
+        + '<linearGradient id="ayS1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9b7cff" stop-opacity=".26"/><stop offset="1" stop-color="#9b7cff" stop-opacity="0"/></linearGradient>'
+        + '<linearGradient id="ayS2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff2d55" stop-opacity=".2"/><stop offset="1" stop-color="#ff2d55" stop-opacity="0"/></linearGradient>'
+        + '<linearGradient id="ayE" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff2d55"/><stop offset="1" stop-color="#5b2cff"/></linearGradient>'
+        + '<radialGradient id="ayFl" cx=".5" cy="1" r=".9"><stop offset="0" stop-color="#7c5cff" stop-opacity=".3"/><stop offset="1" stop-color="#7c5cff" stop-opacity="0"/></radialGradient></defs>'
+        + softStars(90, 1920, 1080, 85, 1080)
+        + '<g class="ay-spot"><path d="M820 0h70l380 1080H980z" fill="url(#ayS1)"/></g><g class="ay-spot2"><path d="M1240 0h70L1020 1080H760z" fill="url(#ayS2)"/></g>'
+        + '<circle cx="' + (wx + 130) + '" cy="' + (wy - 70) + '" r="420" fill="url(#ayW)"/>'
+        + '<g class="ay-worm"><g stroke="#fff" stroke-width="2">' + worm + '</g><path d="' + ribs + '" stroke="#fff" stroke-width="1.4" opacity=".08"/></g>'
+        + '<g class="op-up" opacity=".45">' + notes + '</g>'
+        + '<rect y="820" width="1920" height="260" fill="url(#ayFl)"/>'
+        + '<g fill="url(#ayE)" opacity=".2">' + bars + '</g>'
+        + twinkle(spark(1300, 160, 12, '#fff'), 3, .5) + twinkle(spark(1700, 470, 9, '#c9b8ff'), 3.6, 1.7) + twinkle(spark(640, 900, 8, '#ff7a9a'), 2.8, 1) + '</svg>';
+    },
+    // No menu: a ametista lapidada do ícone do Amethyst, com o anel, notas musicais e brilhinhos.
+    nav: () => navGem({ p: 'na', c: '#d9c6ff', glow: '#7c5cff', gap: '#1a0c3a',
+      defs: '<linearGradient id="naF" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f0e8ff"/><stop offset=".3" stop-color="#b48cff"/><stop offset=".7" stop-color="#6a34e0"/><stop offset="1" stop-color="#1a0c3a"/></linearGradient>',
+      clip: '<path d="M65 60H95L108 76L80 116L52 76Z"/>',
+      stone: '<path d="M65 60H95L108 76L80 116L52 76Z" fill="url(#naF)"/>'
+        + '<path d="M52 76H108M65 60L72 76L80 116M95 60L88 76L80 116M72 76L80 60L88 76" stroke="#f0e8ff" stroke-width="1.2" opacity=".7"/>'
+        + '<path d="M65 60H95L108 76L80 116L52 76Z" stroke="#d9c6ff" stroke-width="2.4"/><path d="M60 70L67 63" stroke="#fff" stroke-width="2.2" opacity=".9"/>',
+      extra: noteSvg(128, 46, .62, '#ff7a9a') + notes2Svg(22, 136, .5, '#c9b8ff')
+        + twinkle(spark(34, 44, 6, '#fff'), 3, .6) + twinkle(spark(138, 126, 5, '#c9b8ff'), 3.6, 1.6) + twinkle(spark(116, 150, 3.4, '#ff7a9a'), 2.6, 1)
+        + '<circle cx="22" cy="92" r="1.3" fill="#fff" opacity=".5"/><circle cx="146" cy="86" r="1.2" fill="#d9c6ff" opacity=".6"/>' }),
   },
 };
 
@@ -2565,50 +2972,94 @@ function drawThemeSky(g, W, H, rnd, th) {
     g.globalAlpha = 1;
     return true;
   } else if (th === 'aurora') {
+    // A aurora em si é animada na cena (SAVER_SCENES.aurora); o céu fica só com um brilho verde bem fraco.
     g.fillStyle = '#01070a'; g.fillRect(0, 0, W, H);
-    for (const [y, c, a] of [[.28, '93,255,192', .22], [.18, '180,140,255', .16]]) {
-      g.save(); g.lineWidth = H * .2; g.setLineDash([2 * u, 7 * u]);
-      const gr = g.createLinearGradient(0, H * (y - .12), 0, H * (y + .12));
-      gr.addColorStop(0, `rgba(${c},0)`); gr.addColorStop(.5, `rgba(${c},${a})`); gr.addColorStop(1, `rgba(${c},0)`);
-      g.strokeStyle = gr; g.beginPath(); g.moveTo(-W * .05, H * y);
-      g.bezierCurveTo(W * .3, H * (y - .1), W * .55, H * (y + .1), W * 1.05, H * (y - .04)); g.stroke(); g.restore();
-    }
+    glowAt(g, W * .5, H * .25, 0, H * .7, 'rgba(60,200,150,.05)');
   } else if (th === 'rubi') {
+    // Sala de cinema escura: a tela no meio, cortinas de veludo dos lados, o bandô em cima e o feixe do projetor
+    // vindo da cabine (canto de cima à direita) até a tela. A luz da tela e as lâmpadas piscam na cena.
     g.fillStyle = '#050102'; g.fillRect(0, 0, W, H);
-    glowAt(g, W * .5, 0, 0, H * .9, 'rgba(120,20,40,.25)');
-    const gr = g.createLinearGradient(W, 0, W * .5, H);
-    gr.addColorStop(0, 'rgba(255,230,190,.07)'); gr.addColorStop(1, 'rgba(255,230,190,0)');
-    g.fillStyle = gr; g.beginPath(); g.moveTo(W, 0); g.lineTo(W * .62, H); g.lineTo(W * .32, H); g.closePath(); g.fill();
+    glowAt(g, W * .5, H * .38, 0, H * .8, 'rgba(120,20,40,.2)');
+    g.fillStyle = '#020001'; g.fillRect(W * .2, H * .13, W * .6, H * .52);
+    g.fillStyle = 'rgba(255,236,214,.012)'; g.fillRect(W * .22, H * .15, W * .56, H * .48);
+    const beam = g.createLinearGradient(W * .97, H * .03, W * .5, H * .4);
+    beam.addColorStop(0, 'rgba(255,230,190,.07)'); beam.addColorStop(1, 'rgba(255,230,190,0)');
+    g.fillStyle = beam; g.beginPath(); g.moveTo(W * .965, H * .025); g.lineTo(W * .985, H * .05); g.lineTo(W * .7, H * .62); g.lineTo(W * .26, H * .2); g.closePath(); g.fill();
+    const fold = W * .028;
+    for (const [x0, x1] of [[0, W * .2], [W * .8, W]]) for (let x = x0; x < x1; x += fold) {
+      const c = g.createLinearGradient(x, 0, x + fold, 0);
+      c.addColorStop(0, '#0e0204'); c.addColorStop(.5, '#2c060d'); c.addColorStop(1, '#0e0204');
+      g.fillStyle = c; g.fillRect(x, 0, fold + 1, H * .92);
+    }
+    const val = g.createLinearGradient(0, 0, 0, H * .1);
+    val.addColorStop(0, '#2a050c'); val.addColorStop(1, '#4a0a16');
+    g.fillStyle = val; g.fillRect(0, 0, W, H * .08);
+    for (let x = 0; x < W; x += H * .08) { g.beginPath(); g.arc(x + H * .04, H * .08, H * .04, 0, Math.PI); g.fill(); }
+    g.strokeStyle = 'rgba(255,210,122,.22)'; g.lineWidth = Math.max(1, 2 * u);
+    g.beginPath(); for (let x = 0; x < W; x += H * .08) { g.moveTo(x, H * .08); g.arc(x + H * .04, H * .08, H * .04, Math.PI, 0, true); } g.stroke();
   } else if (th === 'safira') {
-    // Fundo do mar escuro: azul quase preto e três faixas de luz bem fracas vindas de cima.
+    // Fundo do mar escuro: luz da superfície, faixas de luz bem fracas e ondas de luz no alto (o recife vem depois).
     const gr = g.createLinearGradient(0, 0, 0, H);
-    gr.addColorStop(0, '#031a35'); gr.addColorStop(.5, '#010a18'); gr.addColorStop(1, '#000306');
+    gr.addColorStop(0, '#04203f'); gr.addColorStop(.45, '#010a18'); gr.addColorStop(1, '#000306');
     g.fillStyle = gr; g.fillRect(0, 0, W, H);
-    for (const [x, w] of [[.42, .06], [.6, .04], [.78, .07]]) {
+    glowAt(g, W * .55, -H * .2, 0, H * .8, 'rgba(120,200,255,.1)');
+    for (const [x, w] of [[.28, .04], [.42, .06], [.6, .04], [.78, .07]]) {
       const ray = g.createLinearGradient(0, 0, 0, H);
       ray.addColorStop(0, 'rgba(140,210,255,.07)'); ray.addColorStop(1, 'rgba(140,210,255,0)');
       g.fillStyle = ray; g.beginPath(); g.moveTo(W * x, 0); g.lineTo(W * (x + w), 0); g.lineTo(W * (x + w * 3), H); g.lineTo(W * (x + w), H); g.closePath(); g.fill();
     }
+    g.strokeStyle = 'rgba(190,235,255,.06)'; g.lineWidth = Math.max(1, 2 * u);
+    for (const y of [.025, .055, .085]) { g.beginPath(); g.moveTo(0, H * y); for (let x = 0, k = 0; x < W; x += W / 24, k++) g.quadraticCurveTo(x + W / 48, H * y + (k % 2 ? 8 : -8) * u, x + W / 24, H * y); g.stroke(); }
   } else if (th === 'esmeralda') {
     g.fillStyle = '#010603'; g.fillRect(0, 0, W, H);
-    glowAt(g, W * .85, 0, 0, H * .8, 'rgba(60,200,120,.12)');
-    for (let i = 0; i < 18; i++) glowAt(g, rnd() * W, H * (.25 + rnd() * .6), 0, 10 * u, 'rgba(230,255,138,.35)');
+    glowAt(g, W * .52, H * .1, 0, H * .7, 'rgba(60,200,120,.1)');
+    glowAt(g, W * .52, H * .1, 0, 60 * u, 'rgba(220,255,232,.18)');
+    g.fillStyle = 'rgba(220,255,232,.32)'; g.beginPath(); g.arc(W * .52, H * .1, 22 * u, 0, TAU); g.fill();
   } else if (th === 'ambar') {
-    // Fim de tarde apagado: roxo escuro em cima, o sol baixo só como um brilho e a grade no chão.
-    const gr = g.createLinearGradient(0, 0, 0, H);
-    gr.addColorStop(0, '#07020d'); gr.addColorStop(.7, '#1a0618'); gr.addColorStop(1, '#0a0208');
-    g.fillStyle = gr; g.fillRect(0, 0, W, H);
-    glowAt(g, W * .6, H * .72, 0, H * .5, 'rgba(255,120,60,.14)');
-    g.strokeStyle = 'rgba(255,94,168,.12)'; g.lineWidth = Math.max(1, u * 1.5); g.beginPath();
-    for (let i = 1; i <= 7; i++) { const y = H * (.72 + Math.pow(i / 7, 2) * .28); g.moveTo(0, y); g.lineTo(W, y); }
-    for (let i = -10; i <= 10; i++) { g.moveTo(W * .6, H * .72); g.lineTo(W * .6 + i * W * .1, H); }
-    g.stroke();
+    // Fim de tarde apagado: roxo escuro em cima, o sol listrado bem fraco e as montanhas (a grade anda na cena).
+    const hz = H * .72, gr = g.createLinearGradient(0, 0, 0, hz);
+    gr.addColorStop(0, '#07020d'); gr.addColorStop(.7, '#1a0618'); gr.addColorStop(1, '#2a0a1c');
+    g.fillStyle = gr; g.fillRect(0, 0, W, hz);
+    g.fillStyle = '#050106'; g.fillRect(0, hz, W, H - hz);
+    glowAt(g, W * .6, hz, 0, H * .55, 'rgba(255,120,60,.14)');
+    const sun = g.createLinearGradient(0, hz - H * .22, 0, hz);
+    sun.addColorStop(0, 'rgba(255,211,107,.26)'); sun.addColorStop(1, 'rgba(255,79,154,.2)');
+    g.save(); g.beginPath(); g.rect(0, 0, W, hz); g.clip();
+    g.fillStyle = sun; g.beginPath(); g.arc(W * .6, hz, H * .2, 0, TAU); g.fill();
+    g.fillStyle = gr; for (let i = 0; i < 6; i++) g.fillRect(W * .6 - H * .2, hz - H * .12 + i * H * .022 + i * i * H * .002, H * .4, (2 + i * 2) * u);
+    g.restore();
+    g.fillStyle = '#07010a'; g.strokeStyle = 'rgba(255,94,168,.2)'; g.lineWidth = Math.max(1, 2 * u);
+    g.beginPath(); g.moveTo(W * .35, hz);
+    for (const [x, y] of [[.42, .66], [.47, .69], [.53, .6], [.58, .67], [.66, .62], [.72, .68], [.8, .58], [.86, .65], [.92, .61], [1, .67]]) g.lineTo(W * x, H * y);
+    g.lineTo(W, hz); g.closePath(); g.fill(); g.stroke();
+    g.strokeStyle = 'rgba(255,179,71,.3)'; g.beginPath(); g.moveTo(0, hz); g.lineTo(W, hz); g.stroke();
   } else if (th === 'quartzo') {
     g.fillStyle = '#070307'; g.fillRect(0, 0, W, H);
     glowAt(g, W * .8, H * .25, 0, H * .5, 'rgba(255,190,215,.1)');
-    g.fillStyle = 'rgba(255,214,228,.08)'; g.beginPath(); g.arc(W * .8, H * .25, H * .12, 0, TAU); g.fill();
+    g.fillStyle = 'rgba(255,214,228,.1)'; g.beginPath(); g.arc(W * .8, H * .25, H * .12, 0, TAU); g.fill();
+    g.fillStyle = 'rgba(255,190,215,.05)';
+    for (const [dx, dy, r] of [[-.03, -.02, .025], [.03, .03, .018], [.01, -.04, .01]]) { g.beginPath(); g.arc(W * .8 + H * dx, H * (.25 + dy), H * r, 0, TAU); g.fill(); }
+    g.strokeStyle = 'rgba(255,214,228,.05)'; g.lineWidth = Math.max(1, u); g.setLineDash([2 * u, 9 * u]);
+    g.beginPath(); g.arc(W * .8, H * .25, H * .16, 0, TAU); g.stroke(); g.setLineDash([]);
+  } else if (th === 'opala') {
+    // Noite quentinha: brilho laranja no alto, rosa embaixo, lua crescente e estrelinhas de 4 pontas paradas.
+    g.fillStyle = '#0a0605'; g.fillRect(0, 0, W, H);
+    glowAt(g, W * .8, H * .14, 0, H * .6, 'rgba(255,138,61,.13)');
+    glowAt(g, W * .06, H * .92, 0, H * .5, 'rgba(242,90,106,.08)');
+    const moon = sprite(64 * u, 64 * u, (m, w) => { m.fillStyle = 'rgba(255,211,173,.3)'; m.beginPath(); m.arc(w / 2, w / 2, 30 * u, 0, TAU); m.fill(); m.globalCompositeOperation = 'destination-out'; m.fillStyle = '#000'; m.beginPath(); m.arc(w / 2 + 13 * u, w / 2 - 8 * u, 26 * u, 0, TAU); m.fill(); });
+    g.drawImage(moon, W * .86 - 32 * u, H * .17 - 32 * u);
+    for (let i = 0; i < 46; i++) { g.globalAlpha = .08 + rnd() * .25; g.fillStyle = ['#ff9a4d', '#ffc58f', '#ff7a6b'][i % 3]; sparkPath(g, rnd() * W, rnd() * H, (3 + rnd() * 6) * u); g.fill(); }
+    g.globalAlpha = 1;
+  } else if (th === 'amethyst') {
+    g.fillStyle = '#040406'; g.fillRect(0, 0, W, H);
+    glowAt(g, W * .82, H * .18, 0, H * .7, 'rgba(124,92,255,.12)');
+    glowAt(g, W * .04, H * .96, 0, H * .5, 'rgba(255,45,85,.07)');
+    for (const [x0, x1, c] of [[.42, .6, 'rgba(155,124,255,.05)'], [.66, .48, 'rgba(255,45,85,.04)']]) {
+      const sp = g.createLinearGradient(0, 0, 0, H); sp.addColorStop(0, c); sp.addColorStop(1, 'rgba(0,0,0,0)');
+      g.fillStyle = sp; g.beginPath(); g.moveTo(W * x0, 0); g.lineTo(W * (x0 + .03), 0); g.lineTo(W * (x1 + .1), H); g.lineTo(W * (x1 - .04), H); g.closePath(); g.fill();
+    }
   } else return false;
-  const n = Math.round(W * H / 14000);
+  const n = th === 'rubi' ? 0 : Math.round(W * H / 14000);   // dentro do cinema não há estrelas
   for (let i = 0; i < n; i++) { g.globalAlpha = .08 + rnd() * .35; g.fillStyle = '#fff'; g.beginPath(); g.arc(rnd() * W, rnd() * H * (th === 'aurora' || th === 'ambar' ? .7 : 1), (rnd() > .9 ? 1.2 : .7) * u, 0, TAU); g.fill(); }
   g.globalAlpha = 1;
   if (th === 'aurora') {
@@ -2616,12 +3067,46 @@ function drawThemeSky(g, W, H, rnd, th) {
     for (let x = 0; x <= W; x += W / 14) g.lineTo(x, H * (.86 + Math.sin(x / W * 9) * .035 + (rnd() - .5) * .03));
     g.lineTo(W, H); g.closePath(); g.fill();
   }
-  if (th === 'esmeralda' || th === 'quartzo') {
-    // Folhagem (Esmeralda) ou o monte com as colinas (Quartzo Rosa), em silhueta preta embaixo.
-    g.fillStyle = '#000'; g.beginPath(); g.moveTo(0, H);
-    if (th === 'quartzo') { g.lineTo(W * .5, H); g.lineTo(W * .74, H * .7); g.quadraticCurveTo(W * .78, H * .66, W * .82, H * .7); g.lineTo(W, H * .86); }
-    else for (let x = 0; x <= W; x += W / 40) g.lineTo(x, H * (.9 - Math.abs(Math.sin(x / W * 23)) * .06 - rnd() * .03));
+  // Pinheiro em silhueta para o céu da Esmeralda.
+  const pineAt = (x, b, h, w) => { g.beginPath(); g.moveTo(x, b - h); for (const [dx, dy] of [[.22, .3], [.12, .3], [.36, .58], [.2, .58], [.5, .92], [-.5, .92], [-.2, .58], [-.36, .58], [-.12, .3], [-.22, .3]]) g.lineTo(x + w * dx, b - h + h * dy); g.closePath(); g.fill(); g.fillRect(x - w * .06, b - h * .1, w * .12, h * .1); };
+  if (th === 'esmeralda') {
+    g.fillStyle = '#03120a';
+    for (let x = 0; x < W;) { const h = H * (.12 + rnd() * .1), w = h * .42; pineAt(x, H * .8 + rnd() * 10 * u, h, w); x += w * (.45 + rnd() * .3); }
+    glowAt(g, W * .5, H * .82, 0, W * .5, 'rgba(160,232,192,.035)');
+    g.fillStyle = '#000';
+    for (let x = 0; x < W;) { const h = H * (.18 + rnd() * .14), w = h * .4; pineAt(x, H * .94 + rnd() * 10 * u, h, w); x += w * (.4 + rnd() * .3); }
+    g.fillRect(0, H * .93, W, H * .07);
+  }
+  if (th === 'safira') {
+    g.fillStyle = '#010711'; g.beginPath(); g.moveTo(0, H);
+    for (let x = 0; x <= W; x += W / 30) g.lineTo(x, H * (.9 - Math.abs(Math.sin(x / W * 11)) * .04 - rnd() * .02));
     g.lineTo(W, H); g.closePath(); g.fill();
+    glowAt(g, W * .76, H * .95, 0, H * .14, 'rgba(80,150,255,.14)');
+    g.fillStyle = 'rgba(40,90,200,.35)';
+    for (const [x, w, h, t] of [[.74, .012, .1, -.2], [.76, .016, .14, .05], [.78, .011, .08, .3]]) {
+      g.save(); g.translate(W * x, H); g.rotate(t); g.beginPath(); g.moveTo(-H * w, 0); g.lineTo(-H * w, -H * h * .72); g.lineTo(0, -H * h); g.lineTo(H * w, -H * h * .72); g.lineTo(H * w, 0); g.closePath(); g.fill(); g.restore();
+    }
+    g.strokeStyle = '#010a14'; g.lineWidth = 6 * u;
+    for (const [x, h, k] of [[.06, .3, 1], [.09, .22, -1], [.9, .34, -1], [.93, .26, 1], [.96, .4, -1]]) {
+      g.beginPath(); g.moveTo(W * x, H); g.bezierCurveTo(W * x + k * 30 * u, H * (1 - h * .35), W * x - k * 30 * u, H * (1 - h * .7), W * x + k * 10 * u, H * (1 - h)); g.stroke();
+    }
+  }
+  if (th === 'quartzo') {
+    // O monte com a neve, o pagode e o lago com o reflexo da lua, em silhueta.
+    g.fillStyle = '#000'; g.beginPath(); g.moveTo(W * .45, H * .9); g.lineTo(W * .74, H * .62); g.quadraticCurveTo(W * .78, H * .58, W * .82, H * .62); g.lineTo(W, H * .78); g.lineTo(W, H * .9); g.closePath(); g.fill();
+    g.fillStyle = 'rgba(255,220,235,.13)'; g.beginPath(); g.moveTo(W * .74, H * .62); g.quadraticCurveTo(W * .78, H * .58, W * .82, H * .62); g.lineTo(W * .8, H * .65); g.lineTo(W * .78, H * .63); g.lineTo(W * .76, H * .655); g.closePath(); g.fill();
+    g.fillStyle = '#000';
+    const px = W * .26;
+    for (let i = 0; i < 4; i++) { const w = H * (.13 - i * .022), y = H * (.88 - i * .055); g.fillRect(px - w * .32, y - H * .035, w * .64, H * .035); g.beginPath(); g.moveTo(px - w / 2 - 14 * u, y - H * .04); g.quadraticCurveTo(px, y - H * .05, px + w / 2 + 14 * u, y - H * .04); g.lineTo(px + w / 2, y - H * .032); g.lineTo(px - w / 2, y - H * .032); g.closePath(); g.fill(); }
+    g.fillRect(px - 3 * u, H * .62, 6 * u, H * .05);
+    g.fillStyle = '#020102'; g.fillRect(0, H * .9, W, H * .1);
+    g.fillStyle = 'rgba(255,214,228,.07)';
+    for (let i = 0; i < 6; i++) { const w = H * (.08 - i * .01); g.fillRect(W * .8 - w / 2, H * (.915 + i * .014), w, 2 * u); }
+  }
+  if (th === 'opala') {
+    // Um banco de nuvens fofas embaixo, em silhueta.
+    g.fillStyle = '#140b08';
+    for (let x = -H * .05; x < W + H * .1; x += H * (.07 + rnd() * .05)) { g.beginPath(); g.arc(x, H * (1.01 - rnd() * .03), H * (.05 + rnd() * .06), 0, TAU); g.fill(); }
   }
   if (th === 'rubi') {
     g.fillStyle = '#000';
@@ -2718,6 +3203,10 @@ const ES = Object.freeze({
   "na HBO Max": "en HBO Max",
   "no Globoplay": "en Globoplay",
   "no Prime Video": "en Prime Video",
+  "*Mais 2 temas:* em *Configurações → Aparência → Tema*. *Onix Opala* é a noite quentinha do Opala, com estrelinhas laranja, constelação, lua crescente e coraçõezinhos. *Onix Amethyst* é o palco do Amethyst, com o buraco de minhoca, canhões de luz, notas musicais e o equalizador pulsando. Agora são 11 temas.": "*2 temas más:* en *Configuración → Apariencia → Tema*. *Onix Opala* es la noche cálida de Opala, con estrellitas naranjas, constelación, luna creciente y corazoncitos. *Onix Amethyst* es el escenario de Amethyst, con el agujero de gusano, reflectores, notas musicales y el ecualizador. Ahora son 11 temas.",
+  "*Safira, Esmeralda, Âmbar e Quartzo Rosa refeitos:* fundos com mais camadas e detalhes. A Safira ganhou recife, cardume, raias-manta e safiras no chão; a Esmeralda, névoa entre os pinheiros, cogumelos que brilham e cristais; o Âmbar, nuvens sobre o sol, palmeiras e o reflexo do sol; o Quartzo Rosa, pagode, portal torii e lago. O foco ganhou brilho e os títulos, o enfeite de cada pedra.": "*Zafiro, Esmeralda, Ámbar y Cuarzo Rosa renovados:* fondos con más capas y detalles. Zafiro tiene arrecife, cardumen, mantarrayas y zafiros en el fondo; Esmeralda, niebla entre los pinos, hongos que brillan y cristales; Ámbar, nubes sobre el sol, palmeras y el reflejo del sol; Cuarzo Rosa, pagoda, torii y lago. El foco tiene brillo y los títulos, el adorno de cada piedra.",
+  "*Desenho do menu novo:* nos temas de pedra, o desenho entre *Jogos* e *Entradas* virou um símbolo solto, como o planeta do Onix Escuro: três raias-manta na Safira, o ícone do Emerald na Esmeralda, o pôr do sol dentro do âmbar, o coração de quartzo rosa, a opala de fogo e a ametista.": "*Dibujo nuevo del menú:* en los temas de piedras, el dibujo entre *Juegos* y *Entradas* es ahora un símbolo suelto, como el planeta de Onix Oscuro: tres mantarrayas en Zafiro, el ícono de Emerald en Esmeralda, el atardecer dentro del ámbar, el corazón de cuarzo rosa, el ópalo de fuego y la amatista.",
+  "*Uma tela de descanso para cada tema:* aviõezinhos de papel no White, naves de pixel no Cobalt, a aurora se mexendo, a sala de cinema no Rubi, peixes e águas-vivas na Safira, vaga-lumes na Esmeralda, a grade neon andando no Âmbar, pétalas e lanternas no Quartzo Rosa, estrelinhas e corações no Opala e notas musicais no Amethyst. O Onix Escuro continua com os planetas.": "*Un protector de pantalla para cada tema:* aviones de papel en White, naves pixeladas en Cobalt, la aurora en movimiento, la sala de cine en Rubí, peces y medusas en Zafiro, luciérnagas en Esmeralda, la cuadrícula neón en Ámbar, pétalos y faroles en Cuarzo Rosa, estrellitas y corazones en Opala y notas musicales en Amethyst. Onix Oscuro sigue con los planetas.",
   "*Prime Video e Paramount+ nas indicações:* as indicações da semana agora também trazem os títulos populares do Prime Video e do Paramount+, com o ícone de cada serviço na capa. Eles entram sozinhos quando você abre o app mais de 3 vezes pelo Onix, ou você marca em *Configurações → Indicações*. *Assistir* abre o título no app.": "*Prime Video y Paramount+ en las recomendaciones:* las recomendaciones de la semana ahora también traen los títulos populares de Prime Video y Paramount+, con el ícono de cada servicio en la portada. Entran solos cuando abres la app más de 3 veces desde Onix, o los marcas en *Configuración → Recomendaciones*. *Ver* abre el título en la app.",
   "*Banner do Project Gems com imagens deitadas:* as novidades do Project Gems no destaque podem mostrar uma imagem larga ou duas sobrepostas, além das duas em pé de antes.": "*Banner de Project Gems con imágenes horizontales:* las novedades de Project Gems en el destacado pueden mostrar una imagen ancha o dos superpuestas, además de las dos verticales de antes.",
   "no Paramount+": "en Paramount+",
@@ -3304,7 +3793,7 @@ const ES = Object.freeze({
   "*10 fontes novas:* Bodoni Moda (o estilo da Vogue), Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand e Press Start 2P. A fonte escolhida muda todas as palavras do Onix, do relógio aos menus. Todas vêm dentro do app e funcionam sem internet.": "*10 fuentes nuevas:* Bodoni Moda (el estilo de Vogue), Cinzel, Butler, Playfair Display, Montserrat, Poppins, Bebas Neue, Orbitron, Quicksand y Press Start 2P. La fuente elegida cambia todas las palabras de Onix, del reloj a los menús. Todas vienen dentro de la app y funcionan sin internet.",
   "*8 estilos de relógio:* Fino (o de sempre), Negrito, Empilhado, Analógico, Digital (como um rádio-relógio), Flip (cartões que viram a cada minuto), Por extenso (\"dez e meia\") e Neon. Valem na tela inicial e na tela de descanso.": "*8 estilos de reloj:* Fino (el de siempre), Negrita, Apilado, Analógico, Digital (como un radio reloj), Flip (tarjetas que giran cada minuto), En palabras (\"las diez y media\") y Neón. Valen en la pantalla de inicio y en el protector de pantalla.",
   "Aparência": "Apariencia", "Tema": "Tema", "Fonte": "Fuente", "Estilo do relógio": "Estilo del reloj",
-  "Muda o visual do Onix inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. Onix Escuro é o de sempre; Onix Cobalt é pixel art, como o Cobalt GameHub; Onix Aurora tem a aurora boreal sobre montanhas; Onix Rubi Cinema é uma sala de cinema; Onix Safira é o fundo do mar; Onix Esmeralda é uma floresta à noite com vaga-lumes; Onix Âmbar é um pôr do sol retrô; Onix Quartzo Rosa é um jardim japonês com cerejeiras; Onix White é claro sem cansar a vista. OK troca.": "Cambia el aspecto de todo Onix: el vidrio, los colores, el foco, los dibujos y el protector de pantalla. Onix Oscuro es el de siempre; Onix Cobalt es pixel art, como Cobalt GameHub; Onix Aurora tiene la aurora boreal sobre montañas; Onix Rubí Cine es una sala de cine; Onix Zafiro es el fondo del mar; Onix Esmeralda es un bosque de noche con luciérnagas; Onix Ámbar es un atardecer retro; Onix Cuarzo Rosa es un jardín japonés con cerezos; Onix White es claro sin cansar la vista. OK cambia.",
+  "Muda o visual do Onix inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. Onix Escuro é o de sempre; Onix Cobalt é pixel art, como o Cobalt GameHub; Onix Aurora tem a aurora boreal sobre montanhas; Onix Rubi Cinema é uma sala de cinema; Onix Safira é o fundo do mar; Onix Esmeralda é uma floresta à noite com vaga-lumes; Onix Âmbar é um pôr do sol retrô; Onix Quartzo Rosa é um jardim japonês com cerejeiras; Onix Opala é a noite quentinha do Opala, com estrelinhas laranja; Onix Amethyst é o palco do Amethyst, com o buraco de minhoca e notas musicais; Onix White é claro sem cansar a vista. OK troca.": "Cambia el aspecto de todo Onix: el vidrio, los colores, el foco, los dibujos y el protector de pantalla. Onix Oscuro es el de siempre; Onix Cobalt es pixel art, como Cobalt GameHub; Onix Aurora tiene la aurora boreal sobre montañas; Onix Rubí Cine es una sala de cine; Onix Zafiro es el fondo del mar; Onix Esmeralda es un bosque de noche con luciérnagas; Onix Ámbar es un atardecer retro; Onix Cuarzo Rosa es un jardín japonés con cerezos; Onix Opala es la noche cálida de Opala, con estrellitas naranjas; Onix Amethyst es el escenario de Amethyst, con el agujero de gusano y notas musicales; Onix White es claro sin cansar la vista. OK cambia.",
   "Muda a letra de todas as palavras do Onix, do relógio aos menus. Sistema é a de sempre. OK troca.": "Cambia la letra de todas las palabras de Onix, del reloj a los menús. Sistema es la de siempre. OK cambia.",
   "Fino, negrito, empilhado, analógico (de ponteiros), digital (como um rádio-relógio), flip (cartões que viram), por extenso ou neon. Vale também na tela de descanso. OK troca.": "Fino, negrita, apilado, analógico (de agujas), digital (como un radio reloj), flip (tarjetas que giran), en palabras o neón. También vale en el protector de pantalla. OK cambia.",
   "Onix Escuro": "Onix Oscuro", "Onix Rubi Cinema": "Onix Rubí Cine", "Onix Safira": "Onix Zafiro", "Onix Esmeralda": "Onix Esmeralda", "Onix Âmbar": "Onix Ámbar", "Onix Quartzo Rosa": "Onix Cuarzo Rosa", "Sistema": "Sistema",
@@ -5628,7 +6117,7 @@ const OPTIONS = [
   { group: 'Idioma' },
   { key: 'lang',   name: 'Idioma',                desc: 'Português ou espanhol. Automático segue o idioma da TV. OK troca.' },
   { group: 'Aparência' },
-  { key: 'theme', name: 'Tema', desc: 'Muda o visual do Onix inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. Onix Escuro é o de sempre; Onix Cobalt é pixel art, como o Cobalt GameHub; Onix Aurora tem a aurora boreal sobre montanhas; Onix Rubi Cinema é uma sala de cinema; Onix Safira é o fundo do mar; Onix Esmeralda é uma floresta à noite com vaga-lumes; Onix Âmbar é um pôr do sol retrô; Onix Quartzo Rosa é um jardim japonês com cerejeiras; Onix White é claro sem cansar a vista. OK troca.' },
+  { key: 'theme', name: 'Tema', desc: 'Muda o visual do Onix inteiro: o vidro, as cores, o foco, os desenhos e a tela de descanso. Onix Escuro é o de sempre; Onix Cobalt é pixel art, como o Cobalt GameHub; Onix Aurora tem a aurora boreal sobre montanhas; Onix Rubi Cinema é uma sala de cinema; Onix Safira é o fundo do mar; Onix Esmeralda é uma floresta à noite com vaga-lumes; Onix Âmbar é um pôr do sol retrô; Onix Quartzo Rosa é um jardim japonês com cerejeiras; Onix Opala é a noite quentinha do Opala, com estrelinhas laranja; Onix Amethyst é o palco do Amethyst, com o buraco de minhoca e notas musicais; Onix White é claro sem cansar a vista. OK troca.' },
   { key: 'font', name: 'Fonte', desc: 'Muda a letra de todas as palavras do Onix, do relógio aos menus. Sistema é a de sempre. OK troca.' },
   { key: 'clock', name: 'Estilo do relógio', desc: 'Fino, negrito, empilhado, analógico (de ponteiros), digital (como um rádio-relógio), flip (cartões que viram), por extenso ou neon. Vale também na tela de descanso. OK troca.' },
   { group: 'Desempenho' },
@@ -5678,6 +6167,12 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '17.4.0', date: 'novembro de 2026', items: [
+    ['new', '*Mais 2 temas:* em *Configurações → Aparência → Tema*. *Onix Opala* é a noite quentinha do Opala, com estrelinhas laranja, constelação, lua crescente e coraçõezinhos. *Onix Amethyst* é o palco do Amethyst, com o buraco de minhoca, canhões de luz, notas musicais e o equalizador pulsando. Agora são 11 temas.'],
+    ['fix', '*Safira, Esmeralda, Âmbar e Quartzo Rosa refeitos:* fundos com mais camadas e detalhes. A Safira ganhou recife, cardume, raias-manta e safiras no chão; a Esmeralda, névoa entre os pinheiros, cogumelos que brilham e cristais; o Âmbar, nuvens sobre o sol, palmeiras e o reflexo do sol; o Quartzo Rosa, pagode, portal torii e lago. O foco ganhou brilho e os títulos, o enfeite de cada pedra.'],
+    ['new', '*Desenho do menu novo:* nos temas de pedra, o desenho entre *Jogos* e *Entradas* virou um símbolo solto, como o planeta do Onix Escuro: três raias-manta na Safira, o ícone do Emerald na Esmeralda, o pôr do sol dentro do âmbar, o coração de quartzo rosa, a opala de fogo e a ametista.'],
+    ['new', '*Uma tela de descanso para cada tema:* aviõezinhos de papel no White, naves de pixel no Cobalt, a aurora se mexendo, a sala de cinema no Rubi, peixes e águas-vivas na Safira, vaga-lumes na Esmeralda, a grade neon andando no Âmbar, pétalas e lanternas no Quartzo Rosa, estrelinhas e corações no Opala e notas musicais no Amethyst. O Onix Escuro continua com os planetas.'],
+  ] },
   { version: '17.3.0', date: 'novembro de 2026', items: [
     ['new', '*Prime Video e Paramount+ nas indicações:* as indicações da semana agora também trazem os títulos populares do Prime Video e do Paramount+, com o ícone de cada serviço na capa. Eles entram sozinhos quando você abre o app mais de 3 vezes pelo Onix, ou você marca em *Configurações → Indicações*. *Assistir* abre o título no app.'],
     ['new', '*Banner do Project Gems com imagens deitadas:* as novidades do Project Gems no destaque podem mostrar uma imagem larga ou duas sobrepostas, além das duas em pé de antes.'],
@@ -7669,7 +8164,9 @@ function sizeSaver() {
   sky.width = fg.width = W; sky.height = fg.height = H;
   drawSky(sky.getContext('2d', { alpha: false }), W, H, rng(7));
   svCtx = fg.getContext('2d');
-  if (svSpritesH !== H) { svSprites = buildSprites(H); svSpritesH = H; }
+  const sc = SAVER_SCENES[themeDrawn], key = themeDrawn + W + 'x' + H;   // cada tema tem os sprites da sua cena
+  if (svSpritesH !== key) { svSprites = sc ? sc.build(H, rng(42)) : buildSprites(H); svSpritesH = key; }
+  svCtx.imageSmoothingEnabled = !(sc && sc.px);
   seedSaver();
 }
 
@@ -7918,7 +8415,14 @@ function makeRock(initial) {
   };
 }
 function seedSaver() {
-  svBodies = []; svQueue = [];
+  svBodies = []; svQueue = []; svT = 0;
+  const sc = SAVER_SCENES[themeDrawn];
+  if (sc) {
+    for (const [k, n] of sc.kinds) for (let i = 0; i < n; i++) svBodies.push(sc.spawn(k, svSprites, true));
+    svBodies.sort((a, b) => a.z - b.z);
+    svMeteor = null; svMeteorIn = 6 + Math.random() * 10;
+    return;
+  }
   for (let i = 0; i < 4; i++) svBodies.push(makePlanet(i < 3 ? svW * (.12 + i * .3 + Math.random() * .1) : null));
   for (let i = 0; i < ROCKS; i++) svBodies.push(makeRock(true));
   svBodies.sort((a, b) => a.z - b.z);
@@ -7932,6 +8436,8 @@ function saverFrame(t) {
   const g = svCtx;
   g.setTransform(1, 0, 0, 1, 0, 0);
   g.clearRect(0, 0, svW, svH);
+  const sc = SAVER_SCENES[themeDrawn];
+  if (sc) { sceneFrame(g, dt, sc); if (sc.meteor !== false) drawMeteor(g, dt); return; }
   let resort = false;
   for (let i = 0; i < svBodies.length; i++) {
     const b = svBodies[i], hw = b.img.width / 2;
@@ -7973,6 +8479,406 @@ function drawMeteor(g, dt) {
   g.strokeStyle = gr; g.lineWidth = Math.max(1, svH / 700); g.lineCap = 'round';
   g.beginPath(); g.moveTo(hx, hy); g.lineTo(tx, ty); g.stroke();
 }
+
+/* ---------------- Cena da tela de descanso de cada tema ----------------
+   O Onix Escuro continua com os planetas. Os outros temas têm a cena própria: os sprites são desenhados
+   uma vez (build) e os corpos (spawn) cruzam a tela; por quadro só há drawImage. Um corpo pode piscar (tw),
+   balançar (sw), quicar (hop), girar (va), balançar o ângulo (ro), pulsar (pu) e ter vida curta (life, com fade). fx desenha o que
+   muda a cada quadro (a grade do Âmbar, o equalizador do Amethyst). */
+let svT = 0;
+const rrn = (a, b) => a + Math.random() * (b - a);
+function sprite(w, h, draw) {
+  const c = canvasOf(w, h), g = c.getContext('2d');
+  g.lineCap = 'round'; g.lineJoin = 'round';
+  draw(g, c.width, c.height);
+  return c;
+}
+const glowSprite = (r, color) => sprite(r * 2, r * 2, g => glowAt(g, r, r, 0, r, color));
+function sparkPath(g, x, y, r) {
+  const k = r * .14;
+  g.beginPath(); g.moveTo(x, y - r);
+  g.quadraticCurveTo(x + k, y - k, x + r, y); g.quadraticCurveTo(x + k, y + k, x, y + r);
+  g.quadraticCurveTo(x - k, y + k, x - r, y); g.quadraticCurveTo(x - k, y - k, x, y - r); g.closePath();
+}
+const sparkSprite = (r, color, glow) => sprite(r * 3, r * 3, g => { if (glow) glowAt(g, r * 1.5, r * 1.5, 0, r * 1.5, glow); sparkPath(g, r * 1.5, r * 1.5, r); g.fillStyle = color; g.fill(); });
+function pxCanvas(rows, pal, u) {
+  return sprite(rows[0].length * u, rows.length * u, g => rows.forEach((row, j) => { for (let i = 0; i < row.length; i++) if (pal[row[i]]) { g.fillStyle = pal[row[i]]; g.fillRect(i * u, j * u, u, u); } }));
+}
+// Desenha um path de SVG (d) num sprite, na escala s, com o canto (0, 0) do desenho em (ox, oy).
+function pathSprite(w, h, s, ox, oy, d, fill, stroke, lw) {
+  return sprite(w * s, h * s, g => {
+    g.setTransform(s, 0, 0, s, ox * s, oy * s);
+    const p = new Path2D(d);
+    if (fill) { g.fillStyle = fill; g.fill(p); }
+    if (stroke) { g.strokeStyle = stroke; g.lineWidth = lw; g.stroke(p); }
+  });
+}
+// Corpo novo: no primeiro quadro, em qualquer lugar; depois, entrando pela borda de onde vem.
+function sbody(k, img, vx, vy, initial, o) {
+  const b = Object.assign({ k, img, vx, vy, a: 0, va: 0, z: 0, t: 0, al: 1 }, o || {});
+  const hw = img.width / 2, hh = img.height / 2, still = !vx && !vy, horiz = Math.abs(vx) >= Math.abs(vy);
+  if (initial || still) { b.x = Math.random() * svW; b.y = Math.random() * svH; }
+  else if (horiz) { b.x = vx < 0 ? svW + hw : -hw; b.y = Math.random() * svH; }
+  else { b.y = vy < 0 ? svH + hh : -hh; b.x = Math.random() * svW; }
+  if (b.ry && (horiz || initial)) b.y = svH * rrn(b.ry[0], b.ry[1]);
+  if (b.rx && (!horiz || initial)) b.x = svW * rrn(b.rx[0], b.rx[1]);
+  if (b.life && initial) b.t = Math.random() * b.life;
+  return b;
+}
+const twinkler = (k, sp, list, o) => sbody(k, list[Math.random() * list.length | 0], 0, 0, true, Object.assign({ life: rrn(3, 7), z: -1 }, o || {}));
+
+function sceneFrame(g, dt, sc) {
+  const T = (svT += dt);
+  if (sc.fx) sc.fx(g, dt, T);
+  let resort = false;
+  for (let i = 0; i < svBodies.length; i++) {
+    const b = svBodies[i], w = b.img.width, h = b.img.height, m = Math.max(w, h) * .75 + (b.sw ? Math.max(b.sw[0], b.sw[1]) : 0);
+    b.t += dt; b.x += b.vx * dt; b.y += b.vy * dt; b.a += b.va * dt;
+    if ((b.vx < 0 && b.x < -m) || (b.vx > 0 && b.x > svW + m) || (b.vy < 0 && b.y < -m) || (b.vy > 0 && b.y > svH + m) || (b.life && b.t > b.life)) {
+      svBodies[i] = sc.spawn(b.k, svSprites, false); resort = true; continue;
+    }
+    let al = b.al, x = b.x, y = b.y, sx = b.fl || 1, sy = 1;
+    if (b.tw) al *= b.tw[2] + (1 - b.tw[2]) * (.5 + .5 * Math.sin(T * b.tw[0] + b.tw[1]));
+    if (b.life) al *= Math.sin(Math.PI * Math.min(1, b.t / b.life));
+    if (b.sw) { x += b.sw[0] * Math.sin(T * b.sw[2] + b.sw[3]); y += b.sw[1] * Math.cos(T * b.sw[2] * 1.3 + b.sw[3]); }
+    if (b.hop) y -= b.hop[0] * Math.abs(Math.sin(T * b.hop[1] + b.hop[2]));
+    if (b.pu) { const p = 1 + b.pu[0] * Math.sin(T * b.pu[1] + (b.pu[2] || 0)); sy *= p; if (!b.pu[3]) sx *= p; }
+    if (al <= .01) continue;
+    g.globalAlpha = Math.min(1, al);
+    if (sc.px) { g.setTransform(1, 0, 0, 1, 0, 0); g.drawImage(b.img, Math.round(x - w / 2), Math.round(y - h / 2)); continue; }
+    const ang = b.a + (b.ro ? b.ro[0] * Math.sin(T * b.ro[1] + (b.ro[2] || 0)) : 0), c = Math.cos(ang), s = Math.sin(ang);
+    g.setTransform(c * sx, s * sx, -s * sy, c * sy, x, y);
+    g.drawImage(b.img, -w / 2, -h / 2);
+  }
+  g.globalAlpha = 1; g.setTransform(1, 0, 0, 1, 0, 0);
+  if (resort) svBodies.sort((a, b) => a.z - b.z);
+}
+
+const SAVER_SCENES = {
+  // Onix White: aviõezinhos de papel planando entre nuvens de traço, no amanhecer escuro.
+  white: {
+    kinds: [['cloud', 6], ['plane', 3], ['star', 8]],
+    build(H) {
+      const u = H / 1080, clouds = [];
+      for (const k of [1, .75, .55]) clouds.push(sprite(370 * u * k, 160 * u * k, (g, w, h) => {
+        // A forma da nuvem (bolinhas + base reta arredondada) vira uma máscara; o contorno é a máscara clara
+        // desenhada em volta, e o miolo é a máscara escura por cima: a borda fica inteira, sem riscos dentro.
+        const lw = Math.max(1, 3 * u * k), shape = col => sprite(w, h, (m, mw, mh) => {
+          m.fillStyle = col;
+          for (const [x, y, r] of [[.24, .64, .17], [.42, .46, .24], [.64, .5, .2], [.8, .66, .14]]) { m.beginPath(); m.arc(x * mw, y * mh, r * mw * .62 * 1.15, 0, TAU); m.fill(); }
+          const y0 = .62 * mh, y1 = .86 * mh, r = (y1 - y0) / 2;
+          m.beginPath(); m.moveTo(.16 * mw + r, y0); m.lineTo(.86 * mw - r, y0); m.arc(.86 * mw - r, y0 + r, r, -Math.PI / 2, Math.PI / 2); m.lineTo(.16 * mw + r, y1); m.arc(.16 * mw + r, y0 + r, r, Math.PI / 2, Math.PI * 1.5); m.fill();
+        });
+        const edge = shape('rgba(225,230,255,.2)'), body = shape('#121833');
+        for (let a = 0; a < 8; a++) g.drawImage(edge, Math.cos(a * Math.PI / 4) * lw, Math.sin(a * Math.PI / 4) * lw);
+        g.globalCompositeOperation = 'destination-out'; g.drawImage(body, 0, 0); g.globalCompositeOperation = 'source-over';
+        g.drawImage(body, 0, 0);
+      }));
+      const plane = sprite(110 * u, 60 * u, (g, w, h) => {
+        g.lineWidth = Math.max(1, 2.6 * u); g.strokeStyle = 'rgba(240,242,255,.85)'; g.fillStyle = 'rgba(240,242,255,.1)';
+        const P = (x, y) => [x * w, y * h];
+        g.beginPath(); g.moveTo(...P(.04, .5)); g.lineTo(...P(.96, .12)); g.lineTo(...P(.44, .62)); g.closePath(); g.fill(); g.stroke();
+        g.beginPath(); g.moveTo(...P(.96, .12)); g.lineTo(...P(.5, .92)); g.lineTo(...P(.44, .62)); g.fill(); g.stroke();
+        g.globalAlpha = .4; g.beginPath(); g.moveTo(...P(.44, .62)); g.lineTo(...P(.04, .5)); g.stroke();
+      });
+      return { clouds, plane, stars: [sparkSprite(5 * u, '#fff', 'rgba(255,200,180,.4)'), sparkSprite(3.5 * u, '#ffd9c6')] };
+    },
+    spawn(k, sp, init) {
+      const H = svH;
+      if (k === 'cloud') { const i = Math.random() * 3 | 0; return sbody(k, sp.clouds[i], -H * rrn(.008, .016) * (1.4 - i * .3), 0, init, { ry: [.06, .7], al: .55 - i * .1, z: -i }); }
+      if (k === 'plane') return sbody(k, sp.plane, H * rrn(.05, .08), -H * .006, init, { ry: [.2, .8], a: -.08, sw: [0, H * .02, rrn(.4, .7), rrn(0, 6)], z: 2 });
+      return twinkler(k, sp, sp.stars, { ry: [0, .6] });
+    },
+  },
+
+  // Onix Cobalt: naves de pixel cruzando, moedas piscando, slimes quicando e planetas de pixel ao fundo.
+  cobalt: {
+    px: true,
+    kinds: [['planet', 2], ['coin', 5], ['slime', 2], ['ship', 2], ['star', 12]],
+    build(H) {
+      const u = Math.max(1, Math.round(H / 135));
+      const ship = sprite(16 * u, 7 * u, g => { g.drawImage(pxCanvas(PX_FLAME, PX_PAL, u), 0, 2 * u); g.drawImage(pxCanvas(PX_SHIP, PX_PAL, u), 3 * u, 0); });
+      const planet = (R, tones, ring) => sprite(R * 5, R * 5, g => {
+        const c = R * 2.5, tilt = -20 * Math.PI / 180, cs = Math.cos(tilt), sn = Math.sin(tilt);
+        for (let y = 0; y < R * 5; y += u) for (let x = 0; x < R * 5; x += u) {
+          const dx = x + u / 2 - c, dy = y + u / 2 - c, inP = dx * dx + dy * dy <= R * R;
+          let inRing = false, front = false;
+          if (ring) { const rx = dx * cs + dy * sn, ry = -dx * sn + dy * cs, e = rx * rx / (R * R * 4.4) + ry * ry / (R * R * .3); inRing = e > .8 && e < 1.12; front = ry > 0; }
+          const i = x / u | 0, j = y / u | 0;
+          if (inRing && (front || !inP)) { g.fillStyle = (i + j) % 4 ? ring[0] : ring[1]; g.fillRect(x, y, u, u); }
+          else if (inP) { const lit = (-dx * .62 - dy * .78) / R, t = (lit + 1) / 2 * (tones.length - 1) + (((i + j) & 1) ? .22 : -.22); g.fillStyle = tones[Math.max(0, Math.min(tones.length - 1, Math.round(t)))]; g.fillRect(x, y, u, u); }
+        }
+      });
+      const plus = c => sprite(3 * u, 3 * u, g => { g.fillStyle = c; g.fillRect(u, 0, u, 3 * u); g.fillRect(0, u, 3 * u, u); });
+      return { ship, coin: pxCanvas(PX_COIN, PX_PAL, u), slime: pxCanvas(PX_SLIME, { c: '#3de1ff', w: '#ffffff', k: '#070820' }, u),
+        planets: [planet(12 * u, ['#2d1a78', '#5a3cc8', '#8b6cf0', '#d6c8ff'], ['#ff3d9a', '#ffd36b']), planet(7 * u, ['#0d4a5a', '#1f8fa8', '#3de1ff'])],
+        stars: [plus('#ffffff'), plus('#3de1ff'), plus('#ff3d9a')] };
+    },
+    spawn(k, sp, init) {
+      const H = svH;
+      if (k === 'ship') return sbody(k, sp.ship, H * rrn(.12, .2), 0, init, { ry: [.1, .7], sw: [0, H * .015, 1.2, rrn(0, 6)], z: 3 });
+      if (k === 'coin') return sbody(k, sp.coin, -H * .03, 0, init, { ry: [.15, .85], tw: [rrn(3, 5), rrn(0, 6), .75], z: 1 });
+      if (k === 'slime') return sbody(k, sp.slime, -H * rrn(.04, .06), 0, init, { ry: [.8, .9], hop: [H * .06, rrn(2.5, 3.5), rrn(0, 6)], z: 2 });
+      if (k === 'planet') { const i = Math.random() * 2 | 0; return sbody(k, sp.planets[i], -H * (i ? .03 : .018), 0, init, { ry: [.15, .7], z: -2 }); }
+      return twinkler(k, sp, sp.stars, { life: rrn(1.5, 4) });
+    },
+  },
+
+  // Onix Aurora: as cortinas da aurora balançam e respiram sobre as montanhas; flocos de neve caem devagar.
+  aurora: {
+    kinds: [['ribbon', 2], ['snow', 26], ['star', 8]],
+    build(H) {
+      const u = H / 1080, W = svW;
+      const ribbon = (rgb, seed, a) => {
+        const Wr = Math.ceil(W * 1.35), Hr = Math.ceil(H * .55), col = canvasOf(1, 64), cg = col.getContext('2d'), gr = cg.createLinearGradient(0, 0, 0, 64);
+        gr.addColorStop(0, `rgba(${rgb},0)`); gr.addColorStop(.25, `rgba(${rgb},${a})`); gr.addColorStop(1, `rgba(${rgb},0)`);
+        cg.fillStyle = gr; cg.fillRect(0, 0, 1, 64);
+        return sprite(Wr, Hr, g => {
+          const st = Math.max(1, 3 * u);
+          for (let x = 0; x < Wr; x += st) {
+            const t = x / Wr * TAU, top = Hr * (.2 + .1 * Math.sin(t * 1.3 + seed) + .04 * Math.sin(t * 3.1 + seed * 2)), len = Math.min(Hr - top, Hr * (.36 + .2 * (.5 + .5 * Math.sin(t * 2.2 + 1 + seed))));
+            g.globalAlpha = .5 + .3 * (.5 + .5 * Math.sin(x * .013 + seed)) + .2 * (.5 + .5 * Math.sin(x * .051));
+            g.drawImage(col, x, top, st * 1.15, len);
+          }
+        });
+      };
+      return { ribbons: [ribbon('93,255,192', 1, .5), ribbon('180,140,255', 4, .38)], snow: [glowSprite(5 * u, 'rgba(255,255,255,.85)'), glowSprite(3 * u, 'rgba(220,255,245,.9)')],
+        stars: [sparkSprite(4 * u, '#fff', 'rgba(125,255,207,.35)')] };
+    },
+    ribbonsOut: 0,
+    spawn(k, sp, init) {
+      const H = svH;
+      if (k === 'ribbon') { const i = this.ribbonsOut++ % 2; return Object.assign(sbody(k, sp.ribbons[i], 0, 0, true), { x: svW / 2, y: H * (i ? .26 : .34), sw: [svW * .07, H * .012, .035 + i * .02, i * 2], tw: [.22 + i * .1, i * 3, .45], z: -5 + i }); }
+      if (k === 'snow') return sbody(k, sp.snow[Math.random() * 2 | 0], 0, H * rrn(.02, .045), init, { sw: [H * .02, 0, rrn(.4, .8), rrn(0, 6)], al: rrn(.35, .8), z: 2 });
+      return twinkler(k, sp, sp.stars, { ry: [0, .55] });
+    },
+  },
+
+  // Onix Rubi Cinema: a sala de cinema. A luz da tela tremula como num filme passando, as lâmpadas do bandô
+  // piscam alternadas e a poeira dourada flutua no feixe do projetor.
+  rubi: {
+    meteor: false,
+    kinds: [['dust', 46]],
+    build(H) {
+      const u = H / 1080;
+      return { dust: [glowSprite(7 * u, 'rgba(255,230,190,.9)'), glowSprite(4 * u, 'rgba(255,214,160,.95)'), glowSprite(12 * u, 'rgba(255,220,180,.35)')],
+        bulb: glowSprite(16 * u, 'rgba(255,214,140,.95)') };
+    },
+    fx(g, dt, T) {
+      const W = svW, H = svH, sp = svSprites;
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      // Luz da tela: muda devagar, com um tremido de projetor de vez em quando.
+      const f = .016 + .008 * Math.sin(T * .7) + .006 * Math.sin(T * 5.3) * Math.sin(T * 1.1) + (Math.sin(T * 17) > .97 ? .01 : 0);
+      g.fillStyle = 'rgba(255,236,214,' + f.toFixed(3) + ')'; g.fillRect(W * .22, H * .15, W * .56, H * .48);
+      // Lâmpadas do bandô: as pares e as ímpares acendem alternadas.
+      const step = H * .08, on = Math.floor(T * 1.4) % 2, b = sp.bulb, r = b.width / 2;
+      for (let k = 0, x = H * .04; x < W; x += step, k++) {
+        g.globalAlpha = k % 2 === on ? .95 : .25;
+        g.drawImage(b, x - r, H * .1 - r);
+      }
+      g.globalAlpha = 1;
+    },
+    spawn(k, sp, init) {
+      const H = svH;
+      // A poeira nasce dentro do feixe (da cabine, no canto de cima à direita, até a tela) e flutua devagar.
+      const b = sbody(k, sp.dust[Math.random() * 3 | 0], H * rrn(-.006, .006), -H * rrn(0, .008), true, { life: rrn(8, 18), sw: [H * .01, H * .008, rrn(.3, .7), rrn(0, 6)], tw: [rrn(1, 2.5), rrn(0, 6), .3], z: 3 });
+      const t = Math.pow(Math.random(), .8), w = rrn(-.5, .5) * t;
+      b.x = svW * (.975 - .44 * t) + svW * w * .16; b.y = svH * (.035 + .38 * t) + svH * w * .3;
+      return b;
+    },
+  },
+
+  // Onix Safira: peixes nadando para os dois lados, águas-vivas subindo e pulsando, bolhas, uma raia-manta e plâncton.
+  safira: {
+    meteor: false,
+    kinds: [['manta', 1], ['jelly', 3], ['fish', 9], ['bubble', 18], ['star', 12]],
+    build(H) {
+      const u = H / 1080;
+      const fish = (c1, c2) => sprite(90 * u, 40 * u, (g, w, h) => {
+        const gr = g.createLinearGradient(0, 0, 0, h); gr.addColorStop(0, c1); gr.addColorStop(1, c2);
+        g.fillStyle = gr; g.setTransform(u, 0, 0, u, 0, 0);
+        g.fill(new Path2D('M4 20C18 4 48 4 66 20 48 36 18 36 4 20zM64 20L86 6 80 20 86 34z'));
+        g.fillStyle = 'rgba(255,255,255,.9)'; g.beginPath(); g.arc(16, 17, 2.6, 0, TAU); g.fill();
+        g.strokeStyle = 'rgba(255,255,255,.35)'; g.lineWidth = 1.6; g.beginPath(); g.moveTo(30, 10); g.quadraticCurveTo(36, 20, 30, 30); g.stroke();
+      });
+      const jelly = sprite(200 * u, 300 * u, (g, w) => {
+        glowAt(g, w / 2, 70 * u, 0, 100 * u, 'rgba(111,214,255,.28)');
+        g.setTransform(u, 0, 0, u, 100 * u, 80 * u);
+        const bell = new Path2D('M-60 0C-60-78 60-78 60 0Q45 12 30 0Q15 12 0 0Q-15 12-30 0Q-45 12-60 0z');
+        g.fillStyle = 'rgba(160,225,255,.22)'; g.fill(bell);
+        g.strokeStyle = 'rgba(190,235,255,.8)'; g.lineWidth = 3; g.stroke(bell);
+        g.lineWidth = 2; g.strokeStyle = 'rgba(160,220,255,.6)';
+        g.stroke(new Path2D('M-46 8c-10 30 12 54-4 90M-26 10c6 34-12 64 6 104M26 10c-6 32 12 58-2 96M46 8c10 28-10 52 6 84'));
+        g.lineWidth = 4; g.strokeStyle = 'rgba(190,235,255,.4)'; g.stroke(new Path2D('M-12 6c-6 18 10 30 0 46s8 26 0 40M12 6c6 18-10 30 0 46s-8 26 0 40'));
+      });
+      const manta = sprite(280 * u, 164 * u, g => {
+        g.setTransform(u, 0, 0, u, 92 * u, 80 * u);
+        const p = new Path2D('M-62 0C-58-14-40-24-20-30-8-48 14-72 44-86 44-66 46-48 54-32 60-20 68-10 78-4L82 0 78 4C68 10 60 20 54 32 46 48 44 66 44 86 14 72-8 48-20 30-40 24-58 14-62 0z');
+        g.fillStyle = 'rgba(14,60,110,.85)'; g.fill(p); g.strokeStyle = 'rgba(143,211,255,.55)'; g.lineWidth = 2.4; g.stroke(p);
+        g.lineWidth = 2.6; g.beginPath(); g.moveTo(80, 0); g.lineTo(186, 0); g.stroke();
+      });
+      const bubble = r => sprite(r * 2 + 4, r * 2 + 4, (g, w) => { g.strokeStyle = 'rgba(190,235,255,.7)'; g.lineWidth = Math.max(1, 2 * u); g.beginPath(); g.arc(w / 2, w / 2, r, 0, TAU); g.stroke(); g.beginPath(); g.arc(w / 2 - r * .35, w / 2 - r * .35, r * .25, 0, TAU); g.stroke(); });
+      return { fish: [fish('#8fe4ff', '#2f6dff'), fish('#c4f1ff', '#3fa8d0'), fish('#6fd6ff', '#0f3f86')], jelly, manta, bubbles: [bubble(4 * u), bubble(7 * u), bubble(11 * u)],
+        stars: [glowSprite(5 * u, 'rgba(160,230,255,.8)'), glowSprite(3 * u, 'rgba(200,245,255,.9)')] };
+    },
+    spawn(k, sp, init) {
+      const H = svH;
+      if (k === 'fish') { const dir = Math.random() < .5 ? -1 : 1, s = Math.random(); return sbody(k, sp.fish[Math.random() * 3 | 0], dir * H * rrn(.04, .09), 0, init, { fl: dir > 0 ? -1 : 1, ry: [.18, .9], sw: [0, H * .012, rrn(1, 1.8), rrn(0, 6)], al: .55 + s * .35, z: s }); }
+      if (k === 'jelly') return sbody(k, sp.jelly, 0, -H * rrn(.012, .025), init, { rx: [.1, .95], pu: [.06, 1.6, rrn(0, 6), 1], sw: [H * .02, 0, .3, rrn(0, 6)], al: rrn(.55, .85), z: -1 });
+      if (k === 'manta') return sbody(k, sp.manta, -H * .025, 0, init, { ry: [.15, .5], sw: [0, H * .03, .25, rrn(0, 6)], al: .7, z: -2 });
+      if (k === 'bubble') return sbody(k, sp.bubbles[Math.random() * 3 | 0], 0, -H * rrn(.07, .14), init, { sw: [H * .008, 0, rrn(1.5, 2.5), rrn(0, 6)], al: .7, z: 2 });
+      return twinkler(k, sp, sp.stars, { life: rrn(4, 8) });
+    },
+  },
+
+  // Onix Esmeralda: vaga-lumes passeando e piscando, folhas caindo girando e esmeraldas de pixel brilhando.
+  esmeralda: {
+    kinds: [['gem', 6], ['leaf', 7], ['fly', 24]],
+    build(H) {
+      const u = H / 1080;
+      const fly = sprite(48 * u, 48 * u, (g, w) => { glowAt(g, w / 2, w / 2, 0, w / 2, 'rgba(230,255,138,.55)'); g.fillStyle = '#f4ffb0'; g.beginPath(); g.arc(w / 2, w / 2, 3 * u, 0, TAU); g.fill(); });
+      const leaf = c => pathSprite(40, 24, u * 1.4, 2, 12, 'M0 0C8-12 28-12 36 0 28 12 8 12 0 0z', c, 'rgba(160,255,200,.35)', 1.4);
+      return { fly, leaves: [leaf('#1f7a48'), leaf('#2f9a5e'), leaf('#145a34')], gems: [pxCanvas(PX_EMERALD, PX_EM_PAL, Math.max(2, 5 * u | 0)), pxCanvas(PX_GLINT, PX_EM_PAL, Math.max(2, 5 * u | 0))] };
+    },
+    spawn(k, sp, init) {
+      const H = svH;
+      if (k === 'fly') return sbody(k, sp.fly, H * rrn(-.012, .012) || .001, -H * rrn(0, .01), true, { ry: [.3, .95], sw: [H * .03, H * .02, rrn(.2, .5), rrn(0, 6)], tw: [rrn(1.5, 3), rrn(0, 6), .05], life: rrn(14, 26), z: 3 });
+      if (k === 'leaf') return sbody(k, sp.leaves[Math.random() * 3 | 0], -H * .01, H * rrn(.03, .05), init, { va: rrn(-1, 1), sw: [H * .04, 0, rrn(.5, .9), rrn(0, 6)], al: .8, z: 2 });
+      return twinkler(k, sp, sp.gems, { ry: [.1, .9], pu: [.15, 2], life: rrn(3, 6) });
+    },
+  },
+
+  // Onix Âmbar: a grade neon anda em direção à tela, como numa estrada sem fim; bandos de pássaros cruzam o pôr do sol.
+  ambar: {
+    kinds: [['birds', 2], ['star', 14]],
+    build(H) {
+      const u = H / 1080;
+      const birds = sprite(200 * u, 90 * u, g => {
+        g.strokeStyle = 'rgba(255,170,200,.6)'; g.lineWidth = Math.max(1, 3 * u);
+        for (const [x, y, s] of [[30, 40, 1], [70, 22, .8], [96, 54, .9], [134, 34, .7], [160, 62, .6], [54, 70, .6]]) {
+          g.beginPath(); g.moveTo((x - 14 * s) * u, (y - 4 * s) * u); g.quadraticCurveTo((x - 6 * s) * u, (y - 10 * s) * u, x * u, y * u); g.quadraticCurveTo((x + 6 * s) * u, (y - 10 * s) * u, (x + 14 * s) * u, (y - 4 * s) * u); g.stroke();
+        }
+      });
+      return { birds, stars: [sparkSprite(5 * u, '#fff', 'rgba(255,140,200,.35)'), sparkSprite(3.5 * u, '#ffd36b')] };
+    },
+    fx(g, dt, T) {
+      const W = svW, H = svH, hz = H * .72, vx = W * .6, ph = T * .3 % 1, N = 12;
+      g.setTransform(1, 0, 0, 1, 0, 0);
+      g.lineWidth = Math.max(1, H / 600);
+      for (let i = 0; i < N; i++) {
+        const t = (i + ph) / N, y = hz + (H - hz) * t * t;
+        g.strokeStyle = 'rgba(255,94,168,' + (.06 + t * .22).toFixed(3) + ')';
+        g.beginPath(); g.moveTo(0, y); g.lineTo(W, y); g.stroke();
+      }
+      g.strokeStyle = 'rgba(255,94,168,.14)'; g.beginPath();
+      for (let i = -14; i <= 14; i++) { g.moveTo(vx, hz); g.lineTo(vx + i * W * .09, H); }
+      g.stroke();
+    },
+    spawn(k, sp, init) {
+      if (k === 'birds') return sbody(k, sp.birds, -svH * rrn(.03, .05), 0, init, { ry: [.1, .45], sw: [0, svH * .015, .4, rrn(0, 6)], z: 2 });
+      return twinkler(k, sp, sp.stars, { ry: [0, .55] });
+    },
+  },
+
+  // Onix Quartzo Rosa: pétalas de cerejeira caindo e girando, e lanternas de papel subindo devagar.
+  quartzo: {
+    kinds: [['lantern', 5], ['petal', 26], ['star', 6]],
+    build(H) {
+      const u = H / 1080;
+      const petal = c => pathSprite(20, 16, u * 1.6, 2, 2, 'M0 6C4-1 14-1 16 6 12 14 4 14 0 6z', c);
+      const lantern = sprite(110 * u, 130 * u, (g, w, h) => {
+        glowAt(g, w / 2, h / 2, 0, w / 2, 'rgba(255,190,110,.45)');
+        const x = w / 2 - 18 * u, y = h / 2 - 26 * u, gr = g.createLinearGradient(x, 0, x + 36 * u, 0);
+        gr.addColorStop(0, '#d8584a'); gr.addColorStop(.5, '#ffcf8a'); gr.addColorStop(1, '#d8584a');
+        g.fillStyle = gr; g.beginPath(); g.ellipse(w / 2, h / 2, 18 * u, 26 * u, 0, 0, TAU); g.fill();
+        g.fillStyle = '#3a1420'; g.fillRect(w / 2 - 10 * u, y - 3 * u, 20 * u, 6 * u); g.fillRect(w / 2 - 10 * u, y + 49 * u, 20 * u, 6 * u);
+        g.strokeStyle = 'rgba(120,30,30,.4)'; g.lineWidth = Math.max(1, 1.4 * u);
+        for (const dy of [-14, 0, 14]) { g.beginPath(); g.ellipse(w / 2, h / 2 + dy * u, 18 * u * Math.sqrt(1 - (dy / 26) ** 2), 2 * u, 0, 0, TAU); g.stroke(); }
+      });
+      return { petals: [petal('#ffb7d0'), petal('#ffc2d8'), petal('#ff9cc0'), petal('#fff0f5')], lantern, stars: [sparkSprite(4 * u, '#fff', 'rgba(255,170,200,.35)')] };
+    },
+    spawn(k, sp, init) {
+      const H = svH;
+      if (k === 'lantern') return sbody(k, sp.lantern, 0, -H * rrn(.012, .025), init, { rx: [.08, .92], sw: [H * .02, 0, rrn(.3, .5), rrn(0, 6)], tw: [rrn(2, 4), rrn(0, 6), .75], z: 1 });
+      if (k === 'petal') return sbody(k, sp.petals[Math.random() * 4 | 0], -H * rrn(.01, .03), H * rrn(.03, .06), init, { va: rrn(-1.4, 1.4), sw: [H * .03, 0, rrn(.6, 1.1), rrn(0, 6)], al: rrn(.55, .9), z: 2 });
+      return twinkler(k, sp, sp.stars, { ry: [0, .6] });
+    },
+  },
+
+  // Onix Opala: estrelinhas laranja que nascem, brilham e somem; coraçõezinhos subindo e nuvens passando.
+  opala: {
+    kinds: [['cloud', 3], ['heart', 7], ['spark', 30]],
+    build(H) {
+      const u = H / 1080;
+      const sparks = [];
+      for (const c of ['#ff9a4d', '#ffc58f', '#ff7a6b', '#ffe2c4']) for (const r of [6, 10, 16]) sparks.push(sparkSprite(r * u, c, 'rgba(255,154,77,.35)'));
+      const heart = c => pathSprite(28, 24, u * 1.6, 14, 12, 'M0 9s-9-5.5-11.5-11C-13.3-6.2-10.8-11-6.3-11c2.6 0 4.3 1.5 5.1 2.9.8-1.4 2.5-2.9 5.1-2.9 4.5 0 7 4.8 5.2 9C9 3.5 0 9 0 9z', c);
+      const opal = sprite(120 * u, 130 * u, (g, w, h) => {
+        glowAt(g, w / 2, h / 2, 0, w / 2, 'rgba(255,122,61,.35)');
+        const gr = g.createRadialGradient(w * .42, h * .36, 2, w / 2, h / 2, 40 * u);
+        gr.addColorStop(0, '#ffe2c4'); gr.addColorStop(.35, '#ffb066'); gr.addColorStop(.75, '#e0662a'); gr.addColorStop(1, '#4a1a0a');
+        g.fillStyle = gr; g.beginPath(); g.ellipse(w / 2, h / 2, 30 * u, 36 * u, .5, 0, TAU); g.fill();
+        g.strokeStyle = '#ffb07a'; g.lineWidth = 3 * u; g.stroke();
+        sparkPath(g, w * .56, h * .42, 7 * u); g.fillStyle = '#ffe2c4'; g.fill();
+      });
+      const cloud = sprite(260 * u, 110 * u, g => {
+        g.setTransform(u, 0, 0, u, 130 * u, 70 * u);
+        const p = new Path2D('M-90 30a30 30 0 0 1 20-52 40 40 0 0 1 72-16 34 34 0 0 1 58 18 26 26 0 0 1 22 50z');
+        g.fillStyle = '#170c08'; g.fill(p); g.strokeStyle = 'rgba(255,181,138,.32)'; g.lineWidth = 3; g.stroke(p);
+      });
+      return { sparks, hearts: [heart('#ff7a8a'), heart('#ffb07a'), heart('#ff9aa8')], opal, cloud };
+    },
+    spawn(k, sp, init) {
+      const H = svH;
+      if (k === 'spark') return twinkler(k, sp, sp.sparks, { life: rrn(2.5, 6), pu: [.25, rrn(1.5, 3)], va: rrn(-.3, .3) });
+      if (k === 'heart') return sbody(k, sp.hearts[Math.random() * 3 | 0], 0, -H * rrn(.025, .05), init, { sw: [H * .025, 0, rrn(.6, 1), rrn(0, 6)], al: rrn(.45, .8), z: 2 });
+      if (k === 'opal') return sbody(k, sp.opal, -H * rrn(.01, .02), 0, init, { ry: [.15, .85], va: rrn(-.12, .12), sw: [0, H * .02, .3, rrn(0, 6)], al: .85, z: 1 });
+      return sbody(k, sp.cloud, -H * rrn(.008, .014), 0, init, { ry: [.55, .92], z: -1 });
+    },
+  },
+
+  // Onix Amethyst: o buraco de minhoca balançando, notas musicais subindo e o equalizador pulsando.
+  amethyst: {
+    kinds: [['worm', 1], ['note', 12], ['star', 10]],
+    build(H) {
+      const u = H / 1080;
+      const worm = sprite(H * 1.25, H * .8, (g, w, h) => {
+        g.strokeStyle = '#fff';
+        for (let i = 0; i < 16; i++) {
+          const t = i / 15, rx = w * .48 * Math.pow(1 - t, 1.5) + 6 * u, ry = rx * .62;
+          g.globalAlpha = .05 + .22 * t; g.lineWidth = Math.max(1, 2 * u);
+          g.beginPath(); g.ellipse(w / 2 + w * .06 * t, h / 2 - h * .06 * t, rx, ry, 0, 0, TAU); g.stroke();
+        }
+        g.globalAlpha = 1; glowAt(g, w * .56, h * .44, 0, h * .3, 'rgba(124,92,255,.35)');
+      });
+      const note = (c, two) => sprite((two ? 44 : 28) * u * 1.5, 46 * u * 1.5, g => {
+        g.setTransform(u * 1.5, 0, 0, u * 1.5, 8 * u * 1.5, 40 * u * 1.5);
+        g.fillStyle = g.strokeStyle = c; g.lineWidth = 3;
+        const head = (x, y) => { g.beginPath(); g.ellipse(x, y, 6, 4.4, -.38, 0, TAU); g.fill(); };
+        head(0, 0); if (two) head(24, -5);
+        g.beginPath(); g.moveTo(5.2, -1.6); g.lineTo(5.2, -32);
+        if (two) { g.moveTo(29.2, -6.6); g.lineTo(29.2, -37); g.stroke(); g.beginPath(); g.moveTo(5.2, -32); g.lineTo(29.2, -37); g.lineTo(29.2, -31); g.lineTo(5.2, -26); g.closePath(); g.fill(); }
+        else { g.quadraticCurveTo(13, -29, 16, -20); g.stroke(); }
+      });
+      return { worm, notes: [note('#ff7a9a'), note('#c9b8ff', 1), note('#ff2d55'), note('#c9b8ff')], stars: [sparkSprite(4 * u, '#fff', 'rgba(155,124,255,.4)')] };
+    },
+    fx(g, dt, T) {
+      const W = svW, H = svH, n = 40, bw = W / n;
+      if (!this.grad || this.gradH !== H) { this.grad = g.createLinearGradient(0, H * .82, 0, H); this.grad.addColorStop(0, 'rgba(255,45,85,.22)'); this.grad.addColorStop(1, 'rgba(91,44,255,.08)'); this.gradH = H; }
+      g.setTransform(1, 0, 0, 1, 0, 0); g.fillStyle = this.grad;
+      for (let i = 0; i < n; i++) {
+        const h = H * (.03 + .07 * (.5 + .5 * Math.sin(T * (1.6 + (i * 7 % 5) * .35) + i * 1.7)) * (.6 + .4 * Math.sin(i * .5)));
+        g.fillRect(i * bw + bw * .25, H - h, bw * .5, h);
+      }
+    },
+    spawn(k, sp, init) {
+      const H = svH;
+      if (k === 'worm') return Object.assign(sbody(k, sp.worm, 0, 0, true), { x: svW * .68, y: H * .46, ro: [.08, .15], pu: [.02, .3], al: .9, z: -5 });
+      if (k === 'note') return sbody(k, sp.notes[Math.random() * 4 | 0], 0, -H * rrn(.03, .05), init, { rx: [.35, .98], sw: [H * .025, 0, rrn(.6, 1), rrn(0, 6)], al: rrn(.5, .85), z: 3 });
+      return twinkler(k, sp, sp.stars, { ry: [0, .7] });
+    },
+  },
+};
 
 /* ---------------- Atualização de apps ---------------- */
 function refreshApps() {

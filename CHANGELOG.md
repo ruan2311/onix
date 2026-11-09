@@ -2,6 +2,13 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 17.4.0 (novembro de 2026)
+
+- **Mais 2 temas:** em **Configurações → Aparência → Tema**. **Onix Opala** é a noite quentinha do Opala, com estrelinhas laranja, constelação, lua crescente e coraçõezinhos. **Onix Amethyst** é o palco do Amethyst, com o buraco de minhoca, canhões de luz, notas musicais e o equalizador pulsando. Agora são 11 temas.
+- **Safira, Esmeralda, Âmbar e Quartzo Rosa refeitos:** fundos com mais camadas e detalhes. A Safira ganhou recife, cardume, raias-manta e safiras no chão; a Esmeralda, névoa entre os pinheiros, cogumelos que brilham e cristais; o Âmbar, nuvens sobre o sol, palmeiras e o reflexo do sol; o Quartzo Rosa, pagode, portal torii e lago. O foco ganhou brilho e os títulos, o enfeite de cada pedra.
+- **Desenho do menu novo:** nos temas de pedra, o desenho entre **Jogos** e **Entradas** virou um símbolo solto, como o planeta do Onix Escuro: três raias-manta na Safira, o ícone do Emerald na Esmeralda, o pôr do sol dentro do âmbar, o coração de quartzo rosa, a opala de fogo e a ametista.
+- **Uma tela de descanso para cada tema:** aviõezinhos de papel no White, naves de pixel no Cobalt, a aurora se mexendo, a sala de cinema no Rubi, peixes e águas-vivas na Safira, vaga-lumes na Esmeralda, a grade neon andando no Âmbar, pétalas e lanternas no Quartzo Rosa, estrelinhas e corações no Opala e notas musicais no Amethyst. O Onix Escuro continua com os planetas.
+
 ## 17.3.0 (novembro de 2026)
 
 - **Prime Video e Paramount+ nas indicações:** as indicações da semana agora também trazem os títulos populares do Prime Video e do Paramount+, com o ícone de cada serviço na capa. Eles entram sozinhos quando você abre o app mais de 3 vezes pelo Onix, ou você marca em **Configurações → Indicações**. **Assistir** abre o título no app.

@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, minijogos, o **Cobalt GameHub** de jogos clássicos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-17.0.0-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-17.4.0-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -22,7 +22,7 @@ notícias de games, minijogos, o **Cobalt GameHub** de jogos clássicos, troca d
 
 ## Sumário
 
-- [Novidades da 17.0.0](#novidades-da-1700)
+- [Novidades da 17.4.0](#novidades-da-1740)
 - [Recursos](#recursos)
 - [Instalação: qual é a sua TV?](#instalação)
   - [Android TV e Google TV](#android-tv-e-google-tv)
@@ -36,7 +36,13 @@ notícias de games, minijogos, o **Cobalt GameHub** de jogos clássicos, troca d
 
 ---
 
-## Novidades da 17.1.0
+## Novidades da 17.4.0
+
+- **Mais 2 temas:** **Onix Opala** (a noite quentinha do Opala, com estrelinhas laranja e coraçõezinhos) e **Onix Amethyst** (o palco do Amethyst, com o buraco de minhoca, notas musicais e o equalizador). Agora são 11.
+- **Safira, Esmeralda, Âmbar e Quartzo Rosa refeitos**, com fundos em mais camadas, foco com brilho e um símbolo novo no menu para cada pedra.
+- **Uma tela de descanso para cada tema:** aviõezinhos de papel no White, naves de pixel no Cobalt, a aurora se mexendo, a sala de cinema no Rubi, peixes e águas-vivas na Safira, vaga-lumes na Esmeralda, a grade neon no Âmbar, pétalas e lanternas no Quartzo Rosa, estrelinhas no Opala e notas musicais no Amethyst.
+
+Da 17.1.0:
 
 - **Mais 4 temas:** **Onix Safira** (fundo do mar), **Onix Esmeralda** (floresta com vaga-lumes), **Onix Âmbar** (pôr do sol retrô) e **Onix Quartzo Rosa** (jardim japonês com cerejeiras). Agora são 9.
 
@@ -63,14 +69,16 @@ As versões anteriores estão no [CHANGELOG.md](CHANGELOG.md) e na [página de R
 | **Entradas** | TV (antena e cabo) e HDMI direto pelo launcher, com banners editáveis (PlayStation 5, Xbox, Switch, Computador…) |
 | **Tela de descanso** | Planetas e asteroides depois de 10 minutos parado, com o relógio mudando de lugar para não marcar telas OLED |
 | **Perfis e Modo Infantil** | Um perfil por pessoa, com senha opcional de 4 números; o infantil só mostra os apps liberados, tem PIN para sair e limite de tempo por dia |
-| **Aparência e sons** | 9 temas, 10 fontes, 8 relógios, posição do menu (lateral, em cima ou embaixo) e 5 sons de navegação |
+| **Aparência e sons** | 11 temas, 10 fontes, 8 relógios, posição do menu (lateral, em cima ou embaixo) e 5 sons de navegação |
 | **Outros** | **Desligar TV**, chip de conexão que testa a internet de verdade, clima opcional, atualizações pelo próprio app, português e español |
 
 <details>
 <summary><b>Capturas de tela</b></summary>
 
-| Onix Cobalt | Onix Aurora |
+| Onix Opala | Onix Amethyst |
 |---|---|
+| <img src="docs/screenshots/tema-opala.png" alt="Tema Onix Opala"> | <img src="docs/screenshots/tema-amethyst.png" alt="Tema Onix Amethyst"> |
+| **Onix Cobalt** | **Onix Aurora** |
 | <img src="docs/screenshots/tema-cobalt.png" alt="Tema Onix Cobalt, em pixel art"> | <img src="docs/screenshots/tema-aurora.png" alt="Tema Onix Aurora"> |
 
 | Onix Rubi Cinema | Onix White |
@@ -374,7 +382,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Español* o
 
 Si Downloader no puede instalar apps, actívalo en **Configuración** y vuelve. Si **Play Protect** avisa, toca **Más detalles → Instalar de todos modos**.
 
-**Novedades de la 17.1.0:** **4 temas más**: *Onix Zafiro* (fondo del mar), *Onix Esmeralda* (bosque con luciérnagas), *Onix Ámbar* (atardecer retro) y *Onix Cuarzo Rosa* (jardín japonés con cerezos). **De la 17.0.0:** **4 temas** (*Onix Cobalt*, *Onix Aurora*, *Onix Rubí Cine* y *Onix White*), **10 fuentes** y **8 estilos de reloj** en **Configuración → Apariencia**. El historial completo está en el [CHANGELOG.md](CHANGELOG.md) (en portugués).
+**Novedades de la 17.4.0:** **2 temas más**: *Onix Opala* (la noche cálida de Opala) y *Onix Amethyst* (el escenario de Amethyst), ahora son 11; *Zafiro*, *Esmeralda*, *Ámbar* y *Cuarzo Rosa* renovados, y un protector de pantalla propio para cada tema. **De la 17.1.0:** **4 temas más**: *Onix Zafiro* (fondo del mar), *Onix Esmeralda* (bosque con luciérnagas), *Onix Ámbar* (atardecer retro) y *Onix Cuarzo Rosa* (jardín japonés con cerezos). **De la 17.0.0:** **4 temas** (*Onix Cobalt*, *Onix Aurora*, *Onix Rubí Cine* y *Onix White*), **10 fuentes** y **8 estilos de reloj** en **Configuración → Apariencia**. El historial completo está en el [CHANGELOG.md](CHANGELOG.md) (en portugués).
 
 ---
 
