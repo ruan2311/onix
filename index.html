@@ -9143,6 +9143,12 @@ if (/[?&]gems-studio=1(&|$)/.test(location.search)) window.gemsStudio = Object.f
     fundos: GS_BACKGROUNDS.map(b => ({ id: b.id, nome: b.name, cor: b.bg, css: b.css })),
     animados: GS_ANIMS.map(([id, nome]) => ({ id, nome })), menus: GS_NAVS.map(([id, nome]) => ({ id, nome })),
     temas: CUSTOM_THEMES.map(t => Object.assign({}, t)),
+    // Para as outras páginas do Gems Studio: configurações iniciais, Trajetória e Novidades (com o espanhol).
+    padroes: Object.assign({}, DEFAULTS), escolhas: CHOICES,
+    nomes: (() => { let g = ''; return OPTIONS.map(o => { if (o.group) g = o.group; return o.key && Object.prototype.hasOwnProperty.call(DEFAULTS, o.key) ? { key: o.key, name: o.name, desc: o.desc || '', grupo: g } : null; }).filter(Boolean); })(),
+    historia: STORY.map(c => ({ kicker: c.kicker || '', title: c.title || '', body: c.body || '', es: { kicker: ES[c.kicker] || '', title: ES[c.title] || '', body: ES[c.body] || '' } })),
+    novidades: CHANGELOG.slice(0, 15).map(v => ({ version: v.version, date: v.date, items: v.items.map(([t, x]) => ({ tipo: t, pt: x, es: ES[x] || '' })) })),
+    tipos: Object.assign({}, LOG_TAGS),
   }),
   aplicar(def) {
     registerCustomTheme(Object.assign({}, def, { id: 'gs-previa', name: String(def.name || 'Prévia').slice(0, 40) }));
