@@ -8,7 +8,7 @@
   - Sem rede (connect-src 'none'), sem frames, sem plugins, sem formulários.
   - Imagens apenas data: (ícones vindos da ponte Android, validados). Na Samsung (Tizen), também file: (ícones dos apps instalados).
 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src 'none'; media-src 'none'; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; font-src data:; connect-src 'none'; media-src data:; object-src 'none'; frame-src 'none'; worker-src 'none'; base-uri 'none'; form-action 'none'">
 <meta name="referrer" content="no-referrer">
 <meta name="color-scheme" content="dark">
 <title>Onix</title>
@@ -1645,7 +1645,11 @@ html.th-amethyst .kb-key.is-focused,html.th-amethyst .pin-key.is-focused,html.th
 .ay-bar{transform-box:fill-box;transform-origin:50% 100%;animation:ayBar 1.2s ease-in-out infinite alternate}
 @keyframes ayBar{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
 
-/* Gems Studio: a cena de um tema usada como fundo estático fica parada. */
+/* Gems Studio: foto, vídeo e imagem da lateral próprios; a cena de um tema usada como fundo estático fica parada. */
+#themeArt>.ta-foto,#themeArt>.ta-midia,#themeArt>.ta-sombra{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}
+#themeArt>.ta-sombra{background:#000}
+.nav-theme .nav-img{display:block;width:100%;height:100%;object-fit:contain}
+#saverMedia{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;opacity:.6}
 #themeArt .ta-static{position:absolute;top:0;right:0;bottom:0;left:0}
 #themeArt .ta-static>svg{position:absolute;top:0;left:0;width:100%;height:100%}
 #themeArt .ta-static *{animation:none!important}
@@ -2178,13 +2182,20 @@ const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: 
    entre as duas marcas abaixo; cada tema é só a escolha de peças prontas (veja "Temas do Gems Studio" no fim do
    script). Aqui a lista é conferida: id curto, nome sem tags e as quatro escolhas como texto. */
 const CUSTOM_THEMES = (() => {
+  const IMG = /^data:image\/(png|jpeg|webp|gif|svg\+xml);base64,[A-Za-z0-9+/]+={0,2}$/, VID = /^data:video\/(mp4|webm);base64,[A-Za-z0-9+/]+={0,2}$/, HEX = /^#[0-9a-fA-F]{6}$/;
+  const media = (v, vid, max) => typeof v === 'string' && v.length <= max && (IMG.test(v) || (vid && VID.test(v))) ? v : '';
+  const num = (v, lo, hi, d) => { v = +v; return isFinite(v) ? Math.min(hi, Math.max(lo, v)) : d; };
   const raw = /*GEMS-STUDIO:INICIO*/[]/*GEMS-STUDIO:FIM*/;
   const out = [];
   for (const t of Array.isArray(raw) ? raw : []) {
     if (!t || typeof t !== 'object' || typeof t.id !== 'string' || !/^[a-z0-9-]{1,24}$/.test(t.id)) continue;
     const name = typeof t.name === 'string' ? t.name.replace(/[<>&"]/g, '').trim().slice(0, 40) : '';
     if (!name || out.some(o => o.id === t.id)) continue;
-    out.push({ id: t.id, name, pal: String(t.pal || ''), bg: String(t.bg || ''), anim: String(t.anim || ''), nav: String(t.nav || '') });
+    const c = t.cor && typeof t.cor === 'object' && HEX.test(t.cor.a) ? { a: t.cor.a, b: HEX.test(t.cor.b) ? t.cor.b : t.cor.a, tipo: t.cor.tipo === 'glass' ? 'glass' : 'solid' } : null;
+    const m = t.midia && typeof t.midia === 'object' ? t.midia : {}, aj = t.ajustes && typeof t.ajustes === 'object' ? t.ajustes : {};
+    out.push({ id: t.id, name, pal: String(t.pal || ''), bg: String(t.bg || ''), anim: String(t.anim || ''), nav: String(t.nav || ''), cor: c,
+      midia: { fundo: media(m.fundo, false, 4e6), animado: media(m.animado, true, 2e7), lateral: media(m.lateral, false, 2e6), descanso: media(m.descanso, true, 2e7) },
+      ajustes: { escurecer: num(aj.escurecer, 0, .85, 0), intensidade: num(aj.intensidade, .1, 1, 1) } });
   }
   return out;
 })();
@@ -2223,6 +2234,7 @@ function applyAppearance(kid) {
 function drawThemeArt() {
   const th = themeDrawn, art = THEME_ART[th], el = document.getElementById('themeArt'), nav = document.querySelector('.nav-theme');
   el.innerHTML = art ? art.bg() : '';
+  el.querySelectorAll('video').forEach(v => { v.muted = true; v.play().catch(() => {}); });
   nav.innerHTML = art && art.nav ? art.nav() : '';
   if (th === 'rubi') {
     const g = document.createElement('div');
@@ -3070,7 +3082,7 @@ function drawThemeSky(g, W, H, rnd, th) {
     g.globalAlpha = 1;
   } else if (GS_BY_ID[th]) {
     // Tema do Gems Studio: a cor do fundo escolhido, bem escurecida, e um brilho fraco da cor das abas.
-    const t = GS_BY_ID[th], bg = gsFind(GS_BACKGROUNDS, t.bg), p = gsFind(GS_PALETTES, t.pal), gr = g.createLinearGradient(0, 0, 0, H);
+    const t = GS_BY_ID[th], bg = gsBg(t), p = gsPal(t), gr = g.createLinearGradient(0, 0, 0, H);
     gr.addColorStop(0, gsMix(bg.bg, '#000000', .1)); gr.addColorStop(1, '#000000');
     g.fillStyle = gr; g.fillRect(0, 0, W, H);
     glowAt(g, W * .8, H * .15, 0, H * .7, 'rgba(' + gsRgb(p.a) + ',.08)');
@@ -8135,6 +8147,17 @@ for (const t of ['keydown', 'keyup', 'pointerdown', 'mousedown', 'touchstart', '
 window.addEventListener('mousemove', () => { lastInput = Date.now(); }, { passive: true });
 window.addEventListener('resize', () => { if (saverOn) { svW = 0; sizeSaver(); } });
 
+// Foto ou vídeo próprio na tela de descanso de um tema do Gems Studio: entre o céu e as partículas.
+function gsSaverMedia(on) {
+  const old = document.getElementById('saverMedia');
+  if (old) old.remove();
+  const t = on && typeof GS_BY_ID !== 'undefined' ? GS_BY_ID[themeDrawn] : null;
+  if (!t || !t.saverMedia) return;
+  const vid = t.saverMedia.indexOf('data:video') === 0, el = document.createElement(vid ? 'video' : 'img');
+  el.id = 'saverMedia'; el.src = t.saverMedia;
+  if (vid) { el.muted = true; el.loop = true; el.playsInline = true; el.play().catch(() => {}); }
+  document.getElementById('saverSky').after(el);
+}
 function showSaver() {
   if (saverOn) return;
   if (game) pauseGame();
@@ -8143,6 +8166,7 @@ function showSaver() {
   sizeSaver();
   saverClock();
   $('#saver').classList.add('show');
+  gsSaverMedia(true);
   svLast = 0;
   svRaf = requestAnimationFrame(saverFrame);
 }
@@ -8153,6 +8177,7 @@ function hideSaver() {
     saverOn = false;
     cancelAnimationFrame(svRaf); clearTimeout(svClockTimer);
     $('#saver').classList.remove('show');
+    gsSaverMedia(false);
     // Devolve a memória das duas telas cheias (a TV tem pouca); os sprites ficam guardados.
     for (const c of $$('#saver canvas')) { c.width = 0; c.height = 0; }
     saverQr();
@@ -8950,6 +8975,9 @@ const GS_NAVS = [['onix', 'Planeta do Onix'], ['cobalt', 'Cobalt (pixel art)'], 
   ['safira', 'Três raias-manta'], ['esmeralda', 'Ícone do Emerald'], ['ambar', 'Pôr do sol no âmbar'], ['quartzo', 'Coração de quartzo'],
   ['opala', 'Opala de fogo'], ['amethyst', 'Ametista']];
 const gsFind = (list, id) => list.find(x => x.id === id);
+// Cor própria (escolhida no seletor do app) e foto própria de fundo.
+const gsPal = t => t.pal === 'propria' && t.cor ? { id: 'propria', name: 'Cor própria', kind: t.cor.tipo, a: t.cor.a, b: t.cor.b } : gsFind(GS_PALETTES, t.pal) || gsFind(GS_PALETTES, 'vidro-neutro');
+const gsBg = t => t.bg === 'foto' ? { id: 'foto', name: 'Foto própria', bg: '#08090c', css: '#08090c', scene: '' } : gsFind(GS_BACKGROUNDS, t.bg) || GS_BACKGROUNDS[0];
 const gsHas = (list, id) => list.some(x => x[0] === id);
 const gsRgbOf = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
 const gsRgb = hex => gsRgbOf(hex).join(',');
@@ -8958,7 +8986,7 @@ const gsLum = hex => { const [r, g, b] = gsRgbOf(hex); return (r * .299 + g * .5
 
 // O CSS de um tema: o mesmo molde dos temas de pedra, com as cores da paleta e a cor do fundo escolhido.
 function gsCss(t) {
-  const p = gsFind(GS_PALETTES, t.pal), bg = gsFind(GS_BACKGROUNDS, t.bg), h = 'html.th-c-' + t.id;
+  const p = gsPal(t), bg = gsBg(t), h = 'html.th-c-' + t.id;
   const A = p.a, B = p.b, a = gsRgb(A), b = gsRgb(B), d = gsRgb(gsMix(bg.bg, '#000000', .1)), glass = p.kind === 'glass';
   const ink = glass ? '#fff' : (gsLum(A) + gsLum(B)) / 2 > .55 ? '#10131a' : '#fff', inkDim = ink === '#fff' ? 'rgba(255,255,255,.75)' : 'rgba(16,19,26,.72)';
   const fill = glass ? 'linear-gradient(100deg,rgba(' + a + ',.34),rgba(' + b + ',.22))' : A === B ? A : 'linear-gradient(100deg,' + A + ',' + B + ')';
@@ -9040,12 +9068,12 @@ function gsAnimSvg(type, p) {
 }
 
 // Tela de descanso: o céu escuro da cor do fundo (drawThemeSky) e as mesmas partículas do fundo animado.
-function gsScene(type, p) {
+function gsScene(type, p, media) {
   const L = gsMix(p.a, '#ffffff', .5), Lr = gsRgb(L);
   const kinds = { estrelas: [['star', 24]], brilhos: [['spark', 32]], bolhas: [['bubble', 22], ['star', 8]], petalas: [['petal', 26], ['star', 6]],
-    vagalumes: [['fly', 26]], coracoes: [['heart', 10], ['spark', 14]], notas: [['note', 12], ['star', 10]], neve: [['snow', 60]] }[type] || [['star', 24]];
+    vagalumes: [['fly', 26]], coracoes: [['heart', 10], ['spark', 14]], notas: [['note', 12], ['star', 10]], neve: [['snow', 60]] }[type] || (media ? [] : [['star', 24]]);
   return {
-    meteor: type !== 'bolhas', kinds,
+    meteor: type !== 'bolhas' && !media, kinds,
     build(H) {
       const u = H / 1080, sp = { stars: [sparkSprite(5 * u, '#fff', 'rgba(' + Lr + ',.4)'), sparkSprite(3.5 * u, L)], sparks: [] };
       for (const c of [p.a, p.b, L]) for (const r of [6, 10, 15]) sp.sparks.push(sparkSprite(r * u, c, 'rgba(' + gsRgb(c) + ',.35)'));
@@ -9076,12 +9104,17 @@ function gsScene(type, p) {
 
 const GS_BY_ID = {};
 function registerCustomTheme(t) {
+  const m = t.midia || {}, aj = t.ajustes || {};
   const def = {
-    id: t.id, name: t.name,
-    pal: gsFind(GS_PALETTES, t.pal) ? t.pal : 'vidro-neutro', bg: gsFind(GS_BACKGROUNDS, t.bg) ? t.bg : 'grafite',
-    anim: gsHas(GS_ANIMS, t.anim) ? t.anim : 'nada', nav: gsHas(GS_NAVS, t.nav) ? t.nav : 'onix',
+    id: t.id, name: t.name, cor: t.cor || null, midia: m, ajustes: { escurecer: +aj.escurecer || 0, intensidade: aj.intensidade == null ? 1 : +aj.intensidade },
+    pal: gsFind(GS_PALETTES, t.pal) || (t.pal === 'propria' && t.cor) ? t.pal : 'vidro-neutro',
+    bg: gsFind(GS_BACKGROUNDS, t.bg) || (t.bg === 'foto' && m.fundo) ? t.bg : 'grafite',
+    anim: gsHas(GS_ANIMS, t.anim) || (t.anim === 'proprio' && m.animado) ? t.anim : 'nada',
+    nav: gsHas(GS_NAVS, t.nav) || (t.nav === 'propria' && m.lateral) ? t.nav : 'onix',
   };
-  const key = 'c-' + def.id, p = gsFind(GS_PALETTES, def.pal), bg = gsFind(GS_BACKGROUNDS, def.bg);
+  // Tela de descanso: a foto ou o vídeo escolhido para ela; senão o vídeo animado; senão a foto de fundo.
+  def.saverMedia = m.descanso || (def.anim === 'proprio' ? m.animado : '') || (def.bg === 'foto' ? m.fundo : '');
+  const key = 'c-' + def.id, p = gsPal(def), bg = gsBg(def);
   GS_BY_ID[key] = def;
   const at = CHOICES.theme.findIndex(c => c[0] === key);
   if (at >= 0) CHOICES.theme[at][1] = def.name;
@@ -9089,11 +9122,17 @@ function registerCustomTheme(t) {
   let st = document.getElementById('gs-' + def.id);
   if (!st) { st = document.createElement('style'); st.id = 'gs-' + def.id; document.head.appendChild(st); }
   st.textContent = gsCss(def);
+  const mediaTag = (src, cls, op) => src.indexOf('data:video') === 0
+    ? '<video class="' + cls + '" src="' + src + '" muted loop autoplay playsinline style="opacity:' + op + '"></video>'
+    : '<img class="' + cls + '" src="' + src + '" alt="" style="opacity:' + op + '">';
   THEME_ART[key] = {
-    bg: () => (bg.scene && THEME_ART[bg.scene] ? '<div class="ta-static">' + THEME_ART[bg.scene].bg() + '</div>' : '') + gsAnimSvg(def.anim, p),
-    nav: def.nav === 'onix' ? null : () => THEME_ART[def.nav].nav(),
+    bg: () => (def.bg === 'foto' ? mediaTag(m.fundo, 'ta-foto', 1) + (def.ajustes.escurecer ? '<div class="ta-sombra" style="opacity:' + def.ajustes.escurecer + '"></div>' : '') : '')
+      + (bg.scene && THEME_ART[bg.scene] ? '<div class="ta-static">' + THEME_ART[bg.scene].bg() + '</div>' : '')
+      + (def.anim === 'proprio' ? mediaTag(m.animado, 'ta-midia', def.ajustes.intensidade) : gsAnimSvg(def.anim, p)),
+    nav: def.nav === 'onix' ? null : def.nav === 'propria' ? () => '<img class="nav-img" src="' + m.lateral + '" alt="">' : () => THEME_ART[def.nav].nav(),
   };
-  SAVER_SCENES[key] = gsScene(def.anim, p);
+  // Partículas da tela de descanso: as do fundo animado; com foto ou vídeo próprio, só se o fundo animado for de partículas.
+  SAVER_SCENES[key] = gsScene(def.anim === 'proprio' ? (def.saverMedia ? 'nada' : 'estrelas') : def.anim, p, !!def.saverMedia);
 }
 CUSTOM_THEMES.forEach(registerCustomTheme);
 
