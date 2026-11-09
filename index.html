@@ -1645,6 +1645,10 @@ html.th-amethyst .kb-key.is-focused,html.th-amethyst .pin-key.is-focused,html.th
 .ay-bar{transform-box:fill-box;transform-origin:50% 100%;animation:ayBar 1.2s ease-in-out infinite alternate}
 @keyframes ayBar{from{transform:scaleY(.25)}to{transform:scaleY(1)}}
 
+/* Gems Studio: a cena de um tema usada como fundo estático fica parada. */
+#themeArt .ta-static{position:absolute;top:0;right:0;bottom:0;left:0}
+#themeArt .ta-static>svg{position:absolute;top:0;left:0;width:100%;height:100%}
+#themeArt .ta-static *{animation:none!important}
 /* Desenho do menu (no vão entre Jogos e Entradas) de cada tema; o padrão é o .nav-art. */
 .nav-theme{display:none;width:78%;max-height:100%;opacity:.95}
 html.kids .nav-theme{display:none!important}
@@ -2170,6 +2174,20 @@ const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: 
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, pickPrime: false, pickParamount: false, projectAd: true, autoUpdate: true,
   anim: 'suave', heroFx: 'fade', tabFx: false, lang: 'auto', remote: true, remoteQr: true, soundFx: 'chime', homeStyle: 'glass', navPos: 'left',
   theme: 'dark', font: 'system', clock: 'thin' });
+/* Temas criados no Gems Studio (o app do Ruan para criar temas, que só existe no PC dele). O app grava a lista
+   entre as duas marcas abaixo; cada tema é só a escolha de peças prontas (veja "Temas do Gems Studio" no fim do
+   script). Aqui a lista é conferida: id curto, nome sem tags e as quatro escolhas como texto. */
+const CUSTOM_THEMES = (() => {
+  const raw = /*GEMS-STUDIO:INICIO*/[]/*GEMS-STUDIO:FIM*/;
+  const out = [];
+  for (const t of Array.isArray(raw) ? raw : []) {
+    if (!t || typeof t !== 'object' || typeof t.id !== 'string' || !/^[a-z0-9-]{1,24}$/.test(t.id)) continue;
+    const name = typeof t.name === 'string' ? t.name.replace(/[<>&"]/g, '').trim().slice(0, 40) : '';
+    if (!name || out.some(o => o.id === t.id)) continue;
+    out.push({ id: t.id, name, pal: String(t.pal || ''), bg: String(t.bg || ''), anim: String(t.anim || ''), nav: String(t.nav || '') });
+  }
+  return out;
+})();
 // Opções de escolha (OK passa para a próxima): valor salvo -> nome na tela.
 const CHOICES = Object.freeze({
   anim: [['suave', 'Suave'], ['elastica', 'Elástica'], ['rapida', 'Rápida'], ['flutuar', 'Flutuar'], ['pulsar', 'Pulsar']],
@@ -2178,7 +2196,7 @@ const CHOICES = Object.freeze({
   soundFx: [['chime', 'Onix Chime'], ['crystal', 'Crystal'], ['sharp', 'Sharpness'], ['velvet', 'Velvet'], ['pulse', 'Pulse']],
   homeStyle: [['glass', 'Onix Glass'], ['clean', 'Clean Glass'], ['cosmos', 'Onix Cosmos']],
   navPos: [['left', 'Lateral'], ['top', 'Em cima'], ['bottom', 'Embaixo']],
-  theme: [['dark', 'Onix Escuro'], ['cobalt', 'Onix Cobalt'], ['aurora', 'Onix Aurora'], ['rubi', 'Onix Rubi Cinema'], ['safira', 'Onix Safira'], ['esmeralda', 'Onix Esmeralda'], ['ambar', 'Onix Âmbar'], ['quartzo', 'Onix Quartzo Rosa'], ['opala', 'Onix Opala'], ['amethyst', 'Onix Amethyst'], ['white', 'Onix White']],   // o claro por último, para ninguém passar por ele de surpresa
+  theme: [['dark', 'Onix Escuro'], ['cobalt', 'Onix Cobalt'], ['aurora', 'Onix Aurora'], ['rubi', 'Onix Rubi Cinema'], ['safira', 'Onix Safira'], ['esmeralda', 'Onix Esmeralda'], ['ambar', 'Onix Âmbar'], ['quartzo', 'Onix Quartzo Rosa'], ['opala', 'Onix Opala'], ['amethyst', 'Onix Amethyst'], ...CUSTOM_THEMES.map(t => ['c-' + t.id, t.name]), ['white', 'Onix White']],   // o claro por último, para ninguém passar por ele de surpresa
   font: [['system', 'Sistema'], ['bodoni', 'Bodoni Moda'], ['cinzel', 'Cinzel'], ['butler', 'Butler'], ['playfair', 'Playfair Display'], ['montserrat', 'Montserrat'],
     ['poppins', 'Poppins'], ['bebas', 'Bebas Neue'], ['orbitron', 'Orbitron'], ['quicksand', 'Quicksand'], ['pressstart', 'Press Start 2P']],
   clock: [['thin', 'Fino'], ['bold', 'Negrito'], ['stack', 'Empilhado'], ['analog', 'Analógico'], ['digital', 'Digital'], ['flip', 'Flip'], ['words', 'Por extenso'], ['neon', 'Neon']],
@@ -3050,6 +3068,12 @@ function drawThemeSky(g, W, H, rnd, th) {
     g.drawImage(moon, W * .86 - 32 * u, H * .17 - 32 * u);
     for (let i = 0; i < 46; i++) { g.globalAlpha = .08 + rnd() * .25; g.fillStyle = ['#ff9a4d', '#ffc58f', '#ff7a6b'][i % 3]; sparkPath(g, rnd() * W, rnd() * H, (3 + rnd() * 6) * u); g.fill(); }
     g.globalAlpha = 1;
+  } else if (GS_BY_ID[th]) {
+    // Tema do Gems Studio: a cor do fundo escolhido, bem escurecida, e um brilho fraco da cor das abas.
+    const t = GS_BY_ID[th], bg = gsFind(GS_BACKGROUNDS, t.bg), p = gsFind(GS_PALETTES, t.pal), gr = g.createLinearGradient(0, 0, 0, H);
+    gr.addColorStop(0, gsMix(bg.bg, '#000000', .1)); gr.addColorStop(1, '#000000');
+    g.fillStyle = gr; g.fillRect(0, 0, W, H);
+    glowAt(g, W * .8, H * .15, 0, H * .7, 'rgba(' + gsRgb(p.a) + ',.08)');
   } else if (th === 'amethyst') {
     g.fillStyle = '#040406'; g.fillRect(0, 0, W, H);
     glowAt(g, W * .82, H * .18, 0, H * .7, 'rgba(124,92,255,.12)');
@@ -8880,6 +8904,217 @@ const SAVER_SCENES = {
   },
 };
 
+/* ---------------- Temas do Gems Studio ----------------
+   O Gems Studio (o criador de temas do Ruan, só no PC dele) grava a lista CUSTOM_THEMES lá em cima. Cada tema
+   é uma combinação de peças prontas daqui: as cores das abas (sólidas, degradês ou de vidro), o fundo estático
+   (uma cor ou a cena parada de um tema), o fundo animado (que também vira a tela de descanso) e o desenho do menu. */
+const GS_PALETTES = [
+  ['solido-branco', 'Sólido branco', 'solid', '#ffffff'], ['solido-ciano', 'Sólido ciano', 'solid', '#3de1ff'],
+  ['solido-azul', 'Sólido azul', 'solid', '#5aa2ff'], ['solido-verde', 'Sólido verde', 'solid', '#5fe89a'],
+  ['solido-lima', 'Sólido lima', 'solid', '#c9f26a'], ['solido-dourado', 'Sólido dourado', 'solid', '#ffd27a'],
+  ['solido-ambar', 'Sólido âmbar', 'solid', '#ffb347'], ['solido-laranja', 'Sólido laranja', 'solid', '#ff8a3d'],
+  ['solido-vermelho', 'Sólido vermelho', 'solid', '#ff4d5e'], ['solido-rosa', 'Sólido rosa', 'solid', '#ff8fbe'],
+  ['solido-violeta', 'Sólido violeta', 'solid', '#9b7cff'],
+  ['degrade-aurora', 'Degradê aurora', 'solid', '#7dffcf', '#c7b2ff'], ['degrade-por-do-sol', 'Degradê pôr do sol', 'solid', '#ffd36b', '#ff5ea8'],
+  ['degrade-oceano', 'Degradê oceano', 'solid', '#8fe4ff', '#3f8cff'], ['degrade-amethyst', 'Degradê Amethyst', 'solid', '#ff2d55', '#5b2cff'],
+  ['degrade-esmeralda', 'Degradê esmeralda', 'solid', '#7cf0ac', '#c9f26a'],
+  ['vidro-neutro', 'Vidro neutro', 'glass', '#ffffff'], ['vidro-azul', 'Vidro azul', 'glass', '#6fd6ff'],
+  ['vidro-verde', 'Vidro verde', 'glass', '#5fe89a'], ['vidro-rosa', 'Vidro rosa', 'glass', '#ffa8c8'],
+  ['vidro-laranja', 'Vidro laranja', 'glass', '#ff9a4d'], ['vidro-violeta', 'Vidro violeta', 'glass', '#b49cff'],
+  ['vidro-dourado', 'Vidro dourado', 'glass', '#ffd27a'], ['vidro-vermelho', 'Vidro vermelho', 'glass', '#ff5a6e'],
+  ['vidro-aurora', 'Vidro aurora', 'glass', '#7dffcf', '#c7b2ff'], ['vidro-por-do-sol', 'Vidro pôr do sol', 'glass', '#ffb347', '#ff5ea8'],
+].map(([id, name, kind, a, b]) => ({ id, name, kind, a, b: b || a }));
+const GS_BACKGROUNDS = [
+  ['grafite', 'Grafite', '#0c0d10', 'radial-gradient(70% 60% at 80% 0%,#1d2029,#0c0d10 60%,#060709)'],
+  ['meia-noite', 'Azul meia-noite', '#050b1c', 'radial-gradient(70% 60% at 75% 0%,#13285a,#081430 55%,#030713)'],
+  ['oceano', 'Oceano', '#021226', 'linear-gradient(180deg,#07305a,#04193a 45%,#010812)'],
+  ['floresta', 'Floresta', '#03100a', 'radial-gradient(80% 60% at 80% 0%,#0d3a24,#062014 50%,#020805)'],
+  ['vinho', 'Vinho', '#12040a', 'radial-gradient(90% 70% at 55% 0%,#3d0b18,#1c0509 55%,#0a0204)'],
+  ['roxo', 'Roxo profundo', '#0c0618', 'radial-gradient(70% 60% at 80% 10%,#2b1458,#140a2c 55%,#07040f)'],
+  ['brasa', 'Brasa', '#120805', 'radial-gradient(60% 50% at 80% 10%,#4a1f0c,#1c0c06 55%,#0a0503)'],
+  ['rosa-noturno', 'Rosa noturno', '#140a12', 'radial-gradient(70% 60% at 85% 20%,#3a1a2e,#1f0e1a 55%,#0a0408)'],
+  ['cena-cobalt', 'Cena do Cobalt', '#070820', 'linear-gradient(180deg,#0d0c34,#080924 50%,#04040f)', 'cobalt'],
+  ['cena-aurora', 'Cena da Aurora', '#03111a', 'linear-gradient(180deg,#071c2a,#04131c 50%,#020a0d)', 'aurora'],
+  ['cena-rubi', 'Cena do Rubi Cinema', '#12040a', 'radial-gradient(120% 85% at 55% 0%,#3d0b18,#1c0509 55%,#0a0204)', 'rubi'],
+  ['cena-safira', 'Cena da Safira', '#020e1f', 'linear-gradient(180deg,#07305a 0%,#04193a 40%,#020b1c 75%,#010610)', 'safira'],
+  ['cena-esmeralda', 'Cena da Esmeralda', '#03100a', 'linear-gradient(180deg,#0b3321,#06200f 45%,#020a05)', 'esmeralda'],
+  ['cena-ambar', 'Cena do Âmbar', '#14061c', 'linear-gradient(180deg,#12052a,#2a0b3e 45%,#4a1440 70%,#14061c)', 'ambar'],
+  ['cena-quartzo', 'Cena do Quartzo Rosa', '#140a12', 'linear-gradient(180deg,#2a1226,#1d0c1a 50%,#0b050a)', 'quartzo'],
+  ['cena-opala', 'Cena do Opala', '#0f0907', 'radial-gradient(50% 42% at 80% 14%,rgba(255,138,61,.24),transparent 70%),linear-gradient(180deg,#140b08,#0b0605)', 'opala'],
+  ['cena-amethyst', 'Cena do Amethyst', '#060709', 'radial-gradient(55% 45% at 82% 18%,rgba(124,92,255,.24),transparent 70%),linear-gradient(180deg,#0a0a10,#050507)', 'amethyst'],
+].map(([id, name, bg, css, scene]) => ({ id, name, bg, css, scene: scene || '' }));
+const GS_ANIMS = [['nada', 'Nenhum'], ['estrelas', 'Estrelas piscando'], ['brilhos', 'Brilhos de 4 pontas'], ['bolhas', 'Bolhas subindo'],
+  ['petalas', 'Pétalas caindo'], ['vagalumes', 'Vaga-lumes'], ['coracoes', 'Corações subindo'], ['notas', 'Notas musicais'],
+  ['neve', 'Neve caindo'], ['raios', 'Raios de luz']];
+const GS_NAVS = [['onix', 'Planeta do Onix'], ['cobalt', 'Cobalt (pixel art)'], ['aurora', 'Aurora e montanhas'], ['rubi', 'Rubi Cinema'],
+  ['safira', 'Três raias-manta'], ['esmeralda', 'Ícone do Emerald'], ['ambar', 'Pôr do sol no âmbar'], ['quartzo', 'Coração de quartzo'],
+  ['opala', 'Opala de fogo'], ['amethyst', 'Ametista']];
+const gsFind = (list, id) => list.find(x => x.id === id);
+const gsHas = (list, id) => list.some(x => x[0] === id);
+const gsRgbOf = hex => [1, 3, 5].map(i => parseInt(hex.slice(i, i + 2), 16));
+const gsRgb = hex => gsRgbOf(hex).join(',');
+const gsMix = (h1, h2, t) => { const a = gsRgbOf(h1), b = gsRgbOf(h2); return '#' + a.map((v, i) => Math.round(v + (b[i] - v) * t).toString(16).padStart(2, '0')).join(''); };
+const gsLum = hex => { const [r, g, b] = gsRgbOf(hex); return (r * .299 + g * .587 + b * .114) / 255; };
+
+// O CSS de um tema: o mesmo molde dos temas de pedra, com as cores da paleta e a cor do fundo escolhido.
+function gsCss(t) {
+  const p = gsFind(GS_PALETTES, t.pal), bg = gsFind(GS_BACKGROUNDS, t.bg), h = 'html.th-c-' + t.id;
+  const A = p.a, B = p.b, a = gsRgb(A), b = gsRgb(B), d = gsRgb(gsMix(bg.bg, '#000000', .1)), glass = p.kind === 'glass';
+  const ink = glass ? '#fff' : (gsLum(A) + gsLum(B)) / 2 > .55 ? '#10131a' : '#fff', inkDim = ink === '#fff' ? 'rgba(255,255,255,.75)' : 'rgba(16,19,26,.72)';
+  const fill = glass ? 'linear-gradient(100deg,rgba(' + a + ',.34),rgba(' + b + ',.22))' : A === B ? A : 'linear-gradient(100deg,' + A + ',' + B + ')';
+  const focus = 'color:' + ink + ';background:' + fill + ';border-color:' + (glass ? 'rgba(' + a + ',.85)' : 'transparent') + ';box-shadow:0 .5rem 1.4rem rgba(' + a + ',.35),inset 0 1px 0 rgba(255,255,255,' + (glass ? '.3' : '.4') + ')';
+  const keyInk = gsLum(A) > .55 ? '#10131a' : '#fff', sw = gsLum(A) > .85 ? gsMix(A, '#000000', .35) : A;
+  const panel = 'linear-gradient(170deg,' + gsMix(bg.bg, A, .14) + ',' + bg.bg + ' 70%)', bar = 'linear-gradient(180deg,rgba(' + d + ',.96),rgba(0,0,0,.96))';
+  return [
+    h + '{--bg:' + bg.bg + ';--text:#f4f6fa;--muted:rgba(226,232,244,.62);--glass:linear-gradient(135deg,rgba(' + a + ',.14),rgba(255,255,255,.03) 55%,rgba(' + b + ',.07)),linear-gradient(rgba(' + d + ',.58),rgba(' + d + ',.58));'
+      + '--glass-border:rgba(' + a + ',.22);--glass-hi:inset 0 1px 0 rgba(255,255,255,.22),inset 0 -1px 0 rgba(0,0,0,.22);--shadow:0 .45rem 1.1rem rgba(0,0,0,.45);'
+      + '--focus-glow:0 0 0 .14rem ' + A + ',0 0 0 .34rem rgba(' + a + ',.22),0 .6rem 1.8rem rgba(' + a + ',.38);--neon:' + A + ';--clock-accent:' + A + '}',
+    h + ' body{background:' + bg.css + ' var(--bg)}',
+    h + ' .glass-blur{background:' + bar + '}',
+    h + ' #sidebar{border-right-color:rgba(' + a + ',.14)}',
+    h + ' .nav-item.active{background:rgba(' + a + ',.1);border-color:rgba(' + a + ',.2)}',
+    h + ' .nav-item.is-focused,' + h + ' .nav-item.me.is-focused,' + h + ' .opt.is-focused,' + h + ' .row-opt.is-focused,' + h + ' .btn.primary{' + focus + '}',
+    h + ' .nav-item.me.is-focused .me-name{color:' + ink + '}',
+    h + ' .opt.is-focused .opt-desc,' + h + ' .row-opt.is-focused .opt-desc{color:' + inkDim + '}',
+    h + ' .f.is-focused,' + h + ' .tile.is-focused .tile-art{border-color:rgba(' + a + ',.9)}',
+    h + ' .tile.is-focused .tile-label{color:' + A + ';font-weight:600}',
+    h + ' .kicker{color:' + A + '}',
+    h + ' .hero-bg{opacity:.3}',
+    h + ' .dots i.on{background:' + A + ';box-shadow:0 0 .6rem ' + A + '}',
+    h + ' .row-title::before{content:"";display:inline-block;width:.55rem;height:.55rem;margin-right:.75rem;border-radius:50%;background:' + (A === B ? A : 'linear-gradient(135deg,' + A + ',' + B + ')') + ';box-shadow:0 0 .6rem rgba(' + a + ',.8);vertical-align:.12rem}',
+    h + ' .switch.on{background:' + sw + '}',
+    h + ' .tile-art{background:' + gsMix(bg.bg, '#ffffff', .04) + '}',
+    h + ' .tile-art img{background:' + gsMix(bg.bg, '#ffffff', .07) + '}',
+    h + ' #toast{background:' + panel + ';border-color:rgba(' + a + ',.3);box-shadow:0 .8rem 2rem rgba(0,0,0,.5),0 0 1.4rem rgba(' + a + ',.22)}',
+    h + ' .reader-panel,' + h + ' .wx-card{background:' + panel + ';border-color:rgba(' + a + ',.22)}',
+    h + ' .layer{background:radial-gradient(60% 55% at 70% 0%,rgba(' + a + ',.16),transparent 70%),' + bg.css + ',' + bg.bg + '}',
+    h + ' .pf.is-focused .av{box-shadow:0 0 0 .2rem ' + A + ',0 .8rem 2rem rgba(' + a + ',.35)}',
+    h + ' .kb-key.is-focused,' + h + ' .pin-key.is-focused,' + h + ' .svc.is-focused{background:' + A + ';color:' + keyInk + ';border-color:' + A + '}',
+    h + ' .clk-flip .card i{background:linear-gradient(180deg,rgba(' + a + ',.15) 0,rgba(' + a + ',.15) 49.5%,rgba(0,0,0,.4) 49.5%,rgba(0,0,0,.4) 50.5%,rgba(255,255,255,.04) 50.5%)}',
+    h + ' .clk-analog circle.face{fill:rgba(' + a + ',.07)}',
+    h + ' .clk{text-shadow:0 0 2.2rem rgba(' + a + ',.24)}',
+    h + ' .cz-orbit i{background:' + A + ';box-shadow:0 0 .9rem rgba(' + a + ',.8)}',
+    t.nav === 'onix' ? '' : h + ' .nav-art{display:none}' + h + ' .nav-theme{display:block}',
+    '@media (min-width:761px),(orientation:landscape){' + h + '.nav-top #sidebar{background:' + bar + ';border-bottom-color:rgba(' + a + ',.15)}'
+      + h + '.nav-bottom #sidebar{background:' + bar + ';border-color:rgba(' + a + ',.24)}'
+      + h + '.nav-top .nav-item.active::before,' + h + '.nav-bottom .nav-item.active::before{background:' + A + ';box-shadow:0 0 .7rem ' + A + '}}',
+  ].join('\n');
+}
+
+// Fundo animado: uma camada de SVG por cima do fundo estático, com as cores da paleta (só transform e opacity).
+function gsAnimSvg(type, p) {
+  const rnd = rng(97), A = p.a, B = p.b, L = gsMix(A, '#ffffff', .55), cols = [A, B, L, '#ffffff'];
+  const pick = () => cols[rnd() * cols.length | 0];
+  let s = '', defs = '';
+  if (type === 'estrelas' || type === 'brilhos') {
+    for (let i = 0; i < (type === 'estrelas' ? 80 : 50); i++) {
+      const x = 300 + rnd() * 1620 | 0, y = rnd() * 1080 | 0;
+      if (type === 'estrelas') s += i % 4 ? '<circle cx="' + x + '" cy="' + y + '" r="' + (1 + rnd() * 2).toFixed(1) + '" fill="#fff" opacity="' + (.25 + rnd() * .5).toFixed(2) + '"/>' : twinkle(spark(x, y, 4 + rnd() * 6, '#fff'), 2.4 + rnd() * 3, rnd() * 4);
+      else { const r = rnd() > .85 ? 12 + rnd() * 8 : 4 + rnd() * 6; s += i % 3 ? spark(x, y, r, pick(), ' opacity="' + (.2 + rnd() * .4).toFixed(2) + '"') : twinkle(spark(x, y, r, pick()), 2.4 + rnd() * 2.6, rnd() * 4); }
+    }
+  } else if (type === 'bolhas') {
+    const bub = n => { let o = ''; for (let i = 0; i < n; i++) { const x = 340 + rnd() * 1580 | 0, y = 1100 + rnd() * 1200 | 0, r = (2 + rnd() * 9).toFixed(1); o += '<circle cx="' + x + '" cy="' + y + '" r="' + r + '"/><circle cx="' + x + '" cy="' + (y - 1200) + '" r="' + r + '"/>'; } return o; };
+    s = '<g stroke="' + L + '" stroke-width="2" opacity=".55" fill="none"><g class="sf-up">' + bub(10) + '</g><g class="sf-up2">' + bub(9) + '</g><g class="sf-up3">' + bub(8) + '</g></g>';
+  } else if (type === 'petalas' || type === 'neve') {
+    const one = (x, y) => type === 'neve' ? '<circle cx="' + x + '" cy="' + y + '" r="' + (2 + rnd() * 4).toFixed(1) + '"/>' : '<g transform="translate(' + x + ' ' + y + ')"><path class="qz-sway" d="M0 0c6-9 18-7 16 4-2 9-12 11-16-4z"/></g>';
+    const fall = n => { let o = ''; for (let i = 0; i < n; i++) { const x = 600 + rnd() * 1500 | 0, y = -120 + rnd() * 1200 | 0; o += one(x, y) + one(x + 520, y - 1220); } return o; };
+    s = '<g fill="' + (type === 'neve' ? '#ffffff' : L) + '" opacity="' + (type === 'neve' ? .7 : .8) + '"><g class="qz-fall1">' + fall(type === 'neve' ? 14 : 5) + '</g><g class="qz-fall2">' + fall(type === 'neve' ? 14 : 5) + '</g><g class="qz-fall3">' + fall(type === 'neve' ? 12 : 4) + '</g></g>';
+  } else if (type === 'vagalumes') {
+    defs = '<radialGradient id="gsF"><stop offset="0" stop-color="' + L + '" stop-opacity=".6"/><stop offset="1" stop-color="' + L + '" stop-opacity="0"/></radialGradient>';
+    const f = ['', '', ''];
+    for (let i = 0; i < 30; i++) { const x = 340 + rnd() * 1580 | 0, y = 200 + rnd() * 860 | 0; f[i % 3] += '<circle cx="' + x + '" cy="' + y + '" r="16" fill="url(#gsF)"/><circle cx="' + x + '" cy="' + y + '" r="2.6" fill="#fff"/>'; }
+    s = '<g class="es-drift"><g class="es-fly1">' + f[0] + '</g></g><g class="es-drift2"><g class="es-fly2">' + f[1] + '</g></g><g class="es-fly3">' + f[2] + '</g>';
+  } else if (type === 'coracoes' || type === 'notas') {
+    for (let i = 0; i < 10; i++) {
+      const x = 360 + rnd() * 1520 | 0, y = 1100 + rnd() * 1200 | 0, sc = (.9 + rnd() * 1.1).toFixed(2), c = i % 2 ? A : L;
+      const one = yy => type === 'coracoes' ? heartSvg(x, yy, sc, c, i % 3 === 0) : (i % 2 ? noteSvg : notes2Svg)(x, yy, sc, c);
+      s += one(y) + one(y - 1200);
+    }
+    s = '<g class="op-up" opacity=".5">' + s + '</g>';
+  } else if (type === 'raios') {
+    defs = '<linearGradient id="gsR" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + L + '" stop-opacity=".2"/><stop offset="1" stop-color="' + L + '" stop-opacity="0"/></linearGradient>';
+    s = '<g class="sf-ray" fill="url(#gsR)"><path d="M760 0h150l320 1080H930z"/><path d="M1300 0h90l250 1080h-190z"/><path d="M520 0h60l200 1080H660z"/></g>'
+      + '<g class="sf-ray2" fill="url(#gsR)"><path d="M1040 0h70l140 1080h-120z"/><path d="M1560 0h140l220 900v180h-120z"/></g>';
+  }
+  return s ? SVG_BG + (defs ? '<defs>' + defs + '</defs>' : '') + s + '</svg>' : '';
+}
+
+// Tela de descanso: o céu escuro da cor do fundo (drawThemeSky) e as mesmas partículas do fundo animado.
+function gsScene(type, p) {
+  const L = gsMix(p.a, '#ffffff', .5), Lr = gsRgb(L);
+  const kinds = { estrelas: [['star', 24]], brilhos: [['spark', 32]], bolhas: [['bubble', 22], ['star', 8]], petalas: [['petal', 26], ['star', 6]],
+    vagalumes: [['fly', 26]], coracoes: [['heart', 10], ['spark', 14]], notas: [['note', 12], ['star', 10]], neve: [['snow', 60]] }[type] || [['star', 24]];
+  return {
+    meteor: type !== 'bolhas', kinds,
+    build(H) {
+      const u = H / 1080, sp = { stars: [sparkSprite(5 * u, '#fff', 'rgba(' + Lr + ',.4)'), sparkSprite(3.5 * u, L)], sparks: [] };
+      for (const c of [p.a, p.b, L]) for (const r of [6, 10, 15]) sp.sparks.push(sparkSprite(r * u, c, 'rgba(' + gsRgb(c) + ',.35)'));
+      sp.bubbles = [4, 7, 11].map(r => sprite(r * 2 * u + 4, r * 2 * u + 4, (g, w) => { g.strokeStyle = 'rgba(' + Lr + ',.75)'; g.lineWidth = Math.max(1, 2 * u); g.beginPath(); g.arc(w / 2, w / 2, r * u, 0, TAU); g.stroke(); }));
+      sp.petals = [p.a, L, p.b].map(c => pathSprite(20, 16, u * 1.6, 2, 2, 'M0 6C4-1 14-1 16 6 12 14 4 14 0 6z', c));
+      sp.fly = sprite(48 * u, 48 * u, (g, w) => { glowAt(g, w / 2, w / 2, 0, w / 2, 'rgba(' + Lr + ',.55)'); g.fillStyle = '#fff'; g.beginPath(); g.arc(w / 2, w / 2, 3 * u, 0, TAU); g.fill(); });
+      sp.hearts = [p.a, L].map(c => pathSprite(28, 24, u * 1.6, 14, 12, 'M0 9s-9-5.5-11.5-11C-13.3-6.2-10.8-11-6.3-11c2.6 0 4.3 1.5 5.1 2.9.8-1.4 2.5-2.9 5.1-2.9 4.5 0 7 4.8 5.2 9C9 3.5 0 9 0 9z', c));
+      sp.notes = [p.a, L].map(c => sprite(30 * u * 1.5, 46 * u * 1.5, g => {
+        g.setTransform(u * 1.5, 0, 0, u * 1.5, 8 * u * 1.5, 40 * u * 1.5); g.fillStyle = g.strokeStyle = c; g.lineWidth = 3;
+        g.beginPath(); g.ellipse(0, 0, 6, 4.4, -.38, 0, TAU); g.fill(); g.beginPath(); g.moveTo(5.2, -1.6); g.lineTo(5.2, -32); g.quadraticCurveTo(13, -29, 16, -20); g.stroke();
+      }));
+      sp.snow = [glowSprite(9 * u, 'rgba(255,255,255,.9)'), glowSprite(6 * u, 'rgba(' + Lr + ',.95)'), glowSprite(4 * u, 'rgba(255,255,255,.9)')];
+      return sp;
+    },
+    spawn(k, sp, init) {
+      const H = svH, one = l => l[Math.random() * l.length | 0];
+      if (k === 'spark') return twinkler(k, sp, sp.sparks, { life: rrn(2.5, 6), pu: [.25, rrn(1.5, 3)], va: rrn(-.3, .3) });
+      if (k === 'bubble') return sbody(k, one(sp.bubbles), 0, -H * rrn(.07, .14), init, { sw: [H * .008, 0, rrn(1.5, 2.5), rrn(0, 6)], al: .7, z: 2 });
+      if (k === 'petal') return sbody(k, one(sp.petals), -H * rrn(.01, .03), H * rrn(.03, .06), init, { va: rrn(-1.4, 1.4), sw: [H * .03, 0, rrn(.6, 1.1), rrn(0, 6)], al: rrn(.55, .9), z: 2 });
+      if (k === 'fly') return sbody(k, sp.fly, H * rrn(-.012, .012) || .001, -H * rrn(0, .01), true, { ry: [.2, .95], sw: [H * .03, H * .02, rrn(.2, .5), rrn(0, 6)], tw: [rrn(1.5, 3), rrn(0, 6), .05], life: rrn(14, 26), z: 3 });
+      if (k === 'heart') return sbody(k, one(sp.hearts), 0, -H * rrn(.025, .05), init, { sw: [H * .025, 0, rrn(.6, 1), rrn(0, 6)], al: rrn(.45, .8), z: 2 });
+      if (k === 'note') return sbody(k, one(sp.notes), 0, -H * rrn(.03, .05), init, { sw: [H * .025, 0, rrn(.6, 1), rrn(0, 6)], al: rrn(.5, .85), z: 3 });
+      if (k === 'snow') return sbody(k, one(sp.snow), 0, H * rrn(.02, .045), init, { sw: [H * .02, 0, rrn(.4, .8), rrn(0, 6)], al: rrn(.35, .8), z: 2 });
+      return twinkler(k, sp, sp.stars, {});
+    },
+  };
+}
+
+const GS_BY_ID = {};
+function registerCustomTheme(t) {
+  const def = {
+    id: t.id, name: t.name,
+    pal: gsFind(GS_PALETTES, t.pal) ? t.pal : 'vidro-neutro', bg: gsFind(GS_BACKGROUNDS, t.bg) ? t.bg : 'grafite',
+    anim: gsHas(GS_ANIMS, t.anim) ? t.anim : 'nada', nav: gsHas(GS_NAVS, t.nav) ? t.nav : 'onix',
+  };
+  const key = 'c-' + def.id, p = gsFind(GS_PALETTES, def.pal), bg = gsFind(GS_BACKGROUNDS, def.bg);
+  GS_BY_ID[key] = def;
+  const at = CHOICES.theme.findIndex(c => c[0] === key);
+  if (at >= 0) CHOICES.theme[at][1] = def.name;
+  else CHOICES.theme.splice(CHOICES.theme.findIndex(c => c[0] === 'white'), 0, [key, def.name]);
+  let st = document.getElementById('gs-' + def.id);
+  if (!st) { st = document.createElement('style'); st.id = 'gs-' + def.id; document.head.appendChild(st); }
+  st.textContent = gsCss(def);
+  THEME_ART[key] = {
+    bg: () => (bg.scene && THEME_ART[bg.scene] ? '<div class="ta-static">' + THEME_ART[bg.scene].bg() + '</div>' : '') + gsAnimSvg(def.anim, p),
+    nav: def.nav === 'onix' ? null : () => THEME_ART[def.nav].nav(),
+  };
+  SAVER_SCENES[key] = gsScene(def.anim, p);
+}
+CUSTOM_THEMES.forEach(registerCustomTheme);
+
+// Prévia do Gems Studio: só existe quando o app abre o Onix com ?gems-studio=1 (nunca na TV).
+if (/[?&]gems-studio=1(&|$)/.test(location.search)) window.gemsStudio = Object.freeze({
+  opcoes: () => ({
+    paletas: GS_PALETTES.map(p => ({ id: p.id, nome: p.name, tipo: p.kind, a: p.a, b: p.b })),
+    fundos: GS_BACKGROUNDS.map(b => ({ id: b.id, nome: b.name, cor: b.bg, css: b.css })),
+    animados: GS_ANIMS.map(([id, nome]) => ({ id, nome })), menus: GS_NAVS.map(([id, nome]) => ({ id, nome })),
+    temas: CUSTOM_THEMES.map(t => Object.assign({}, t)),
+  }),
+  aplicar(def) {
+    registerCustomTheme(Object.assign({}, def, { id: 'gs-previa', name: String(def.name || 'Prévia').slice(0, 40) }));
+    settings.theme = 'c-gs-previa'; themeDrawn = null; svSpritesH = 0;
+    if (def.fonte && CHOICES.font.some(c => c[0] === def.fonte)) settings.font = def.fonte;   // a foto do site usa a Poppins, como as capturas da TV
+    applyAppearance(false);
+    return true;
+  },
+  descanso(on) { if (on) { svSpritesH = 0; showSaver(); } else hideSaver(); return true; },
+});
+
 /* ---------------- Atualização de apps ---------------- */
 function refreshApps() {
   const wasInApps = current && current.classList.contains('tile');
@@ -9036,7 +9271,7 @@ function startProfiles() {
   if (!profiles.length) {
     let fresh = true;
     try { fresh = !Object.keys(localStorage).some(k => k.indexOf('onix.') === 0); } catch (_) {}
-    if (fresh) { openWelcome(); return; }
+    if (fresh && !/[?&]gems-studio=1(&|$)/.test(location.search)) { openWelcome(); return; }   // a prévia do Gems Studio vai direto ao Onix
     profiles = [cleanProfile({ id: FIRST_PROFILE, name: t('Meu perfil'), prefs: profilePrefsNow() })];
     profileId = FIRST_PROFILE;
     saveProfiles();
