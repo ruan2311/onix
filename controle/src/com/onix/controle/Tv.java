@@ -49,6 +49,23 @@ final class Tv {
         this.listener = listener;
     }
 
+    /** A conexão atual desistiu (TV fora de alcance); volta quando a TV aparecer no Wi-Fi. */
+    boolean away() {
+        Conn c = conn;
+        return c != null && c.away;
+    }
+
+    /** Nome e IP da TV da conexão atual (null se não há conexão). */
+    String name() {
+        Conn c = conn;
+        return c == null ? null : c.name;
+    }
+
+    String host() {
+        Conn c = conn;
+        return c == null ? null : c.host;
+    }
+
     boolean ready() {
         Conn c = conn;
         return c != null && c.readyAt != 0 && System.currentTimeMillis() >= c.readyAt;
@@ -144,6 +161,7 @@ final class Tv {
         volatile long readyAt;   // 0 = ainda não ativo
         volatile long imeCounter, fieldCounter = -1;
         volatile String lastLink;
+        volatile boolean away;
 
         Conn(String host, String name, String pin) {
             this.host = host;
@@ -217,7 +235,9 @@ final class Tv {
                 listener.on("paired", d);
                 return true;
             } catch (Exception e) {
-                if (!closed) state("error", "A TV não aceitou o pareamento. Tente de novo.");
+                if (!closed) state("error", network(e)
+                        ? "Não achei a TV na rede. Confira se ela está ligada e no mesmo Wi-Fi do celular."
+                        : "A TV não aceitou o pareamento. Tente de novo.");
                 return false;
             } finally {
                 socket = null;
@@ -225,10 +245,16 @@ final class Tv {
             }
         }
 
+        /**
+         * Mantém a conexão. Se a TV some, tenta de novo algumas vezes (mais vezes se já estava
+         * conectada) e então desiste com "away": nada de ficar tentando para sempre longe da TV.
+         * Quem traz de volta é o Finder (a TV apareceu no Wi-Fi) ou abrir o app de novo.
+         */
         void session() {
             int fails = 0;
+            boolean everActive = false;
             while (!closed) {
-                state("connecting", null);
+                if (fails == 0) state("connecting", null);
                 SSLSocket s = null;
                 boolean active = false;
                 try {
@@ -239,13 +265,14 @@ final class Tv {
                     InputStream in = s.getInputStream();
                     fieldCounter = -1;
                     while (!closed) {
-                        if (handle(Proto.parse(Proto.read(in)))) active = true;
+                        if (handle(Proto.parse(Proto.read(in)))) active = everActive = true;
                         fails = 0;
                     }
                 } catch (SSLException e) {
                     if (closed) return;
-                    // Certificado da TV mudou, ou a TV recusou este celular logo de cara: parear de novo.
-                    if (String.valueOf(e.getMessage()).contains("PIN") || !active) {
+                    // Só é "pareie de novo" quando a TV recusou de verdade (certificado dela mudou ou
+                    // ela rejeitou o deste celular). Queda de rede no meio do aperto de mão não conta.
+                    if (!active && refused(e)) {
                         state("unpaired", null);
                         return;
                     }
@@ -258,9 +285,14 @@ final class Tv {
                     quiet(s);
                 }
                 fails++;
+                if (fails >= (everActive ? 6 : 3)) {
+                    away = true;
+                    state("away", null);
+                    return;
+                }
                 state("offline", null);
                 try {
-                    Thread.sleep(Math.min(1000L * fails, 5000));
+                    Thread.sleep(Math.min(2000L * fails, 8000));
                 } catch (InterruptedException e) {
                     return;
                 }
@@ -340,6 +372,24 @@ final class Tv {
         private void emit(String type, JSONObject d) {
             if (!closed && conn == this) listener.on(type, d);
         }
+    }
+
+    /** A TV recusou o celular (e não foi só a rede que caiu)? */
+    private static boolean refused(Exception e) {
+        StringBuilder m = new StringBuilder();
+        for (Throwable t = e; t != null; t = t.getCause()) m.append(' ').append(t.getMessage());
+        String s = m.toString().toLowerCase(Locale.ROOT);
+        return s.contains("pin") || s.contains("certificate") || s.contains("bad_cert") || s.contains("handshake_failure")
+                || s.contains("access_denied") || s.contains("unknown_ca");
+    }
+
+    /** Falha de rede (TV desligada, longe ou em outro Wi-Fi)? */
+    private static boolean network(Exception e) {
+        for (Throwable t = e; t != null; t = t.getCause()) {
+            if (t instanceof java.net.SocketTimeoutException || t instanceof java.net.ConnectException
+                    || t instanceof java.net.NoRouteToHostException || t instanceof java.net.UnknownHostException) return true;
+        }
+        return false;
     }
 
     // --- pareamento: protocolo ---

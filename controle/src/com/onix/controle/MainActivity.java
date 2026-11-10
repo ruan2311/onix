@@ -216,6 +216,17 @@ public class MainActivity extends Activity implements Tv.Listener, Finder.Listen
             nearby = new JSONObject(tvs);
         }
         emit("tvs", tvsJson());
+        // A TV da conexão atual apareceu no Wi-Fi: se o controle tinha desistido (estava longe) ou ela
+        // trocou de IP no meio das tentativas, conecta de novo sozinho. Nunca mexe num pareamento novo.
+        final String cur = tv.name(), host = cur == null ? null : tvs.get(cur);
+        final JSONObject t = cur == null ? null : paired().optJSONObject(cur);
+        if (host != null && t != null && !tv.ready() && (tv.away() || !host.equals(tv.host()))) {
+            ui.post(new Runnable() {
+                public void run() {
+                    if (cur.equals(tv.name()) && !tv.ready()) tv.connect(host, cur, t.optString("pin"));
+                }
+            });
+        }
     }
 
     @Override

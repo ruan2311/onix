@@ -6,8 +6,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.onix.controle"
-    android:versionCode="9"
-    android:versionName="1.0.8">
+    android:versionCode="10"
+    android:versionName="1.0.9">
 
     <uses-sdk android:minSdkVersion="23" android:targetSdkVersion="35" />
 
