@@ -2,6 +2,12 @@
 
 As mesmas notas aparecem dentro do app, em **Configurações → Novidades**.
 
+## 17.5.0 (novembro de 2026)
+
+- **Clean Glass mais limpo:** o relógio fica no alto, o meio da tela fica livre e os apps, maiores, ficam embaixo. As indicações da semana saíram do Clean Glass; quem quiser pode trazer de volta em **Configurações → Início → Indicações no Clean Glass**. Ideia de um usuário do Threads.
+- **Menu em cima combinando com o Clean Glass:** com o menu em cima e o Clean Glass, a barra perde o fundo e vira abas só de texto no centro, com um ponto embaixo da aba aberta e o Desligar TV só no ícone.
+- **Continuar no CloudStream e no Stremio (em teste):** uma fileira opcional na tela inicial com o que esses apps colocam na TV: o que você está assistindo e as capas da tela inicial deles. OK abre o título no app. Vem desligada: ligue em **Configurações → Indicações**, leia o aviso e permita o acesso que o Android pede. Só na versão para Google TV.
+
 ## 17.4.0 (novembro de 2026)
 
 - **Mais 2 temas:** em **Configurações → Aparência → Tema**. **Onix Opala** é a noite quentinha do Opala, com estrelinhas laranja, constelação, lua crescente e coraçõezinhos. **Onix Amethyst** é o palco do Amethyst, com o buraco de minhoca, canhões de luz, notas musicais e o equalizador pulsando. Agora são 11 temas.

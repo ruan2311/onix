@@ -601,10 +601,22 @@ public class MainActivity extends Activity {
         }
     }
 
+    /** Resposta da permissão do "Continuar nos seus apps" (AppRows): vai para a página. */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] results) {
+        if (requestCode != AppRows.REQUEST) return;
+        boolean ok = results.length > 0 && results[0] == PackageManager.PERMISSION_GRANTED;
+        // Recusada com "não perguntar de novo": o Android não mostra mais a pergunta.
+        boolean again = ok || shouldShowRequestPermissionRationale(AppRows.PERMISSION);
+        AppRows.get().stale();
+        js("window.Launcher&&Launcher.onAppRowsPermission&&Launcher.onAppRowsPermission(" + ok + "," + again + ")");
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
         resumed = true;
+        AppRows.get().stale();   // volta de outro app: o "Continuar assistindo" pode ter mudado
         if (webView != null) {
             webView.resumeTimers();
             webView.onResume();

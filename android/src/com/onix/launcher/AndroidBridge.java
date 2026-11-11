@@ -278,6 +278,48 @@ public class AndroidBridge {
         return searchTitle(title) ? "search" : "";
     }
 
+    /* "Continuar nos seus apps" (CloudStream e Stremio, ver AppRows): opcional, a página só chama
+       depois do aviso e de a pessoa ligar em Configurações → Indicações. */
+
+    /** "off" (Android sem as tabelas, antes do 8), "granted" ou "denied". */
+    @JavascriptInterface
+    public String appRowsState() {
+        if (!trusted || !AppRows.supported()) return "off";
+        return AppRows.allowed(activity) ? "granted" : "denied";
+    }
+
+    /** Pede a permissão (o Android mostra a pergunta); a resposta chega em Launcher.onAppRowsPermission. */
+    @JavascriptInterface
+    public String appRowsRequest() {
+        if (!trusted || !AppRows.supported()) return "off";
+        if (AppRows.allowed(activity)) return "granted";
+        activity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                activity.requestPermissions(new String[]{AppRows.PERMISSION}, AppRows.REQUEST);
+            }
+        });
+        return "asked";
+    }
+
+    @JavascriptInterface
+    public String getAppRows() {
+        if (!trusted) return "[]";
+        return AppRows.get().json(activity, new Runnable() {
+            @Override
+            public void run() {
+                if (activity instanceof MainActivity)
+                    ((MainActivity) activity).js("window.Launcher&&Launcher.onAppRowsChanged&&Launcher.onAppRowsChanged()");
+            }
+        });
+    }
+
+    @JavascriptInterface
+    public boolean openAppRow(final int id) {
+        if (!trusted || !AppRows.allowed(activity)) return false;
+        return AppRows.get().open(activity, id);
+    }
+
     private boolean start(final Intent i) {
         try {
             activity.startActivity(i);

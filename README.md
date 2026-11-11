@@ -7,7 +7,7 @@
 Visual escuro de vidro, apps organizados do seu jeito, indicações da semana da Netflix,
 notícias de games, minijogos, o **Cobalt GameHub** de jogos clássicos, troca de entradas HDMI e uma tela de descanso espacial.
 
-![Versão](https://img.shields.io/badge/vers%C3%A3o-17.4.0-white?style=flat-square)
+![Versão](https://img.shields.io/badge/vers%C3%A3o-17.5.0-white?style=flat-square)
 ![Android](https://img.shields.io/badge/Android-5.0%2B-3ddc84?style=flat-square&logo=android&logoColor=white)
 ![Plataforma](https://img.shields.io/badge/Android%20TV%20%7C%20Google%20TV-black?style=flat-square)
 ![Samsung](https://img.shields.io/badge/Samsung%20Tizen-2022%2B%20(beta)-1428a0?style=flat-square&logo=samsung&logoColor=white)
@@ -22,7 +22,7 @@ notícias de games, minijogos, o **Cobalt GameHub** de jogos clássicos, troca d
 
 ## Sumário
 
-- [Novidades da 17.4.0](#novidades-da-1740)
+- [Novidades da 17.5.0](#novidades-da-1750)
 - [Recursos](#recursos)
 - [Instalação: qual é a sua TV?](#instalação)
   - [Android TV e Google TV](#android-tv-e-google-tv)
@@ -36,7 +36,13 @@ notícias de games, minijogos, o **Cobalt GameHub** de jogos clássicos, troca d
 
 ---
 
-## Novidades da 17.4.0
+## Novidades da 17.5.0
+
+- **Clean Glass mais limpo:** o relógio no alto, o meio da tela livre e os apps, maiores, embaixo. As indicações da semana saíram do Clean Glass e voltam se você quiser, em **Configurações → Início → Indicações no Clean Glass**. Ideia de um usuário do Threads.
+- **Menu em cima combinando com o Clean Glass:** a barra perde o fundo e vira abas só de texto no centro, com um ponto embaixo da aba aberta.
+- **Continuar no CloudStream e no Stremio** (em teste, só Google TV): uma fileira opcional com o que esses apps colocam na TV (o que você está assistindo e as capas da tela inicial deles). Vem desligada; ligue em **Configurações → Indicações**, depois do aviso e da permissão do Android.
+
+Da 17.4.0:
 
 - **Mais 2 temas:** **Onix Opala** (a noite quentinha do Opala, com estrelinhas laranja e coraçõezinhos) e **Onix Amethyst** (o palco do Amethyst, com o buraco de minhoca, notas musicais e o equalizador). Agora são 11.
 - **Safira, Esmeralda, Âmbar e Quartzo Rosa refeitos**, com fundos em mais camadas, foco com brilho e um símbolo novo no menu para cada pedra.
@@ -61,8 +67,9 @@ As versões anteriores estão no [CHANGELOG.md](CHANGELOG.md) e na [página de R
 
 | | |
 |---|---|
-| **Início** | Três estilos (**Onix Glass**, **Clean Glass** e **Onix Cosmos**), destaque rotativo com as indicações da semana, fileira com os seus apps favoritos, botões **Atualizar** e **Limpar memória** |
+| **Início** | Três estilos (**Onix Glass**, **Clean Glass**, só com o relógio e os apps, e **Onix Cosmos**), destaque rotativo com as indicações da semana, fileira com os seus apps favoritos, botões **Atualizar** e **Limpar memória** |
 | **Indicações da semana** | Títulos populares no Brasil (JustWatch + iTunes), renovados toda segunda. A **Netflix** é o padrão; **Disney+**, **HBO Max**, **Globoplay**, **Prime Video** e **Paramount+** entram quando você abre o app mais de 3 vezes pelo Onix (ou escolha em **Configurações → Indicações**). **Assistir no…** abre o título direto no app |
+| **Continuar nos seus apps** | Opcional e em teste (só Google TV): o que o **CloudStream** e o **Stremio** colocam na TV, com o que você está assistindo e as capas da tela inicial deles. **OK** abre o título no app. Vem desligada |
 | **Apps** | Grade com todos os apps instalados, separados em **Recentes** e **Não usados** |
 | **Jogos** | O cartão do [Cobalt GameHub](#cobalt-gamehub-jogos-clássicos) e quatro minijogos com fases e recorde: **Pong**, **Pinball**, **Tijolos** e **Cobrinha**. Na Samsung e na LG, um hub de jogos na nuvem (Game Pass e apps de cloud gaming) |
 | **Notícias dos games** | Adrenaline e Eurogamer.pt, a cada 3 horas. **OK** abre o resumo; um QR code leva à matéria no celular |
@@ -310,7 +317,7 @@ adb shell dpm set-active-admin com.aurora.launcher/.PowerAdmin
 
 - **Sem rastreamento, sem anúncios, sem conta.** Preferências, perfis, PIN e contagem de uso dos apps ficam **só na TV**.
 - A interface roda num WebView **offline**, com uma Content-Security-Policy que bloqueia a rede. Os downloads são feitos pelo código nativo, só por HTTPS e só destes serviços: JustWatch e iTunes (indicações), Adrenaline e Eurogamer.pt (notícias), GitHub (atualizações), `connectivitycheck.gstatic.com` (teste de internet) e Open-Meteo (clima, só se você ligar).
-- Permissões do Android: `INTERNET`, `ACCESS_NETWORK_STATE`, `RECEIVE_BOOT_COMPLETED` (agenda das indicações), `REQUEST_INSTALL_PACKAGES` (atualizações, sempre com confirmação) e, opcional, o administrador do dispositivo só com `force-lock`.
+- Permissões do Android: `INTERNET`, `ACCESS_NETWORK_STATE`, `RECEIVE_BOOT_COMPLETED` (agenda das indicações), `REQUEST_INSTALL_PACKAGES` (atualizações, sempre com confirmação), `READ_TV_LISTINGS` (só se você ligar **Continuar no CloudStream e no Stremio**; o Android pergunta na tela) e, opcional, o administrador do dispositivo só com `force-lock`.
 - **Controle pelo celular:** com o Onix aberto, atende na porta `8765`, só na rede de casa, com a chave do QR code (muda a cada conexão e uma vez por dia). Dá para desligar em **Configurações → Controle pelo celular**.
 - **Onix Controle:** fala direto com a TV nas portas `6466` e `6467`, com TLS e certificado da TV guardado no pareamento. Na internet, só acessa o GitHub.
 
@@ -382,7 +389,7 @@ Onix está en **español**: en **Configuración → Idioma**, elige *Español* o
 
 Si Downloader no puede instalar apps, actívalo en **Configuración** y vuelve. Si **Play Protect** avisa, toca **Más detalles → Instalar de todos modos**.
 
-**Novedades de la 17.4.0:** **2 temas más**: *Onix Opala* (la noche cálida de Opala) y *Onix Amethyst* (el escenario de Amethyst), ahora son 11; *Zafiro*, *Esmeralda*, *Ámbar* y *Cuarzo Rosa* renovados, y un protector de pantalla propio para cada tema. **De la 17.1.0:** **4 temas más**: *Onix Zafiro* (fondo del mar), *Onix Esmeralda* (bosque con luciérnagas), *Onix Ámbar* (atardecer retro) y *Onix Cuarzo Rosa* (jardín japonés con cerezos). **De la 17.0.0:** **4 temas** (*Onix Cobalt*, *Onix Aurora*, *Onix Rubí Cine* y *Onix White*), **10 fuentes** y **8 estilos de reloj** en **Configuración → Apariencia**. El historial completo está en el [CHANGELOG.md](CHANGELOG.md) (en portugués).
+**Novedades de la 17.5.0:** *Clean Glass* más limpio (el reloj arriba, el centro libre y las apps más grandes abajo; las recomendaciones quedan opcionales), menú arriba a juego con *Clean Glass* y la fila opcional **Seguir en CloudStream y Stremio** (en prueba, solo Google TV). **De la 17.4.0:** **2 temas más**: *Onix Opala* (la noche cálida de Opala) y *Onix Amethyst* (el escenario de Amethyst), ahora son 11; *Zafiro*, *Esmeralda*, *Ámbar* y *Cuarzo Rosa* renovados, y un protector de pantalla propio para cada tema. **De la 17.1.0:** **4 temas más**: *Onix Zafiro* (fondo del mar), *Onix Esmeralda* (bosque con luciérnagas), *Onix Ámbar* (atardecer retro) y *Onix Cuarzo Rosa* (jardín japonés con cerezos). **De la 17.0.0:** **4 temas** (*Onix Cobalt*, *Onix Aurora*, *Onix Rubí Cine* y *Onix White*), **10 fuentes** y **8 estilos de reloj** en **Configuración → Apariencia**. El historial completo está en el [CHANGELOG.md](CHANGELOG.md) (en portugués).
 
 ---
 

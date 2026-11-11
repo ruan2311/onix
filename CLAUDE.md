@@ -12,7 +12,7 @@ Este projeto é editado em duas estações: o celular (Termux) e o PC (WSL + VS 
 
 - **Pasta:** `/root/onix` (celular) e `~/onix` (PC). **GitHub:** `ruan2311/onix` (público).
 - **O que é:** tela inicial para Google TV / Android TV, com versões para Samsung (Tizen) e LG
-  (webOS). A interface é o `index.html`. Versão atual: **17.4.0** (fora da fase beta desde a 16.3.2). Onix Controle: **1.0.8**.
+  (webOS). A interface é o `index.html`. Versão atual: **17.5.0** (fora da fase beta desde a 16.3.2). Onix Controle: **1.0.8**.
 - **Pacote Android:** fica **`com.aurora.launcher`** para sempre (o código está em
   `com.onix.launcher`). Nunca renomeie o pacote, o alias `com.aurora.launcher.MainActivity` nem a
   classe `PowerAdmin`. Isso quebraria as atualizações e as configurações dos usuários.

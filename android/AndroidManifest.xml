@@ -11,7 +11,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.aurora.launcher"
     android:versionCode="17"
-    android:versionName="17.4.0">
+    android:versionName="17.5.0">
 
     <uses-sdk android:minSdkVersion="21" android:targetSdkVersion="35" />
 
@@ -31,6 +31,9 @@
         android:name="com.onix.gamehub.permission.HUB"
         android:protectionLevel="signature" />
     <uses-permission android:name="com.onix.gamehub.permission.HUB" />
+    <!-- "Continuar nos seus apps" (opcional, desligado de início): ler o que o CloudStream e o
+         Stremio publicam na tela da TV. O Android pergunta na tela só quando a pessoa liga a opção. -->
+    <uses-permission android:name="android.permission.READ_TV_LISTINGS" />
 
     <uses-feature android:name="android.software.leanback" android:required="false" />
     <uses-feature android:name="android.hardware.touchscreen" android:required="false" />

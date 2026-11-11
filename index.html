@@ -555,10 +555,13 @@ html.tab-fx .section.active{animation:tabIn .28s var(--ease) both}
    Onix Glass é o padrão. Os outros só mudam o CSS da aba Início (o topo, com "html.on-home"):
    nada é recalculado e o foco ignora o que fica escondido. */
 
-/* Clean Glass: tudo no centro e quase nada na tela. Relógio grande e fino, a data e a temperatura
-   embaixo, os apps numa fileira centralizada e as indicações em capas pequenas. Sem destaque;
-   os botões do topo viram ícones no canto (o nome aparece no focado). */
-html.home-clean.on-home .topbar{position:relative;flex-direction:column;align-items:center;justify-content:center;gap:0;margin:4.2rem 0 3rem;text-align:center}
+/* Clean Glass: quase nada na tela. O relógio grande e fino no alto, com a data e a temperatura
+   embaixo; o meio fica livre e os apps, maiores, ficam no pé da tela. Sem destaque; as indicações
+   da semana só aparecem com "Indicações no Clean Glass" ligado (desligado de início). Os botões do
+   topo viram ícones no canto (o nome aparece no focado). */
+html.home-clean.on-home #main{display:flex;flex-direction:column}
+html.home-clean.on-home #sec-home.active{flex:1 0 auto;display:flex;flex-direction:column;justify-content:flex-end}
+html.home-clean.on-home .topbar{position:relative;flex:none;flex-direction:column;align-items:center;justify-content:center;gap:0;margin:4.2rem 0 2rem;text-align:center}
 html.home-clean.on-home .topbar>div:first-child{display:flex;flex-direction:column;align-items:center}
 html.home-clean.on-home #clock{font-size:7.5rem;font-weight:100;letter-spacing:-.03em}
 html.home-clean.on-home #date{font-size:.85rem;letter-spacing:.24em;text-transform:uppercase;margin-top:.9rem}
@@ -576,11 +579,36 @@ html.home-clean #refreshBtn.is-focused,html.home-clean #ramBtn.is-focused,html.h
 /* Fileiras no centro: margem automática nas pontas (com muitos apps, rola normal a partir da esquerda). */
 html.home-clean #sec-home .row>:first-child{margin-left:auto}
 html.home-clean #sec-home .row>:last-child{margin-right:auto}
-html.home-clean #homeApps .tile{width:10.5rem}
+html.home-clean #homeApps .tile{width:12.8rem}
+html.home-clean:not(.clean-picks) .picks-title,html.home-clean:not(.clean-picks) #homePicks{display:none}
+/* Com as indicações ou o "Continuar nos seus apps" à mostra, tudo encolhe um pouco para caber na tela. */
+html.home-clean.clean-picks.on-home .topbar,html.home-clean.has-app-rows.on-home .topbar{margin:1.4rem 0 .6rem}
+html.home-clean.clean-picks.on-home #clock,html.home-clean.has-app-rows.on-home #clock{font-size:5.2rem}
+html.home-clean.clean-picks #homeApps .tile,html.home-clean.has-app-rows #homeApps .tile{width:10.5rem}
+html.home-clean.clean-picks #homeApps,html.home-clean.has-app-rows #homeApps{padding-bottom:.6rem}
 html.home-clean #sec-home .tile-label{opacity:0}
 html.home-clean #sec-home .tile.is-focused .tile-label{opacity:1}
-html.home-clean .picks-title{text-align:center;font-size:.75rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-top:2.6rem}
-html.home-clean #homePicks .tile.pick{width:6.8rem}
+html.home-clean .picks-title,html.home-clean #appRowsTitle{text-align:center;font-size:.75rem;font-weight:600;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);margin-top:.4rem}
+html.home-clean #homePicks .tile.pick,html.home-clean #appRows .tile.pick{width:6.8rem}
+
+/* Continuar nos seus apps (CloudStream e Stremio): capa, o nome do app no canto e, no que está
+   sendo assistido, a barrinha do quanto já foi visto. */
+.tile.app-row .tile-art{background:#16171c}
+.ar-ph{position:absolute;top:0;right:0;bottom:0;left:0;display:flex;align-items:center;justify-content:center;padding:.8rem;
+  text-align:center;font-size:.85rem;font-weight:600;line-height:1.3;color:var(--muted);overflow:hidden}
+.ar-app{position:absolute;z-index:3;top:.4rem;left:.4rem;padding:.12rem .45rem;border-radius:.4rem;font-size:.62rem;font-weight:700;letter-spacing:.03em;color:#fff;background:rgba(0,0,0,.62)}
+.ar-prog{position:absolute;z-index:3;left:0;bottom:0;height:.25rem;background:#fff;box-shadow:0 0 .4rem rgba(255,255,255,.6)}
+/* Aviso antes de ligar a fileira (Configurações → Indicações). */
+.ar-card{width:100%;max-width:46rem;text-align:left}
+.ar-tag{display:inline-block;padding:.3rem .8rem;border-radius:2rem;font-size:.72rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;
+  color:#ffd27a;background:rgba(255,210,122,.12);border:1px solid rgba(255,210,122,.3)}
+.layer .ar-card h2{text-align:left;margin:.8rem 0 .2rem}
+.ar-card .layer-sub{text-align:left;margin:0 0 1.2rem}
+.ar-list{list-style:none;margin:0 0 1.6rem;padding:0;display:flex;flex-direction:column;gap:.7rem}
+.ar-list li{padding:.8rem 1.1rem;border-radius:1rem;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.08);line-height:1.4}
+.ar-list b{display:block;font-weight:600;margin-bottom:.15rem}
+.ar-list span{color:var(--muted);font-size:.92rem}
+.ar-card .layer-actions{justify-content:flex-end}
 
 /* Onix Cosmos: o planeta do Onix, órbitas, luas, estrelas e um cometa desenhados atrás do destaque,
    que perde a caixa e a capa. Desenho estático; só uma lua gira (uma camada pequena, no compositor). */
@@ -796,7 +824,7 @@ html.kids .grid.games .tile-art,html.kids #gamesGrid .tile-art{border-radius:1.6
 .wl-gap{flex:1}
 
 /* Modo Infantil: só os apps liberados, sem destaque, indicações, Apps, Entradas, Configurações e Desligar TV. */
-html.kids #hero,html.kids .picks-title,html.kids #homePicks,html.kids .top-actions,html.kids #powerBtn,
+html.kids #hero,html.kids .picks-title,html.kids #homePicks,html.kids #appRowsTitle,html.kids #appRows,html.kids .top-actions,html.kids #powerBtn,
 html.kids .nav-item[data-section="apps"],html.kids .nav-item[data-section="inputs"],html.kids .nav-item[data-section="settings"]{display:none!important}
 .chip.kids{color:#1a1400;background:#ffd23f;border-color:#ffd23f;font-weight:600}
 .chip[hidden]{display:none}
@@ -1657,6 +1685,27 @@ html.th-amethyst .kb-key.is-focused,html.th-amethyst .pin-key.is-focused,html.th
 .nav-theme{display:none;width:78%;max-height:100%;opacity:.95}
 html.kids .nav-theme{display:none!important}
 @media (min-width:761px),(orientation:landscape){html.nav-top .nav-theme,html.nav-bottom .nav-theme{display:none!important}}
+/* Menu em cima com o Clean Glass: a barra perde o fundo e as linhas e vira abas só de texto no
+   centro, com a marca à esquerda e o perfil à direita. A aba aberta fica branca, com um ponto
+   embaixo (na cor do tema); Desligar TV vira só o ícone. Fica depois das cores de cada tema, e o
+   ":not(.kids)" (o Modo Infantil nunca tem o menu em cima) só dá peso para vencer a barra deles. */
+@media (min-width:761px),(orientation:landscape){
+  html.home-clean.nav-top:not(.kids) #sidebar{justify-content:center;gap:.15rem;border-bottom:0;
+    background:linear-gradient(180deg,rgba(0,0,0,.3),rgba(0,0,0,0))}
+  html.home-clean.nav-top:not(.kids) #sidebar::after{display:none}
+  html.home-clean.nav-top:not(.kids) .brand{position:absolute;top:0;bottom:0;left:2.4rem;padding:0;margin:0;border-right:0;opacity:.8}
+  html.home-clean.nav-top:not(.kids) .nav-item.me{position:absolute;top:50%;right:2.4rem;margin:-1.45rem 0 0}
+  html.home-clean.nav-top:not(.kids) .nav-spacer{flex:none;width:0;min-width:0}
+  html.home-clean.nav-top:not(.kids) .nav-item:not(.me):not(.power) svg{display:none}
+  html.home-clean.nav-top:not(.kids) .nav-item{padding:0 1.05rem;color:var(--muted);background:transparent;border-color:transparent;box-shadow:none}
+  html.home-clean.nav-top:not(.kids) .nav-item.active:not(.is-focused){background:transparent;color:var(--text)}
+  html.home-clean.nav-top:not(.kids) .nav-item.active::before{bottom:.2rem;width:.34rem;height:.34rem;margin-left:-.17rem;border-radius:50%}
+  html.home-clean.nav-top:not(.kids) .nav-item.is-focused{background:rgba(255,255,255,.14);border-color:rgba(255,255,255,.18);color:var(--text);transform:none}
+  html.home-clean.nav-top:not(.kids) .nav-item.power{padding:0 .85rem}
+  html.home-clean.nav-top:not(.kids) .nav-item.power span{display:none}
+  html.home-clean.nav-top:not(.kids) .nav-item.power.is-focused span{display:inline}
+  html.home-clean.nav-top.on-home .topbar{margin-top:2.2rem}
+}
 /* Tela de descanso: o Cobalt desenha em baixa resolução e amplia sem suavizar (pixel art). */
 html.th-cobalt #saver canvas{image-rendering:pixelated;image-rendering:crisp-edges}
 </style>
@@ -1873,6 +1922,8 @@ html.th-cobalt #saver canvas{image-rendering:pixelated;image-rendering:crisp-edg
     </div>
     <div class="row-title" id="homeAppsTitle">Seus apps</div>
     <div class="row" id="homeApps"></div>
+    <div class="row-title" id="appRowsTitle" hidden>Continuar nos seus apps<span class="row-sub" id="appRowsSub"></span></div>
+    <div class="row" id="appRows" hidden></div>
     <div class="row-title picks-title">Indicações da semana<span class="row-sub" id="picksSub">· Netflix em primeiro · renovadas toda segunda-feira</span></div>
     <div class="row" id="homePicks"></div>
   </section>
@@ -2044,6 +2095,20 @@ html.th-cobalt #saver canvas{image-rendering:pixelated;image-rendering:crisp-edg
     <button class="f btn primary" id="wlNext" tabindex="-1"><span>Continuar</span></button>
   </div>
 </div>
+<div class="layer dim" id="appRowsWarn" hidden role="dialog" aria-labelledby="arTitle">
+  <div class="ar-card">
+    <span class="ar-tag">Opcional · em teste</span>
+    <h2 id="arTitle">Antes de ativar</h2>
+    <p class="layer-sub">Continuar no CloudStream e no Stremio</p>
+    <ul class="ar-list">
+      <li><b>O Android vai pedir uma permissão.</b> <span>É a de ver a programação da TV: com ela, o Onix enxerga as capas que esses apps colocam na tela da TV.</span></li>
+      <li><b>O Onix só mostra o que os apps já publicam.</b> <span>O que você está assistindo e as capas da tela inicial deles. O Onix não baixa nada desses apps nem entra nos sites deles.</span></li>
+      <li><b>Esses apps não são do Onix.</b> <span>O que aparece neles, e nas extensões que você instalou, é responsabilidade de cada app.</span></li>
+      <li><b>Pode ficar vazio.</b> <span>Se o app não colocar nada na TV (o Stremio pode não colocar), a fileira não aparece. Para desligar, volte nesta opção.</span></li>
+    </ul>
+    <div class="layer-actions"><button class="f btn" id="arCancel" tabindex="-1"><span>Agora não</span></button><button class="f btn primary" id="arOk" tabindex="-1"><span>Entendi, ativar</span></button></div>
+  </div>
+</div>
 <div class="layer dim" id="phonePane" hidden role="dialog" aria-labelledby="ppTitle">
   <div class="pp">
     <div class="reader-qr pp-qr" id="ppQr"></div>
@@ -2172,12 +2237,12 @@ function svgFrom(str) {
 
 /* Preferências do Onix (localStorage). As de desempenho viram classes na <html>
    que desligam efeitos no CSS; nada é recalculado por quadro. */
-const APP_VERSION = '17.4.0'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
+const APP_VERSION = '17.5.0'; // o build.sh troca pelo android:versionName do AndroidManifest.xml
 const SETTINGS_KEY = 'onix.settings';
 const DEFAULTS = Object.freeze({ shine: true, zoom: true, motion: true, shadow: true, rotate: true, h24: true, sound: true, saver: true,
   pickAuto: true, pickNetflix: true, pickDisney: false, pickMax: false, pickGloboplay: false, pickPrime: false, pickParamount: false, projectAd: true, autoUpdate: true,
   anim: 'suave', heroFx: 'fade', tabFx: false, lang: 'auto', remote: true, remoteQr: true, soundFx: 'chime', homeStyle: 'glass', navPos: 'left',
-  theme: 'dark', font: 'system', clock: 'thin' });
+  theme: 'dark', font: 'system', clock: 'thin', cleanPicks: false, appRows: false });
 /* Temas criados no Gems Studio (o app do Ruan para criar temas, que só existe no PC dele). O app grava a lista
    entre as duas marcas abaixo; cada tema é só a escolha de peças prontas (veja "Temas do Gems Studio" no fim do
    script). Aqui a lista é conferida: id curto, nome sem tags e as quatro escolhas como texto. */
@@ -3164,6 +3229,7 @@ function applySettings() {
   const kid = cl.contains('kids');   // o Modo Infantil tem o visual próprio
   cl.toggle('home-clean', !kid && settings.homeStyle === 'clean');
   cl.toggle('home-cosmos', !kid && settings.homeStyle === 'cosmos');
+  cl.toggle('clean-picks', settings.cleanPicks);
   // Posição do menu (o Modo Infantil tem o menu lateral dele).
   cl.toggle('nav-top', !kid && settings.navPos === 'top');
   cl.toggle('nav-bottom', !kid && settings.navPos === 'bottom');
@@ -3365,6 +3431,33 @@ const ES = Object.freeze({
   "Descansar agora": "Activar ahora",
   "Entra na tela de descanso na hora, mesmo com ela desligada acima. Qualquer tecla volta ao Onix.": "Activa el salvapantallas al instante, aunque esté desactivado arriba. Cualquier tecla vuelve a Onix.",
   "Indicações": "Recomendaciones",
+  "*Clean Glass mais limpo:* o relógio fica no alto, o meio da tela fica livre e os apps, maiores, ficam embaixo. As indicações da semana saíram do Clean Glass; quem quiser pode trazer de volta em *Configurações → Início → Indicações no Clean Glass*. Ideia de um usuário do Threads.": "*Clean Glass más limpio:* el reloj queda arriba, el centro de la pantalla queda libre y las apps, más grandes, quedan abajo. Las recomendaciones de la semana salieron de Clean Glass; quien quiera puede traerlas de vuelta en *Configuración → Inicio → Recomendaciones en Clean Glass*. Idea de un usuario de Threads.",
+  "*Menu em cima combinando com o Clean Glass:* com o menu em cima e o Clean Glass, a barra perde o fundo e vira abas só de texto no centro, com um ponto embaixo da aba aberta e o Desligar TV só no ícone.": "*Menú arriba a juego con Clean Glass:* con el menú arriba y Clean Glass, la barra pierde el fondo y se vuelve pestañas solo de texto en el centro, con un punto debajo de la pestaña abierta y Apagar TV solo con el ícono.",
+  "*Continuar no CloudStream e no Stremio (em teste):* uma fileira opcional na tela inicial com o que esses apps colocam na TV: o que você está assistindo e as capas da tela inicial deles. OK abre o título no app. Vem desligada: ligue em *Configurações → Indicações*, leia o aviso e permita o acesso que o Android pede. Só na versão para Google TV.": "*Seguir en CloudStream y Stremio (en prueba):* una fila opcional en la pantalla de inicio con lo que esas apps ponen en la TV: lo que estás viendo y las portadas de su pantalla de inicio. OK abre el título en la app. Viene desactivada: actívala en *Configuración → Recomendaciones*, lee el aviso y permite el acceso que pide Android. Solo en la versión para Google TV.",
+  "Indicações no Clean Glass": "Recomendaciones en Clean Glass",
+  "Mostra as indicações da semana embaixo dos apps. Desligado (o padrão), o Clean Glass fica só com o relógio e os apps.": "Muestra las recomendaciones de la semana debajo de las apps. Desactivado (lo predeterminado), Clean Glass queda solo con el reloj y las apps.",
+  "Continuar no CloudStream e no Stremio": "Seguir en CloudStream y Stremio",
+  "Opcional e em teste. Mostra na tela inicial o que esses apps colocam na TV: o que você está assistindo e as capas da tela inicial deles. Antes de ligar, aparece um aviso.": "Opcional y en prueba. Muestra en la pantalla de inicio lo que esas apps ponen en la TV: lo que estás viendo y las portadas de su pantalla de inicio. Antes de activarlo, aparece un aviso.",
+  "Continuar nos seus apps": "Seguir en tus apps",
+  " · OK abre no app": " · OK abre en la app",
+  "Não deu para abrir no {0}": "No se pudo abrir en {0}",
+  "Continuar nos seus apps desligado": "Seguir en tus apps desactivado",
+  "Ligado. A fileira aparece na tela inicial quando o CloudStream ou o Stremio colocarem algo na TV.": "Activado. La fila aparece en la pantalla de inicio cuando CloudStream o Stremio pongan algo en la TV.",
+  "Sem a permissão, a fileira continua desligada": "Sin el permiso, la fila sigue desactivada",
+  "O Android não pergunta mais. Para ativar, libere em Configurações da TV → Apps → Onix → Permissões.": "Android ya no pregunta. Para activarlo, permítelo en Configuración de la TV → Apps → Onix → Permisos.",
+  "Esta TV não tem como mostrar essa fileira (precisa do Android 8 ou mais novo)": "Esta TV no puede mostrar esta fila (necesita Android 8 o más reciente)",
+  "Opcional · em teste": "Opcional · en prueba",
+  "Antes de ativar": "Antes de activar",
+  "O Android vai pedir uma permissão.": "Android va a pedir un permiso.",
+  "É a de ver a programação da TV: com ela, o Onix enxerga as capas que esses apps colocam na tela da TV.": "Es el de ver la programación de la TV: con él, Onix ve las portadas que esas apps ponen en la pantalla de la TV.",
+  "O Onix só mostra o que os apps já publicam.": "Onix solo muestra lo que las apps ya publican.",
+  "O que você está assistindo e as capas da tela inicial deles. O Onix não baixa nada desses apps nem entra nos sites deles.": "Lo que estás viendo y las portadas de su pantalla de inicio. Onix no descarga nada de esas apps ni entra en sus sitios.",
+  "Esses apps não são do Onix.": "Esas apps no son de Onix.",
+  "O que aparece neles, e nas extensões que você instalou, é responsabilidade de cada app.": "Lo que aparece en ellas, y en las extensiones que instalaste, es responsabilidad de cada app.",
+  "Pode ficar vazio.": "Puede quedar vacía.",
+  "Se o app não colocar nada na TV (o Stremio pode não colocar), a fileira não aparece. Para desligar, volte nesta opção.": "Si la app no pone nada en la TV (Stremio puede no hacerlo), la fila no aparece. Para desactivarla, vuelve a esta opción.",
+  "Agora não": "Ahora no",
+  "Entendi, ativar": "Entendido, activar",
   "Pelo que você assiste": "Según lo que ves",
   "A Netflix sempre, mais Disney+, HBO Max, Globoplay, Prime Video e Paramount+ quando você abre o app mais de 3 vezes pelo Onix. Desligado, você escolhe os serviços abaixo.": "Netflix siempre, más Disney+, HBO Max, Globoplay, Prime Video y Paramount+ cuando abres la app más de 3 veces desde Onix. Desactivado, eliges los servicios abajo.",
   "Indicações da Netflix.": "Recomendaciones de Netflix.",
@@ -3742,7 +3835,7 @@ const ES = Object.freeze({
   "*Site novo, Project Gems:* todos os projetos do Ruan num lugar só, em *projectgems.github.io*: o Onix, o Onix GameHub, o Amethyst e o Opala.": "*Sitio nuevo, Project Gems:* todos los proyectos de Ruan en un solo lugar, en *projectgems.github.io*: Onix, Onix GameHub, Amethyst y Opala.",
   "A *Trajetória do Onix* ganhou o Onix GameHub no capítulo das pedras preciosas, e o Opala aparece com o ícone novo, o mesmo do site Project Gems.": "La *Trayectoria de Onix* ahora incluye Onix GameHub en el capítulo de las piedras preciosas, y Opala aparece con el ícono nuevo, el mismo del sitio Project Gems.",
   "Estilo da tela inicial": "Estilo de la pantalla de inicio",
-  "Onix Glass é o de sempre. Clean Glass é minimalista: relógio no centro e só os apps e as indicações. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.": "Onix Glass es el de siempre. Clean Glass es minimalista: reloj en el centro y solo las apps y las recomendaciones. Onix Cosmos es artístico, con el planeta de Onix, órbitas y estrellas dibujados. OK cambia.",
+  "Onix Glass é o de sempre. Clean Glass é minimalista: o relógio no alto e os apps, maiores, embaixo, com o meio livre. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.": "Onix Glass es el de siempre. Clean Glass es minimalista: el reloj arriba y las apps, más grandes, abajo, con el centro libre. Onix Cosmos es artístico, con el planeta de Onix, órbitas y estrellas dibujados. OK cambia.",
   "*Estilo da tela inicial:* além do *Onix Glass* (o de sempre), dois estilos novos. *Clean Glass* é minimalista: relógio grande no centro, os apps numa fileira centralizada e as indicações em capas pequenas. *Onix Cosmos* é artístico: o planeta do Onix, órbitas, luas e estrelas desenhados atrás do destaque. Em *Configurações → Início*.": "*Estilo de la pantalla de inicio:* además de *Onix Glass* (el de siempre), dos estilos nuevos. *Clean Glass* es minimalista: reloj grande en el centro, las apps en una fila centrada y las recomendaciones en portadas pequeñas. *Onix Cosmos* es artístico: el planeta de Onix, órbitas, lunas y estrellas dibujados detrás del destacado. En *Configuración → Inicio*.",
   "*Som da navegação:* quatro sons novos além do *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* e *Pulse*. Em *Configurações → Início*, OK troca e toca uma amostra.": "*Sonido de navegación:* cuatro sonidos nuevos además de *Onix Chime*: *Crystal*, *Sharpness*, *Velvet* y *Pulse*. En *Configuración → Inicio*, OK cambia y reproduce una muestra.",
   "Os sons do menu tocam com menos atraso: a saída de áudio da TV não \"dorme\" mais entre um toque e outro.": "Los sonidos del menú suenan con menos retraso: la salida de audio de la TV ya no se \"duerme\" entre un toque y otro.",
@@ -3938,6 +4031,28 @@ const Bridge = (() => {
     launch(pkg) {
       if (!native) return false;
       try { return b.launchApp(pkg) !== false; } catch (e) { console.warn('launchApp falhou', e); return false; }
+    },
+    // Continuar nos seus apps: "off" (não dá nesta TV), "granted" ou "denied".
+    appRowsState() {
+      if (!has('appRowsState')) return 'off';
+      try { const r = b.appRowsState(); return r === 'granted' || r === 'denied' ? r : 'off'; } catch (_) { return 'off'; }
+    },
+    // "granted" (já tinha), "asked" (a resposta chega em Launcher.onAppRowsPermission) ou "off".
+    appRowsRequest() {
+      if (!has('appRowsRequest')) return 'off';
+      try { const r = b.appRowsRequest(); return r === 'granted' || r === 'asked' ? r : 'off'; } catch (_) { return 'off'; }
+    },
+    getAppRows() {
+      if (!has('getAppRows')) return [];
+      try {
+        const raw = b.getAppRows();
+        if (typeof raw !== 'string' || raw.length > 12 * 1024 * 1024) return [];
+        return sanitizeAppRows(JSON.parse(raw));
+      } catch (e) { console.warn('getAppRows falhou', e); return []; }
+    },
+    openAppRow(id) {
+      if (!has('openAppRow')) return false;
+      try { return b.openAppRow(id) === true; } catch (e) { console.warn('openAppRow falhou', e); return false; }
     },
     getPicks() {
       if (!native || typeof b.getWeeklyPicks !== 'function') return [];
@@ -4670,6 +4785,71 @@ function resetHome() {
   renderEditRow();
   renderEditGrid();
   toast('“Seus apps” voltou ao padrão');
+}
+
+/* ---------------- Continuar nos seus apps (CloudStream e Stremio) ----------------
+   Opcional e desligado de início (Configurações → Indicações, depois de um aviso). O nativo
+   (AppRows.java) lê o que esses apps publicam na TV e manda as capas em data: URL; para abrir,
+   a página só manda o número do item. Fora do Modo Infantil. */
+const APP_ROW_APPS = ['CloudStream', 'Stremio'];
+const APP_ROW_POSTER = /^data:image\/jpeg;base64,[A-Za-z0-9+/]+={0,2}$/;
+let appRows = [];
+function sanitizeAppRows(list) {
+  if (!Array.isArray(list)) return [];
+  const out = [];
+  for (const p of list.slice(0, 24)) {
+    if (!p || typeof p !== 'object' || !Number.isInteger(p.id) || p.id < 0 || p.id > 23 || !APP_ROW_APPS.includes(p.app)) continue;
+    const title = cleanText(p.title, 100);
+    if (!title) continue;
+    out.push({ id: p.id, app: p.app, title, sub: cleanText(p.sub, 80),
+      progress: Number.isInteger(p.progress) && p.progress > 0 && p.progress <= 100 ? p.progress : 0,
+      poster: typeof p.poster === 'string' && p.poster.length < 600 * 1024 && APP_ROW_POSTER.test(p.poster) ? p.poster : '' });
+  }
+  return out;
+}
+function refreshAppRows() {
+  appRows = settings.appRows && !isKids() ? Bridge.getAppRows() : [];
+  renderAppRows();
+}
+function renderAppRows() {
+  const row = $('#appRows'), title = $('#appRowsTitle');
+  const at = current && row.contains(current) ? $$('.tile', row).indexOf(current) : -1;
+  row.replaceChildren();
+  row.hidden = title.hidden = !appRows.length;
+  document.documentElement.classList.toggle('has-app-rows', appRows.length > 0);
+  if (!appRows.length) { if (at >= 0) focusFirstContent(); return; }
+  const apps = APP_ROW_APPS.filter(a => appRows.some(p => p.app === a));
+  $('#appRowsSub').textContent = '· ' + apps.join(t(' e ')) + t(' · OK abre no app');
+  for (const p of appRows) {
+    const b = h('button', { class: 'f tile pick app-row', tabindex: '-1', 'aria-label': p.title },
+      h('span', { class: 'tile-art' },
+        p.poster ? h('img', { src: p.poster, alt: '', draggable: 'false', decoding: 'async' }) : h('span', { class: 'ar-ph', text: p.title }),
+        h('span', { class: 'ar-app', text: p.app }),
+        p.progress ? h('i', { class: 'ar-prog', style: 'width:' + p.progress + '%' }) : null),
+      h('span', { class: 'tile-label', text: p.sub ? p.title + ' · ' + p.sub : p.title }));
+    b._act = () => { if (!Bridge.openAppRow(p.id)) toast(t('Não deu para abrir no {0}', p.app)); };
+    row.append(b);
+  }
+  if (at >= 0) setFocus($$('.tile', row)[Math.min(at, appRows.length - 1)]);
+}
+// Ligar passa pelo aviso e pela permissão do Android; desligar é na hora.
+function toggleAppRows(from) {
+  if (settings.appRows) {
+    setOption('appRows', false); syncSwitches(); refreshAppRows();
+    toast('Continuar nos seus apps desligado');
+    return;
+  }
+  openPane('appRowsWarn', { from });
+  setFocus($('#arCancel'));
+}
+function appRowsOn() {
+  setOption('appRows', true); syncSwitches(); refreshAppRows();
+  toast('Ligado. A fileira aparece na tela inicial quando o CloudStream ou o Stremio colocarem algo na TV.');
+}
+function onAppRowsPermission(ok, again) {
+  if (ok) appRowsOn();
+  else toast(again ? 'Sem a permissão, a fileira continua desligada'
+    : 'O Android não pergunta mais. Para ativar, libere em Configurações da TV → Apps → Onix → Permissões.');
 }
 
 function renderPicks() {
@@ -6169,7 +6349,8 @@ const OPTIONS = [
   { group: 'Menu' },
   { key: 'navPos', name: 'Posição do menu', desc: 'Onde o menu fica: na lateral (o de sempre), em cima, numa barra de abas, ou embaixo, num dock flutuante. OK troca.' },
   { group: 'Início' },
-  { key: 'homeStyle', name: 'Estilo da tela inicial', desc: 'Onix Glass é o de sempre. Clean Glass é minimalista: relógio no centro e só os apps e as indicações. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.' },
+  { key: 'homeStyle', name: 'Estilo da tela inicial', desc: 'Onix Glass é o de sempre. Clean Glass é minimalista: o relógio no alto e os apps, maiores, embaixo, com o meio livre. Onix Cosmos é artístico, com o planeta do Onix, órbitas e estrelas desenhados. OK troca.' },
+  { key: 'cleanPicks', clean: true, name: 'Indicações no Clean Glass', desc: 'Mostra as indicações da semana embaixo dos apps. Desligado (o padrão), o Clean Glass fica só com o relógio e os apps.' },
   { key: 'rotate', name: 'Trocar destaque sozinho', desc: 'Passa para a próxima indicação a cada 9 segundos.' },
   { key: 'h24',    name: 'Relógio de 24 horas',   desc: 'Desligado, mostra 1:00 em vez de 13:00.' },
   { key: 'sound',  name: 'Sons do menu',          desc: 'Toque suave ao navegar, abrir e voltar.' },
@@ -6187,6 +6368,7 @@ const OPTIONS = [
   { key: 'pickGloboplay', service: 'globoplay', name: 'Globoplay', desc: 'Indicações do Globoplay.' },
   { key: 'pickPrime',     service: 'prime',     name: 'Prime Video', desc: 'Indicações do Prime Video.' },
   { key: 'pickParamount', service: 'paramount', name: 'Paramount+', desc: 'Indicações do Paramount+.' },
+  { key: 'appRows', rows: true, name: 'Continuar no CloudStream e no Stremio', desc: 'Opcional e em teste. Mostra na tela inicial o que esses apps colocam na TV: o que você está assistindo e as capas da tela inicial deles. Antes de ligar, aparece um aviso.' },
   { key: 'projectAd', name: 'Novidades do Project Gems', desc: 'Primeiro banner do destaque, com os apps novos do criador do Onix. Desligado, o destaque mostra só as indicações.' },
   { group: 'Atualizações' },
   { act: 'update', name: 'Procurar atualizações', desc: 'Confere no GitHub se saiu uma versão nova do Onix.' },
@@ -6203,6 +6385,11 @@ const OPTIONS = [
    Cada item: [tipo, texto], com tipo 'new' (Novo), 'fix' (Correção: ajuste no que já existia) ou 'bug' (Bug corrigido). */
 const LOG_TAGS = Object.freeze({ new: 'Novo', fix: 'Correção', bug: 'Bug' });
 const CHANGELOG = [
+  { version: '17.5.0', date: 'novembro de 2026', items: [
+    ['new', '*Clean Glass mais limpo:* o relógio fica no alto, o meio da tela fica livre e os apps, maiores, ficam embaixo. As indicações da semana saíram do Clean Glass; quem quiser pode trazer de volta em *Configurações → Início → Indicações no Clean Glass*. Ideia de um usuário do Threads.'],
+    ['new', '*Menu em cima combinando com o Clean Glass:* com o menu em cima e o Clean Glass, a barra perde o fundo e vira abas só de texto no centro, com um ponto embaixo da aba aberta e o Desligar TV só no ícone.'],
+    ['new', '*Continuar no CloudStream e no Stremio (em teste):* uma fileira opcional na tela inicial com o que esses apps colocam na TV: o que você está assistindo e as capas da tela inicial deles. OK abre o título no app. Vem desligada: ligue em *Configurações → Indicações*, leia o aviso e permita o acesso que o Android pede. Só na versão para Google TV.'],
+  ] },
   { version: '17.4.0', date: 'novembro de 2026', items: [
     ['new', '*Mais 2 temas:* em *Configurações → Aparência → Tema*. *Onix Opala* é a noite quentinha do Opala, com estrelinhas laranja, constelação, lua crescente e coraçõezinhos. *Onix Amethyst* é o palco do Amethyst, com o buraco de minhoca, canhões de luz, notas musicais e o equalizador pulsando. Agora são 11 temas.'],
     ['fix', '*Safira, Esmeralda, Âmbar e Quartzo Rosa refeitos:* fundos com mais camadas e detalhes. A Safira ganhou recife, cardume, raias-manta e safiras no chão; a Esmeralda, névoa entre os pinheiros, cogumelos que brilham e cristais; o Âmbar, nuvens sobre o sol, palmeiras e o reflexo do sol; o Quartzo Rosa, pagode, portal torii e lago. O foco ganhou brilho e os títulos, o enfeite de cada pedra.'],
@@ -6445,6 +6632,7 @@ function renderSettings() {
   if (Bridge.has('remoteInfo')) readRemoteInfo();
   // Os serviços só aparecem com a escolha manual; "Atualizar automaticamente", se a ponte instala.
   const opts = OPTIONS.filter(o => (!o.service || !settings.pickAuto) && (!o.phone || Bridge.has('remoteStart'))
+    && (!o.clean || settings.homeStyle === 'clean') && (!o.rows || Bridge.appRowsState() !== 'off')
     && (o.key !== 'autoUpdate' || !Bridge.native || Bridge.has('setAutoUpdate')) && (o.act !== 'support' || !isKids()));
   $('#optsList').replaceChildren(...opts.map(o => {
     if (o.group) return h('div', { class: 'opts-group', text: o.group });
@@ -6478,11 +6666,17 @@ function renderSettings() {
         toast(t(o.name) + ': ' + t(next[1]) + (settings.sound ? '' : t(' (ligue "Sons do menu" para ouvir)')));
         setTimeout(() => sfx('select'), 260);   // amostra do som novo, depois do toque do OK
       }
-      else if (o.key === 'homeStyle' || o.key === 'navPos' || o.key === 'theme' || o.key === 'font' || o.key === 'clock') toast(t(o.name) + ': ' + t(next[1]));
+      else if (o.key === 'homeStyle') {
+        toast(t(o.name) + ': ' + t(next[1]));
+        renderSettings();   // mostra/esconde "Indicações no Clean Glass"
+        setFocus($('#optsList button[aria-label="' + t(o.name) + '"]'));
+      }
+      else if (o.key === 'navPos' || o.key === 'theme' || o.key === 'font' || o.key === 'clock') toast(t(o.name) + ': ' + t(next[1]));
       else if (!settings.motion) toast(t(o.name) + ': ' + t(next[1]) + t(' (ligue "Transições suaves" para ver)'));
       else if (o.key === 'heroFx') { toast(t(o.name) + ': ' + t(next[1])); nextHero(); }
       else toast(t(o.name) + ': ' + t(next[1]));
     };
+    else if (o.key === 'appRows') b._act = () => toggleAppRows(b);
     else if (o.key) b._act = () => { setOption(o.key, !settings[o.key]); syncSwitches(); };
     else if (o.act === 'perf') b._act = () => {
       ['shine', 'zoom', 'motion', 'shadow'].forEach(k => { settings[k] = false; });
@@ -6493,6 +6687,7 @@ function renderSettings() {
       syncPicksChoice(); Bridge.setAutoUpdate(DEFAULTS.autoUpdate);
       const was = LANG; resolveLang(); if (LANG !== was) changeLang();
       storeProfilePrefs();
+      refreshAppRows();
       renderSettings(); setFocus($('#optsList button[aria-label="' + t(o.name) + '"]'));
       toast('Configurações restauradas');
     };
@@ -7362,6 +7557,7 @@ function enterProfile(pr, quiet) {
   renderMe();
   if (Bridge.native) syncPicksChoice();
   renderPicks();
+  refreshAppRows();
   showSection('home');
   setFocus(pr.kids ? ($('#homeApps .tile') || $('.nav-item[data-section="games"]')) : $('#heroOpen'));
   kidsMark = 0;
@@ -7877,6 +8073,13 @@ function renderPhonePane() {
   $('#ppWait').hidden = phoneMode !== 'photo';
 }
 btnAct('ppClose', () => paneBack());
+btnAct('arCancel', () => paneBack());
+btnAct('arOk', () => {
+  closePane('appRowsWarn');
+  const r = Bridge.appRowsRequest();
+  if (r === 'granted') appRowsOn();
+  else if (r === 'off') toast('Esta TV não tem como mostrar essa fileira (precisa do Android 8 ou mais novo)');
+});
 
 // Busca de apps digitando no celular.
 function openSearch(v) {
@@ -9239,7 +9442,7 @@ function resync() {
 }
 // Gancho para o lado nativo chamar via evaluateJavascript.
 Object.defineProperty(window, 'Launcher', {
-  value: Object.freeze({ onAppsChanged: () => { refreshApps(); renderHub(); }, onGameHub: () => renderHub(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onAdChanged: () => { loadAd(); renderHero(false); }, onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onScreenOff: () => lockProfile(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); kidsTick(); refreshWeather(false); renderHub(); }, onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync(), onWeather: j => onWeather(j), onCities: (j, q) => onCities(j, q), onRemote: j => onRemote(j), onRemoteInfo: e => onRemoteInfo(e), onSettingsKey: () => settingsKey() }),
+  value: Object.freeze({ onAppsChanged: () => { refreshApps(); renderHub(); }, onGameHub: () => renderHub(), onPicksChanged: () => refreshPicks(), onNewsChanged: () => refreshNews(), onAdChanged: () => { loadAd(); renderHero(false); }, onRefreshed: (n, p) => onRefreshed(!!n, !!p), onMemoryCleared: (f, a, t, l) => onMemoryCleared(+f, +a, +t, !!l), onBack: () => back(), onScreenOff: () => lockProfile(), onNetwork: on => setNetwork(!!on), onResume: () => { wakeSaver(); refreshUsed(); kidsTick(); refreshWeather(false); renderHub(); refreshAppRows(); }, onAppRowsChanged: () => refreshAppRows(), onAppRowsPermission: (ok, again) => onAppRowsPermission(!!ok, !!again), onInputsChanged: () => refreshInputs(), onMessage: m => toast(cleanText(m, 160)), onUpdate: () => refreshUpdate(), onResync: () => resync(), onWeather: j => onWeather(j), onCities: (j, q) => onCities(j, q), onRemote: j => onRemote(j), onRemoteInfo: e => onRemoteInfo(e), onSettingsKey: () => settingsKey() }),
   writable: false, configurable: false,
 });
 
@@ -9294,6 +9497,7 @@ function init() {
   loadPicks();
   renderApps();
   renderPicks();
+  refreshAppRows();
   showSection('home');
   updateClock(true);
   scheduleClock();
